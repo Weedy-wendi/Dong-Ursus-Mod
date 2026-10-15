@@ -7,7 +7,7 @@
 <sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.2-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.3-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
@@ -74,6 +74,13 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 ## 更新日志（Changelog）
 
 本包从 **v1.0.0** 起有自己的版本号（与本体版本解耦）；每条发布对应一个分支 `base-<本体版本>`，`mod.mjs update` 会挑「base 匹配且版本更高」的那条。逐条细节见 [`CHANGES.md`](CHANGES.md)。
+
+### v1.0.3 — 2026-10-16
+
+- **与其他 mod 共存**：卸载/升级不再只靠「整文件指纹」，而是先**反向套补丁**（`git apply -R`，必要时 `-R --3way`）——只摘掉本 mod 改过的那几段，同一个文件里别的 mod 或你自己的改动**原样留下**。实测：在「别的 mod 已改过 `meta.js` / `build-data.mjs`」的树上卸载，本 mod 两个补丁全部反解、29 个自有文件处理干净、12 个被替换的上游文件还原，而别的 mod 的标记完好、`git status` 里只剩它自己的 2 个文件。
+- **install 也放开了**：这 85 个文件与基线不符时，先让 git 试套一遍 —— 补丁能干净套上就继续（装完仍按 102 个指纹复核），套不上才拒绝并指出哪个补丁套不上（`--force` 可硬装，会落 `.rej`）。
+- **status 结论的优先级修正**：树里有本 mod 的文件/数据时不再报「未安装」，而是「检测到本 mod 的内容（自有文件 N/29 · 补丁产物 N/73 · 被替换的上游文件 N/12）」，并区分**完整**与**不完整（半装）**两种情形。
+- **残留检查更准**：只把**本 mod 的残留**算失败；与基线不同但属于别的改动的文件只做告知（退出码不受影响）。
 
 ### v1.0.2 — 2026-10-16
 
@@ -284,6 +291,7 @@ node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>   # 复现「技�
 
 - 全部文档与代码注释为中文；`README` / `SKILL.md` 面向中文读者。
 - 与本体版本强绑定：换版本需重新生成补丁，`*.rej` 需人工合入；`mod.json` 的指纹也随之重算。
+- **可以与别的 mod 共存**：卸载/升级走反向套补丁，只摘自己那几段；只有当别的 mod 改到了**本 mod 补丁的同一段**时才会冲突（那时会留下 `.rej`，需要人工处理）。
 - `update` 的联网路径依赖发布分支 `base-<本体版本>` 存在；GitHub 被屏蔽的环境可用 `--source` 指向镜像地址，或用 `--file` 走本地包。
 - 本包**不附带游戏美术资源**，唯一例外是随包的【东】盟约图标（取自本体自带的东国阵营 LOGO）。
 - 文案有历史缺口：`garrison_986_a/b` 的 `ja` / `ko` / `zh-TW` 三条仍是中文（机制类文案未译），其余记录四语言齐全。

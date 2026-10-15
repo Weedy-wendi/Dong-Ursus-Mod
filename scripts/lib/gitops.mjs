@@ -75,6 +75,28 @@ export function patchTargets(patchAbs) {
   } catch { return []; }
 }
 
+/**
+ * **反向**套一个补丁：把本 mod 的改动从文件里摘掉。
+ * 这是「本体上还装了别的 mod」时的正确做法——补丁的 hunk 只覆盖我们改过的那几段，
+ * 别的 mod 改在别处的内容会原样留下（整文件级别的指纹匹配做不到这一点）。
+ * 顺序：-R → （失败）-R --3way（能三路合并就合并）→ （失败）-R --ignore-whitespace → -R --reject。
+ * @returns {{ ok: boolean, mode: string, rejects: string[], err: string }}
+ */
+export function revertPatch(root, patchAbs) {
+  const modes = [['reverse', []], ['reverse-3way', ['--3way']], ['reverse-ignore-whitespace', ['--ignore-whitespace']]];
+  for (const [mode, extra] of modes) {
+    const r = run('git', [...LF, 'apply', '-R', '-p1', ...extra, patchAbs], { cwd: root, capture: true, allowFail: true, ceiling: root });
+    if (r.code === 0) return { ok: true, mode, rejects: [], err: '' };
+  }
+  const rej = run('git', [...LF, 'apply', '-R', '--reject', '-p1', patchAbs], { cwd: root, capture: true, allowFail: true, ceiling: root });
+  return {
+    ok: false,
+    mode: 'reverse-reject',
+    rejects: collectRejects(root, patchTargets(patchAbs)),
+    err: (rej.err || rej.out || '').trim().split('\n')[0] || '',
+  };
+}
+
 /** 在给定文件集合里找残留的 *.rej */
 export function collectRejects(root, rels) {
   return (rels ?? []).filter((rel) => exists(join(root, ...(rel + '.rej').split('/')))).map((rel) => rel + '.rej');

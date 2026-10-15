@@ -26,7 +26,8 @@ import {
   backUp, backupPath, clearState, driftCheck, loadState, saveState, stateDir, statePath, summarize,
 } from './lib/state.mjs';
 import {
-  applyPatch, checkoutPaths, collectRejects, gitAvailable, gitVersion, hasCommit, isRepoRoot, patchTargets, pathsInCommit,
+  applyPatch, checkoutPaths, collectRejects, gitAvailable, gitVersion, hasCommit, isRepoRoot, patchCheck, patchTargets,
+  pathsInCommit, revertPatch,
 } from './lib/gitops.mjs';
 import { stagePackage } from './lib/source.mjs';
 
@@ -277,11 +278,16 @@ function cmdStatus(repo, flags) {
     out.verdict = drifted.length || missing.length
       ? `已安装 v${st.modVersion}，但有 ${drifted.length} 个文件被改过、${missing.length} 个文件不见了`
       : `已安装 v${st.modVersion}（干净，与安装时一致）`;
+  } else if (c?.modPresent) {
+    // 树里有本 mod 的东西 —— 优先级高于「85 个文件是否在基线」：
+    // 文件在 / 数据被重建 / 上游文件被删，都说明这台机器上装过本 mod（可能是不完整的半装）。
+    const full = c.patchedMatch === c.patchedTotal && c.removedAbsent === c.removedTotal;
+    out.verdict = `检测到本 mod 的内容（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里 · 补丁产物 ${c.patchedMatch}/${c.patchedTotal} 符合 · 被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}）` +
+      (full
+        ? '；但没有安装记录（旧版安装 / 手工覆盖）。install 会先把它摘干净再装，uninstall 可直接撤掉'
+        : '；这是一次**不完整**的安装（例如文件在、补丁没套）。install 会补齐，uninstall 会把这些文件和改动都撤掉');
   } else if (c?.pristine) {
     out.verdict = `未安装；本体是 v${mod.base.version} 的基线，可以直接 install`;
-  } else if (c?.modPresent) {
-    out.verdict = `树里有本 mod 的内容但没有安装记录（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里、被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}）` +
-      ' —— 直接 install 会自动把这 85 个文件回退到基线再装，不必手工 stash';
   } else if (c) {
     out.verdict = `未安装；这 85 个文件里有 ${c.pre.mismatch.length} 个内容不同、${c.pre.missing.length} 个缺失，且看不出是本 mod 造成的` +
       ' —— install 会先拒绝并列出它们（确认无关可用 --force 硬装）';
@@ -401,8 +407,8 @@ function cmdInstall(repo, flags) {
 
   if (flags.dryRun) {
     if (st) say(`  --dry-run：有安装记录 v${st.modVersion} → 会先精确还原，再装 v${mod.version}`);
+    else if (c.modPresent) say(`  --dry-run：树里有本 mod 内容但没有记录 → 先反向套补丁摘掉本 mod 的改动，再${restorePristine(repo, mod, { dryRun: true, force: flags.force }).plan}，最后装 v${mod.version}`);
     else if (c.pristine) say('  --dry-run：本体是基线 → 直接装');
-    else if (c.modPresent) say(`  --dry-run：树里有本 mod 内容但没有记录 → 先${restorePristine(repo, mod, { dryRun: true, force: flags.force }).plan}，再装`);
     else {
       reportBad(c.pre, '本体这边有改动，但看不出是本 mod 造成的');
       say('  --dry-run：install 会拒绝这些改动（确认与本 mod 无关可 --force 硬装）');
@@ -418,34 +424,46 @@ function cmdInstall(repo, flags) {
     say(`  还原：git ${r.fromGit} · 备份 ${r.fromBackup} · 删除新增 ${r.deleted.length} · 保留改动 ${r.kept.length}`);
     if (r.unresolved.length) die(`还原失败 ${r.unresolved.length} 个文件：${brief(r.unresolved)}\n      用 status 查看，或手工从 .mod-dong-ursus/backup/ 取回`, 5);
     if (r.kept.length) warn(`保留了 ${r.kept.length} 个被改过的文件：${brief(r.kept)}`);
-    // C. 没有记录，但树里有本 mod 内容（旧版 install.mjs 装的 / 手工覆盖过）→ 自动回退这 85 个文件
-  } else if (!c.pristine && c.modPresent) {
-    say(`  树里有本 mod 内容但没有安装记录（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里、被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}）`);
-    say(`  按「旧版安装」处理：先把相关文件回退到 v${mod.base.version} 基线，再装 v${mod.version}`);
-    const r = restorePristine(repo, mod, { force: flags.force });
-    say(`  回退：git ${r.fromGit} · 备份 ${r.fromBackup} · 另存 ${r.backedUp} 个文件${r.backupDir ? ` → ${r.backupDir}` : ''}`);
-    if (r.kept.length) warn(`保留了 ${r.kept.length} 个看着像你自己改的文件（会让基线校验失败，--force 可强制回退）：${brief(r.kept)}`);
-    if (r.unresolved.length) {
-      die(`有 ${r.unresolved.length} 个文件没能回退到基线：${brief(r.unresolved)}\n` +
+    // C. 没有记录，但树里有本 mod 内容（旧版 install.mjs 装的 / 手工覆盖 / 半装）→ 先摘掉
+  } else if (c.modPresent) {
+    say(`  树里有本 mod 内容但没有安装记录（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里、补丁产物 ${c.patchedMatch}/${c.patchedTotal}、被删的上游文件 ${c.removedAbsent}/${c.removedTotal}）`);
+    say(`  先按「旧版安装」处理：反向套补丁摘掉本 mod 的改动 + 回退被删的上游文件，再装 v${mod.version}`);
+    const r = stripModContent(repo, mod, { force: flags.force });
+    say(`  摘除：反向套补丁 ${r.reverted}/${r.total} 个 · 其余回退 git ${r.fromGit} · 备份 ${r.fromBackup} · 另存 ${r.backedUp} 个文件${r.backupDir ? ` → ${r.backupDir}` : ''}`);
+    if (r.rejects.length) warn(`  有 ${r.rejects.length} 个段落与别的改动冲突，留下了 .rej：${brief(r.rejects)}`);
+    if (r.kept.length) warn(`保留了 ${r.kept.length} 个看着像你自己改的文件：${brief(r.kept)}`);
+    if (r.unresolved.length && !flags.force) {
+      die(`有 ${r.unresolved.length} 个文件没能摘回基线：${brief(r.unresolved)}\n` +
         `      本体不是 git 检出、或基线提交不可达，且没有上一次安装留下的备份。\n` +
         `      处理办法：用 git stash / 重新解包本体回到基线；确实要硬装：--force（补丁可能套不上）`, 5);
     }
   }
 
   const v = verifySet(repo, mod.base.files);
-  if (v.missing.length || v.mismatch.length) {
+  const baselineOk = !v.missing.length && !v.mismatch.length;
+  if (baselineOk) {
+    say(`  基线校验：${verdict(v)} ✅`);
+  } else {
     reportBad(v, '本体树与基线不一致');
-    if (!flags.force) {
-      die(`这 85 个文件里有内容与本 mod 适配的 v${mod.base.version} 基线不符，而且看不出是本 mod 造成的` +
-        `（本 mod 的内容会在上面被自动回退）。\n` +
+    // 差异不是本 mod 造成的（别的 mod / 你自己改的）时，先让 git 试套一遍：
+    // 补丁能干净套上就继续（补丁只改自己那几段，套完还会按指纹复核）；
+    // 套不上才拒绝，避免落一地 .rej。
+    const checkable = (mod.patches ?? []).map((p) => ({ p, ...patchCheck(repo, join(modRoot, ...p.split('/'))) }));
+    const allForward = checkable.every((x) => x.forward);
+    if (c.modPresent || allForward) {
+      if (c.modPresent) warn('  上面这些差异看着不是本 mod 造成的（别的 mod / 你自己的改动）→ 继续装；');
+      else warn('  这些差异看着不是本 mod 造成的（别的 mod / 你自己的改动），但本 mod 的补丁能干净套上 → 继续装；');
+      warn(`  补丁只会改自己那几段${allForward ? '' : '（有的补丁 check 没过，套用可能失败并落 .rej）'}，装完按 102 个指纹复核`);
+    } else if (!flags.force) {
+      die(`这 85 个文件里有内容与本 mod 适配的 v${mod.base.version} 基线不符，本 mod 的补丁也套不上：\n` +
+        checkable.filter((x) => !x.forward).map((x) => `        · ${x.p} 套不上`).join('\n') + '\n' +
         `      常见原因：你手改过这些文件、装了别的 mod、或本体版本不对。\n` +
         `      处理办法（任选其一，然后重跑本命令）：\n` +
         `        · 可回退：git stash push -u -m "快照"\n` +
         `        · 回基线：git reset --hard ${mod.base.commit} && git clean -fd\n` +
-        `        · 确认与本 mod 无关、想硬装：--force（补丁可能套不上，会落 .rej）`, 2);
-    }
-    warn('--force：跳过基线校验，继续安装');
-  } else say(`  基线校验：${verdict(v)} ✅`);
+        `        · 想硬装（会落 .rej，需人工合入）：--force`, 2);
+    } else warn('--force：跳过基线校验，继续安装（补丁套不上会落 .rej）');
+  }
 
   head('2/5 快照与备份');
   const entries = buildEntries(repo, mod);
@@ -515,6 +533,27 @@ function cmdInstall(repo, flags) {
 // ---------------------------------------------------------------- uninstall
 
 /**
+ * 把本 mod 的改动从树里「摘」出来（install 的「先摘再装」与 uninstall 共用）：
+ *   ① **反向套补丁**（`git apply -R`，必要时 -R --3way）：只摘我们改过的那些 hunk，
+ *      同一个文件里别的 mod / 你自己的改动原样留下 —— 整文件级的指纹匹配做不到这一点；
+ *   ② 兜底 `restorePristine()`：反向套不上的、以及安装时被删掉的上游文件按指纹/备份回退。
+ */
+function stripModContent(repo, mod, { dryRun = false, force = false, backup = true } = {}) {
+  const patches = [...(mod.patches ?? [])].reverse();
+  let reverted = 0;
+  const rejects = [];
+  if (!dryRun) {
+    for (const p of patches) {
+      const r = revertPatch(repo, join(modRoot, ...p.split('/')));
+      if (r.ok) reverted++;
+      rejects.push(...r.rejects);
+    }
+  }
+  const rp = restorePristine(repo, mod, { dryRun, force, backup });
+  return { reverted, total: patches.length, rejects, ...rp };
+}
+
+/**
  * 没有安装记录时的卸载：按 mod.json 重建「本 mod 加了什么」，全部撤掉。
  *   85 个装前文件 → 回退到基线（git 优先、备份兜底；只动确实是本 mod 造成的差异）
  *   22 个生成物   → 从基线提交还原
@@ -538,20 +577,44 @@ function uninstallWithoutRecord(repo, mod, flags) {
       '      无法重建「装之前」的字节。请用本体自己的 git 回到基线，或重新解包本体。', 5);
   }
 
-  // 1) 85 个装前文件
-  const r = restorePristine(repo, mod, { force: flags.force, backup: false });
-  say(`  装前文件：git ${r.fromGit} · 备份 ${r.fromBackup} · 保留本机改动 ${r.kept.length}`);
-  if (r.kept.length) {
-    warn(`  这些文件看着像你自己改的，已保留：${brief(r.kept)}`);
+  // 1) 先反向套补丁：把本 mod 的改动从文件里「摘」出来。
+  //    这是与别的 mod 共存时的关键——补丁的 hunk 只覆盖我们改过的段落，别处的内容原样留下；
+  //    整文件指纹匹配做不到这一点（文件里同时有别人的改动时，指纹对不上，只能整文件保留）。
+  const strip = stripModContent(repo, mod, { force: flags.force, backup: false });
+  say(`  摘除本 mod 改动：反向套补丁 ${strip.reverted}/${mod.patches.length} 个 · 其余回退 git ${strip.fromGit} · 备份 ${strip.fromBackup} · 本机改动保留 ${strip.kept.length}`);
+  if (strip.rejects.length) {
+    warn(`  有 ${strip.rejects.length} 个段落与别的改动冲突，反向套用留下了 .rej：${brief(strip.rejects)}`);
+    warn('  这些段落需要手工处理（或先用 --force 把整文件回退到基线）');
+  }
+  if (strip.kept.length) {
+    warn(`  这些文件看着像你自己改的，已保留：${brief(strip.kept)}`);
     warn('  想把它们也一起回退到基线：再跑一次 uninstall --force');
   }
 
-  // 2) 生成物（data/*.json 等）
+  // 2) 生成物（data/*.json 等）：树里还有别的改动 → 重建 data 更合适；否则 git 还原最精确
   const gen = mod.generated ?? [];
-  let genFail = [];
-  if (useGit) genFail = checkoutPaths(repo, mod.base.commit, gen);
-  say(`  生成物：${gen.length - genFail.length}/${gen.length} 已还原到基线${genFail.length ? `（${genFail.length} 个失败）` : ''}`);
-  if (genFail.length) warn(`  没还原：${brief(genFail)}；可删掉 tools/custom-content.mjs 后重跑 node tools/build-data.mjs 重建官方数据`);
+  const otherEdits = classify(repo, mod, null).pre.mismatch;
+  const buildData = mod.build?.data ? join(repo, ...mod.build.data.split('/')) : null;
+  const restoreGenerated = () => {
+    if (!useGit) return;
+    const genFail = checkoutPaths(repo, mod.base.commit, gen);
+    say(`  生成物：${gen.length - genFail.length}/${gen.length} 已还原到基线${genFail.length ? `（${genFail.length} 个失败）` : ''}`);
+    if (genFail.length) warn(`  没还原：${brief(genFail)}；可删掉 tools/custom-content.mjs 后重跑 node tools/build-data.mjs 重建官方数据`);
+  };
+  if (otherEdits.length && buildData && exists(buildData)) {
+    say(`  还有 ${otherEdits.length} 个文件带着别的改动（别的 mod？）→ 重跑 build-data 重建 data，而不是 git 还原`);
+    const rr = run(process.execPath, [buildData], { cwd: repo, allowFail: true });
+    if (rr.code !== 0) {
+      warn('  重建 data 失败（本体工具链不完整？）→ 改为按基线还原生成物');
+      restoreGenerated();
+    } else {
+      const buildI18n = mod.build?.i18n ? join(repo, ...mod.build.i18n.split('/')) : null;
+      if (buildI18n && exists(buildI18n)) {
+        const ri = run(process.execPath, [buildI18n], { cwd: repo, allowFail: true });
+        if (ri.code !== 0) warn('  重建 i18n 失败（可选步骤，继续）');
+      }
+    }
+  } else restoreGenerated();
 
   // 3) 29 个自有文件：本体原有的还原，本 mod 新增的删除
   //    注意：data/assets.json 同时在 owned 与 generated 里（它是本体自带的素材清单），
@@ -576,22 +639,26 @@ function uninstallWithoutRecord(repo, mod, flags) {
   clearState(repo, { keepBackup: flags.keepBackup });
   say(`  ${flags.keepBackup ? '已保留 .mod-dong-ursus/（含旧的备份）' : '已清理 .mod-dong-ursus/'}`);
 
-  // 5) 残留检查
+  // 5) 残留检查：只把「本 mod 的残留」算失败；别的改动（别的 mod / 你自己的）只做告知
   head('残留检查');
   const after = classify(repo, mod, null);
-  const leftover = [];
-  if (after.ownedMatch) leftover.push(`自有文件仍在树里 ${after.ownedMatch}/${after.ownedTotal}`);
-  if (after.patchedMatch) leftover.push(`补丁产物仍符合 ${after.patchedMatch}/${after.patchedTotal}`);
-  if (after.removedAbsent) leftover.push(`被替换的上游文件仍缺 ${after.removedAbsent}/${after.removedTotal}`);
-  if (after.pre.mismatch.length) leftover.push(`基线不一致 ${after.pre.mismatch.length} 个`);
-  say(`  本 mod 指纹：${leftover.length ? leftover.join(' · ') : '已清空 ✅'}`);
+  const ours = [];
+  if (after.ownedMatch) ours.push(`自有文件仍在树里 ${after.ownedMatch}/${after.ownedTotal}`);
+  if (after.patchedMatch) ours.push(`补丁产物仍符合 ${after.patchedMatch}/${after.patchedTotal}`);
+  if (after.removedAbsent) ours.push(`被替换的上游文件仍缺 ${after.removedAbsent}/${after.removedTotal}`);
+  const others = after.pre.mismatch.filter((rel) => !(rel in (mod.patched ?? {})));
+  say(`  本 mod 指纹：${ours.length ? ours.join(' · ') : '已清空 ✅'}`);
+  if (others.length || after.pre.missing.length) {
+    say(`  另有 ${others.length + after.pre.missing.length} 个文件与基线不同，但不是本 mod 的内容（未动）`);
+    if (others.length) say(`    ${brief(others, 6)}`);
+  }
   if (exists(join(repo, '.git'))) {
     const st = run('git', ['status', '--porcelain'], { cwd: repo, capture: true, allowFail: true });
     const lines = st.out.split('\n').map((l) => l.trim()).filter(Boolean);
     say(`  git status：${lines.length ? `${lines.length} 项（例：${lines.slice(0, 3).join(' | ')}）` : '空 ✅'}`);
-    if (lines.length) warn('  这些改动与本 mod 无关（或是你保留的本机改动），需要自己处理');
+    if (lines.length) say('  这些是别的改动（别的 mod / 你保留的本机改动），本 mod 不会再碰它们');
   }
-  return (after.ownedMatch + after.patchedMatch + after.removedAbsent + after.pre.mismatch.length) ? 5 : 0;
+  return (after.ownedMatch + after.patchedMatch + after.removedAbsent) ? 5 : 0;
 }
 
 function cmdUninstall(repo, flags) {
