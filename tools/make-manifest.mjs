@@ -125,11 +125,13 @@ for (const [script, optional] of [['i18n/apply-i18n.mjs', false], ['i18n/prune-s
 const verify = ['scripts/verify.mjs'].filter((s) => exists(join(modRoot, ...s.split('/'))));
 
 // 默认镜像：GitHub 直连不稳/被屏蔽时，update 会按 source.repo → source.mirrors → 自动派生的
-// gitclone 形式依次尝试。运行时可用 MOD_MIRROR（空格/逗号分隔，可写完整 URL 或前缀）临时覆盖。
-const DEFAULT_MIRRORS = ['https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod'];
+// gitclone 形式依次尝试。镜像可写完整 URL 或前缀（前缀会拼成 <前缀>/<源地址>）。
+// 运行时可用 MOD_MIRROR（空格/逗号分隔）或 MOD_SOURCE 临时覆盖，--source 优先级最高。
+// 实测（2026-10-16）：ghproxy 前缀可用、数据新鲜；gitclone 形式可用但缓存可能滞后（曾只看到 master）。
+const DEFAULT_MIRRORS = ['https://ghproxy.net', 'https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod'];
 const source = { ...(existing?.source ?? { repo: 'https://github.com/Weedy-wendi/Dong-Ursus-Mod', branchPrefix: 'base-' }) };
 if (opt.source) source.repo = opt.source;
-if (!Array.isArray(source.mirrors) || !source.mirrors.length) source.mirrors = DEFAULT_MIRRORS;
+source.mirrors = [...new Set([...DEFAULT_MIRRORS, ...(Array.isArray(source.mirrors) ? source.mirrors : [])])];
 
 const manifest = {
   format: 1,

@@ -9,6 +9,7 @@
     "repo": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
     "branchPrefix": "base-",
     "mirrors": [
+      "https://ghproxy.net",
       "https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod"
     ]
   },
