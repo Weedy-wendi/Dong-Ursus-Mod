@@ -95,4 +95,14 @@ export function cloneBranch(url, branch, dest) {
   return { ok: r.code === 0, err: (r.err || r.out || '').trim() };
 }
 
+/** 远端有哪些分支（读不到返回 null）。用于「拉不到 base-<版本>」时给出准确原因。 */
+export function remoteHeads(url) {
+  const r = run('git', ['ls-remote', '--heads', url], { capture: true, allowFail: true });
+  if (r.code !== 0) return null;
+  return r.out.split('\n')
+    .map((l) => l.trim().split(/\s+/)[1])
+    .filter((ref) => ref?.startsWith('refs/heads/'))
+    .map((ref) => ref.replace('refs/heads/', ''));
+}
+
 export { tempDir, rmrf, warn };

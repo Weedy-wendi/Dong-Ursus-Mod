@@ -3,7 +3,7 @@
 // 的 mod.json 再做一次自我声明校验（base.version / base.commit），两道都要过。
 import { statSync } from 'node:fs';
 import { join } from 'node:path';
-import { cloneBranch } from './gitops.mjs';
+import { cloneBranch, remoteHeads } from './gitops.mjs';
 import { tryLoadManifest } from './manifest.mjs';
 import { extractPackageZip } from './zip.mjs';
 import { die, exists, rmrf, say, tempDir, warn } from './util.mjs';
@@ -26,6 +26,17 @@ export function stageFromFile(file) {
   const dir = extractPackageZip(file, tmp);
   if (!exists(join(dir, 'mod.json'))) die(`这个 zip 里没有 mod.json（不是 mod 包？）：${file}`, 3);
   return { dir, origin: `本地 zip ${file}`, cleanup: tmp };
+}
+
+/**
+ * 从 git 的输出里挑出真正有用的那行：git 把 "Cloning into ..." 也写在 stderr 上，
+ * 直接取第一行只会得到进度噪声，真正的 fatal 在后面。
+ */
+function usefulLine(text) {
+  const lines = String(text ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
+  return lines.find((l) => /fatal|error|could not resolve|not found|repository .* not|Authentication|denied|timed out/i.test(l))
+    ?? lines[lines.length - 1]
+    ?? '';
 }
 
 /** 候选远端地址：显式 --source 优先，其次 mod.json 的 source.repo；镜像写法自动补一份 */
@@ -56,7 +67,7 @@ export function stageFromRepo({ baseVersion, branchPrefix = 'base-', branch: bra
       if (r.ok && exists(join(dest, 'mod.json'))) {
         return { dir: dest, origin: `${url} （分支 ${branch}）`, cleanup: null };
       }
-      problems.push(`${url} #${i}: ${(r.err || '克隆成功但里面没有 mod.json').split('\n')[0]}`);
+      problems.push(`${url} #${i}: ${r.err ? usefulLine(r.err) : '克隆成功，但里面没有 mod.json（分支不对？）'}`);
       rmrf(dest);
       if (i < attempts) say(`  ${url} 第 ${i} 次失败，重试…`);
     }
@@ -65,6 +76,14 @@ export function stageFromRepo({ baseVersion, branchPrefix = 'base-', branch: bra
   warn(`  1) 换成本地包：--file <mod 包.zip | 解压后的目录>`);
   warn(`  2) 显式指定可用地址：--source <url>（例如 https://gitclone.com/github.com/<owner>/<repo>）`);
   warn(`  3) 若 GitHub 被 hosts 屏蔽而用 gitclone 镜像：确认 git 的 insteadOf 是 https://gitclone.com/github.com（少了 /github.com 会 404）`);
+  // 远端到底有哪些分支：最常见的原因是发布分支还没建
+  for (const url of urls) {
+    const heads = remoteHeads(url);
+    if (!heads) continue;
+    warn(`  远端 ${url} 现有分支：${heads.length ? heads.join('、') : '(无)'}` +
+      (heads.includes(branch) ? '' : ` —— 没有 ${branch}，这个分支还没发布？`));
+    break;
+  }
   for (const p of problems.slice(-4)) warn(`     · ${p}`);
   die(`没能取到 ${branch} 分支的包`, 4);
 }
