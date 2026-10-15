@@ -4,26 +4,87 @@
 
 **给《卫戍协议：盟约》复刻版（Stronghold-Protocol）的本体，加两个真正能进对局结算的核心盟约阵营。**
 
-<sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 四语言文案 · 幂等安装</sub>
+<sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.0-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
-![install](https://img.shields.io/badge/install-idempotent-16a34a?style=flat-square)
+![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
-![verify](https://img.shields.io/badge/verify-20%20test%20files-8b5cf6?style=flat-square)
+![verify](https://img.shields.io/badge/verify-274%20tests-8b5cf6?style=flat-square)
+![license](https://img.shields.io/badge/license-GPL--3.0--or--later-blue?style=flat-square)
 
 </div>
 
+---
+
+## 快速开始（Quick Start）
+
+**前提**：本体是 **v0.2.6 的源码检出**（`git clone` 或源码包，**不是** Release 里的 `*-lite.zip`）、装了 `git`、Node.js **≥ 22**。
+
 ```bash
-cd <本体源码检出根>                        # 必须是源码检出，不是 Release 里的 *-lite.zip
-node <mod 包>/scripts/mod.mjs status  .    # 体检：本体版本 / 基线纯净度 / 是否已装（只读）
-node <mod 包>/scripts/mod.mjs install .    # 安装：覆盖 → 套补丁 → 重建 data → 合并 i18n
-node <mod 包>/scripts/mod.mjs update  .    # 升级：取 base-<本体版本> 分支的最新包并更新
-node <mod 包>/scripts/mod.mjs uninstall .  # 卸载：精确还原到安装前（git 优先，备份兜底）
-node <mod 包>/scripts/verify.mjs .         # mod 验收子集（20 个测试文件）
+cd <本体源码检出根>
+node <mod 包>/scripts/mod.mjs status  .   # ① 体检（只读）：本体版本 / 基线纯净度 / 是否已装
+node <mod 包>/scripts/mod.mjs install .   # ② 安装（旧版会先精确还原再装）
+node <mod 包>/scripts/verify.mjs .        # ③ 验收：274 个用例应全绿
 ```
 
-> 装完即可开局：牌池里会多出 13 名预设棋子，【东】/【乌萨斯】按 3 / 6 人档激活，图标、文案、特质、装备全部就位。
+装完直接开局：牌池会多出 13 名预设棋子，【东】/【乌萨斯】按 3 / 6 人档激活，图标、文案、特质、装备全部就位。
+
+### 四条命令
+
+| 命令 | 做什么 | 会不会动本体 |
+|---|---|---|
+| `mod.mjs status` | 本体版本 / 基线纯净度 / 安装状态与漂移 / 一句话结论（`--json` 可机读） | 只读 |
+| `mod.mjs install` | 覆盖 29 个自有文件 → 套两个补丁 → 删 6 个被替换的旧 kit → `build-data` → i18n 四连；装完按字节指纹复核 | 会（`--dry-run` 则只体检） |
+| `mod.mjs update` | 取 `base-<本体版本>` 分支的最新包，对比 `base` 与版本号；有新版就用**新包自己**装，并同步本地包目录 | 有新版才动（`--check` 只报） |
+| `mod.mjs uninstall` | 精确还原到安装前：优先 `git checkout <基线提交>`，备份兜底 | 会（这台电脑改过的文件默认保留） |
+
+退出码：`0` 成功 · `2` 版本/纯净度不符 · `3` 用法或环境问题 · `4` 拉取失败 · `5` 补丁或复核失败。
+
+### 三个常见情况
+
+```bash
+# 提示「本体树与基线不一致」= 树上还留着旧版 mod 的改动，或你手改过：
+git stash push -u -m "mod 快照"          # 可回退；然后重跑 install
+
+# 没有网络 / GitHub 连不上：用本地包升级
+node <mod 包>/scripts/mod.mjs update . --file <新包.zip 或解压后的目录>
+
+# 只想看看会做什么，不改任何文件
+node <mod 包>/scripts/mod.mjs install . --dry-run
+```
+
+### 它在你的本体里留下什么
+
+- 安装记录与装前备份：`<本体>/.mod-dong-ursus/`（`state.json` + `backup/`，约 20 MB）。补丁 01 会把它加进本体 `.gitignore`，所以它不出现在 `git status` 里，也不会被 `git clean -fd` 删掉。
+- 卸载走 git 时能做到「`git status --porcelain` 为空」；非 git 检出（源码 zip）走备份，同样逐字节还原。
+
+---
+
+## 更新日志（Changelog）
+
+本包从 **v1.0.0** 起有自己的版本号（与本体版本解耦）；每条发布对应一个分支 `base-<本体版本>`，`mod.mjs update` 会挑「base 匹配且版本更高」的那条。逐条细节见 [`CHANGES.md`](CHANGES.md)。
+
+### v1.0.0 — 2026-10-16
+
+- **命令行工具**：`scripts/mod.mjs` 提供 `install` / `update` / `uninstall` / `status`；`scripts/install.mjs` 保留为兼容入口。
+- **包清单 `mod.json`**：登记 mod 版本、适配本体（`v0.2.6` + 基线提交 `16a0f9b`）与逐文件指纹（装前 85 / 补丁产物 73 / 自有文件 29 / 删除 12 / 生成物 22），由 `tools/make-manifest.mjs` 生成。
+- **精确卸载**：安装时记录每个被触碰文件的装前/装后字节（`state.json` + `backup/`），卸载优先 `git checkout`，备份兜底；本机改过的文件默认保留并报告，可 `--force` 重试。
+- **只在纯净基线上安装**：装前逐字节校验 85 个基线文件；树上已有旧版安装记录时先精确还原。实测「把新版补丁直接覆盖到旧版树上」会落 **71 个 `.rej`** 而只真正改到 1 个文件。
+- **不信 git 的退出码**：套完补丁按 102 个产物指纹复核（`git apply` 在仓库子目录里会静默跳过并返回 0）。
+- **换行符钉死**：补丁相关的 git 命令一律 `core.autocrlf=false` + `core.eol=lf`，避免机器上的全局 autocrlf 把新增行写成 CRLF；校验对「仅换行符不同」宽容。
+- **许可**：补上 `LICENSE`（GPL-3.0-or-later 原文）与 `NOTICE`（依 §5(a) 的改动说明）；patch 01 新增一行本体 `.gitignore`。
+
+### v1.0.0 之前（本包首次版本化之前的改动，按日期倒序）
+
+| 日期 | 改了什么 |
+|---|---|
+| 2026-10-16 | 鸿雪 `986` 付与对象「身后」→「**身前**」；麒麟R夜刀 `992` 三处数值上调（再部署 −75%、部署时失 50% 当前生命并获得 **2× 损失量**的屏障、【狂龙症】+50% 攻击） |
+| 2026-10-15（四） | 【乌萨斯】每层系数改为 `+3.6%+0.06%·L`、上限 `54%+0.9%·L`；补齐两个打包缺陷（补丁缺 `spine.js`、测试文件重复声明常量） |
+| 2026-10-15（三） | 补上【东】盟约图标 `dongShip.png`（本体素材集缺这一张） |
+| 2026-10-15（二） | 修「技能结束后普通攻击播技能 clip」＋按技能槽位的普攻口径，新增钉子测试 |
+| 2026-10-15 | 发射 clip 放行名单收窄为 6 个宿主干员；嵯峨 `S2/S3` 清单侧修正落地 |
 
 ---
 
@@ -40,9 +101,9 @@ node <mod 包>/scripts/verify.mjs .         # mod 验收子集（20 个测试文
 | 文案 | 四语言 overlay（zh-TW / en / ja / ko） | `i18n/mod-i18n.json` + 合并脚本 |
 | 盟约图标 | 【东】随包分发；【乌萨斯】用本体既有阵营 LOGO | `files/public/assets/bond/dongShip.png` |
 
-你不需要手改本体：`install.mjs` 按「**覆盖 mod 自有文件 → 套两个补丁 → 删被替换的上游 kit → `build-data` 重建 data → i18n 四连**」的顺序执行，每一步都幂等。
+你不需要手改本体：`mod.mjs install` 按「**覆盖 mod 自有文件 → 套两个补丁 → 删被替换的上游 kit → `build-data` 重建 data → i18n 四连**」的顺序执行，装完再按指纹复核。
 
-## 装完你会看到的数字（v0.2.6 实测，2026-10-15）
+## 装完你会看到的数字（v0.2.6 实测）
 
 | 指标 | 数值 |
 |---|---|
@@ -113,19 +174,22 @@ i18n 四连                            build-i18n（迁移本体既有翻译）�
                                      → prune-stale（清「数据已不存在」的陈旧记录）→ rehash-families（重算 _h）
 ```
 
-安装脚本的五步顺序：
+`install` 的五步顺序（每一步都会按指纹复核）：
 
 1. **覆盖** `files/` 下 29 个 mod 自有文件（含整文件覆盖 `tools/custom-content.mjs` 与 `data/assets.json`）；
-2. **套两个补丁**：`patches/01-mod-shared.patch`（22 个上游共享文件的改动：`bonds/core.js`、`garrisons/meta.js`、`items/battle.js`、`kits/index.js`、`skills.js`、`battle/deploy.js`、`render/units.js`、`render/spine.js`、`tools/assets/*`、`build-data` 接线等）与 `patches/02-tests-calibration.patch`（50 个既有测试的计数 / 口径校准）；
+2. **套两个补丁**：`patches/01-mod-shared.patch`（23 个上游共享文件的改动：`bonds/core.js`、`garrisons/meta.js`、`items/battle.js`、`kits/index.js`、`skills.js`、`battle/deploy.js`、`render/units.js`、`render/spine.js`、`tools/assets/*`、`build-data` 接线、本体 `.gitignore` 一行等）与 `patches/02-tests-calibration.patch`（50 个既有测试的计数 / 口径校准）；
 3. **清理**被替换的上游自选 kit（`op-headb2` / `op-helage` / `op-poca` / `op-bgsnow` / `op-veen` / `op-saga` 及其旧测试）——它们已转为预设棋子；
 4. **重建数据** `node tools/build-data.mjs`；
 5. **合并文案** i18n 四连（`build-i18n` → `apply-i18n` → `prune-stale` → `rehash-families`）。
+
+装前会在 `<本体>/.mod-dong-ursus/` 记下将被触碰的 135 个路径的装前字节，装完再按 `mod.json` 的 102 个产物指纹复核——**不看 git 的退出码**（它在仓库子目录里会静默跳过补丁并返回 0）。
 
 ## 包结构
 
 ```text
 .
-├─ SKILL.md                 给 agent 的操作手册（安装 / 适配 / 排障 / 维护）
+├─ README.md                本文件：快速开始 / 更新日志 / 内容与数值速查
+├─ SKILL.md                 给 agent 的操作手册（安装 / 升级 / 卸载 / 适配 / 排障 / 维护）
 ├─ CHANGES.md               逐条修改记录（改了什么 / 为什么 / 怎么验的）
 ├─ mod.json                 包清单：版本 / 适配本体 / 基线指纹 / 补丁产物指纹
 ├─ LICENSE · NOTICE         GPL-3.0-or-later 原文 + 改动与版权说明
@@ -139,26 +203,43 @@ i18n 四连                            build-i18n（迁移本体既有翻译）�
 │   ├─ 01-mod-shared.patch   上游共享文件（23 个，含给本体 .gitignore 加一行）
 │   └─ 02-tests-calibration.patch   既有测试校准（50 个）
 ├─ i18n/                    mod-i18n.json + apply / prune-stale / rehash-families
-├─ tools/make-manifest.mjs 生成/刷新 mod.json（发布前跑一次）
-└─ scripts/                 mod（install·update·uninstall·status）· install（兼容入口）· lib · verify · check-anim-roles · repro-skill-latch
+├─ tools/make-manifest.mjs  生成/刷新 mod.json（发布前跑一次）
+└─ scripts/
+    ├─ mod.mjs              install · update · uninstall · status
+    ├─ install.mjs          兼容入口（= mod.mjs install）
+    ├─ lib/                 util · manifest · state · gitops · source · zip
+    ├─ verify.mjs           mod 验收子集（20 个测试文件）
+    ├─ check-anim-roles.mjs 动作角色对账
+    └─ repro-skill-latch.mjs 「技能结束后普攻播技能 clip」的复现脚本
 ```
 
 ## 验证与测试
 
 ```bash
-node <mod 包>/scripts/verify.mjs <本体仓库根>            # mod 验收子集：20 个测试文件
-node <mod 包>/scripts/check-anim-roles.mjs <本体仓库根>   # 逐模型对账「清单 == resolver + 修正」
-node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>  # 复现「技能结束后普攻播技能 clip」的闩锁
+node <mod 包>/scripts/mod.mjs status <本体仓库根>          # 先看状态
+node <mod 包>/scripts/verify.mjs <本体仓库根>              # mod 验收子集：20 个测试文件
+node <mod 包>/scripts/check-anim-roles.mjs <本体仓库根>    # 逐模型对账「清单 == resolver + 修正」
+node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>   # 复现「技能结束后普攻播技能 clip」的闩锁
 ```
 
-最近一次实测（2026-10-16，鸿雪 / 麒麟R夜刀 特质修订后）：`check-anim-roles` **695/695 一致**、`repro-skill-latch` **异常 0/9**（修复前 7/9）、`verify` **274/274**。
+最近一次实测（2026-10-16）：
 
-> 2026-10-15 的【乌萨斯】系数修订（每层 1% → 0.06%、上限每层 1% → 0.9%）当时未复测；2026-10-16 的两处特质修订（鸿雪 986 改身前、麒麟R夜刀 992 三个数值）与它一起被 `verify` 子集覆盖：`ursus_bond.test.js` 断言系数、`garrisons_meta.test.js` 断言 986 的付与对象、`kits_char_6_97.test.js` 断言 992 的新数值。上面的 274/274 即这次结果。
+| 检查 | 结果 |
+|---|---|
+| `verify` 子集（本体适配树） | **274 / 274 通过**（0 fail / 0 skip） |
+| `verify` 子集（纯净树装完后） | **274 / 274 通过** |
+| `check-anim-roles` | **695 / 695 一致** |
+| `repro-skill-latch` | **异常 0 / 9**（修复前 7/9） |
+| 装完产物 vs 本体适配树 | 102 个文件里 **101 个逐字节一致**（唯一差异是旧安装尚未应用的 `.gitignore` 一行） |
+| `uninstall` 后 | `git status --porcelain` **为空**（git 还原路径 107 个文件，0 残留） |
+
+> 【乌萨斯】2026-10-15 的系数修订与 2026-10-16 的两处特质修订都被 `verify` 子集覆盖：`ursus_bond.test.js` 断言系数、`garrisons_meta.test.js` 断言 986 的付与对象、`kits_char_6_97.test.js` 断言 992 的新数值。上面两组 274/274 即这两次结果。
 
 ## 版本与兼容
 
-- **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install.mjs` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
-- **一条命令升级 / 卸载**：`mod.mjs update` 按你的本体版本取 `base-<本体版本>` 分支的包（源在 `mod.json` 的 `source.repo`，可用 `--source` / `--file` 覆盖），只有 **base 匹配且版本更高** 才动手；`mod.mjs uninstall` 精确还原到安装前。**不要**把新版包直接覆盖在装了旧版的树上——实测会落 71 个 `.rej` 且几乎不改内容。安装记录与装前备份在 `<本体>/.mod-dong-ursus/`（补丁 01 已把它写进本体 `.gitignore`，`git clean -fd` 不会删）。
+- **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
+- **mod 版本与本体版本解耦**：本包 `version` 是自己的 semver（当前 `v1.0.0`），`base.version` 才是适配的本体版本。发布侧一个本体版本一个分支（`base-0.2.6`），`update` 只挑 base 匹配且版本更高的那条。
+- **一条命令升级 / 卸载**：`mod.mjs update` 按你的本体版本取对应分支的包（源在 `mod.json` 的 `source.repo`，可用 `--source` / `--file` / `--branch` 覆盖）；`mod.mjs uninstall` 精确还原到安装前。**不要**把新版包直接覆盖在装了旧版的树上——实测会落 71 个 `.rej` 且几乎不改内容。
 - **首次 `build-data` 需要网络**：缺 `.cache/gamedata` 时会从 GitHub 拉官方数据表。网络不稳时设 `HTTPS_PROXY`，或直接把本机已装仓库的 `.cache/gamedata/` 整目录拷过来（最快、可离线）。
 - **另有一份面向 v0.2.4 的旧包**（历史分支，patch 01 = 17 文件 / patch 02 = 45 文件），与本体 v0.2.4 fork 配套；本包是 0.2.6 版。两者各自独立，不要混用脚本。
 
@@ -168,31 +249,35 @@ node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>  # 复现「技�
 1. 新本体落位（**源码检出**）后：`node scripts/mod.mjs status <本体仓库根>` 体检，再 `node scripts/mod.mjs install <本体仓库根>`；
 2. 补丁若产生 `*.rej`：按 `SKILL.md`「冲突处理」的识别标志手工合入；
 3. `node scripts/verify.mjs <本体仓库根>`，计数断言按 `SKILL.md` 清单校准；
-4. 全量测试前先 `node tools/golden.mjs --update`；
-5. 换基线时更新 `files/data/assets.json`：以本体新 manifest 为基，把本包引用的 id（新棋子 / 盟约 / 装备 / 语音）合并进来，并按 `tools/fetch-assets.mjs` 的 `countStats` 重算 `stats`、按 `contentHash(body)` 重算 `hash`（注意清单末尾保留 LF）；
-6. 合并**不会**带来动作角色（`anims`）的代码侧修正——那是 `tools/assets/anim-roles.mjs` + `spine.mjs` 的产物。装完跑一次 `check-anim-roles.mjs`，逐模型对账必须 100% 一致（v0.2.6 实测 695/695）；不一致就按 `SKILL.md`「维护」第 6 条重算清单（`anims` + `hash`，两份都写），钉子测试是 `test/render/anim-role-fixes.test.js`。
+4. 改了 `files/` 或补丁后，用 `node tools/make-manifest.mjs --repo <本体源码检出> --base-commit <新基线> --version <新版本>` 重生成 `mod.json`；
+5. 全量测试前先 `node tools/golden.mjs --update`；
+6. 换基线时更新 `files/data/assets.json`：以本体新 manifest 为基，把本包引用的 id（新棋子 / 盟约 / 装备 / 语音）合并进来，并按 `tools/fetch-assets.mjs` 的 `countStats` 重算 `stats`、按 `contentHash(body)` 重算 `hash`（注意清单末尾保留 LF）；
+7. 合并**不会**带来动作角色（`anims`）的代码侧修正——那是 `tools/assets/anim-roles.mjs` + `spine.mjs` 的产物。装完跑一次 `check-anim-roles.mjs`，逐模型对账必须 100% 一致（v0.2.6 实测 695/695）；不一致就按 `SKILL.md`「维护」第 6 条重算清单（`anims` + `hash`，两份都写），钉子测试是 `test/render/anim-role-fixes.test.js`。
 
 </details>
 
 ## 已知限制
 
 - 全部文档与代码注释为中文；`README` / `SKILL.md` 面向中文读者。
-- 与本体版本强绑定：换版本需重新生成补丁，`*.rej` 需人工合入。
+- 与本体版本强绑定：换版本需重新生成补丁，`*.rej` 需人工合入；`mod.json` 的指纹也随之重算。
+- `update` 的联网路径依赖发布分支 `base-<本体版本>` 存在；GitHub 被屏蔽的环境可用 `--source` 指向镜像地址，或用 `--file` 走本地包。
 - 本包**不附带游戏美术资源**，唯一例外是随包的【东】盟约图标（取自本体自带的东国阵营 LOGO）。
-- 本包自身没有 `LICENSE` 文件；本体以 **GPL-3.0-or-later** 发布，因此分发本包（及其作用于本体的补丁）时应按同一许可处理，并与素材来源方对齐授权。
+- 文案有历史缺口：`garrison_986_a/b` 的 `ja` / `ko` / `zh-TW` 三条仍是中文（机制类文案未译），其余记录四语言齐全。
 - 上面的测试数字来自 2026-10-16 的实跑（mod 验收子集 20 个文件）；尚未跑本体的**全量** `node --test test/`（需先 `node tools/golden.mjs --update`）。
 
 ## 文档索引
 
 | 文档 | 内容 |
 |---|---|
-| [`SKILL.md`](SKILL.md) | 安装 / 适配 / 测试 / 冲突处理 / 维护的完整操作手册（给 agent 用） |
+| [`SKILL.md`](SKILL.md) | 安装 / 升级 / 卸载 / 适配 / 测试 / 冲突处理 / 维护的完整操作手册（给 agent 用） |
 | [`CHANGES.md`](CHANGES.md) | 按日期倒序的修改记录，每条含「改了什么 / 为什么 / 怎么验的」 |
+| [`NOTICE`](NOTICE) · [`LICENSE`](LICENSE) | 改动与版权说明 · GPL-3.0-or-later 原文 |
 | [`PLAN-attack-anim-after-skill.md`](PLAN-attack-anim-after-skill.md) | 「技能结束后普攻播技能 clip」的排查与修复方案 |
 | `MIGRATION-0.2.4-to-0.2.6.md` · `BACKPORT-0.2.6-fixes-to-0.2.4.md` | 版本迁移与回填清单（在 0.2.4 仓库根目录，不在本包内） |
 
 ## 致谢与版权
 
 - 本体：[**sganggs/Stronghold-Protocol**](https://github.com/sganggs/Stronghold-Protocol)（《卫戍协议：盟约》复刻项目，GPL-3.0-or-later）——本包只做注入与补丁，不含本体代码。
+- 本包以 **GPL-3.0-or-later** 发布（见 [`LICENSE`](LICENSE)）；它包含对本体的修改，改动清单见 [`NOTICE`](NOTICE)、`mod.json` 与 `patches/*.patch`。
 - 数据 / 文案：本体自带的 gamedata 与社区镜像 [Kengxxiao/ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData)（四语言文本来源见 `data/i18n/*.json` 的 `meta.source`）。
 - 《明日方舟》及其角色、美术、音频版权归 **Hypergryph / Studio Montagne** 所有；本项目为非官方粉丝作品，仅供学习与交流使用。
