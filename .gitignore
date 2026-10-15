@@ -1,0 +1,57 @@
+# ══════════════════════════════════════════════════════════════════
+#  Stronghold-Protocol 东 / 乌萨斯 mod —— 不入库清单
+#  原则：只入库 mod 包本身（files / patches / i18n / scripts / docs）。
+#        助手运行期状态、本地临时文件、备份、凭据与个人隐私一律排除。
+# ══════════════════════════════════════════════════════════════════
+
+# ── 助手 / Agent 运行时状态（记忆、会话、团队编排、转录）──────────
+/.agent-teams/
+/.workbuddy/
+/.dsh/
+/.codex/
+/.claude/
+/.cursor/
+**/*.jsonl
+**/transcripts/
+/.cache/
+
+# ── 本地临时与日志 ────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+tmp-*
+*.bak
+*.orig
+*.rej
+*~
+*.swp
+
+# ── 备份、构建产物与发布压缩包 ────────────────────────────────────
+*.bundle
+backup/
+backups/
+node_modules/
+dist/
+*.zip
+*.tar.gz
+*.7z
+
+# ── 凭据与个人隐私（含中文命名的私人笔记）────────────────────────
+.env
+.env.*
+*.local
+*.secret
+*.token
+credentials*.json
+secrets*.json
+private/
+私密*
+个人隐私*
+
+# ── 操作系统 / 编辑器垃圾 ─────────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
+$RECYCLE.BIN/
+.vscode/
+.idea/

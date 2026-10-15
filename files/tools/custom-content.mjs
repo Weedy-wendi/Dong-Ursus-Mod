@@ -1,0 +1,698 @@
+// tools/custom-content.mjs — 自定义内容（官方 act2autochess 赛季数据里没有的棋子 / 盟约）。
+//
+// 为什么需要它：本项目没有给「自创干员 / 自创盟约」留扩展点 —— 内容包（packs/）目前只支持 `lang` 类型，
+// `data` 类型在 docs/PACKS.md 里是 "planned"（不会加载）。所以自制内容只能**在构建前注入官方数据表**，
+// 让 tools/build-data.mjs 的既有管线照常生成它：属性 / 技能 / 天赋 / 模组 / 盟约阈值全部由官方代码推导，
+// 这里一个数值都不手写。
+//
+// 注入清单（chess → effect → bond，顺序无关，都在 main() 的构建之前）：
+//   棋子    act.charChessDataDict / chessNormalIdLookupDict / charShopChessDatas
+//   盟约    act.bondInfoDict + ac.bondInfoDict（autoChessData）
+//   效果    act.effectInfoDataDict + act.effectBuffInfoDataDict（盟约黑board，buildBonds 会读它推阈值）
+//
+// 加内容时同步改下面这些常量（validateAll 与 test/data.test.js、test/backups.test.js 里是硬断言）：
+export const CUSTOM_VISIBLE_CHESS = 13;  // 新增「可见、非 DIY」棋子数  （112 + N）
+export const CUSTOM_BASE_CHESS = 13;     // 新增基础棋子数（PRESET）  （133 + N）
+export const CUSTOM_CHESS_RECORDS = 26;  // 新增 chess 记录数（普通 + 精英）（266 + N）
+export const CUSTOM_BOND_COUNT = 2;      // 新增盟约数                （23  + N）
+export const CUSTOM_CORE_BOND_COUNT = 2; // 新增「核心」盟约数        （8   + N）
+export const CUSTOM_ITEMS = 4;           // 新增装备数（普通 + 进阶）（115 + 2N 条记录 / 56 + N 件普通 EQUIP）
+
+/** 自制棋子。key = 基础 chessId（不带 `_a`）。 */
+const CHESS = {
+  'chess_char_3_99': {
+    charId: 'char_289_gyuki',           // 缠丸：4★ 近卫 / 无畏者(fearless) / nationId higashi（东国）
+    tier: 3,                            // 商店等级：tier 3 → price 3（2026-10-13 用户口径：从 tier 2 调到 tier 3）
+    identifier: 9001,                   // 自定义段，避开官方编号
+    shopSortId: 900,
+    defaultSkillIndex: 1,               // 默认技能 = 第 2 个（恶鬼之力）；kit 里两个技能都写了 spec
+    moduleId: 'uniequip_002_gyuki',     // DRE-Y 断竹插花作品
+    bondIds: ['dongShip', 'indomShip'], // 【东】【不屈】
+    garrisonIds: ['garrison_988_a', 'garrison_988_b'], // 特质（普通/精锐）：恶鬼血战
+  },
+  'chess_char_3_97': {
+    charId: 'char_118_yuki',            // 白雪：4★ 狙击 / 炮手(aoesniper) / nationId higashi
+    tier: 2,                            // 2026-10-14 用户口径：从 tier 3 改回 tier 2
+    identifier: 9019,
+    shopSortId: 909,
+    defaultSkillIndex: 1,               // S2 凝武（签名技）
+    moduleId: 'uniequip_002_yuki',      // art-y 手里剑
+    bondIds: ['dongShip', 'skillfulShip'], // 【东】【灵巧】
+    garrisonIds: ['garrison_990_a', 'garrison_990_b'], // 特质：武库清点
+  },
+  'chess_char_3_96': {
+    charId: 'char_4203_kichi',          // 吉星：5★ 狙击 / 散射手(reaperrange) / nationId higashi
+    tier: 3,
+    identifier: 9021,
+    shopSortId: 910,
+    defaultSkillIndex: 1,               // S2 吉星高照！（签名技）
+    moduleId: 'uniequip_002_kichi',     // rpr-x 可疑的宣传页
+    bondIds: ['dongShip', 'preciShip'], // 【东】【精准】
+    garrisonIds: ['garrison_991_a', 'garrison_991_b'], // 特质：鸿运当头
+  },
+  'chess_char_5_97': {
+    charId: 'char_362_saga',            // 嵯峨：6★ 先锋 / 尖兵(pioneer) / nationId higashi
+    tier: 5,
+    identifier: 9023,
+    shopSortId: 911,
+    defaultSkillIndex: 2,               // S3 怒目（签名技）
+    moduleId: 'uniequip_003_saga',      // sol-x 何处寻驮？（002 是 SOL-Y 身向云泥，未选用）
+    bondIds: ['dongShip', 'steadShip'], // 【东】【坚守】（2026-10-13 用户修订，原【东】【不屈】）
+    garrisonIds: ['garrison_989_a', 'garrison_989_b'], // 特质：同门切磋
+  },
+  'chess_char_6_97': {
+    charId: 'char_1029_yato2',          // 麒麟R夜刀：6★ 特种 / 处决者(executor) / nationId rhodes（盟约按用户指定覆盖为东）
+    tier: 6,
+    identifier: 9025,
+    shopSortId: 912,
+    defaultSkillIndex: 1,               // S2 乱舞（2026-10-13 用户修订，原 S3 空中回旋乱舞）
+    moduleId: 'uniequip_003_yato2',     // exe-y 罗德岛制式双刀
+    bondIds: ['dongShip', 'raidShip', 'indomShip'], // 【东】【突袭】【不屈】
+    garrisonIds: ['garrison_992_a', 'garrison_992_b'], // 特质：麒麟之魂
+  },
+  'chess_char_6_98': {
+    charId: 'char_1051_headb2',         // 怒潮凛冬：6★ 近卫 / 撼地者(hammer) / nationId ursus（乌萨斯）
+    tier: 6,                            // tier 6 → price 4（44 个 6★ 全为 6|4）
+    identifier: 9003,
+    shopSortId: 901,
+    defaultSkillIndex: 2,               // S3 无可抵挡（6★ 惯例 18/22 用 skillIndex 2）
+    moduleId: 'uniequip_002_headb2',    // ham-x 迟到的勋章
+    bondIds: ['ursusShip', 'swiftShip', 'steadShip'], // 【乌萨斯】（自制核心）【迅捷】【坚守】（官方附加；2026-10-12 加坚守）
+    garrisonIds: ['garrison_980_a', 'garrison_980_b'], // 特质（普通/精锐）：潮涌共鸣
+  },
+  'chess_char_6_99': {
+    charId: 'char_197_poca',            // 早露：6★ 狙击 / 攻城手(siegesniper，professions.js 补分支) / nationId ursus，学生自治团
+    tier: 6,                            // tier 6 → price 4（用户指定 t6）
+    identifier: 9009,
+    shopSortId: 904,
+    defaultSkillIndex: 2,               // S3（tier6 惯例 index 2）
+    moduleId: 'uniequip_002_poca',      // SIE-X 攻城器械训练装置
+    bondIds: ['ursusShip', 'preciShip'],// 【乌萨斯】【精准】
+    garrisonIds: ['garrison_983_a', 'garrison_983_b'], // 特质：雪崩攻势
+  },
+  'chess_char_5_98': {
+    charId: 'char_4224_turdus',         // 乌啾：5★ 医疗 / 链愈师(chainhealer) / nationId ursus
+    tier: 5,                            // tier 5 → price 4（用户指定 t5；tier5 惯例 price 4）
+    identifier: 9011,
+    shopSortId: 905,
+    defaultSkillIndex: 1,               // S2 “捉迷藏！”（签名技）
+    moduleId: 'uniequip_002_turdus',    // XAH-X “睡前故事”（跳跃衰减 25%→15%）
+    bondIds: ['ursusShip', 'swiftShip'],// 【乌萨斯】【迅捷】
+    garrisonIds: ['garrison_984_a', 'garrison_984_b'], // 特质：病床巡视
+  },
+  'chess_char_5_99': {
+    charId: 'char_4226_veen',           // 维伊：6★ 术师 / 秘术师(mystic) / nationId ursus
+    tier: 5,                            // tier 5 → price 4（用户指定 t5，非 6★ 惯例）
+    identifier: 9013,
+    shopSortId: 906,
+    defaultSkillIndex: 2,               // S3（签名技）
+    moduleId: 'uniequip_002_veen',      // MSC-Y 军械库
+    bondIds: ['ursusShip', 'arcaneShip'],// 【乌萨斯】【奥术】
+    garrisonIds: ['garrison_985_a', 'garrison_985_b'], // 特质：奥术共鸣
+  },
+  'chess_char_4_99': {
+    charId: 'char_4055_bgsnow',         // 鸿雪：6★ 狙击 / 重射手(closerange) / nationId rhodes（盟约按用户指定覆盖为乌萨斯）
+    tier: 4,                            // tier 4 → price 3（用户指定 t4）
+    identifier: 9015,
+    shopSortId: 907,
+    defaultSkillIndex: 2,               // S3（签名技）
+    moduleId: 'uniequip_002_bgsnow',    // ARC-Y 打字机色带
+    bondIds: ['ursusShip', 'preciShip'],// 【乌萨斯】【精准】
+    garrisonIds: ['garrison_986_a', 'garrison_986_b'], // 特质：休整犒赏
+  },
+  'chess_char_3_98': {
+    charId: 'char_194_leto',            // 烈夏：5★ 近卫 / 领主(lord) / nationId ursus，学生自治团
+    tier: 3,                            // tier 3 → price 3（用户指定 t3）
+    identifier: 9017,
+    shopSortId: 908,
+    defaultSkillIndex: 1,               // S2 一呼百应（签名技）
+    moduleId: 'uniequip_002_leto',      // LOR-Y 旧衣服
+    bondIds: ['ursusShip'],             // 【乌萨斯】
+    garrisonIds: ['garrison_987_a', 'garrison_987_b'], // 特质：学生代表
+  },
+  'chess_char_2_98': {
+    charId: 'char_4223_botany',         // 伯塔尼：5★ 辅助 / 巫役(ritualist) / nationId ursus
+    tier: 2,                            // tier 2 → price 3（5★→tier2 项目内 28 例）
+    identifier: 9005,
+    shopSortId: 902,
+    defaultSkillIndex: 0,               // S1 谐波破坏（用户指定，非 tier2 惯例 S2）
+    moduleId: 'uniequip_002_botany',    // rit-x 昨日、今日、明日
+    bondIds: ['ursusShip', 'deputShip'],// 【乌萨斯】【助力】
+    garrisonIds: ['garrison_981_a', 'garrison_981_b'], // 特质：乌萨斯齐鸣
+  },
+  'chess_char_4_98': {
+    charId: 'char_188_helage',          // 赫拉格：6★ 近卫 / 武者(musha) / nationId ursus
+    tier: 4,                            // tier 4 → price 3（tier4 现行惯例）
+    identifier: 9007,
+    shopSortId: 903,
+    defaultSkillIndex: 1,               // S2 弦月（tier4 惯例 21/26 用 skillIndex 1；自带 75% 物理闪避）
+    moduleId: 'uniequip_002_helage',    // sbl-x 藏锋（无特性追加；003 免死版未被选用）
+    bondIds: ['ursusShip', 'visiShip'], // 【乌萨斯】【远见】（2026-10-13 用户口径：去掉【突袭】）
+    garrisonIds: ['garrison_982_a', 'garrison_982_b'], // 特质：老将刀意
+  },
+};
+
+
+/**
+ * 官方预设棋子的盟约覆盖（乌萨斯核心盟约上线后，同势力官方棋子补归属，2026-10-12）。
+ * key = 基础 chessId，value = 完整 bondIds 覆盖（_a/_b 同表）。只覆盖棋子侧：
+ * 官方保留盟约（坚守/独行）在官方 chessIdList 里本就有它们；ursusShip 侧镜像由 BONDS.ursusShip.members 提供。
+ */
+const BOND_OVERRIDES = {
+  chess_char_2_17: ['ursusShip', 'steadShip', 'soloShip'], // 折桠：乌萨斯、坚守、独行
+  chess_char_1_10: ['ursusShip', 'steadShip'],             // 古米：乌萨斯、坚守
+  // 【东】上线后补归属（2026-10-13，用户口径；只加不改 —— 官方 bond 的 chessIdList 原样保留）
+  chess_char_1_18: ['dongShip', 'raidShip'],               // 宴：东、突袭
+  chess_char_2_11: ['dongShip', 'miraShip'],               // 风丸：东、奇迹
+  chess_char_4_09: ['dongShip', 'egirShip', 'soloShip'],   // 水月：东、阿戈尔、独行
+  chess_char_4_17: ['yanShip', 'dongShip'],                // 星熊：炎、东
+  chess_char_5_10: ['siracusaShip', 'dongShip', 'emptyShip'], // 铃兰：叙拉古、东、协防
+};
+
+/**
+ * 官方特质的覆盖（`act.garrisonDataDict`）。盟约【东】上线后，补入【东】的官方棋子里，若宿主的特质按盟约**
+ * 读层**（`attrByBond` 的 `bond_id`）并在文案里点名盟约，则文案与读层列表都要把【东】补上 —— 否则展示
+ * 与实际加成不一致（2026-10-14 用户口径）。
+ *
+ * key = garrisonId，value = { desc, bonds }：`desc` = 覆盖后的 `garrisonDesc`（含 rich 标记，buildGarrisons
+ * 的 textPair 会拆出 desc / descRaw）；`bonds` = 覆盖后的 `bond_id`（逗号分隔，stepsOf 据此读层）。_a / _b 成对。
+ * 目前只有水月 garrison_07（【阿戈尔】→【阿戈尔】【东】）。星熊 garrison_65 是「自身所属盟约」不点名盟约，
+ * 语义已含【东】，无需覆盖。
+ */
+const GARRISON_OVERRIDES = {
+  garrison_07_a: { desc: '【阿戈尔】【东】每叠加3层，本干员攻击力<@ba.vup>+1%</>', bonds: 'egirShip,dongShip' },
+  garrison_07_b: { desc: '【阿戈尔】【东】每叠加3层，本干员攻击力<@ba.vup>+2%</>', bonds: 'egirShip,dongShip' },
+};
+
+/**
+ * 自制特质（garrisons，干员在本模式的自身效果展示）。官方条目在 `act.garrisonDataDict`；
+ * buildGarrisons 只收录「棋子 garrisonIds 引用到的」条目，owners 由它反算（与棋子侧互为镜像）。
+ *
+ * 这三条就是三个干员的**干员自身效果**（潮涌共鸣 / 乌萨斯齐鸣 / 老将刀意）的展示文案——真正的效果
+ * 写在各自的 kit 里，特质本身不带战斗数据（bb 留空、effectKey 不注册 INSTALLERS → 运行时静默跳过）。
+ * 编号沿用自定义段（980-982，与官方 1-160 错开）；_a = 普通形态、_b = 精锐形态（与官方 _a/_b 配对一致）。
+ * 文案风格照抄官方 ADD_BOND 特质（如 garrison_24_a「消耗子弹→已激活盟约层数+2」）。
+ */
+const GARRISONS = {
+  'garrison_980_a': {
+    garrisonDesc: '<战斗中>造成伤害时，额外附带自身生命上限75%的真实伤害',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_980_b': {
+    garrisonDesc: '<战斗中>造成伤害时，额外附带自身生命上限150%的真实伤害',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_981_a': {
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+1（每场战斗每种最多叠加8层，需盟约已激活）',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_981_b': {
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+2（每场战斗每种最多叠加16层，需盟约已激活）',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_982_a': {
+    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+2（每场战斗最多叠加8层，需盟约已激活）',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_982_b': {
+    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+4（每场战斗最多叠加16层，需盟约已激活）',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+
+  'garrison_983_a': {
+    // 2026-10-13 用户修订：只统计**已激活**盟约的层数（未激活的不纳入）
+    garrisonDesc: '<战斗中>己方已激活的【乌萨斯】与【精准】盟约层数每合计达到3层，自身攻击力+1%',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_983_b': {
+    garrisonDesc: '<战斗中>己方已激活的【乌萨斯】与【精准】盟约层数每合计达到3层，自身攻击力+2%',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_984_a': {
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+1（每场战斗每种最多叠加8层，需盟约已激活）',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_984_b': {
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+2（每场战斗每种最多叠加16层，需盟约已激活）',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_985_a': {
+    // 2026-10-13 用户修订：只统计**已激活**盟约的层数（未激活的不纳入）
+    garrisonDesc: '<战斗中>己方已激活的【乌萨斯】与【奥术】盟约层数每合计达到3层，自身攻击力+1%',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_985_b': {
+    garrisonDesc: '<战斗中>己方已激活的【乌萨斯】与【奥术】盟约层数每合计达到3层，自身攻击力+2%',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_986_a': {
+    // 休整期事件走 SERVER_PREP_FIN（garrison_47 同型）；文案无限定「已激活」→ 自定义处理器按 requireActive:false 加层
+    garrisonDesc: '<休整期结束时>自身和身后干员的所属盟约层数+4',
+    eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND_POSITION', battleRuneKey: null,
+    bb: { count: 4 }, bbStr: { dir: 'behind', conditionkey: 'character_target_inboard' },
+  },
+  'garrison_986_b': {
+    garrisonDesc: '<休整期结束时>自身和身后干员的所属盟约层数+8',
+    eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND_POSITION', battleRuneKey: null,
+    bb: { count: 8 }, bbStr: { dir: 'behind', conditionkey: 'character_target_inboard' },
+  },
+  'garrison_987_a': {
+    // 获得事件走 SERVER_GAIN（garrison_25 同型展示）；道具随机（自定义处理器 rollItem）
+    garrisonDesc: '<获得干员时>获得1个道具',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'GAIN_ITEM', battleRuneKey: null,
+    bb: { count: 1 },
+  },
+  'garrison_987_b': {
+    garrisonDesc: '<获得干员时>获得2个道具',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'GAIN_ITEM', battleRuneKey: null,
+    bb: { count: 2 },
+  },
+  // ---- 2026-10-13 【东】扩展批次（988-992）----
+  'garrison_988_a': {
+    // 缠丸：单血线 70%（2026-10-14 用户修订：按盟约分档 ——【东】+8、【不屈】+4；加层目标保持**已激活**的自身盟约）
+    garrisonDesc: '<战斗中>每场战斗自身生命值首次降低至70%以下时，使自身已激活的【东】+8层、【不屈】+4层',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_988_b': {
+    garrisonDesc: '<战斗中>每场战斗自身生命值首次降低至70%以下时，使自身已激活的【东】+16层、【不屈】+8层',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_989_a': {
+    // 嵯峨：特质授予自身与身前干员（各按其所属盟约结算，一场战斗一次；2026-10-14 用户修订：+12→+8）
+    garrisonDesc: '<战斗中>自身和身前的干员获得特质：每场战斗生命值首次降低至70%以下时，使自身已激活的盟约+8层',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_989_b': {
+    garrisonDesc: '<战斗中>自身和身前的干员获得特质：每场战斗生命值首次降低至70%以下时，使自身已激活的盟约+16层',
+    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+  },
+  'garrison_990_a': {
+    // 白雪：获得时（SERVER_GAIN），已激活的层数最高的盟约（2026-10-13 二次修订：加「已激活」限定）
+    garrisonDesc: '<获得干员时>已激活的层数最高的盟约+3层',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: null,
+    bb: { count: 3 },
+  },
+  'garrison_990_b': {
+    garrisonDesc: '<获得干员时>已激活的层数最高的盟约+6层',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: null,
+    bb: { count: 6 },
+  },
+  'garrison_991_a': {
+    // 吉星：获得时，自身所属盟约全部 +N（**不需要已激活**，未激活也加，鸿雪 986 同口径）
+    garrisonDesc: '<获得干员时>自身所属盟约+6层（不需要已激活）',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: null,
+    bb: { count: 6 },
+  },
+  'garrison_991_b': {
+    garrisonDesc: '<获得干员时>自身所属盟约+12层（不需要已激活）',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'ADD_BOND', battleRuneKey: null,
+    bb: { count: 12 },
+  },
+  'garrison_992_a': {
+    // 麒麟R夜刀：再部署-50% + 部署转屏障 + 每叠3层【东】【突袭】【不屈】加攻并流血（真效果在 kit；损失生命不加盾；
+    // 2026-10-14 三次修订：检测盟约改为【东】【突袭】【不屈】——层数按已激活者合计（未激活不计入），流失 50→100）
+    garrisonDesc: '<战斗中>再部署时间-50%；【东】【突袭】【不屈】每叠3层，自身攻击力+1%；部署时获得【狂龙症】：立刻失去当前生命值的50%并转化为等量屏障，每秒失去100点生命',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_992_b': {
+    garrisonDesc: '<战斗中>再部署时间-50%；【东】【突袭】【不屈】每叠3层，自身攻击力+2%；部署时获得【狂龙症】：立刻失去当前生命值的50%并转化为等量屏障，每秒失去100点生命',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+};
+
+/**
+ * 自制盟约（【东】【乌萨斯】，均为正式实装的核心盟约 —— 效果在 server/sim/content/bonds/core.js，
+ * 参数在下方 bb，数值文案用官方 {i:fmt} 占位符 + descParamBaseList/perStackList 实算）。
+ */
+const BONDS = {
+  // 【东】= 自制核心盟约，2026-10-13 效果正式化（bonds/core.js installDong 实现，参数在此）。
+  // desc（静态散文，整备区显示）与 effectDesc（占位符，局内「当前效果」按
+  // formatBondEffect 实算）分离 —— 与乌萨斯同一机制（见 ursusShip 注释）。
+  dongShip: {
+    name: '东',
+    identifier: 900,
+    isCore: true,                        // 势力盟约 → 与其它 core bond 同级
+    powerIdList: ['higashi'],            // 官方 nationId（东国）
+    activeCount: 3,
+    thresholds: [3, 6],
+    // 成员 = 持有该盟约的棋子（_a）：宴/风丸/吉星/白雪/缠丸/水月/星熊/铃兰/嵯峨/麒麟R夜刀（2026-10-13 用户口径）
+    members: ['chess_char_1_18_a', 'chess_char_2_11_a', 'chess_char_3_96_a', 'chess_char_3_97_a', 'chess_char_3_99_a',
+      'chess_char_4_09_a', 'chess_char_4_17_a', 'chess_char_5_10_a', 'chess_char_5_97_a', 'chess_char_6_97_a'],
+    effectId: 'bondeffect_dong',
+    buffKey: 'act2autochess_bond_eff_dong',
+    // 2026-10-14 用户修订：desc/effectDesc 贴合原版（谢拉格样式）—— desc 全定性（无公式无数值），
+    // effectDesc 只显示「表达式得到的结果」（提升至129% = 1+基础+每层×层数，经 dmg_disp_* 显示键计算），
+    // 已损失生命比例部分是单位动态值，按官方对不可预计算部分的定性写法处理。
+    // 富文本标记按官方 bondInfoDict 惯例：数值/关键词 <@ba.vup>，「（受层数影响）」<@autochess.gray>，
+    // 「<在场N名…>」的数字 <@autochess.dgreen>（2026-10-14 用户口径，样式与官方盟约一致）。
+    desc: '【东】干员<@ba.vup>攻击造成的伤害</>提升，自身<@ba.vup>已损失生命比例</>越高，攻击造成伤害越高<@autochess.gray>（受层数影响）</>，并获得【死战】：战斗中首次受到<@ba.vup>致命伤害</>时不撤退，保留<@ba.vup>1</>点生命，持续<@ba.vup>4</>秒，持续时间结束后撤退\n【东】干员开启技能时，所有【东】干员失去<@ba.vup>10%</>当前生命值并转化为等量屏障\n<在场<@autochess.dgreen>6</>名不同【东】干员>【东】干员<@ba.vup>攻击力</>提升，开启技能时所有【东】干员额外失去<@ba.vup>15%</>当前生命并转化为等量屏障；当前生命低于<@ba.vup>50%</>时，<@ba.vup>攻击力</>额外提升',
+    effectDesc: '【东】干员攻击造成的伤害提升至<@ba.vup>{0:0%}</>，自身<@ba.vup>已损失生命比例</>越高，攻击造成伤害越高<@autochess.gray>（受层数影响）</>，并获得【死战】：战斗中首次受到<@ba.vup>致命伤害</>时不撤退，保留<@ba.vup>1</>点生命，持续<@ba.vup>4</>秒，持续时间结束后撤退\n【东】干员开启技能时，所有【东】干员失去<@ba.vup>10%</>当前生命值并转化为等量屏障\n<在场<@autochess.dgreen>6</>名不同【东】干员>【东】干员攻击力<@ba.vup>+60%</>，开启技能时所有【东】干员额外失去<@ba.vup>15%</>当前生命并转化为等量屏障；当前生命低于<@ba.vup>50%</>时，攻击力额外<@ba.vup>+120%</>',
+    bb: {
+      dmg_base: 0.15,        // 伤害倍率基础（×(1+15%+…)）（2026-10-14 用户修订：25%→15%）
+      dmg_per_layer: 0.007,  // 每层盟约层数 +0.7%（2026-10-14 二次修订：0.6%→0.7%）
+      dmg_disp_base: 1.15,   // 显示键：effectDesc 占位符用（1+基础）——「提升至115%+0.7%×层数」的整体结果
+      dmg_disp_per: 0.007,   // 显示键：每层 +0.7%（2026-10-14 二次修订：0.6%→0.7%）
+      dmg_per_lost_hp: 0.004, // 每损失 1% 生命 +0.4%（×(1+0.4%×已损失生命比例)；2026-10-14 用户修订：0.2%→0.4%）
+      deathless_time: 4,     // 死战持续 4s
+      hp_loss_ratio: 0.1,    // 3人：开技能时所有【东】失 10% 当前生命 → 等量屏障
+      hp_loss_ratio_6: 0.15, // 6人：额外失 15%
+      atk_6: 0.6,            // 6人：攻击力 +60%（直接乘算；2026-10-14 用户修订：40%→60%）
+      atk_low_hp: 1.2,       // 6人：生命低于 50% 时攻击力额外 +120%（2026-10-14 用户修订：40%时+80%）
+      atk_low_hp_ratio: 0.5, // （2026-10-14 用户修订：40%→50%）
+    },
+    descParamBaseList: ['dmg_disp_base'],
+    descParamPerStackList: ['dmg_disp_per'],
+  },
+  // 【乌萨斯】= 第二条自制核心盟约，效果同为占位符。
+  // 三名乌萨斯干员（怒潮凛冬/伯塔尼/赫拉格）的「叠层」全部是**干员自身效果**（各写在 kit 里），
+  // 盟约本身不带效果 —— 与【东】同一决策。
+  // 注意：members 凑满 3 人即达到 threshold[0]=3，占位效果会真实进入激活判定
+  //（bb 仅含计数键，激活无数值影响）。
+  ursusShip: {
+    name: '乌萨斯',
+    identifier: 901,
+    isCore: true,
+    powerIdList: ['ursus'],              // 官方 nationId（乌萨斯）
+    activeCount: 3,
+    thresholds: [3, 6],
+    // 成员 = 持有该盟约的棋子（_a）：怒潮凛冬/伯塔尼/赫拉格（2026-10-11）+ 早露/乌啾/维伊/鸿雪/烈夏 + 官方棋子折桠/古米（2026-10-12）
+    members: ['chess_char_6_98_a', 'chess_char_2_98_a', 'chess_char_4_98_a',
+      'chess_char_6_99_a', 'chess_char_5_98_a', 'chess_char_5_99_a', 'chess_char_4_99_a', 'chess_char_3_98_a',
+      'chess_char_2_17_a', 'chess_char_1_10_a'],
+    effectId: 'bondeffect_ursus',
+    buffKey: 'act2autochess_bond_eff_ursus',
+    // 2026-10-13 用户修订（bonds/core.js installUrsus 实现，参数在此）。
+    // desc（静态文案，整备区等处显示）与 effectDesc（局内「当前效果」）分离，与官方盟约同构：
+    // effectDesc 用官方 {i:fmt} 占位符 + descParamBaseList/descParamPerStackList，局内按
+    // formatBondEffect（public/js/ui/richText.js）解析为 bb[base] + bb[perStack]×层数 的实算数值，
+    // 不再显示「+54%+1.2%×盟约层数」这类公式原文（与官方 炎/卡西米尔 同一机制）。
+    desc: '【乌萨斯】干员周围八格的干员<@ba.vup>自然技力恢复速度</>提升（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>提升</><@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员<@ba.vup>自然技力恢复速度</>进一步提升（不叠加），装备<@ba.vup>1</>个道具时，<@ba.vup>攻击造成的伤害</>提升；装备<@ba.vup>2</>个道具时，<@ba.vup>攻击造成的伤害</>进一步提升',
+    effectDesc: '【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+40%</>（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>+{0:0.0%}</>（至多<@ba.vup>+{1:0%}</>）<@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+80%</>（不叠加），装备<@ba.vup>1</>个道具时攻击造成的伤害提升至<@ba.vup>175%</>；装备<@ba.vup>2</>个道具时提升至<@ba.vup>250%</>',
+    bb: {
+      atk_per_start: 0.036,   // 每次开技能 +3.6%（直接乘算，叠加）
+      atk_per_start_per_layer: 0.0006, // 每层盟约层数每次多 +0.06%（2026-10-15 用户修订：1%→0.06%）
+      atk_cap_base: 0.54,     // 叠层上限基础值
+      atk_cap_per_layer: 0.009, // 每层盟约层数上限 +0.9%（2026-10-15 用户修订：1%→0.9%，上限=54%+0.9%×层数）
+      sp_regen: 0.4,          // 周围八格自然技力回复速度 +40%（不叠加；3人档）
+      sp_regen_6: 0.8,        // 6人档：覆盖为 +80%（2026-10-14 用户修订：不是叠加，是 40%→80% 覆盖）
+      damage_scale_1: 1.75,   // 6人：带 1 个道具的攻击倍率（2026-10-14 用户修订：150%→175%）
+      damage_scale_2: 2.5,    // 6人：带 ≥2 个道具的攻击倍率（覆盖制，非连乘；225%→250%）
+    },
+    descParamBaseList: ['atk_per_start', 'atk_cap_base'],
+    descParamPerStackList: ['atk_per_start_per_layer', 'atk_cap_per_layer'],
+  },
+};
+
+/**
+ * 自制装备（2026-10-13 用户需求：东×2 + 乌萨斯×2）。
+ * key = 基础 item id（不带 `_a/_b`；官方形态 `chess_item_<tier>_<nn>_e`，自定义段用 9 系列）。
+ * 结构照抄官方 trapChessDataDict / trapShopChessDatas / effectInfoDataDict / effectBuffInfoDataDict 条目：
+ *   副装备   = 带 giveBondId（自动进同构体映射 / unitBonds，support/index.js），canGiveBond 照官方惯例 false；
+ *   签名装备 = T6、无 giveBondId、效果按「若携带者为【X】盟约干员」门控 + 与该盟约副装备同带强化
+ *             （官方 BOND_SIGNATURE 分类的定义口径，bbStr.other_equip 指向基础 item id）；
+ *   进阶     = `_b` 记录 + 独立 effectId（eff_9g_*），数值为「→」后的那档；可合成（upgradeNum 2）。
+ * 战斗实现在 server/sim/content/items/battle.js 的 BY_ITEM（by item key）；属性 buff 走官方
+ * attr_common_global_buff（statMods 自动处理）。无官方图标素材（iconId 指向自制 trapId，资产缺失走占位）。
+ */
+const ITEMS = {
+  'chess_item_9_01_e': {
+    name: '东国鬼面', nameEn: 'Dong Mask',
+    tier: 2, price: 2, goldenPrice: 5, identifier: 9101, shopSortId: 13,
+    trapId: 'trap_9001_dongmask',
+    giveBondId: 'dongShip',              // 副装备：可被同构体映射转籍
+    category: 'ON_HIT', kind: 'passive_counter',
+    buffKey: 'act2autochess_equip_9_01_global_buff',
+    desc: '开启技能时流失<@ba.vdown>10%</>当前生命，本技能期间攻击力<@ba.vup>+30%</>',
+    goldenDesc: '开启技能时流失<@ba.vdown>20%</>当前生命，本技能期间攻击力<@ba.vup>+45%</>',
+    bb: { hp_loss_ratio: 0.1, atk: 0.3 },
+    goldenBb: { hp_loss_ratio: 0.2, atk: 0.45 },
+    flavor: '东国匠人打造的鬼面，戴上它的人会听见远方的涛声。\n“疼吗？疼就对了——刀快不快，就看这一口气。”',
+    implFormula: "on skillStart: loseHp(carrier, carrier.hp × hp_loss_ratio); during that skill window ATK% += atk",
+  },
+  'chess_item_9_02_e': {
+    name: '残心一闪', nameEn: 'Zanshin Flash',
+    tier: 6, price: 4, goldenPrice: 5, identifier: 9102, shopSortId: 14,
+    trapId: 'trap_9002_canyin',
+    giveBondId: null,                    // 签名装备：不可被同构体映射
+    category: 'BOND_SIGNATURE', kind: 'passive',
+    buffKey: 'act2autochess_equip_9_02_global_buff',
+    desc: '攻击力<@ba.vup>+40%</>；若携带者为【东】盟约干员：自身造成物理和法术伤害时，伤害类型转化为<$ba.weaknessatk>弱点伤害</>；与东国鬼面同带：生命值首次低于50%时，获得相当于生命上限<@ba.vup>50%</>的屏障',
+    goldenDesc: '攻击力<@ba.vup>+60%</>；若携带者为【东】盟约干员：自身造成物理和法术伤害时，伤害类型转化为<$ba.weaknessatk>弱点伤害</>；与东国鬼面同带：生命值首次低于50%时，获得相当于生命上限<@ba.vup>50%</>的屏障',
+    stat: { atk: 0.4 }, goldenStat: { atk: 0.6 },
+    bb: { other_equip: 'chess_item_9_01_e', shield_ratio: 0.5 },
+    goldenBb: { other_equip: 'chess_item_9_01_e', shield_ratio: 0.5 },
+    flavor: '斩击落定之后的静止，才是剑士最锋利的瞬间。\n“残心不乱，一闪足矣。”',
+    implFormula: "ATK% += atk; [【Dong】 member] each physical/arts hit retypes to 弱点伤害 (weaknessRetype); [with 东国鬼面] once per battle, first time HP < 50%: shield += shield_ratio × max HP",
+  },
+  'chess_item_9_03_e': {
+    name: '乌萨斯军粮', nameEn: 'Ursus Ration',
+    tier: 3, price: 2, goldenPrice: 5, identifier: 9103, shopSortId: 15,
+    trapId: 'trap_9003_junliang',
+    giveBondId: 'ursusShip',             // 副装备：可被同构体映射转籍
+    category: 'SURVIVAL', kind: 'passive',
+    buffKey: 'act2autochess_equip_9_03_global_buff',
+    desc: '生命上限<@ba.vup>+25%</>；每5秒回复相当于生命上限<@ba.vup>4%</>的生命',
+    goldenDesc: '生命上限<@ba.vup>+50%</>；每5秒回复相当于生命上限<@ba.vup>5%</>的生命',
+    stat: { max_hp: 0.25 }, goldenStat: { max_hp: 0.5 },
+    bb: { hp_regen_ratio: 0.04 },
+    goldenBb: { hp_regen_ratio: 0.05 },
+    flavor: '乌萨斯行军口粮的铁皮罐，打开时总带着一股凛冽的风。\n“吃完了，就该上路了。”',
+    implFormula: "HP% += max_hp; every 5s heal carrier for hp_regen_ratio × max HP",
+  },
+  'chess_item_9_04_e': {
+    name: '冰原咆哮', nameEn: 'Tundra Roar',
+    tier: 6, price: 4, goldenPrice: 5, identifier: 9104, shopSortId: 16,
+    trapId: 'trap_9004_roar',
+    giveBondId: null,                    // 签名装备：不可被同构体映射
+    category: 'BOND_SIGNATURE', kind: 'passive',
+    buffKey: 'act2autochess_equip_9_04_global_buff',
+    desc: '攻击力<@ba.vup>+45%</>；若携带者为【乌萨斯】盟约干员：场上每有1名其他【乌萨斯】盟约干员，攻击力额外<@ba.vup>+4%</>（最多<@ba.vup>+20%</>）；与乌萨斯军粮同带：上限提升至<@ba.vup>+30%</>',
+    goldenDesc: '攻击力<@ba.vup>+65%</>；若携带者为【乌萨斯】盟约干员：场上每有1名其他【乌萨斯】盟约干员，攻击力额外<@ba.vup>+6%</>（最多<@ba.vup>+30%</>）；与乌萨斯军粮同带：上限提升至<@ba.vup>+45%</>',
+    stat: { atk: 0.45 }, goldenStat: { atk: 0.65 },
+    bb: { other_equip: 'chess_item_9_03_e', per: 0.04, cap: 0.2, cap_combo: 0.3 },
+    goldenBb: { other_equip: 'chess_item_9_03_e', per: 0.06, cap: 0.3, cap_combo: 0.45 },
+    flavor: '风雪吹过乌萨斯荒原的声音，被乌萨斯人称作大地的咆哮。\n“雪停之前，没有谁能让我们低头。”',
+    implFormula: "ATK% += atk; [【Ursus】 member] ATK% += per × (other deployed Ursus members on the field), capped at cap (cap_combo with 乌萨斯军粮 carried)",
+  },
+};
+
+/** `evolvePhase/charLevel/skillLevel/equipLevel` 的模板取自 `shopCharChessInfoData[tier]`，不手写等级。 */
+const statusOf = (row) => ({
+  evolvePhase: row.evolvePhase, charLevel: row.charLevel, skillLevel: row.skillLevel, favorPoint: 0, equipLevel: row.equipLevel,
+});
+
+/**
+ * 把自制内容注入官方赛季数据（**必须在 buildChess / buildEffects / buildBonds 之前**）。
+ * 抛错即中止构建 —— 宁可构建失败，也不要静默产出半成品。
+ * @param {{ act: object, ac: object }} ctx `act` = activity.AUTOCHESS_SEASON.act2autochess；`ac` = activity.autoChessData
+ */
+export function injectCustomContent(ctx) {
+  const { act, ac } = ctx;
+  if (!act || !ac) throw new Error('[custom] build context lacks act / ac');
+
+  // ---- 棋子 ----
+  for (const [base, c] of Object.entries(CHESS)) {
+    const a = `${base}_a`;
+    const b = `${base}_b`;
+    if (act.charChessDataDict[a] || act.charChessDataDict[b]) throw new Error(`[custom] chess ${base} collides with the official season`);
+    const rows = act.shopCharChessInfoData[String(c.tier)] || [];
+    const normal = rows.find((r) => !r.isGolden);
+    const golden = rows.find((r) => !!r.isGolden);
+    if (!normal || !golden) throw new Error(`[custom] chess ${base}: shopCharChessInfoData has no tier ${c.tier} rows`);
+
+    act.charChessDataDict[a] = {
+      chessId: a, identifier: c.identifier, isGolden: false, status: statusOf(normal),
+      upgradeChessId: b, upgradeNum: 3, bondIds: [...c.bondIds], garrisonIds: c.garrisonIds[0] ? [c.garrisonIds[0]] : [],
+    };
+    act.charChessDataDict[b] = {
+      chessId: b, identifier: c.identifier + 1, isGolden: true, status: statusOf(golden),
+      upgradeChessId: null, upgradeNum: 0, bondIds: [...c.bondIds], garrisonIds: c.garrisonIds[1] ? [c.garrisonIds[1]] : [],
+    };
+    act.chessNormalIdLookupDict[a] = a;
+    act.chessNormalIdLookupDict[b] = a;
+    // 商店行按 baseId 建键（buildChess: charShopChessDatas[chessNormalIdLookupDict[chessId]]）。
+    // backup* 指向自己：玩家「未持有」时不会被别的原型干员替换（与官方棋子的自指写法一致；buildBackups 会跳过它）。
+    act.charShopChessDatas[a] = {
+      chessId: a, goldenChessId: b, chessLevel: c.tier, shopLevelSortId: c.shopSortId, chessType: 'PRESET',
+      charId: c.charId, tmplId: null,
+      defaultSkillIndex: c.defaultSkillIndex, defaultUniEquipId: c.moduleId,
+      backupCharId: c.charId, backupTmplId: null,
+      backupCharSkillIndex: c.defaultSkillIndex, backupCharUniEquipId: c.moduleId, backupCharPotRank: 0,
+      isHidden: false,
+    };
+
+    // 官方盟约的成员表也要登记：test/data.test.js 断言「棋子的 bonds 与盟约的 members 互为镜像」
+    for (const bondId of c.bondIds) {
+      const off = act.bondInfoDict[bondId];
+      if (off && Array.isArray(off.chessIdList) && !off.chessIdList.includes(a)) off.chessIdList.push(a);
+    }
+  }
+
+  // ---- 官方棋子的盟约覆盖（乌萨斯补归属）----
+  for (const [base, bondIds] of Object.entries(BOND_OVERRIDES)) {
+    for (const suffix of ['_a', '_b']) {
+      const rec = act.charChessDataDict[base + suffix];
+      if (!rec) throw new Error(`[custom] bond override ${base}: official chess missing`);
+      rec.bondIds = [...bondIds];
+    }
+  }
+
+  // ---- 盟约 + 效果 ----
+  for (const [bondId, cfg] of Object.entries(BONDS)) {
+    if (act.bondInfoDict[bondId]) throw new Error(`[custom] bond ${bondId} collides with the official season`);
+    for (const m of cfg.members) if (!act.charChessDataDict[m]) throw new Error(`[custom] bond ${bondId}: member ${m} not injected`);
+
+    // 效果黑board：buildBonds 由它推导 bb / bbStr / thresholds（BOND_COUNT_KEYS: power_bond_char_cnt / ex_bond_char_cnt）
+    const bbList = [
+      ...Object.entries(cfg.bb).map(([key, value]) => ({ key, value, valueStr: null })),
+      { key: 'power_bond_char_cnt', value: cfg.thresholds[0], valueStr: null },
+      { key: 'ex_bond_char_cnt', value: cfg.thresholds[1], valueStr: null },
+      { key: 'key', value: 0, valueStr: cfg.buffKey },   // 内部 buff key（与官方 bond 效果同形）
+    ];
+    act.effectInfoDataDict[cfg.effectId] = {
+      effectType: 'BOND', effectName: cfg.name, effectDesc: cfg.effectDesc ?? cfg.desc,
+      effectCounterType: 'NONE', continuedRound: -1, effectDecoIconId: null, enemyPrice: 0,
+    };
+    act.effectBuffInfoDataDict[cfg.effectId] = [{ key: 'env_gbuff_new', countType: 'NONE', blackboard: bbList }];
+
+    act.bondInfoDict[bondId] = {
+      bondId, name: cfg.name, identifier: cfg.identifier,
+      desc: cfg.desc, iconId: `icon_${bondId}`,
+      activeCount: cfg.activeCount, activeCondition: 'BOARD', activeConditionTemplate: 'count_threshold_upward',
+      activeParamList: cfg.thresholds.map(String),
+      effectId: cfg.effectId, activeType: 'BATTLE', weight: 1,
+      isActiveInDeck: false, maxInactiveBondCount: -1, noStack: false,
+      descParamBaseList: [...(cfg.descParamBaseList || [])], descParamPerStackList: [...(cfg.descParamPerStackList || [])],
+      chessIdList: [...cfg.members],
+    };
+    // autoChessData 侧：isPower → isCore，powerIdList = 势力。
+    // `bondId` 必须带上：buildBackups 的 faction→bond 规则用 `Object.values(ac.bondInfoDict)…map(b => b.bondId)`
+    // 推导每个自选干员的 bonds，缺了它该干员的 bonds 会变成 [undefined]（validateAll 报 "bond undefined missing"）。
+    ac.bondInfoDict = ac.bondInfoDict || {};
+    ac.bondInfoDict[bondId] = {
+      ...(ac.bondInfoDict[bondId] || {}),
+      bondId, isPower: cfg.isCore, bondType: 'SEASON', bondOrder: cfg.identifier,
+      name: cfg.name, powerIdList: [...cfg.powerIdList], icon: `icon_${bondId}`,
+    };
+  }
+
+  // ---- 特质（garrisons，干员自身效果的展示条目；战斗数据留空，真实效果在各 kit 里）----
+  // 结构照抄官方 garrisonDataDict 条目（garrison_24_a 等）；buildGarrisons 会从棋子 garrisonIds
+  // 引用它们并反算 owners，unknown effectKey 在运行时没有 INSTALLERS → 静默跳过（纯展示）。
+  if (act.garrisonDataDict) {
+    for (const [id, g] of Object.entries(GARRISONS)) {
+      if (act.garrisonDataDict[id]) throw new Error(`[custom] garrison ${id} collides with the official season`);
+      const key = `act2autochess_gar_eff_${id.replace('garrison_', '')}`;
+      act.garrisonDataDict[id] = {
+        garrisonDesc: g.garrisonDesc,
+        eventType: g.eventType, eventTypeDesc: g.eventTypeDesc, eventTypeIcon: g.eventTypeIcon,
+        eventTypeSmallIcon: null, effectType: g.effectType, charLevel: 0,
+        battleRuneKey: g.battleRuneKey,
+        // effectKey = bbStr.key（buildGarrisons）；bb/bbStr 供 SERVER_* 处理器读（官方 flattenBB 同形）
+        blackboard: [
+          { key: 'key', value: 0, valueStr: key },
+          ...Object.entries(g.bb || {}).map(([k, v]) => ({ key: k, value: v, valueStr: null })),
+          ...Object.entries(g.bbStr || {}).map(([k, v]) => ({ key: k, value: 0, valueStr: v })),
+        ],
+      };
+    }
+
+    // ---- 官方特质的覆盖（补【东】等新增核心盟约）----
+    // 原理见 GARRISON_OVERRIDES 的注释：改 garrisonDesc（buildGarrisons 优先读它）+ blackboard 的 bond_id。
+    for (const [id, ov] of Object.entries(GARRISON_OVERRIDES)) {
+      const g = act.garrisonDataDict[id];
+      if (!g) throw new Error(`[custom] garrison override ${id}: official garrison missing`);
+      if (ov.desc) g.garrisonDesc = ov.desc;
+      if (ov.bonds) {
+        const entry = (g.blackboard || []).find((e) => e.key === 'bond_id');
+        if (entry) { entry.value = 0; entry.valueStr = ov.bonds; }
+        else (g.blackboard = g.blackboard || []).push({ key: 'bond_id', value: 0, valueStr: ov.bonds });
+      }
+    }
+  }
+
+  // ---- 装备（items，普通 _a + 进阶 _b，独立 effectId）----
+  // buildItems 读 trapChessDataDict（chessId → 记录）+ trapShopChessDatas（baseId → 商店行）+
+  // effectInfoDataDict / effectBuffInfoDataDict（名称 / 描述 / buffs）。商店行按 _a 键（goldenItemId 指向 _b，
+  // buildItems 对两者都建 shopByBase）——与官方一致（商店表没有 _b 行）。
+  if (act.trapChessDataDict) {
+    for (const [base, cfg] of Object.entries(ITEMS)) {
+      const a = `${base}_a`, b = `${base}_b`;
+      if (act.trapChessDataDict[a] || act.trapChessDataDict[b]) throw new Error(`[custom] item ${base} collides with the official season`);
+      const effA = `eff_${base.replace('chess_item_', '')}`, effB = `eff_9g_${base.replace('chess_item_9_', '')}`;
+      // 每条列表项 = 一个 buff：行为 buff（bbStr.key = cfg.buffKey，battle.js BY_ITEM 读）与属性 buff
+      // （bbStr.key = attr_common_global_buff，installItem 的 STAT_BUFFS → statMods）必须分开两条（双模机械臂同形）。
+      const buffs = (buffKey, bb, stat) => {
+        const list = [{
+          key: 'env_gbuff_new_with_verify', countType: 'NONE',
+          blackboard: [
+            { key: 'key', value: 0, valueStr: buffKey },
+            // 数值 → bb（value），字符串（other_equip 等）→ bbStr（valueStr）——官方 flattenBB 同形
+            ...Object.entries(bb).map(([k, v]) => ({ key: k, value: typeof v === 'string' ? 0 : v, valueStr: typeof v === 'string' ? v : null })),
+          ],
+        }];
+        if (stat) list.push({
+          key: 'env_gbuff_new_with_verify', countType: 'NONE',
+          blackboard: [
+            { key: 'key', value: 0, valueStr: 'attr_common_global_buff' },
+            ...Object.entries(stat).map(([k, v]) => ({ key: k, value: v, valueStr: null })),
+          ],
+        });
+        return list;
+      };
+
+      act.trapChessDataDict[a] = {
+        chessId: a, identifier: cfg.identifier, charId: cfg.trapId, isGolden: false, purchasePrice: cfg.price,
+        status: { evolvePhase: 'PHASE_0', trapLevel: 1, skillIndex: 0, skillLevel: 1 },
+        upgradeChessId: b, upgradeNum: 2, trapDuration: -1,
+        effectId: effA, giveBondId: cfg.giveBondId || null, givePowerId: null, canGiveBond: false, itemType: 'EQUIP',
+      };
+      act.trapChessDataDict[b] = {
+        chessId: b, identifier: cfg.identifier + 5000, charId: cfg.trapId, isGolden: true, purchasePrice: cfg.goldenPrice,
+        status: { evolvePhase: 'PHASE_0', trapLevel: 1, skillIndex: 0, skillLevel: 1 },
+        upgradeChessId: null, upgradeNum: 0, trapDuration: 0,
+        effectId: effB, giveBondId: cfg.giveBondId || null, givePowerId: null, canGiveBond: false, itemType: 'EQUIP',
+      };
+      act.trapShopChessDatas[a] = {
+        itemId: a, goldenItemId: b, hideInShop: false, itemLevel: cfg.tier, iconLevel: 0,
+        shopLevelSortId: cfg.shopSortId, itemType: 'EQUIP', trapId: cfg.trapId,
+      };
+      act.effectInfoDataDict[effA] = {
+        effectId: effA, effectType: 'EQUIP', effectCounterType: 'NONE', continuedRound: -1,
+        effectName: cfg.name, effectDesc: cfg.desc, effectDecoIconId: null, enemyPrice: 0,
+      };
+      act.effectInfoDataDict[effB] = {
+        effectId: effB, effectType: 'EQUIP', effectCounterType: 'NONE', continuedRound: -1,
+        effectName: cfg.name, effectDesc: cfg.goldenDesc, effectDecoIconId: null, enemyPrice: 0,
+      };
+      act.effectBuffInfoDataDict[effA] = [...buffs(cfg.buffKey, cfg.bb, cfg.stat)];
+      act.effectBuffInfoDataDict[effB] = [...buffs(cfg.buffKey, cfg.goldenBb, cfg.goldenStat)];
+    }
+  }
+}

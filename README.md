@@ -1,0 +1,191 @@
+<div align="center">
+
+# 【东】＋【乌萨斯】
+
+**给《卫戍协议：盟约》复刻版（Stronghold-Protocol）的本体，加两个真正能进对局结算的核心盟约阵营。**
+
+<sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 四语言文案 · 幂等安装</sub>
+
+![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
+![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
+![install](https://img.shields.io/badge/install-idempotent-16a34a?style=flat-square)
+![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
+![verify](https://img.shields.io/badge/verify-20%20test%20files-8b5cf6?style=flat-square)
+
+</div>
+
+```bash
+cd <本体源码检出根>                        # 必须是源码检出，不是 Release 里的 *-lite.zip
+node <mod 包>/scripts/install.mjs .        # 覆盖 → 套补丁 → 重建 data → 合并 i18n；幂等，可重复执行
+node <mod 包>/scripts/verify.mjs .         # mod 验收子集（20 个测试文件）
+```
+
+> 装完即可开局：牌池里会多出 13 名预设棋子，【东】/【乌萨斯】按 3 / 6 人档激活，图标、文案、特质、装备全部就位。
+
+---
+
+## 这是什么
+
+这不是一份文案补丁，而是**两条从零实装的核心盟约**外加一整套自制内容，全部经本体的数据管线注入：
+
+| 内容 | 规模 | 落地位置 |
+|---|---|---|
+| 【东】`dongShip`、【乌萨斯】`ursusShip` | 2 条核心盟约（3 / 6 人档，含战斗实现） | `patches/01` → `bonds/core.js`；参数在 `files/tools/custom-content.mjs` |
+| 预设棋子（干员 kit） | 13 名 | `files/server/sim/content/kits/ops/chess_char_*_9*.js` |
+| 特质 | 26 条（`garrison_980_a` ~ `992_b`） | 各 kit + `garrisons/meta.js` |
+| 装备 | 4 件（普通 / 进阶，可合成） | `custom-content.mjs` → `items/battle.js` |
+| 文案 | 四语言 overlay（zh-TW / en / ja / ko） | `i18n/mod-i18n.json` + 合并脚本 |
+| 盟约图标 | 【东】随包分发；【乌萨斯】用本体既有阵营 LOGO | `files/public/assets/bond/dongShip.png` |
+
+你不需要手改本体：`install.mjs` 按「**覆盖 mod 自有文件 → 套两个补丁 → 删被替换的上游 kit → `build-data` 重建 data → i18n 四连**」的顺序执行，每一步都幂等。
+
+## 装完你会看到的数字（v0.2.6 实测，2026-10-15）
+
+| 指标 | 数值 |
+|---|---|
+| 棋子 | `292`（其中可见非 DIY `125`：16 / 19 / 22 / 24 / 22 / 22） |
+| 盟约 | `25`（核心 `10` = 官方 `8` + 【东】【乌萨斯】） |
+| 特质 | `275` · 装备 `123` · 效果 `371` · 合奏带 `40` |
+| backups | base `146`（PRESET `87`）· 自选 6★ 池 `66` |
+| 语音 | JP `199` 人 / `2786` 行 |
+
+数据全部由 `tools/build-data.mjs` 现场生成，包里不存手改的 `data/*.json`。
+
+## 两条盟约
+
+| 盟约 | 激活 | 核心 | 3 人档机制 | 6 人档追加 |
+|---|---|---|---|---|
+| 【东】`dongShip` | 3 人 | 是 | 干员伤害 ×(1+15%+0.7%×层数)×(1+0.4%×已损失生命比例)；【死战】首次致命以 1 HP 存活 4 秒后视为被击倒撤离（傀儡师改切替身）；开技能时全体掉 10% 当前生命转屏障 | 攻击 +60%、额外掉 15% 转屏障、<50% 生命时攻击 +120% |
+| 【乌萨斯】`ursusShip` | 3 人 | 是 | 开技能时其他【乌萨斯】干员攻击 +3.6%+0.06%/层（累计，上限 54%+0.9%×层数）；开启者周围八格自然技回 +40%（不叠加，取最高） | 技回覆盖为 +80%；带 1 件装备攻击 ×1.75、2 件 ×2.5（覆盖制，非连乘） |
+
+- 盟约图标放在**本体**的 `public/assets/bond/<bondId>.png`，URL 由 `data/assets.json` 的 `bonds` 映射给出。
+- 官方 23 条盟约里没有这两个，清单生成端 `tools/assets/plan.mjs:550` 的 `fallbackCampLogo` 分支就用**阵营 LOGO** 兜底：【乌萨斯】的 `ursusShip.png` 来自本体已有的 `ui/campLogo/logo_ursus.png`；【东】的 `dongShip.png`（内容 = `logo_higashi.png`）随本包分发，装完即补上。
+- 另有官方干员通过 `BOND_OVERRIDES` 补入盟约：折桠（2_17）、古米（1_10）→【乌萨斯】；风丸、水月、星熊、铃兰、遥 →【东】；斩业星熊在【炎】之外再得【东】；斥罪在【叙拉古】之外再得【乌萨斯】。
+
+## 干员 ×13
+
+| 棋子 | 干员 | 档 | 盟约 | 特质 |
+|---|---|---|---|---|
+| 2_98 | 伯塔尼 | 2 | 乌萨斯 | 病床巡视 981（每盟约每场上限 8/16 层） |
+| 3_96 | 吉星 | 3 | 东 | 鸿运当头 991（自身盟约 +6/12，无需激活） |
+| 3_97 | 白雪 | 2 | 东 / 灵巧 | 武库清点 990（已激活层数最高盟约 +3/6） |
+| 3_98 | 烈夏 | 3 | 乌萨斯 | 道具获取 987 |
+| 3_99 | 缠丸 | 3 | 东 / 不屈 | 恶鬼血战 988（每场首次 <70% 生命 → 各已激活盟约 +12/24） |
+| 4_98 | 赫拉格 | 4 | 乌萨斯 | 血怒 982（击杀触发：来源盟约 +2/4，每盟约每场上限 8/16 层） |
+| 4_99 | 鸿雪 | 4 | 乌萨斯 | 盟约层数 986 |
+| 5_97 | 嵯峨 | 5 | 东 / 坚守 | 同门切磋 989（自身 + 身前干员，每场首次 <70% → 各已激活盟约 +5/10） |
+| 5_98 | 乌啾 | 5 | 乌萨斯 | 病床巡视 984（上限 8/16 层） |
+| 5_99 | 维伊 | 5 | 乌萨斯 | 奥术共鸣 985（已激活层合计） |
+| 6_97 | 麒麟R夜刀 | 6 | 东 / 突袭 / 不屈 | 麒麟之魂 992（三层各按激活计入：每 3 层攻 +1/2%、每秒失 100 血；激活【东】时再部署 −50%、部署失 50% 当前生命转屏障） |
+| 6_98 | 怒潮凛冬 | 6 | 乌萨斯 / 迅捷 / 坚守 | 潮涌共鸣 980 |
+| 6_99 | 早露 | 6 | 乌萨斯 / 精准 | 雪崩攻势 983（已激活层合计） |
+
+## 装备 ×4
+
+| 装备 | 阶 / 价 | 普通 → 进阶 |
+|---|---|---|
+| 东国鬼面（副装备，可映射 →【东】） | T2 / 2 金 | 开技能流失 10% → 20% 当前生命，技能期间攻击 +30% → +45% |
+| 残心一闪（签名装备，不可映射） | T6 / 4 金 | 攻击 +40% → +60%；【东】攻击转弱点伤害；与鬼面同带 → 首次 <50% 生命获 50% 上限屏障 |
+| 乌萨斯军粮（副装备，可映射 →【乌萨斯】） | T3 / 2 金 | 生命 +25% → +50%；每 5 秒回 4% → 5% 最大生命 |
+| 冰原咆哮（签名装备，不可映射） | T6 / 4 金 | 攻击 +45% → +65%；每 1 名其他【乌萨斯】干员攻 +4% → +6%（至多 +20% → +30%）；与军粮同带 → 上限 +30% → +45% |
+
+## 特质 ×26
+
+`980` 潮涌共鸣 · `981`/`984` 病床巡视 · `982` 血怒 · `983` 雪崩攻势 · `985` 奥术共鸣 · `986` 盟约层数 · `987` 道具获取 · `988` 恶鬼血战 · `989` 同门切磋 · `990` 武库清点 · `991` 鸿运当头 · `992` 麒麟之魂（均为 `_a` / `_b` 两档）。
+
+处理器分工：`986`/`987`/`990`/`991` 是 `garrisons/meta.js` 里的自定义 `SERVER_*` 处理器；其余真效果在各干员 kit；护盾 / 流失 / 流血在 `bonds/core.js` 的 `installDong`。
+
+另有一处官方特质覆盖（`GARRISON_OVERRIDES`）：水月的 `garrison_07`「每叠加 3 层，本干员攻击力 +1/2%」补入【东】后，文案与读层盟约都由【阿戈尔】改为【阿戈尔】【东】（按两者**已激活**层数合计）。
+
+## 它是怎么工作的
+
+```text
+tools/custom-content.mjs            本包唯一数据源（盟约 / 棋子 / 特质 / 装备 / 文案参数）
+        │  injectCustomContent(ctx)
+        ▼
+node tools/build-data.mjs           官方赛季数据表 + 注入 → data/*.json（盟约 25 / 特质 275 / 装备 123 …）
+        │
+        ▼
+i18n 四连                            build-i18n（迁移本体既有翻译）→ apply-i18n（合并本包记录）
+                                     → prune-stale（清「数据已不存在」的陈旧记录）→ rehash-families（重算 _h）
+```
+
+安装脚本的五步顺序：
+
+1. **覆盖** `files/` 下 29 个 mod 自有文件（含整文件覆盖 `tools/custom-content.mjs` 与 `data/assets.json`）；
+2. **套两个补丁**：`patches/01-mod-shared.patch`（22 个上游共享文件的改动：`bonds/core.js`、`garrisons/meta.js`、`items/battle.js`、`kits/index.js`、`skills.js`、`battle/deploy.js`、`render/units.js`、`render/spine.js`、`tools/assets/*`、`build-data` 接线等）与 `patches/02-tests-calibration.patch`（50 个既有测试的计数 / 口径校准）；
+3. **清理**被替换的上游自选 kit（`op-headb2` / `op-helage` / `op-poca` / `op-bgsnow` / `op-veen` / `op-saga` 及其旧测试）——它们已转为预设棋子；
+4. **重建数据** `node tools/build-data.mjs`；
+5. **合并文案** i18n 四连（`build-i18n` → `apply-i18n` → `prune-stale` → `rehash-families`）。
+
+## 包结构
+
+```text
+.
+├─ SKILL.md                 给 agent 的操作手册（安装 / 适配 / 排障 / 维护）
+├─ CHANGES.md               逐条修改记录（改了什么 / 为什么 / 怎么验的）
+├─ files/                   mod 自有文件，整文件覆盖（29 个）
+│   ├─ tools/custom-content.mjs                    唯一数据源
+│   ├─ data/assets.json                            素材清单（含动画角色修正）
+│   ├─ public/assets/bond/dongShip.png             【东】盟约图标
+│   ├─ server/sim/content/kits/ops/chess_char_*_9*.js   13 个 kit
+│   └─ test/**                                     13 个 mod 自有测试
+├─ patches/                 补丁基线 = 本体该版本的 mod 前提交
+│   ├─ 01-mod-shared.patch   上游共享文件（22 个）
+│   └─ 02-tests-calibration.patch   既有测试校准（50 个）
+├─ i18n/                    mod-i18n.json + apply / prune-stale / rehash-families
+└─ scripts/                 install · verify · check-anim-roles · repro-skill-latch
+```
+
+## 验证与测试
+
+```bash
+node <mod 包>/scripts/verify.mjs <本体仓库根>            # mod 验收子集：20 个测试文件
+node <mod 包>/scripts/check-anim-roles.mjs <本体仓库根>   # 逐模型对账「清单 == resolver + 修正」
+node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>  # 复现「技能结束后普攻播技能 clip」的闩锁
+```
+
+最近一次有记录的实测（2026-10-15）：`check-anim-roles` **695/695 一致**、`repro-skill-latch` **异常 0/9**（修复前 7/9）、`verify` **271/271**。
+
+> 注意：2026-10-15 的【乌萨斯】系数修订（每层 1% → 0.06%、上限每层 1% → 0.9%）**没有重跑测试**，测试期望值已同步，但上面的数字是那次修订之前记录的。
+
+## 版本与兼容
+
+- **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install.mjs` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
+- **首次 `build-data` 需要网络**：缺 `.cache/gamedata` 时会从 GitHub 拉官方数据表。网络不稳时设 `HTTPS_PROXY`，或直接把本机已装仓库的 `.cache/gamedata/` 整目录拷过来（最快、可离线）。
+- **另有一份面向 v0.2.4 的旧包**（历史分支，patch 01 = 17 文件 / patch 02 = 45 文件），与本体 v0.2.4 fork 配套；本包是 0.2.6 版。两者各自独立，不要混用脚本。
+
+<details>
+<summary><b>换本体版本时的适配流程（摘要）</b></summary>
+
+1. 新本体落位（**源码检出**）后：`node scripts/install.mjs <本体仓库根>`；
+2. 补丁若产生 `*.rej`：按 `SKILL.md`「冲突处理」的识别标志手工合入；
+3. `node scripts/verify.mjs <本体仓库根>`，计数断言按 `SKILL.md` 清单校准；
+4. 全量测试前先 `node tools/golden.mjs --update`；
+5. 换基线时更新 `files/data/assets.json`：以本体新 manifest 为基，把本包引用的 id（新棋子 / 盟约 / 装备 / 语音）合并进来，并按 `tools/fetch-assets.mjs` 的 `countStats` 重算 `stats`、按 `contentHash(body)` 重算 `hash`（注意清单末尾保留 LF）；
+6. 合并**不会**带来动作角色（`anims`）的代码侧修正——那是 `tools/assets/anim-roles.mjs` + `spine.mjs` 的产物。装完跑一次 `check-anim-roles.mjs`，逐模型对账必须 100% 一致（v0.2.6 实测 695/695）；不一致就按 `SKILL.md`「维护」第 6 条重算清单（`anims` + `hash`，两份都写），钉子测试是 `test/render/anim-role-fixes.test.js`。
+
+</details>
+
+## 已知限制
+
+- 全部文档与代码注释为中文；`README` / `SKILL.md` 面向中文读者。
+- 与本体版本强绑定：换版本需重新生成补丁，`*.rej` 需人工合入。
+- 本包**不附带游戏美术资源**，唯一例外是随包的【东】盟约图标（取自本体自带的东国阵营 LOGO）。
+- 本包自身没有 `LICENSE` 文件；本体以 **GPL-3.0-or-later** 发布，因此分发本包（及其作用于本体的补丁）时应按同一许可处理，并与素材来源方对齐授权。
+- 上面「验证与测试」的数字是历史记录，最新一次系数修订尚未复测。
+
+## 文档索引
+
+| 文档 | 内容 |
+|---|---|
+| [`SKILL.md`](SKILL.md) | 安装 / 适配 / 测试 / 冲突处理 / 维护的完整操作手册（给 agent 用） |
+| [`CHANGES.md`](CHANGES.md) | 按日期倒序的修改记录，每条含「改了什么 / 为什么 / 怎么验的」 |
+| [`PLAN-attack-anim-after-skill.md`](PLAN-attack-anim-after-skill.md) | 「技能结束后普攻播技能 clip」的排查与修复方案 |
+| `MIGRATION-0.2.4-to-0.2.6.md` · `BACKPORT-0.2.6-fixes-to-0.2.4.md` | 版本迁移与回填清单（在 0.2.4 仓库根目录，不在本包内） |
+
+## 致谢与版权
+
+- 本体：[**sganggs/Stronghold-Protocol**](https://github.com/sganggs/Stronghold-Protocol)（《卫戍协议：盟约》复刻项目，GPL-3.0-or-later）——本包只做注入与补丁，不含本体代码。
+- 数据 / 文案：本体自带的 gamedata 与社区镜像 [Kengxxiao/ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData)（四语言文本来源见 `data/i18n/*.json` 的 `meta.source`）。
+- 《明日方舟》及其角色、美术、音频版权归 **Hypergryph / Studio Montagne** 所有；本项目为非官方粉丝作品，仅供学习与交流使用。

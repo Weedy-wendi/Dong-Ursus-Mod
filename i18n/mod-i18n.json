@@ -1,0 +1,1202 @@
+{
+  "en": {
+    "bonds": {
+      "dongShip": {
+        "name": "Dong",
+        "desc": "[Dong] Operators deal increased damage with their attacks, and deal even more the lower their own lost HP ratio is (affected by no. of stacks), and gain [Deathless]: the first time they take fatal damage in battle, they do not retreat, keep 1 HP for 4 seconds, then retreat\nWhen a [Dong] Operator activates a skill, all [Dong] Operators lose 10% of their current HP and gain an equal barrier\n<With 6 different [Dong] Operators on field> [Dong] Operators gain increased ATK, and skill activations cost all [Dong] Operators an extra 15% of their current HP as an equal barrier; while below 50% of max HP, their ATK is increased even further",
+        "descRaw": "[Dong] Operators deal <@ba.vup>increased damage</> with their attacks, and deal even more the lower their own <@ba.vup>lost HP ratio</> is <@autochess.gray>(affected by no. of stacks)</>, and gain [Deathless]: the first time they take <@ba.vup>fatal damage</> in battle, they do not retreat, keep <@ba.vup>1</> HP for <@ba.vup>4</> seconds, then retreat\nWhen a [Dong] Operator activates a skill, all [Dong] Operators lose <@ba.vup>10%</> of their current HP and gain an equal barrier\n<With <@autochess.dgreen>6</> different [Dong] Operators on field> [Dong] Operators gain increased <@ba.vup>ATK</>, and skill activations cost all [Dong] Operators an extra <@ba.vup>15%</> of their current HP as an equal barrier; while below <@ba.vup>50%</> of max HP, their <@ba.vup>ATK</> is increased even further",
+        "effectName": "Dong",
+        "effectDesc": "[Dong] Operators deal {0:0%} damage with their attacks, and deal even more the lower their own lost HP ratio is (affected by no. of stacks), and gain [Deathless]: the first time they take fatal damage in battle, they do not retreat, keep 1 HP for 4 seconds, then retreat\nWhen a [Dong] Operator activates a skill, all [Dong] Operators lose 10% of their current HP and gain an equal barrier\n<With 6 different [Dong] Operators on field> [Dong] Operators gain +60% ATK, and skill activations cost all [Dong] Operators an extra 15% of their current HP as an equal barrier; while below 50% of max HP, their ATK gains a further +120%",
+        "effectDescRaw": "[Dong] Operators deal <@ba.vup>{0:0%}</> damage with their attacks, and deal even more the lower their own <@ba.vup>lost HP ratio</> is <@autochess.gray>(affected by no. of stacks)</>, and gain [Deathless]: the first time they take <@ba.vup>fatal damage</> in battle, they do not retreat, keep <@ba.vup>1</> HP for <@ba.vup>4</> seconds, then retreat\nWhen a [Dong] Operator activates a skill, all [Dong] Operators lose <@ba.vup>10%</> of their current HP and gain an equal barrier\n<With <@autochess.dgreen>6</> different [Dong] Operators on field> [Dong] Operators gain <@ba.vup>+60%</> ATK, and skill activations cost all [Dong] Operators an extra <@ba.vup>15%</> of their current HP as an equal barrier; while below <@ba.vup>50%</> of max HP, their ATK gains a further <@ba.vup>+120%</>",
+        "_h": "nv937jnv8yia"
+      },
+      "ursusShip": {
+        "name": "Ursus",
+        "desc": "The Operators on the 8 tiles around a [Ursus] Operator gain increased natural SP recovery speed (does not stack); when a [Ursus] Operator activates a skill, the other [Ursus] Operators gain increased ATK (affected by no. of stacks) until the end of battle\n<With 6 different [Ursus] Operators on field> the Operators on the 8 tiles around a [Ursus] Operator gain even greater natural SP recovery speed (does not stack); when a [Ursus] Operator carries 1 item, the damage of their attacks is increased; with 2 items, it is increased even further",
+        "descRaw": "The Operators on the 8 tiles around a [Ursus] Operator gain increased <@ba.vup>natural SP recovery speed</> (does not stack); when a [Ursus] Operator activates a skill, the other [Ursus] Operators gain increased <@ba.vup>ATK</><@autochess.gray>(affected by no. of stacks)</> until the end of battle\n<With <@autochess.dgreen>6</> different [Ursus] Operators on field> the Operators on the 8 tiles around a [Ursus] Operator gain even greater <@ba.vup>natural SP recovery speed</> (does not stack); when a [Ursus] Operator carries <@ba.vup>1</> item, the damage of their attacks is increased; with <@ba.vup>2</> items, it is increased even further",
+        "effectName": "Ursus",
+        "effectDesc": "The Operators on the 8 tiles around a [Ursus] Operator gain +40% natural SP recovery speed (does not stack); when a [Ursus] Operator activates a skill, the other [Ursus] Operators gain ATK +{0:0.0%} (up to +{1:0%}) (affected by no. of stacks) until the end of battle\n<With 6 different [Ursus] Operators on field> the Operators on the 8 tiles around a [Ursus] Operator gain +80% natural SP recovery speed (does not stack); when a [Ursus] Operator carries 1 item, the damage of their attacks is increased to 175%; with 2 items, it is increased to 250%",
+        "effectDescRaw": "The Operators on the 8 tiles around a [Ursus] Operator gain <@ba.vup>+40%</> natural SP recovery speed (does not stack); when a [Ursus] Operator activates a skill, the other [Ursus] Operators gain ATK <@ba.vup>+{0:0.0%}</> (up to <@ba.vup>+{1:0%}</>)<@autochess.gray>(affected by no. of stacks)</> until the end of battle\n<With <@autochess.dgreen>6</> different [Ursus] Operators on field> the Operators on the 8 tiles around a [Ursus] Operator gain <@ba.vup>+80%</> natural SP recovery speed (does not stack); when a [Ursus] Operator carries <@ba.vup>1</> item, the damage of their attacks is increased to <@ba.vup>175%</>; with <@ba.vup>2</> items, it is increased to <@ba.vup>250%</>",
+        "_h": "g21lr4g298ra"
+      }
+    },
+    "garrisons": {
+      "garrison_980_a": {
+        "desc": "While in battle: when dealing damage, deal extra True Damage equal to 75% of her own max HP",
+        "descRaw": "While in battle: when dealing damage, deal extra True Damage equal to 75% of her own max HP",
+        "eventTypeDesc": "Combat",
+        "_h": "o7o73p"
+      },
+      "garrison_980_b": {
+        "desc": "While in battle: when dealing damage, deal extra True Damage equal to 150% of her own max HP",
+        "descRaw": "While in battle: when dealing damage, deal extra True Damage equal to 150% of her own max HP",
+        "eventTypeDesc": "Combat",
+        "_h": "wxwx3p"
+      },
+      "garrison_981_a": {
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to the active 【Ursus】 and 【Support】 bonds (each capped at 8 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to the active 【Ursus】 and 【Support】 bonds (each capped at 8 per battle; the bonds must be active)",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "nxnxmz"
+      },
+      "garrison_981_b": {
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 16 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 16 per battle; the bonds must be active)",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "0p0pmz"
+      },
+      "garrison_982_a": {
+        "desc": "While in battle: each time she kills an enemy, +2 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 8 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she kills an enemy, +2 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 8 per battle; the bonds must be active)",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "xsxsmz"
+      },
+      "garrison_982_b": {
+        "desc": "While in battle: each time she kills an enemy, +4 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 16 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she kills an enemy, +4 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 16 per battle; the bonds must be active)",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "m5m5mz"
+      },
+      "garrison_983_a": {
+        "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Precision】 bonds, her ATK +1%",
+        "descRaw": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Precision】 bonds, her ATK +1%",
+        "eventTypeDesc": "Combat",
+        "_h": "ququ3p"
+      },
+      "garrison_983_b": {
+        "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Precision】 bonds, her ATK +2%",
+        "descRaw": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Precision】 bonds, her ATK +2%",
+        "eventTypeDesc": "Combat",
+        "_h": "jhjh3p"
+      },
+      "garrison_984_a": {
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to 【Ursus】 and 【Swiftness】 (each capped at 8 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to 【Ursus】 and 【Swiftness】 (each capped at 8 per battle; the bonds must be active)",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "3w3wmz"
+      },
+      "garrison_984_b": {
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to 【Ursus】 and 【Swiftness】 (each capped at 16 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to 【Ursus】 and 【Swiftness】 (each capped at 16 per battle; the bonds must be active)",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "8a8amz"
+      },
+      "garrison_985_a": {
+        "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Arcane】 bonds, her ATK +1%",
+        "descRaw": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Arcane】 bonds, her ATK +1%",
+        "eventTypeDesc": "Combat",
+        "_h": "sqsq3p"
+      },
+      "garrison_985_b": {
+        "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Arcane】 bonds, her ATK +2%",
+        "descRaw": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Arcane】 bonds, her ATK +2%",
+        "eventTypeDesc": "Combat",
+        "_h": "htht3p"
+      },
+      "garrison_986_a": {
+        "desc": "At the end of each preparation phase: +4 layers to every bond of herself and the operator behind her",
+        "descRaw": "At the end of each preparation phase: +4 layers to every bond of herself and the operator behind her",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "e5e5mz"
+      },
+      "garrison_986_b": {
+        "desc": "At the end of each preparation phase: +8 layers to every bond of herself and the operator behind her",
+        "descRaw": "At the end of each preparation phase: +8 layers to every bond of herself and the operator behind her",
+        "eventTypeDesc": "Sustained stacking",
+        "_h": "2h2hmz"
+      },
+      "garrison_987_a": {
+        "desc": "When gained: gain 1 item",
+        "descRaw": "When gained: gain 1 item",
+        "eventTypeDesc": "One-shot stacking",
+        "_h": "cocojf"
+      },
+      "garrison_987_b": {
+        "desc": "When gained: gain 2 items",
+        "descRaw": "When gained: gain 2 items",
+        "eventTypeDesc": "One-shot stacking",
+        "_h": "n7n7jf"
+      },
+      "garrison_988_a": {
+        "desc": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +8 stacks and [Resilient] gains +4 stacks",
+        "descRaw": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +8 stacks and [Resilient] gains +4 stacks",
+        "eventTypeDesc": "Can stack",
+        "_h": "ninimz"
+      },
+      "garrison_988_b": {
+        "desc": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +16 stacks and [Resilient] gains +8 stacks",
+        "descRaw": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +16 stacks and [Resilient] gains +8 stacks",
+        "eventTypeDesc": "Can stack",
+        "_h": "ljljmz"
+      },
+      "garrison_989_a": {
+        "desc": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +8 stacks",
+        "descRaw": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +8 stacks",
+        "eventTypeDesc": "Can stack",
+        "_h": "5959mz"
+      },
+      "garrison_989_b": {
+        "desc": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +16 stacks",
+        "descRaw": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +16 stacks",
+        "eventTypeDesc": "Can stack",
+        "_h": "9m9mmz"
+      },
+      "garrison_990_a": {
+        "desc": "When gained: +3 layers to the activated bond with the most layers",
+        "descRaw": "When gained: +3 layers to the activated bond with the most layers",
+        "eventTypeDesc": "One-shot stacking",
+        "_h": "ununjf"
+      },
+      "garrison_990_b": {
+        "desc": "When gained: +6 layers to the activated bond with the most layers",
+        "descRaw": "When gained: +6 layers to the activated bond with the most layers",
+        "eventTypeDesc": "One-shot stacking",
+        "_h": "7272jf"
+      },
+      "garrison_991_a": {
+        "desc": "When gained: +6 layers to every bond she carries (activation not required)",
+        "descRaw": "When gained: +6 layers to every bond she carries (activation not required)",
+        "eventTypeDesc": "One-shot stacking",
+        "_h": "oioijf"
+      },
+      "garrison_991_b": {
+        "desc": "When gained: +12 layers to every bond she carries (activation not required)",
+        "descRaw": "When gained: +12 layers to every bond she carries (activation not required)",
+        "eventTypeDesc": "One-shot stacking",
+        "_h": "2x2xjf"
+      },
+      "garrison_992_a": {
+        "desc": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%, but she loses 100 HP per second",
+        "descRaw": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%, but she loses 100 HP per second",
+        "eventTypeDesc": "Combat",
+        "_h": "f5f53p"
+      },
+      "garrison_992_b": {
+        "desc": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +2%, but she loses 100 HP per second",
+        "descRaw": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +2%, but she loses 100 HP per second",
+        "eventTypeDesc": "Combat",
+        "_h": "bmbm3p"
+      },
+      "garrison_07_a": {
+        "descRaw": "For every 3 stacks added to [Ægir] or [Dong] Alliances, this Operator gains <@ba.vup>+1%</> ATK",
+        "desc": "For every 3 stacks added to [Ægir] or [Dong] Alliances, this Operator gains +1% ATK",
+        "eventTypeDesc": "Combat",
+        "_h": "3jze3p"
+      },
+      "garrison_07_b": {
+        "descRaw": "For every 3 stacks added to [Ægir] or [Dong] Alliances, this Operator gains <@ba.vup>+2%</> ATK",
+        "desc": "For every 3 stacks added to [Ægir] or [Dong] Alliances, this Operator gains +2% ATK",
+        "eventTypeDesc": "Combat",
+        "_h": "rqoh3p"
+      }
+    },
+    "items": {
+      "chess_item_9_01_e_a": {
+        "name": "Dong Mask",
+        "effectName": "Dong Mask",
+        "desc": "Lose 10% of current HP on skill activation; during that skill, ATK +30%",
+        "descRaw": "Lose <@ba.vdown>10%</> of current HP on skill activation; during that skill, ATK <@ba.vup>+30%</>",
+        "flavor": "A mask carved by the artisans of the East; its wearer hears the distant waves.\n\"Hurts, doesn't it? Good — a blade is only as quick as that one breath.\"",
+        "_h": "ewewmzlih3"
+      },
+      "chess_item_9_01_e_b": {
+        "name": "Dong Mask",
+        "effectName": "Dong Mask",
+        "desc": "Lose 20% of current HP on skill activation; during that skill, ATK +45%",
+        "descRaw": "Lose <@ba.vdown>20%</> of current HP on skill activation; during that skill, ATK <@ba.vup>+45%</>",
+        "flavor": "A mask carved by the artisans of the East; its wearer hears the distant waves.\n\"Hurts, doesn't it? Good — a blade is only as quick as that one breath.\"",
+        "_h": "ewewz0mvh3"
+      },
+      "chess_item_9_02_e_a": {
+        "name": "Zanshin Flash",
+        "effectName": "Zanshin Flash",
+        "desc": "ATK +40%; if the carrier is a 【Dong】 operator: the operator's physical and arts damage converts to weakness damage; when carried with the Dong Mask: the first time HP falls below 50%, gain a shield of 50% of max HP",
+        "descRaw": "ATK <@ba.vup>+40%</>; if the carrier is a 【Dong】 operator: the operator's physical and arts damage converts to <@$ba.weaknessatk>weakness damage</>; when carried with the Dong Mask: the first time HP falls below 50%, gain a shield of <@ba.vup>50%</> of max HP",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "The stillness after the slash lands is the swordsman's sharpest moment.\n\"Keep zanshin steady — one flash is enough.\"",
+        "_h": "apapm7a4121n"
+      },
+      "chess_item_9_02_e_b": {
+        "name": "Zanshin Flash",
+        "effectName": "Zanshin Flash",
+        "desc": "ATK +60%; if the carrier is a 【Dong】 operator: the operator's physical and arts damage converts to weakness damage; when carried with the Dong Mask: the first time HP falls below 50%, gain a shield of 50% of max HP",
+        "descRaw": "ATK <@ba.vup>+60%</>; if the carrier is a 【Dong】 operator: the operator's physical and arts damage converts to <@$ba.weaknessatk>weakness damage</>; when carried with the Dong Mask: the first time HP falls below 50%, gain a shield of <@ba.vup>50%</> of max HP",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "The stillness after the slash lands is the swordsman's sharpest moment.\n\"Keep zanshin steady — one flash is enough.\"",
+        "_h": "apaps92i121n"
+      },
+      "chess_item_9_03_e_a": {
+        "name": "Ursus Ration",
+        "effectName": "Ursus Ration",
+        "desc": "Max HP +25%; every 5 seconds, restore 4% of max HP",
+        "descRaw": "Max HP <@ba.vup>+25%</>; every 5 seconds, restore <@ba.vup>4%</> of max HP",
+        "flavor": "The tin can of an Ursus field ration, opening with a gust of cold wind.\n\"Finished eating? Time to march.\"",
+        "_h": "tbtbpoa2fx"
+      },
+      "chess_item_9_03_e_b": {
+        "name": "Ursus Ration",
+        "effectName": "Ursus Ration",
+        "desc": "Max HP +50%; every 5 seconds, restore 5% of max HP",
+        "descRaw": "Max HP <@ba.vup>+50%</>; every 5 seconds, restore <@ba.vup>5%</> of max HP",
+        "flavor": "The tin can of an Ursus field ration, opening with a gust of cold wind.\n\"Finished eating? Time to march.\"",
+        "_h": "tbtbsfzzfx"
+      },
+      "chess_item_9_04_e_a": {
+        "name": "Tundra Roar",
+        "effectName": "Tundra Roar",
+        "desc": "ATK +45%; if the carrier is a 【Ursus】 operator: ATK +4% for each other 【Ursus】 operator on the field (up to +20%); when carried with the Ursus Ration: the cap rises to +30%",
+        "descRaw": "ATK <@ba.vup>+45%</>; if the carrier is a 【Ursus】 operator: ATK <@ba.vup>+4%</> for each other 【Ursus】 operator on the field (up to <@ba.vup>+20%</>); when carried with the Ursus Ration: the cap rises to <@ba.vup>+30%</>",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "The sound of blizzards sweeping the Ursus tundra — the Ursus call it the roar of the land.\n\"Before the snow stops, no one makes us bow.\"",
+        "_h": "8484dnwbo6re"
+      },
+      "chess_item_9_04_e_b": {
+        "name": "Tundra Roar",
+        "effectName": "Tundra Roar",
+        "desc": "ATK +65%; if the carrier is a 【Ursus】 operator: ATK +6% for each other 【Ursus】 operator on the field (up to +30%); when carried with the Ursus Ration: the cap rises to +45%",
+        "descRaw": "ATK <@ba.vup>+65%</>; if the carrier is a 【Ursus】 operator: ATK <@ba.vup>+6%</> for each other 【Ursus】 operator on the field (up to <@ba.vup>+30%</>); when carried with the Ursus Ration: the cap rises to <@ba.vup>+45%</>",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "The sound of blizzards sweeping the Ursus tundra — the Ursus call it the roar of the land.\n\"Before the snow stops, no one makes us bow.\"",
+        "_h": "84842sg2o6re"
+      }
+    },
+    "effects": {
+      "bondeffect_dong": {
+        "name": "Dong",
+        "desc": "[Dong] Operators deal {0:0%} damage with their attacks, and deal even more the lower their own lost HP ratio is (affected by no. of stacks), and gain [Deathless]: the first time they take fatal damage in battle, they do not retreat, keep 1 HP for 4 seconds, then retreat\nWhen a [Dong] Operator activates a skill, all [Dong] Operators lose 10% of their current HP and gain an equal barrier\n<With 6 different [Dong] Operators on field> [Dong] Operators gain +60% ATK, and skill activations cost all [Dong] Operators an extra 15% of their current HP as an equal barrier; while below 50% of max HP, their ATK gains a further +120%",
+        "descRaw": "[Dong] Operators deal <@ba.vup>{0:0%}</> damage with their attacks, and deal even more the lower their own <@ba.vup>lost HP ratio</> is <@autochess.gray>(affected by no. of stacks)</>, and gain [Deathless]: the first time they take <@ba.vup>fatal damage</> in battle, they do not retreat, keep <@ba.vup>1</> HP for <@ba.vup>4</> seconds, then retreat\nWhen a [Dong] Operator activates a skill, all [Dong] Operators lose <@ba.vup>10%</> of their current HP and gain an equal barrier\n<With <@autochess.dgreen>6</> different [Dong] Operators on field> [Dong] Operators gain <@ba.vup>+60%</> ATK, and skill activations cost all [Dong] Operators an extra <@ba.vup>15%</> of their current HP as an equal barrier; while below <@ba.vup>50%</> of max HP, their ATK gains a further <@ba.vup>+120%</>",
+        "_h": "nv8yia"
+      },
+      "bondeffect_ursus": {
+        "name": "Ursus",
+        "desc": "The Operators on the 8 tiles around a [Ursus] Operator gain +40% natural SP recovery speed (does not stack); when a [Ursus] Operator activates a skill, the other [Ursus] Operators gain ATK +{0:0.0%} (up to +{1:0%}) (affected by no. of stacks) until the end of battle\n<With 6 different [Ursus] Operators on field> the Operators on the 8 tiles around a [Ursus] Operator gain even greater natural SP recovery speed (does not stack); when a [Ursus] Operator carries 1 item, the damage of their attacks is increased; with 2 items, it is increased even further",
+        "descRaw": "The Operators on the 8 tiles around a [Ursus] Operator gain <@ba.vup>+40%</> natural SP recovery speed (does not stack); when a [Ursus] Operator activates a skill, the other [Ursus] Operators gain ATK <@ba.vup>+{0:0.0%}</> (up to <@ba.vup>+{1:0%}</>)<@autochess.gray>(affected by no. of stacks)</> until the end of battle\n<With <@autochess.dgreen>6</> different [Ursus] Operators on field> the Operators on the 8 tiles around a [Ursus] Operator gain even greater <@ba.vup>natural SP recovery speed</> (does not stack); when a [Ursus] Operator carries <@ba.vup>1</> item, the damage of their attacks is increased; with <@ba.vup>2</> items, it is increased even further",
+        "_h": "g298ra"
+      },
+      "eff_9_01_e": {
+        "name": "Dong Mask",
+        "desc": "Lose 10% of current HP on skill activation; during that skill, ATK +30%",
+        "descRaw": "Lose <@ba.vdown>10%</> of current HP on skill activation; during that skill, ATK <@ba.vup>+30%</>",
+        "_h": "ewmzli"
+      },
+      "eff_9_02_e": {
+        "name": "Zanshin Flash",
+        "desc": "ATK +40%; if the carrier is a 【Dong】 operator: the operator's physical and arts damage converts to weakness damage; when carried with the Dong Mask: the first time HP falls below 50%, gain a shield of 50% of max HP",
+        "descRaw": "ATK <@ba.vup>+40%</>; if the carrier is a 【Dong】 operator: the operator's physical and arts damage converts to <@$ba.weaknessatk>weakness damage</>; when carried with the Dong Mask: the first time HP falls below 50%, gain a shield of <@ba.vup>50%</> of max HP",
+        "_h": "apm7a4"
+      },
+      "eff_9_03_e": {
+        "name": "Ursus Ration",
+        "desc": "Max HP +25%; every 5 seconds, restore 4% of max HP",
+        "descRaw": "Max HP <@ba.vup>+25%</>; every 5 seconds, restore <@ba.vup>4%</> of max HP",
+        "_h": "tbpoa2"
+      },
+      "eff_9_04_e": {
+        "name": "Tundra Roar",
+        "desc": "ATK +45%; if the carrier is a 【Ursus】 operator: ATK +4% for each other 【Ursus】 operator on the field (up to +20%); when carried with the Ursus Ration: the cap rises to +30%",
+        "descRaw": "ATK <@ba.vup>+45%</>; if the carrier is a 【Ursus】 operator: ATK <@ba.vup>+4%</> for each other 【Ursus】 operator on the field (up to <@ba.vup>+20%</>); when carried with the Ursus Ration: the cap rises to <@ba.vup>+30%</>",
+        "_h": "84dnwb"
+      }
+    }
+  },
+  "ja": {
+    "bonds": {
+      "dongShip": {
+        "name": "東",
+        "desc": "【東】オペレーターの攻撃によるダメージが上昇し、自身の失ったHP割合が低いほど（スタック数の影響）さらに上昇。加えて【死戦】を獲得：戦闘中初めて致命的なダメージを受けた際は撤退せず、1ポイントのHPを維持し、4秒後に撤退する\n【東】オペレーターがスキルを発動した時、すべての【東】オペレーターは現在HPの10%を失い、同量のバリアを獲得する\n<場に6体の異なる【東】オペレーター>【東】オペレーターの攻撃力が上昇し、スキル発動時すべての【東】オペレーターはさらに現在HPの15%を失い、同量のバリアを獲得する。現在HPが最大HPの50%未満の時、攻撃力がさらに上昇",
+        "descRaw": "【東】オペレーターの攻撃による<@ba.vup>ダメージ</>が上昇し、自身の<@ba.vup>失ったHP割合</>が低いほど<@autochess.gray>（スタック数の影響）</>さらに上昇。加えて【死戦】を獲得：戦闘中初めて<@ba.vup>致命的なダメージ</>を受けた際は撤退せず、<@ba.vup>1</>ポイントのHPを維持し、<@ba.vup>4</>秒後に撤退する\n【東】オペレーターがスキルを発動した時、すべての【東】オペレーターは現在HPの<@ba.vup>10%</>を失い、同量のバリアを獲得する\n<場に<@autochess.dgreen>6</>体の異なる【東】オペレーター>【東】オペレーターの<@ba.vup>攻撃力</>が上昇し、スキル発動時すべての【東】オペレーターはさらに現在HPの<@ba.vup>15%</>を失い、同量のバリアを獲得する。現在HPが最大HPの<@ba.vup>50%</>未満の時、攻撃力がさらに上昇",
+        "effectName": "東",
+        "effectDesc": "【東】オペレーターの攻撃によるダメージが{0:0%}まで上昇し、自身の失ったHP割合が低いほど（スタック数の影響）さらに上昇。加えて【死戦】を獲得：戦闘中初めて致命的なダメージを受けた際は撤退せず、1ポイントのHPを維持し、4秒後に撤退する\n【東】オペレーターがスキルを発動した時、すべての【東】オペレーターは現在HPの10%を失い、同量のバリアを獲得する\n<場に6体の異なる【東】オペレーター>【東】オペレーターの攻撃力+60%、スキル発動時すべての【東】オペレーターはさらに現在HPの15%を失い、同量のバリアを獲得する。現在HPが最大HPの50%未満の時、攻撃力がさらに+120%",
+        "effectDescRaw": "【東】オペレーターの攻撃によるダメージが<@ba.vup>{0:0%}</>まで上昇し、自身の<@ba.vup>失ったHP割合</>が低いほど<@autochess.gray>（スタック数の影響）</>さらに上昇。加えて【死戦】を獲得：戦闘中初めて<@ba.vup>致命的なダメージ</>を受けた際は撤退せず、<@ba.vup>1</>ポイントのHPを維持し、<@ba.vup>4</>秒後に撤退する\n【東】オペレーターがスキルを発動した時、すべての【東】オペレーターは現在HPの<@ba.vup>10%</>を失い、同量のバリアを獲得する\n<場に<@autochess.dgreen>6</>体の異なる【東】オペレーター>【東】オペレーターの攻撃力<@ba.vup>+60%</>、スキル発動時すべての【東】オペレーターはさらに現在HPの<@ba.vup>15%</>を失い、同量のバリアを獲得する。現在HPが最大HPの<@ba.vup>50%</>未満の時、攻撃力がさらに<@ba.vup>+120%</>",
+        "_h": "nv937jnv8yia"
+      },
+      "ursusShip": {
+        "name": "ウルサス",
+        "desc": "【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度が上昇する（重複しない）。【ウルサス】オペレーターがスキルを発動した時、他の【ウルサス】オペレーターの攻撃力が上昇する（スタック数の影響）。<場に6体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターはアイテムを1個装備時、攻撃によるダメージが上昇。2個装備時、さらに上昇\n<場に6体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度がさらに上昇する（重複しない）。アイテムを1個装備時、攻撃によるダメージが上昇。2個装備時、さらに上昇",
+        "descRaw": "【ウルサス】オペレーターの周囲8マスのオペレーターは<@ba.vup>自然SP回復速度</>が上昇する（重複しない）。【ウルサス】オペレーターがスキルを発動した時、他の【ウルサス】オペレーターの<@ba.vup>攻撃力</>が上昇する<@autochess.gray>（スタック数の影響）</>。<場に<@autochess.dgreen>6</>体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターはアイテムを<@ba.vup>1</>個装備時、<@ba.vup>攻撃によるダメージ</>が上昇。<@ba.vup>2</>個装備時、さらに上昇\n",
+        "effectName": "ウルサス",
+        "effectDesc": "【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度+40%（重複しない）。【ウルサス】オペレーターがスキルを発動した時、他の【ウルサス】オペレーターの攻撃力+{0:0.0%}（最大+{1:0%}）（スタック数の影響）。<場に6体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターはアイテムを1個装備時、攻撃によるダメージが150%まで上昇。2個装備時、225%まで上昇\n<場に6体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度+80%（重複しない）。アイテムを1個装備時、攻撃によるダメージが175%まで上昇。2個装備時、250%まで上昇",
+        "effectDescRaw": "【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度<@ba.vup>+40%</>（重複しない）。【ウルサス】オペレーターがスキルを発動した時、他の【ウルサス】オペレーターの攻撃力<@ba.vup>+{0:0.0%}</>（最大<@ba.vup>+{1:0%}</>）<@autochess.gray>（スタック数の影響）</>。<場に<@autochess.dgreen>6</>体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターはアイテムを<@ba.vup>1</>個装備時、攻撃によるダメージが<@ba.vup>150%</>まで上昇。<@ba.vup>2</>個装備時、<@ba.vup>225%</>まで上昇\n",
+        "_h": "g21lr4g298ra"
+      }
+    },
+    "garrisons": {
+      "garrison_980_a": {
+        "desc": "<戦闘中>ダメージを与える際、さらに自身の最大HPの75%分の確定ダメージを与える",
+        "descRaw": "<戦闘中>ダメージを与える際、さらに自身の最大HPの75%分の確定ダメージを与える",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "o7o73p"
+      },
+      "garrison_980_b": {
+        "desc": "<戦闘中>ダメージを与える際、さらに自身の最大HPの150%分の確定ダメージを与える",
+        "descRaw": "<戦闘中>ダメージを与える際、さらに自身の最大HPの150%分の確定ダメージを与える",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "wxwx3p"
+      },
+      "garrison_981_a": {
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
+        "eventTypeDesc": "持続スタック",
+        "_h": "nxnxmz"
+      },
+      "garrison_981_b": {
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
+        "eventTypeDesc": "持続スタック",
+        "_h": "0p0pmz"
+      },
+      "garrison_982_a": {
+        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+2（各戦闘で最大8層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+2（各戦闘で最大8層、同盟発動中のみ）",
+        "eventTypeDesc": "持続スタック",
+        "_h": "xsxsmz"
+      },
+      "garrison_982_b": {
+        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+4（各戦闘で最大16層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+4（各戦闘で最大16層、同盟発動中のみ）",
+        "eventTypeDesc": "持続スタック",
+        "_h": "m5m5mz"
+      },
+      "garrison_983_a": {
+        "desc": "<戦闘中>発動中の【ウルサス】と【精密】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
+        "descRaw": "<戦闘中>発動中の【ウルサス】と【精密】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "ququ3p"
+      },
+      "garrison_983_b": {
+        "desc": "<戦闘中>発動中の【ウルサス】と【精密】の同盟レベルの合計が3層ごとに、自身の攻撃力+2%",
+        "descRaw": "<戦闘中>発動中の【ウルサス】と【精密】の同盟レベルの合計が3層ごとに、自身の攻撃力+2%",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "jhjh3p"
+      },
+      "garrison_984_a": {
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
+        "eventTypeDesc": "持続スタック",
+        "_h": "3w3wmz"
+      },
+      "garrison_984_b": {
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
+        "eventTypeDesc": "持続スタック",
+        "_h": "8a8amz"
+      },
+      "garrison_985_a": {
+        "desc": "<戦闘中>発動中の【ウルサス】と【魔術】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
+        "descRaw": "<戦闘中>発動中の【ウルサス】と【魔術】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "sqsq3p"
+      },
+      "garrison_985_b": {
+        "desc": "<戦闘中>発動中の【ウルサス】と【魔術】の同盟レベルの合計が3層ごとに、自身の攻撃力+2%",
+        "descRaw": "<戦闘中>発動中の【ウルサス】と【魔術】の同盟レベルの合計が3層ごとに、自身の攻撃力+2%",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "htht3p"
+      },
+      "garrison_986_a": {
+        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "eventTypeDesc": "持続スタック",
+        "_h": "e5e5mz"
+      },
+      "garrison_986_b": {
+        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "eventTypeDesc": "持続スタック",
+        "_h": "2h2hmz"
+      },
+      "garrison_987_a": {
+        "desc": "<获得干员时>获得1个道具",
+        "descRaw": "<获得干员时>获得1个道具",
+        "eventTypeDesc": "単発スタック",
+        "_h": "cocojf"
+      },
+      "garrison_987_b": {
+        "desc": "<获得干员时>获得2个道具",
+        "descRaw": "<获得干员时>获得2个道具",
+        "eventTypeDesc": "単発スタック",
+        "_h": "n7n7jf"
+      },
+      "garrison_988_a": {
+        "desc": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+8スタック、【不屈】に+4スタック",
+        "descRaw": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+8スタック、【不屈】に+4スタック",
+        "eventTypeDesc": "重複可能",
+        "_h": "ninimz"
+      },
+      "garrison_988_b": {
+        "desc": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+16スタック、【不屈】に+8スタック",
+        "descRaw": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+16スタック、【不屈】に+8スタック",
+        "eventTypeDesc": "重複可能",
+        "_h": "ljljmz"
+      },
+      "garrison_989_a": {
+        "desc": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+8スタック",
+        "descRaw": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+8スタック",
+        "eventTypeDesc": "重複可能",
+        "_h": "5959mz"
+      },
+      "garrison_989_b": {
+        "desc": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+16スタック",
+        "descRaw": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+16スタック",
+        "eventTypeDesc": "重複可能",
+        "_h": "9m9mmz"
+      },
+      "garrison_990_a": {
+        "desc": "<獲得時>発動中の盟約のうち最も層の多いもの+3層",
+        "descRaw": "<獲得時>発動中の盟約のうち最も層の多いもの+3層",
+        "eventTypeDesc": "単発スタック",
+        "_h": "ununjf"
+      },
+      "garrison_990_b": {
+        "desc": "<獲得時>発動中の盟約のうち最も層の多いもの+6層",
+        "descRaw": "<獲得時>発動中の盟約のうち最も層の多いもの+6層",
+        "eventTypeDesc": "単発スタック",
+        "_h": "7272jf"
+      },
+      "garrison_991_a": {
+        "desc": "<獲得時>自身の所属盟約+6層（発動は不要）",
+        "descRaw": "<獲得時>自身の所属盟約+6層（発動は不要）",
+        "eventTypeDesc": "単発スタック",
+        "_h": "oioijf"
+      },
+      "garrison_991_b": {
+        "desc": "<獲得時>自身の所属盟約+12層（発動は不要）",
+        "descRaw": "<獲得時>自身の所属盟約+12層（発動は不要）",
+        "eventTypeDesc": "単発スタック",
+        "_h": "2x2xjf"
+      },
+      "garrison_992_a": {
+        "desc": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%、ただし毎秒100のHPを失う",
+        "descRaw": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%、ただし毎秒100のHPを失う",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "f5f53p"
+      },
+      "garrison_992_b": {
+        "desc": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+2%、ただし毎秒100のHPを失う",
+        "descRaw": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+2%、ただし毎秒100のHPを失う",
+        "eventTypeDesc": "戦闘能力",
+        "_h": "bmbm3p"
+      },
+      "garrison_07_a": {
+        "descRaw": "【エーギル】・【東】の合計加算数3ごとに、攻撃力<@ba.vup>+1%</>",
+        "desc": "【エーギル】・【東】の合計加算数3ごとに、攻撃力+1%",
+        "eventTypeDesc": "作戦能力",
+        "_h": "3jze3p"
+      },
+      "garrison_07_b": {
+        "descRaw": "【エーギル】・【東】の合計加算数3ごとに、攻撃力<@ba.vup>+2%</>",
+        "desc": "【エーギル】・【東】の合計加算数3ごとに、攻撃力+2%",
+        "eventTypeDesc": "作戦能力",
+        "_h": "rqoh3p"
+      }
+    },
+    "items": {
+      "chess_item_9_01_e_a": {
+        "name": "東国鬼面",
+        "effectName": "東国鬼面",
+        "desc": "スキル発動時、現在HPの10%を失い、そのスキルの間攻撃力+30%",
+        "descRaw": "スキル発動時、現在HPの<@ba.vdown>10%</>を失い、そのスキルの間攻撃力<@ba.vup>+30%</>",
+        "flavor": "東国の職人が彫った鬼面。身につけると遠い波の音が聞こえるという。\n「痛いか？ 痛ければいい——刀の速さは、その一口の息で決まる。」",
+        "_h": "ewewmzlih3"
+      },
+      "chess_item_9_01_e_b": {
+        "name": "東国鬼面",
+        "effectName": "東国鬼面",
+        "desc": "スキル発動時、現在HPの20%を失い、そのスキルの間攻撃力+45%",
+        "descRaw": "スキル発動時、現在HPの<@ba.vdown>20%</>を失い、そのスキルの間攻撃力<@ba.vup>+45%</>",
+        "flavor": "東国の職人が彫った鬼面。身につけると遠い波の音が聞こえるという。\n「痛いか？ 痛ければいい——刀の速さは、その一口の息で決まる。」",
+        "_h": "ewewz0mvh3"
+      },
+      "chess_item_9_02_e_a": {
+        "name": "残心一閃",
+        "effectName": "残心一閃",
+        "desc": "攻撃力+40%；【東】オペレーターが装備した場合：自身の物理・術ダメージが弱点ダメージに変化；東国鬼面と同時装備：HPが初めて50%未満になったとき、最大HPの50%分の屏障を獲得",
+        "descRaw": "攻撃力<@ba.vup>+40%</>；【東】オペレーターが装備した場合：自身の物理・術ダメージが<@$ba.weaknessatk>弱点ダメージ</>に変化；東国鬼面と同時装備：HPが初めて50%未満になったとき、最大HPの<@ba.vup>50%</>分の屏障を獲得",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "斬撃が決まった後の静止こそ、剣士が最も鋭くなる瞬間。\n「残心を乱すな——一閃で足りる。」",
+        "_h": "apapm7a4121n"
+      },
+      "chess_item_9_02_e_b": {
+        "name": "残心一閃",
+        "effectName": "残心一閃",
+        "desc": "攻撃力+60%；【東】オペレーターが装備した場合：自身の物理・術ダメージが弱点ダメージに変化；東国鬼面と同時装備：HPが初めて50%未満になったとき、最大HPの50%分の屏障を獲得",
+        "descRaw": "攻撃力<@ba.vup>+60%</>；【東】オペレーターが装備した場合：自身の物理・術ダメージが<@$ba.weaknessatk>弱点ダメージ</>に変化；東国鬼面と同時装備：HPが初めて50%未満になったとき、最大HPの<@ba.vup>50%</>分の屏障を獲得",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "斬撃が決まった後の静止こそ、剣士が最も鋭くなる瞬間。\n「残心を乱すな——一閃で足りる。」",
+        "_h": "apaps92i121n"
+      },
+      "chess_item_9_03_e_a": {
+        "name": "ウルサス軍糧",
+        "effectName": "ウルサス軍糧",
+        "desc": "最大HP+25%；5秒ごとに最大HPの4%を回復",
+        "descRaw": "最大HP<@ba.vup>+25%</>；5秒ごとに最大HPの<@ba.vup>4%</>を回復",
+        "flavor": "ウルサスの行軍食のブリキ缶。開けると凍てつく風が吹き抜ける。\n「食べ終わったら、出発だ。」",
+        "_h": "tbtbpoa2fx"
+      },
+      "chess_item_9_03_e_b": {
+        "name": "ウルサス軍糧",
+        "effectName": "ウルサス軍糧",
+        "desc": "最大HP+50%；5秒ごとに最大HPの5%を回復",
+        "descRaw": "最大HP<@ba.vup>+50%</>；5秒ごとに最大HPの<@ba.vup>5%</>を回復",
+        "flavor": "ウルサスの行軍食のブリキ缶。開けると凍てつく風が吹き抜ける。\n「食べ終わったら、出発だ。」",
+        "_h": "tbtbsfzzfx"
+      },
+      "chess_item_9_04_e_a": {
+        "name": "氷原の咆哮",
+        "effectName": "氷原の咆哮",
+        "desc": "攻撃力+45%；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力+4%（最大+20%）；ウルサス軍糧と同時装備：上限が+30%に上昇",
+        "descRaw": "攻撃力<@ba.vup>+45%</>；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力<@ba.vup>+4%</>（最大<@ba.vup>+20%</>）；ウルサス軍糧と同時装備：上限が<@ba.vup>+30%</>に上昇",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "ウルサスの荒原を吹き抜ける吹雪の音を、人々は大地の咆哮と呼ぶ。\n「雪が止むまで、誰も我らを屈させられぬ。」",
+        "_h": "8484dnwbo6re"
+      },
+      "chess_item_9_04_e_b": {
+        "name": "氷原の咆哮",
+        "effectName": "氷原の咆哮",
+        "desc": "攻撃力+65%；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力+6%（最大+30%）；ウルサス軍糧と同時装備：上限が+45%に上昇",
+        "descRaw": "攻撃力<@ba.vup>+65%</>；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力<@ba.vup>+6%</>（最大<@ba.vup>+30%</>）；ウルサス軍糧と同時装備：上限が<@ba.vup>+45%</>に上昇",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "ウルサスの荒原を吹き抜ける吹雪の音を、人々は大地の咆哮と呼ぶ。\n「雪が止むまで、誰も我らを屈させられぬ。」",
+        "_h": "84842sg2o6re"
+      }
+    },
+    "effects": {
+      "bondeffect_dong": {
+        "name": "東",
+        "desc": "【東】オペレーターの攻撃によるダメージが{0:0%}まで上昇し、自身の失ったHP割合が低いほど（スタック数の影響）さらに上昇。加えて【死戦】を獲得：戦闘中初めて致命的なダメージを受けた際は撤退せず、1ポイントのHPを維持し、4秒後に撤退する\n【東】オペレーターがスキルを発動した時、すべての【東】オペレーターは現在HPの10%を失い、同量のバリアを獲得する\n<場に6体の異なる【東】オペレーター>【東】オペレーターの攻撃力+60%、スキル発動時すべての【東】オペレーターはさらに現在HPの15%を失い、同量のバリアを獲得する。現在HPが最大HPの50%未満の時、攻撃力がさらに+120%",
+        "descRaw": "【東】オペレーターの攻撃によるダメージが<@ba.vup>{0:0%}</>まで上昇し、自身の<@ba.vup>失ったHP割合</>が低いほど<@autochess.gray>（スタック数の影響）</>さらに上昇。加えて【死戦】を獲得：戦闘中初めて<@ba.vup>致命的なダメージ</>を受けた際は撤退せず、<@ba.vup>1</>ポイントのHPを維持し、<@ba.vup>4</>秒後に撤退する\n【東】オペレーターがスキルを発動した時、すべての【東】オペレーターは現在HPの<@ba.vup>10%</>を失い、同量のバリアを獲得する\n<場に<@autochess.dgreen>6</>体の異なる【東】オペレーター>【東】オペレーターの攻撃力<@ba.vup>+60%</>、スキル発動時すべての【東】オペレーターはさらに現在HPの<@ba.vup>15%</>を失い、同量のバリアを獲得する。現在HPが最大HPの<@ba.vup>50%</>未満の時、攻撃力がさらに<@ba.vup>+120%</>",
+        "_h": "nv8yia"
+      },
+      "bondeffect_ursus": {
+        "name": "ウルサス",
+        "desc": "【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度+40%（重複しない）。【ウルサス】オペレーターがスキルを発動した時、他の【ウルサス】オペレーターの攻撃力+{0:0.0%}（最大+{1:0%}）（スタック数の影響）。<場に6体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターはアイテムを1個装備時、攻撃によるダメージが150%まで上昇。2個装備時、225%まで上昇\n<場に6体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度がさらに上昇する（重複しない）。アイテムを1個装備時、攻撃によるダメージが上昇。2個装備時、さらに上昇",
+        "descRaw": "【ウルサス】オペレーターの周囲8マスのオペレーターは自然SP回復速度<@ba.vup>+40%</>（重複しない）。【ウルサス】オペレーターがスキルを発動した時、他の【ウルサス】オペレーターの攻撃力<@ba.vup>+{0:0.0%}</>（最大<@ba.vup>+{1:0%}</>）<@autochess.gray>（スタック数の影響）</>。<場に<@autochess.dgreen>6</>体の異なる【ウルサス】オペレーター>【ウルサス】オペレーターはアイテムを<@ba.vup>1</>個装備時、攻撃によるダメージが<@ba.vup>150%</>まで上昇。<@ba.vup>2</>個装備時、<@ba.vup>225%</>まで上昇\n",
+        "_h": "g298ra"
+      },
+      "eff_9_01_e": {
+        "name": "東国鬼面",
+        "desc": "スキル発動時、現在HPの10%を失い、そのスキルの間攻撃力+30%",
+        "descRaw": "スキル発動時、現在HPの<@ba.vdown>10%</>を失い、そのスキルの間攻撃力<@ba.vup>+30%</>",
+        "_h": "ewmzli"
+      },
+      "eff_9_02_e": {
+        "name": "残心一閃",
+        "desc": "攻撃力+40%；【東】オペレーターが装備した場合：自身の物理・術ダメージが弱点ダメージに変化；東国鬼面と同時装備：HPが初めて50%未満になったとき、最大HPの50%分の屏障を獲得",
+        "descRaw": "攻撃力<@ba.vup>+40%</>；【東】オペレーターが装備した場合：自身の物理・術ダメージが<@$ba.weaknessatk>弱点ダメージ</>に変化；東国鬼面と同時装備：HPが初めて50%未満になったとき、最大HPの<@ba.vup>50%</>分の屏障を獲得",
+        "_h": "apm7a4"
+      },
+      "eff_9_03_e": {
+        "name": "ウルサス軍糧",
+        "desc": "最大HP+25%；5秒ごとに最大HPの4%を回復",
+        "descRaw": "最大HP<@ba.vup>+25%</>；5秒ごとに最大HPの<@ba.vup>4%</>を回復",
+        "_h": "tbpoa2"
+      },
+      "eff_9_04_e": {
+        "name": "氷原の咆哮",
+        "desc": "攻撃力+45%；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力+4%（最大+20%）；ウルサス軍糧と同時装備：上限が+30%に上昇",
+        "descRaw": "攻撃力<@ba.vup>+45%</>；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力<@ba.vup>+4%</>（最大<@ba.vup>+20%</>）；ウルサス軍糧と同時装備：上限が<@ba.vup>+30%</>に上昇",
+        "_h": "84dnwb"
+      }
+    }
+  },
+  "ko": {
+    "bonds": {
+      "dongShip": {
+        "name": "동",
+        "desc": "[동] 오퍼레이터의 공격이 주는 피해가 증가하며, 자신의 잃은 HP 비율이 높을수록 피해가 더 증가합니다(스택 수의 영향). 또한 [결사] 획득: 전투 중 처음으로 치명적인 피해를 받을 시 철수하지 않고 HP 1포인트를 유지하며, 4초 후 철수합니다\n[동] 오퍼레이터가 스킬을 발동할 때, 모든 [동] 오퍼레이터는 현재 HP의 10%를 잃고 동량의 방어막을 획득합니다\n<필드에 서로 다른 [동] 오퍼레이터 6명> [동] 오퍼레이터의 공격력이 증가하며, 스킬 발동 시 모든 [동] 오퍼레이터는 추가로 현재 HP의 15%를 잃고 동량의 방어막을 획득합니다. 현재 HP가 최대 HP의 50% 미만일 때 공격력이 추가로 증가",
+        "descRaw": "[동] 오퍼레이터의 공격이 주는 <@ba.vup>피해</>가 증가하며, 자신의 <@ba.vup>잃은 HP 비율</>이 높을수록 <@autochess.gray>(스택 수의 영향)</> 피해가 더 증가합니다. 또한 [결사] 획득: 전투 중 처음으로 <@ba.vup>치명적인 피해</>를 받을 시 철수하지 않고 HP <@ba.vup>1</>포인트를 유지하며, <@ba.vup>4</>초 후 철수합니다\n[동] 오퍼레이터가 스킬을 발동할 때, 모든 [동] 오퍼레이터는 현재 HP의 <@ba.vup>10%</>를 잃고 동량의 방어막을 획득합니다\n<필드에 서로 다른 [동] 오퍼레이터 <@autochess.dgreen>6</>명> [동] 오퍼레이터의 <@ba.vup>공격력</>이 증가하며, 스킬 발동 시 모든 [동] 오퍼레이터는 추가로 현재 HP의 <@ba.vup>15%</>를 잃고 동량의 방어막을 획득합니다. 현재 HP가 최대 HP의 <@ba.vup>50%</> 미만일 때 공격력이 추가로 증가",
+        "effectName": "동",
+        "effectDesc": "[동] 오퍼레이터의 공격이 {0:0%}의 피해를 주며, 자신의 잃은 HP 비율이 높을수록 피해가 더 증가합니다(스택 수의 영향). 또한 [결사] 획득: 전투 중 처음으로 치명적인 피해를 받을 시 철수하지 않고 HP 1포인트를 유지하며, 4초 후 철수합니다\n[동] 오퍼레이터가 스킬을 발동할 때, 모든 [동] 오퍼레이터는 현재 HP의 10%를 잃고 동량의 방어막을 획득합니다\n<필드에 서로 다른 [동] 오퍼레이터 6명> [동] 오퍼레이터의 공격력 +60%, 스킬 발동 시 모든 [동] 오퍼레이터는 추가로 현재 HP의 15%를 잃고 동량의 방어막을 획득합니다. 현재 HP가 최대 HP의 50% 미만일 때 공격력이 추가로 +120%",
+        "effectDescRaw": "[동] 오퍼레이터의 공격이 <@ba.vup>{0:0%}</>의 피해를 주며, 자신의 <@ba.vup>잃은 HP 비율</>이 높을수록 <@autochess.gray>(스택 수의 영향)</> 피해가 더 증가합니다. 또한 [결사] 획득: 전투 중 처음으로 <@ba.vup>치명적인 피해</>를 받을 시 철수하지 않고 HP <@ba.vup>1</>포인트를 유지하며, <@ba.vup>4</>초 후 철수합니다\n[동] 오퍼레이터가 스킬을 발동할 때, 모든 [동] 오퍼레이터는 현재 HP의 <@ba.vup>10%</>를 잃고 동량의 방어막을 획득합니다\n<필드에 서로 다른 [동] 오퍼레이터 <@autochess.dgreen>6</>명> [동] 오퍼레이터의 공격력 <@ba.vup>+60%</>, 스킬 발동 시 모든 [동] 오퍼레이터는 추가로 현재 HP의 <@ba.vup>15%</>를 잃고 동량의 방어막을 획득합니다. 현재 HP가 최대 HP의 <@ba.vup>50%</> 미만일 때 공격력이 추가로 <@ba.vup>+120%</>",
+        "_h": "nv937jnv8yia"
+      },
+      "ursusShip": {
+        "name": "우르사스",
+        "desc": "[우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도가 증가합니다(중복 불가). [우르사스] 오퍼레이터가 스킬을 발동할 때, 다른 [우르사스] 오퍼레이터의 공격력이 증가합니다(스택 수의 영향)\n<필드에 서로 다른 [우르사스] 오퍼레이터 6명> [우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도가 추가로 증가합니다(중복 불가). 아이템 1개 장착 시 공격이 주는 피해가 증가하며, 2개 장착 시 추가로 증가",
+        "descRaw": "[우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 <@ba.vup>자연 SP 회복 속도</>가 증가합니다(중복 불가). [우르사스] 오퍼레이터가 스킬을 발동할 때, 다른 [우르사스] 오퍼레이터의 <@ba.vup>공격력</>이 증가합니다<@autochess.gray>(스택 수의 영향)</>\n",
+        "effectName": "우르사스",
+        "effectDesc": "[우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도 +40%(중복 불가). [우르사스] 오퍼레이터가 스킬을 발동할 때, 다른 [우르사스] 오퍼레이터의 공격력 +{0:0.0%}(최대 +{1:0%})(스택 수의 영향)\n<필드에 서로 다른 [우르사스] 오퍼레이터 6명> [우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도 +80%(중복 불가). 아이템 1개 장착 시 공격이 주는 피해가 175%까지 증가하며, 2개 장착 시 250%까지 증가",
+        "effectDescRaw": "[우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도 <@ba.vup>+40%</>(중복 불가). [우르사스] 오퍼레이터가 스킬을 발동할 때, 다른 [우르사스] 오퍼레이터의 공격력 <@ba.vup>+{0:0.0%}</>(최대 <@ba.vup>+{1:0%}</>)<@autochess.gray>(스택 수의 영향)</>\n",
+        "_h": "g21lr4g298ra"
+      }
+    },
+    "garrisons": {
+      "garrison_980_a": {
+        "desc": "<전투 중> 피해를 줄 때, 자신의 최대 체력의 75%만큼 추가 트루 대미지를 입힘",
+        "descRaw": "<전투 중> 피해를 줄 때, 자신의 최대 체력의 75%만큼 추가 트루 대미지를 입힘",
+        "eventTypeDesc": "전투 능력",
+        "_h": "o7o73p"
+      },
+      "garrison_980_b": {
+        "desc": "<전투 중> 피해를 줄 때, 자신의 최대 체력의 150%만큼 추가 트루 대미지를 입힘",
+        "descRaw": "<전투 중> 피해를 줄 때, 자신의 최대 체력의 150%만큼 추가 트루 대미지를 입힘",
+        "eventTypeDesc": "전투 능력",
+        "_h": "wxwx3p"
+      },
+      "garrison_981_a": {
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
+        "eventTypeDesc": "지속 스택",
+        "_h": "nxnxmz"
+      },
+      "garrison_981_b": {
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
+        "eventTypeDesc": "지속 스택",
+        "_h": "0p0pmz"
+      },
+      "garrison_982_a": {
+        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +2（전투당 최대 8층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +2（전투당 최대 8층, 동맹 발동 필요）",
+        "eventTypeDesc": "지속 스택",
+        "_h": "xsxsmz"
+      },
+      "garrison_982_b": {
+        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +4（전투당 최대 16층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +4（전투당 최대 16층, 동맹 발동 필요）",
+        "eventTypeDesc": "지속 스택",
+        "_h": "m5m5mz"
+      },
+      "garrison_983_a": {
+        "desc": "<전투 중> 발동 중인 【우르서스】와 【정밀】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
+        "descRaw": "<전투 중> 발동 중인 【우르서스】와 【정밀】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
+        "eventTypeDesc": "전투 능력",
+        "_h": "ququ3p"
+      },
+      "garrison_983_b": {
+        "desc": "<전투 중> 발동 중인 【우르서스】와 【정밀】 동맹 레이어의 합계가 3층마다 자신의 공격력 +2%",
+        "descRaw": "<전투 중> 발동 중인 【우르서스】와 【정밀】 동맹 레이어의 합계가 3층마다 자신의 공격력 +2%",
+        "eventTypeDesc": "전투 능력",
+        "_h": "jhjh3p"
+      },
+      "garrison_984_a": {
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
+        "eventTypeDesc": "지속 스택",
+        "_h": "3w3wmz"
+      },
+      "garrison_984_b": {
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
+        "eventTypeDesc": "지속 스택",
+        "_h": "8a8amz"
+      },
+      "garrison_985_a": {
+        "desc": "<전투 중> 발동 중인 【우르서스】와 【비술】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
+        "descRaw": "<전투 중> 발동 중인 【우르서스】와 【비술】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
+        "eventTypeDesc": "전투 능력",
+        "_h": "sqsq3p"
+      },
+      "garrison_985_b": {
+        "desc": "<전투 중> 발동 중인 【우르서스】와 【비술】 동맹 레이어의 합계가 3층마다 자신의 공격력 +2%",
+        "descRaw": "<전투 중> 발동 중인 【우르서스】와 【비술】 동맹 레이어의 합계가 3층마다 자신의 공격력 +2%",
+        "eventTypeDesc": "전투 능력",
+        "_h": "htht3p"
+      },
+      "garrison_986_a": {
+        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "eventTypeDesc": "지속 스택",
+        "_h": "e5e5mz"
+      },
+      "garrison_986_b": {
+        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "eventTypeDesc": "지속 스택",
+        "_h": "2h2hmz"
+      },
+      "garrison_987_a": {
+        "desc": "<获得干员时>获得1个道具",
+        "descRaw": "<获得干员时>获得1个道具",
+        "eventTypeDesc": "단발 스택",
+        "_h": "cocojf"
+      },
+      "garrison_987_b": {
+        "desc": "<获得干员时>获得2个道具",
+        "descRaw": "<获得干员时>获得2个道具",
+        "eventTypeDesc": "단발 스택",
+        "_h": "n7n7jf"
+      },
+      "garrison_988_a": {
+        "desc": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +8스택, [불굴] +4스택",
+        "descRaw": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +8스택, [불굴] +4스택",
+        "eventTypeDesc": "중복 가능",
+        "_h": "ninimz"
+      },
+      "garrison_988_b": {
+        "desc": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +16스택, [불굴] +8스택",
+        "descRaw": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +16스택, [불굴] +8스택",
+        "eventTypeDesc": "중복 가능",
+        "_h": "ljljmz"
+      },
+      "garrison_989_a": {
+        "desc": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +8스택",
+        "descRaw": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +8스택",
+        "eventTypeDesc": "중복 가능",
+        "_h": "5959mz"
+      },
+      "garrison_989_b": {
+        "desc": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +16스택",
+        "descRaw": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +16스택",
+        "eventTypeDesc": "중복 가능",
+        "_h": "9m9mmz"
+      },
+      "garrison_990_a": {
+        "desc": "<획득 시> 발동 중인 동맹 중 가장 많은 레이어의 동맹 +3레이어",
+        "descRaw": "<획득 시> 발동 중인 동맹 중 가장 많은 레이어의 동맹 +3레이어",
+        "eventTypeDesc": "단발 스택",
+        "_h": "ununjf"
+      },
+      "garrison_990_b": {
+        "desc": "<획득 시> 발동 중인 동맹 중 가장 많은 레이어의 동맹 +6레이어",
+        "descRaw": "<획득 시> 발동 중인 동맹 중 가장 많은 레이어의 동맹 +6레이어",
+        "eventTypeDesc": "단발 스택",
+        "_h": "7272jf"
+      },
+      "garrison_991_a": {
+        "desc": "<획득 시> 자신의 소속 동맹 +6레이어 (발동 불필요)",
+        "descRaw": "<획득 시> 자신의 소속 동맹 +6레이어 (발동 불필요)",
+        "eventTypeDesc": "단발 스택",
+        "_h": "oioijf"
+      },
+      "garrison_991_b": {
+        "desc": "<획득 시> 자신의 소속 동맹 +12레이어 (발동 불필요)",
+        "descRaw": "<획득 시> 자신의 소속 동맹 +12레이어 (발동 불필요)",
+        "eventTypeDesc": "단발 스택",
+        "_h": "2x2xjf"
+      },
+      "garrison_992_a": {
+        "desc": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +1%, 대신 매초 HP 100을 잃음",
+        "descRaw": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +1%, 대신 매초 HP 100을 잃음",
+        "eventTypeDesc": "전투 능력",
+        "_h": "f5f53p"
+      },
+      "garrison_992_b": {
+        "desc": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +2%, 대신 매초 HP 100을 잃음",
+        "descRaw": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +2%, 대신 매초 HP 100을 잃음",
+        "eventTypeDesc": "전투 능력",
+        "_h": "bmbm3p"
+      },
+      "garrison_07_a": {
+        "descRaw": "[에기르]/[동] 맹약이 3회 중첩할 때마다 공격력 <@ba.vup>+1%</>",
+        "desc": "[에기르]/[동] 맹약이 3회 중첩할 때마다 공격력 +1%",
+        "eventTypeDesc": "작전 능력",
+        "_h": "3jze3p"
+      },
+      "garrison_07_b": {
+        "descRaw": "[에기르]/[동] 맹약이 3회 중첩할 때마다 공격력 <@ba.vup>+2%</>",
+        "desc": "[에기르]/[동] 맹약이 3회 중첩할 때마다 공격력 +2%",
+        "eventTypeDesc": "작전 능력",
+        "_h": "rqoh3p"
+      }
+    },
+    "items": {
+      "chess_item_9_01_e_a": {
+        "name": "동국귀면",
+        "effectName": "동국귀면",
+        "desc": "스킬 발동 시 현재 체력의 10%를 잃고, 그 스킬 동안 공격력 +30%",
+        "descRaw": "스킬 발동 시 현재 체력의 <@ba.vdown>10%</>를 잃고, 그 스킬 동안 공격력 <@ba.vup>+30%</>",
+        "flavor": "동국 장인이 조각한 귀면. 쓰면 먼 파도 소리가 들린다고 한다.\n\"아픈가? 아프면 됐어——칼이 빠른가는 그 한 숨으로 정해지지.\"",
+        "_h": "ewewmzlih3"
+      },
+      "chess_item_9_01_e_b": {
+        "name": "동국귀면",
+        "effectName": "동국귀면",
+        "desc": "스킬 발동 시 현재 체력의 20%를 잃고, 그 스킬 동안 공격력 +45%",
+        "descRaw": "스킬 발동 시 현재 체력의 <@ba.vdown>20%</>를 잃고, 그 스킬 동안 공격력 <@ba.vup>+45%</>",
+        "flavor": "동국 장인이 조각한 귀면. 쓰면 먼 파도 소리가 들린다고 한다.\n\"아픈가? 아프면 됐어——칼이 빠른가는 그 한 숨으로 정해지지.\"",
+        "_h": "ewewz0mvh3"
+      },
+      "chess_item_9_02_e_a": {
+        "name": "잔심일섬",
+        "effectName": "잔심일섬",
+        "desc": "공격력 +40%；【동】 오퍼레이터가 장착한 경우: 자신의 물리·술 피해가 약점 피해로 전환; 동국귀면과 함께 장착 시: HP가 처음으로 50% 미만이 되었을 때 최대 체력의 50%만큼 보호막 획득",
+        "descRaw": "공격력 <@ba.vup>+40%</>；【동】 오퍼레이터가 장착한 경우: 자신의 물리·술 피해가 <@$ba.weaknessatk>약점 피해</>로 전환; 동국귀면과 함께 장착 시: HP가 처음으로 50% 미만이 되었을 때 최대 체력의 <@ba.vup>50%</>만큼 보호막 획득",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "베기가 끝난 뒤의 정지야말로 검사가 가장 날카로워지는 순간.\n\"잔심을 흐트러뜨리지 마라——일섬이면 충분하다.\"",
+        "_h": "apapm7a4121n"
+      },
+      "chess_item_9_02_e_b": {
+        "name": "잔심일섬",
+        "effectName": "잔심일섬",
+        "desc": "공격력 +60%；【동】 오퍼레이터가 장착한 경우: 자신의 물리·술 피해가 약점 피해로 전환; 동국귀면과 함께 장착 시: HP가 처음으로 50% 미만이 되었을 때 최대 체력의 50%만큼 보호막 획득",
+        "descRaw": "공격력 <@ba.vup>+60%</>；【동】 오퍼레이터가 장착한 경우: 자신의 물리·술 피해가 <@$ba.weaknessatk>약점 피해</>로 전환; 동국귀면과 함께 장착 시: HP가 처음으로 50% 미만이 되었을 때 최대 체력의 <@ba.vup>50%</>만큼 보호막 획득",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "베기가 끝난 뒤의 정지야말로 검사가 가장 날카로워지는 순간.\n\"잔심을 흐트러뜨리지 마라——일섬이면 충분하다.\"",
+        "_h": "apaps92i121n"
+      },
+      "chess_item_9_03_e_a": {
+        "name": "우르서스군량",
+        "effectName": "우르서스군량",
+        "desc": "최대 체력 +25%；5초마다 최대 체력의 4% 회복",
+        "descRaw": "최대 체력 <@ba.vup>+25%</>；5초마다 최대 체력의 <@ba.vup>4%</> 회복",
+        "flavor": "우르서스 행군용 철관. 열면 매서운 바람이 불어나온다.\n\"다 먹었으면, 이제 떠날 시간이다.\"",
+        "_h": "tbtbpoa2fx"
+      },
+      "chess_item_9_03_e_b": {
+        "name": "우르서스군량",
+        "effectName": "우르서스군량",
+        "desc": "최대 체력 +50%；5초마다 최대 체력의 5% 회복",
+        "descRaw": "최대 체력 <@ba.vup>+50%</>；5초마다 최대 체력의 <@ba.vup>5%</> 회복",
+        "flavor": "우르서스 행군용 철관. 열면 매서운 바람이 불어나온다.\n\"다 먹었으면, 이제 떠날 시간이다.\"",
+        "_h": "tbtbsfzzfx"
+      },
+      "chess_item_9_04_e_a": {
+        "name": "설원의 포효",
+        "effectName": "설원의 포효",
+        "desc": "공격력 +45%；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 +4%（최대 +20%）；우르서스군량과 함께 장착 시: 상한이 +30%로 상승",
+        "descRaw": "공격력 <@ba.vup>+45%</>；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 <@ba.vup>+4%</>（최대 <@ba.vup>+20%</>）；우르서스군량과 함께 장착 시: 상한이 <@ba.vup>+30%</>로 상승",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "우르서스 설원을 휩쓰는 눈보라 소리를, 사람들은 대지의 포효라 부른다.\n\"눈이 멎기 전까지, 우리를 꿇릴 수 있는 자는 없다.\"",
+        "_h": "8484dnwbo6re"
+      },
+      "chess_item_9_04_e_b": {
+        "name": "설원의 포효",
+        "effectName": "설원의 포효",
+        "desc": "공격력 +65%；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 +6%（최대 +30%）；우르서스군량과 함께 장착 시: 상한이 +45%로 상승",
+        "descRaw": "공격력 <@ba.vup>+65%</>；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 <@ba.vup>+6%</>（최대 <@ba.vup>+30%</>）；우르서스군량과 함께 장착 시: 상한이 <@ba.vup>+45%</>로 상승",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "우르서스 설원을 휩쓰는 눈보라 소리를, 사람들은 대지의 포효라 부른다.\n\"눈이 멎기 전까지, 우리를 꿇릴 수 있는 자는 없다.\"",
+        "_h": "84842sg2o6re"
+      }
+    },
+    "effects": {
+      "bondeffect_dong": {
+        "name": "동",
+        "desc": "[동] 오퍼레이터의 공격이 {0:0%}의 피해를 주며, 자신의 잃은 HP 비율이 높을수록 피해가 더 증가합니다(스택 수의 영향). 또한 [결사] 획득: 전투 중 처음으로 치명적인 피해를 받을 시 철수하지 않고 HP 1포인트를 유지하며, 4초 후 철수합니다\n[동] 오퍼레이터가 스킬을 발동할 때, 모든 [동] 오퍼레이터는 현재 HP의 10%를 잃고 동량의 방어막을 획득합니다\n<필드에 서로 다른 [동] 오퍼레이터 6명> [동] 오퍼레이터의 공격력 +60%, 스킬 발동 시 모든 [동] 오퍼레이터는 추가로 현재 HP의 15%를 잃고 동량의 방어막을 획득합니다. 현재 HP가 최대 HP의 50% 미만일 때 공격력이 추가로 +120%",
+        "descRaw": "[동] 오퍼레이터의 공격이 <@ba.vup>{0:0%}</>의 피해를 주며, 자신의 <@ba.vup>잃은 HP 비율</>이 높을수록 <@autochess.gray>(스택 수의 영향)</> 피해가 더 증가합니다. 또한 [결사] 획득: 전투 중 처음으로 <@ba.vup>치명적인 피해</>를 받을 시 철수하지 않고 HP <@ba.vup>1</>포인트를 유지하며, <@ba.vup>4</>초 후 철수합니다\n[동] 오퍼레이터가 스킬을 발동할 때, 모든 [동] 오퍼레이터는 현재 HP의 <@ba.vup>10%</>를 잃고 동량의 방어막을 획득합니다\n<필드에 서로 다른 [동] 오퍼레이터 <@autochess.dgreen>6</>명> [동] 오퍼레이터의 공격력 <@ba.vup>+60%</>, 스킬 발동 시 모든 [동] 오퍼레이터는 추가로 현재 HP의 <@ba.vup>15%</>를 잃고 동량의 방어막을 획득합니다. 현재 HP가 최대 HP의 <@ba.vup>50%</> 미만일 때 공격력이 추가로 <@ba.vup>+120%</>",
+        "_h": "nv8yia"
+      },
+      "bondeffect_ursus": {
+        "name": "우르사스",
+        "desc": "[우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도 +40%(중복 불가). [우르사스] 오퍼레이터가 스킬을 발동할 때, 다른 [우르사스] 오퍼레이터의 공격력 +{0:0.0%}(최대 +{1:0%})(스택 수의 영향)\n<필드에 서로 다른 [우르사스] 오퍼레이터 6명> [우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도가 추가로 증가합니다(중복 불가). 아이템 1개 장착 시 공격이 주는 피해가 증가하며, 2개 장착 시 추가로 증가",
+        "descRaw": "[우르사스] 오퍼레이터의 주변 8칸의 오퍼레이터는 자연 SP 회복 속도 <@ba.vup>+40%</>(중복 불가). [우르사스] 오퍼레이터가 스킬을 발동할 때, 다른 [우르사스] 오퍼레이터의 공격력 <@ba.vup>+{0:0.0%}</>(최대 <@ba.vup>+{1:0%}</>)<@autochess.gray>(스택 수의 영향)</>\n",
+        "_h": "g298ra"
+      },
+      "eff_9_01_e": {
+        "name": "동국귀면",
+        "desc": "스킬 발동 시 현재 체력의 10%를 잃고, 그 스킬 동안 공격력 +30%",
+        "descRaw": "스킬 발동 시 현재 체력의 <@ba.vdown>10%</>를 잃고, 그 스킬 동안 공격력 <@ba.vup>+30%</>",
+        "_h": "ewmzli"
+      },
+      "eff_9_02_e": {
+        "name": "잔심일섬",
+        "desc": "공격력 +40%；【동】 오퍼레이터가 장착한 경우: 자신의 물리·술 피해가 약점 피해로 전환; 동국귀면과 함께 장착 시: HP가 처음으로 50% 미만이 되었을 때 최대 체력의 50%만큼 보호막 획득",
+        "descRaw": "공격력 <@ba.vup>+40%</>；【동】 오퍼레이터가 장착한 경우: 자신의 물리·술 피해가 <@$ba.weaknessatk>약점 피해</>로 전환; 동국귀면과 함께 장착 시: HP가 처음으로 50% 미만이 되었을 때 최대 체력의 <@ba.vup>50%</>만큼 보호막 획득",
+        "_h": "apm7a4"
+      },
+      "eff_9_03_e": {
+        "name": "우르서스군량",
+        "desc": "최대 체력 +25%；5초마다 최대 체력의 4% 회복",
+        "descRaw": "최대 체력 <@ba.vup>+25%</>；5초마다 최대 체력의 <@ba.vup>4%</> 회복",
+        "_h": "tbpoa2"
+      },
+      "eff_9_04_e": {
+        "name": "설원의 포효",
+        "desc": "공격력 +45%；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 +4%（최대 +20%）；우르서스군량과 함께 장착 시: 상한이 +30%로 상승",
+        "descRaw": "공격력 <@ba.vup>+45%</>；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 <@ba.vup>+4%</>（최대 <@ba.vup>+20%</>）；우르서스군량과 함께 장착 시: 상한이 <@ba.vup>+30%</>로 상승",
+        "_h": "84dnwb"
+      }
+    }
+  },
+  "zh-TW": {
+    "bonds": {
+      "dongShip": {
+        "name": "東",
+        "desc": "【東】幹員攻擊造成的傷害提升，自身已損失生命比例越高，攻擊造成傷害越高（受層數影響），並獲得【死戰】：戰鬥中首次受到致命傷害時不撤退，保留1點生命，持續4秒，持續時間結束後撤退\n【東】幹員開啟技能時，所有【東】幹員失去10%當前生命值並轉化為等量屏障\n<在場6名不同【東】幹員>【東】幹員攻擊力提升，開啟技能時所有【東】幹員額外失去15%當前生命並轉化為等量屏障；當前生命低於50%時，攻擊力額外提升",
+        "descRaw": "【東】幹員<@ba.vup>攻擊造成的傷害</>提升，自身<@ba.vup>已損失生命比例</>越高，攻擊造成傷害越高<@autochess.gray>（受層數影響）</>，並獲得【死戰】：戰鬥中首次受到<@ba.vup>致命傷害</>時不撤退，保留<@ba.vup>1</>點生命，持續<@ba.vup>4</>秒，持續時間結束後撤退\n【東】幹員開啟技能時，所有【東】幹員失去<@ba.vup>10%</>當前生命值並轉化為等量屏障\n<在場<@autochess.dgreen>6</>名不同【東】幹員>【東】幹員<@ba.vup>攻擊力</>提升，開啟技能時所有【東】幹員額外失去<@ba.vup>15%</>當前生命並轉化為等量屏障；當前生命低於<@ba.vup>50%</>時，攻擊力額外提升",
+        "effectName": "東",
+        "effectDesc": "【東】幹員攻擊造成的傷害提升至{0:0%}，自身已損失生命比例越高，攻擊造成傷害越高（受層數影響），並獲得【死戰】：戰鬥中首次受到致命傷害時不撤退，保留1點生命，持續4秒，持續時間結束後撤退\n【東】幹員開啟技能時，所有【東】幹員失去10%當前生命值並轉化為等量屏障\n<在場6名不同【東】幹員>【東】幹員攻擊力+60%，開啟技能時所有【東】幹員額外失去15%當前生命並轉化為等量屏障；當前生命低於50%時，攻擊力額外+120%",
+        "effectDescRaw": "【東】幹員攻擊造成的傷害提升至<@ba.vup>{0:0%}</>，自身<@ba.vup>已損失生命比例</>越高，攻擊造成傷害越高<@autochess.gray>（受層數影響）</>，並獲得【死戰】：戰鬥中首次受到<@ba.vup>致命傷害</>時不撤退，保留<@ba.vup>1</>點生命，持續<@ba.vup>4</>秒，持續時間結束後撤退\n【東】幹員開啟技能時，所有【東】幹員失去<@ba.vup>10%</>當前生命值並轉化為等量屏障\n<在場<@autochess.dgreen>6</>名不同【東】幹員>【東】幹員攻擊力<@ba.vup>+60%</>，開啟技能時所有【東】幹員額外失去<@ba.vup>15%</>當前生命並轉化為等量屏障；當前生命低於<@ba.vup>50%</>時，攻擊力額外<@ba.vup>+120%</>",
+        "_h": "nv937jnv8yia"
+      },
+      "ursusShip": {
+        "name": "烏薩斯",
+        "desc": "【烏薩斯】幹員周圍八格的幹員自然技力恢復速度提升（不疊加），開啟技能時，其他烏薩斯幹員攻擊力提升（受層數影響）\n<在場6名不同【烏薩斯】幹員>【烏薩斯】幹員周圍八格的幹員自然技力恢復速度進一步提升（不疊加），裝備1個道具時，攻擊造成的傷害提升；裝備2個道具時，攻擊造成的傷害進一步提升",
+        "descRaw": "【烏薩斯】幹員周圍八格的幹員<@ba.vup>自然技力恢復速度</>提升（不疊加），開啟技能時，其他烏薩斯幹員攻擊力<@ba.vup>提升</><@autochess.gray>（受層數影響）</>\n",
+        "effectName": "烏薩斯",
+        "effectDesc": "【烏薩斯】幹員周圍八格的幹員自然技力恢復速度+40%（不疊加），開啟技能時，其他烏薩斯幹員攻擊力+{0:0.0%}（至多+{1:0%}）（受層數影響）\n<在場6名不同【烏薩斯】幹員>【烏薩斯】幹員周圍八格的幹員自然技力恢復速度+80%（不疊加），裝備1個道具時，攻擊造成的傷害提升至175%；裝備2個道具時，攻擊造成的傷害提升至250%",
+        "effectDescRaw": "【烏薩斯】幹員周圍八格的幹員自然技力恢復速度<@ba.vup>+40%</>（不疊加），開啟技能時，其他烏薩斯幹員攻擊力<@ba.vup>+{0:0.0%}</>（至多<@ba.vup>+{1:0%}</>）<@autochess.gray>（受層數影響）</>\n",
+        "_h": "g21lr4g298ra"
+      }
+    },
+    "garrisons": {
+      "garrison_980_a": {
+        "desc": "<戰鬥中>造成傷害時，額外附帶自身生命上限75%的真實傷害",
+        "descRaw": "<戰鬥中>造成傷害時，額外附帶自身生命上限75%的真實傷害",
+        "eventTypeDesc": "作戰能力",
+        "_h": "o7o73p"
+      },
+      "garrison_980_b": {
+        "desc": "<戰鬥中>造成傷害時，額外附帶自身生命上限150%的真實傷害",
+        "descRaw": "<戰鬥中>造成傷害時，額外附帶自身生命上限150%的真實傷害",
+        "eventTypeDesc": "作戰能力",
+        "_h": "wxwx3p"
+      },
+      "garrison_981_a": {
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "eventTypeDesc": "持續疊加",
+        "_h": "nxnxmz"
+      },
+      "garrison_981_b": {
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "eventTypeDesc": "持續疊加",
+        "_h": "0p0pmz"
+      },
+      "garrison_982_a": {
+        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+2（每場戰鬥最多疊加8層，需盟約已激活）",
+        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+2（每場戰鬥最多疊加8層，需盟約已激活）",
+        "eventTypeDesc": "持續疊加",
+        "_h": "xsxsmz"
+      },
+      "garrison_982_b": {
+        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+4（每場戰鬥最多疊加16層，需盟約已激活）",
+        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+4（每場戰鬥最多疊加16層，需盟約已激活）",
+        "eventTypeDesc": "持續疊加",
+        "_h": "m5m5mz"
+      },
+      "garrison_983_a": {
+        "desc": "<戰鬥中>己方已激活的【烏薩斯】與【精準】的盟約層數每合計達到3層，自身攻擊力+1%",
+        "descRaw": "<戰鬥中>己方已激活的【烏薩斯】與【精準】的盟約層數每合計達到3層，自身攻擊力+1%",
+        "eventTypeDesc": "作戰能力",
+        "_h": "ququ3p"
+      },
+      "garrison_983_b": {
+        "desc": "<戰鬥中>己方已激活的【烏薩斯】與【精準】的盟約層數每合計達到3層，自身攻擊力+2%",
+        "descRaw": "<戰鬥中>己方已激活的【烏薩斯】與【精準】的盟約層數每合計達到3層，自身攻擊力+2%",
+        "eventTypeDesc": "作戰能力",
+        "_h": "jhjh3p"
+      },
+      "garrison_984_a": {
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "eventTypeDesc": "持續疊加",
+        "_h": "3w3wmz"
+      },
+      "garrison_984_b": {
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "eventTypeDesc": "持續疊加",
+        "_h": "8a8amz"
+      },
+      "garrison_985_a": {
+        "desc": "<戰鬥中>己方已激活的【烏薩斯】與【奧術】的盟約層數每合計達到3層，自身攻擊力+1%",
+        "descRaw": "<戰鬥中>己方已激活的【烏薩斯】與【奧術】的盟約層數每合計達到3層，自身攻擊力+1%",
+        "eventTypeDesc": "作戰能力",
+        "_h": "sqsq3p"
+      },
+      "garrison_985_b": {
+        "desc": "<戰鬥中>己方已激活的【烏薩斯】與【奧術】的盟約層數每合計達到3層，自身攻擊力+2%",
+        "descRaw": "<戰鬥中>己方已激活的【烏薩斯】與【奧術】的盟約層數每合計達到3層，自身攻擊力+2%",
+        "eventTypeDesc": "作戰能力",
+        "_h": "htht3p"
+      },
+      "garrison_986_a": {
+        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "eventTypeDesc": "持續疊加",
+        "_h": "e5e5mz"
+      },
+      "garrison_986_b": {
+        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "eventTypeDesc": "持續疊加",
+        "_h": "2h2hmz"
+      },
+      "garrison_987_a": {
+        "desc": "<获得干员时>获得1个道具",
+        "descRaw": "<获得干员时>获得1个道具",
+        "eventTypeDesc": "單次疊加",
+        "_h": "cocojf"
+      },
+      "garrison_987_b": {
+        "desc": "<获得干员时>获得2个道具",
+        "descRaw": "<获得干员时>获得2个道具",
+        "eventTypeDesc": "單次疊加",
+        "_h": "n7n7jf"
+      },
+      "garrison_988_a": {
+        "desc": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+8層、【不屈】+4層",
+        "descRaw": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+8層、【不屈】+4層",
+        "eventTypeDesc": "持續疊加",
+        "_h": "ninimz"
+      },
+      "garrison_988_b": {
+        "desc": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+16層、【不屈】+8層",
+        "descRaw": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+16層、【不屈】+8層",
+        "eventTypeDesc": "持續疊加",
+        "_h": "ljljmz"
+      },
+      "garrison_989_a": {
+        "desc": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+8層",
+        "descRaw": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+8層",
+        "eventTypeDesc": "持續疊加",
+        "_h": "5959mz"
+      },
+      "garrison_989_b": {
+        "desc": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+16層",
+        "descRaw": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+16層",
+        "eventTypeDesc": "持續疊加",
+        "_h": "9m9mmz"
+      },
+      "garrison_990_a": {
+        "desc": "<獲得干員時>已激活的層數最高的盟約+3層",
+        "descRaw": "<獲得干員時>已激活的層數最高的盟約+3層",
+        "eventTypeDesc": "單次疊加",
+        "_h": "ununjf"
+      },
+      "garrison_990_b": {
+        "desc": "<獲得干員時>已激活的層數最高的盟約+6層",
+        "descRaw": "<獲得干員時>已激活的層數最高的盟約+6層",
+        "eventTypeDesc": "單次疊加",
+        "_h": "7272jf"
+      },
+      "garrison_991_a": {
+        "desc": "<獲得干員時>自身所屬盟約+6層（不需要已激活）",
+        "descRaw": "<獲得干員時>自身所屬盟約+6層（不需要已激活）",
+        "eventTypeDesc": "單次疊加",
+        "_h": "oioijf"
+      },
+      "garrison_991_b": {
+        "desc": "<獲得干員時>自身所屬盟約+12層（不需要已激活）",
+        "descRaw": "<獲得干員時>自身所屬盟約+12層（不需要已激活）",
+        "eventTypeDesc": "單次疊加",
+        "_h": "2x2xjf"
+      },
+      "garrison_992_a": {
+        "desc": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
+        "descRaw": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
+        "eventTypeDesc": "作戰能力",
+        "_h": "f5f53p"
+      },
+      "garrison_992_b": {
+        "desc": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+2%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
+        "descRaw": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+2%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
+        "eventTypeDesc": "作戰能力",
+        "_h": "bmbm3p"
+      },
+      "garrison_07_a": {
+        "descRaw": "【阿戈爾】、【東】每疊加3層，本幹員攻擊力<@ba.vup>+1%</>",
+        "desc": "【阿戈爾】、【東】每疊加3層，本幹員攻擊力+1%",
+        "eventTypeDesc": "作戰能力",
+        "_h": "3jze3p"
+      },
+      "garrison_07_b": {
+        "descRaw": "【阿戈爾】、【東】每疊加3層，本幹員攻擊力<@ba.vup>+2%</>",
+        "desc": "【阿戈爾】、【東】每疊加3層，本幹員攻擊力+2%",
+        "eventTypeDesc": "作戰能力",
+        "_h": "rqoh3p"
+      }
+    },
+    "items": {
+      "chess_item_9_01_e_a": {
+        "name": "東國鬼面",
+        "effectName": "東國鬼面",
+        "desc": "開啟技能時流失10%當前生命，本技能期間攻擊力+30%",
+        "descRaw": "開啟技能時流失<@ba.vdown>10%</>當前生命，本技能期間攻擊力<@ba.vup>+30%</>",
+        "flavor": "東國匠人打造的鬼面，戴上它的人會聽見遠方的濤聲。\n「疼嗎？疼就對了——刀快不快，就看這一口氣。」",
+        "_h": "ewewmzlih3"
+      },
+      "chess_item_9_01_e_b": {
+        "name": "東國鬼面",
+        "effectName": "東國鬼面",
+        "desc": "開啟技能時流失20%當前生命，本技能期間攻擊力+45%",
+        "descRaw": "開啟技能時流失<@ba.vdown>20%</>當前生命，本技能期間攻擊力<@ba.vup>+45%</>",
+        "flavor": "東國匠人打造的鬼面，戴上它的人會聽見遠方的濤聲。\n「疼嗎？疼就對了——刀快不快，就看這一口氣。」",
+        "_h": "ewewz0mvh3"
+      },
+      "chess_item_9_02_e_a": {
+        "name": "殘心一閃",
+        "effectName": "殘心一閃",
+        "desc": "攻擊力+40%；若攜帶者為【東】盟約幹員：自身造成物理和法術傷害時，傷害類型轉化為弱點傷害；與東國鬼面同帶：生命值首次低於50%時，獲得相當於生命上限50%的屏障",
+        "descRaw": "攻擊力<@ba.vup>+40%</>；若攜帶者為【東】盟約幹員：自身造成物理和法術傷害時，傷害類型轉化為<$ba.weaknessatk>弱點傷害</>；與東國鬼面同帶：生命值首次低於50%時，獲得相當於生命上限<@ba.vup>50%</>的屏障",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "斬擊落定之後的靜止，才是劍士最鋒利的瞬間。\n「殘心不亂，一閃足矣。」",
+        "_h": "apapm7a4121n"
+      },
+      "chess_item_9_02_e_b": {
+        "name": "殘心一閃",
+        "effectName": "殘心一閃",
+        "desc": "攻擊力+60%；若攜帶者為【東】盟約幹員：自身造成物理和法術傷害時，傷害類型轉化為弱點傷害；與東國鬼面同帶：生命值首次低於50%時，獲得相當於生命上限50%的屏障",
+        "descRaw": "攻擊力<@ba.vup>+60%</>；若攜帶者為【東】盟約幹員：自身造成物理和法術傷害時，傷害類型轉化為<$ba.weaknessatk>弱點傷害</>；與東國鬼面同帶：生命值首次低於50%時，獲得相當於生命上限<@ba.vup>50%</>的屏障",
+        "implFormula": "ATK% += 40%/60%; [Dong member] each physical/arts hit retypes to weakness damage (weaknessRetype); [with Dongguo Oni Mask carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP",
+        "flavor": "斬擊落定之後的靜止，才是劍士最鋒利的瞬間。\n「殘心不亂，一閃足矣。」",
+        "_h": "apaps92i121n"
+      },
+      "chess_item_9_03_e_a": {
+        "name": "烏薩斯軍糧",
+        "effectName": "烏薩斯軍糧",
+        "desc": "生命上限+25%；每5秒回復相當於生命上限4%的生命",
+        "descRaw": "生命上限<@ba.vup>+25%</>；每5秒回復相當於生命上限<@ba.vup>4%</>的生命",
+        "flavor": "烏薩斯行軍口糧的鐵皮罐，打開時總帶著一股凜冽的風。\n「吃完了，就該上路了。」",
+        "_h": "tbtbpoa2fx"
+      },
+      "chess_item_9_03_e_b": {
+        "name": "烏薩斯軍糧",
+        "effectName": "烏薩斯軍糧",
+        "desc": "生命上限+50%；每5秒回復相當於生命上限5%的生命",
+        "descRaw": "生命上限<@ba.vup>+50%</>；每5秒回復相當於生命上限<@ba.vup>5%</>的生命",
+        "flavor": "烏薩斯行軍口糧的鐵皮罐，打開時總帶著一股凜冽的風。\n「吃完了，就該上路了。」",
+        "_h": "tbtbsfzzfx"
+      },
+      "chess_item_9_04_e_a": {
+        "name": "冰原咆哮",
+        "effectName": "冰原咆哮",
+        "desc": "攻擊力+45%；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外+4%（最多+20%）；與烏薩斯軍糧同帶：上限提升至+30%",
+        "descRaw": "攻擊力<@ba.vup>+45%</>；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外<@ba.vup>+4%</>（最多<@ba.vup>+20%</>）；與烏薩斯軍糧同帶：上限提升至<@ba.vup>+30%</>",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "風雪吹過烏薩斯荒原的聲音，被烏薩斯人稱作大地的咆哮。\n「雪停之前，沒有誰能讓我們低頭。」",
+        "_h": "8484dnwbo6re"
+      },
+      "chess_item_9_04_e_b": {
+        "name": "冰原咆哮",
+        "effectName": "冰原咆哮",
+        "desc": "攻擊力+65%；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外+6%（最多+30%）；與烏薩斯軍糧同帶：上限提升至+45%",
+        "descRaw": "攻擊力<@ba.vup>+65%</>；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外<@ba.vup>+6%</>（最多<@ba.vup>+30%</>）；與烏薩斯軍糧同帶：上限提升至<@ba.vup>+45%</>",
+        "implFormula": "ATK% += 45%/65%; [Ursus member] ATK% += 4%/6% per other deployed Ursus member on the field (incl. Ration Transfer / Isomorph grants), capped at 20%/30% (30%/45% with Ursus Rations carried); re-read every 0.5s and on deploy",
+        "flavor": "風雪吹過烏薩斯荒原的聲音，被烏薩斯人稱作大地的咆哮。\n「雪停之前，沒有誰能讓我們低頭。」",
+        "_h": "84842sg2o6re"
+      }
+    },
+    "effects": {
+      "bondeffect_dong": {
+        "name": "東",
+        "desc": "【東】幹員攻擊造成的傷害提升至{0:0%}，自身已損失生命比例越高，攻擊造成傷害越高（受層數影響），並獲得【死戰】：戰鬥中首次受到致命傷害時不撤退，保留1點生命，持續4秒，持續時間結束後撤退\n【東】幹員開啟技能時，所有【東】幹員失去10%當前生命值並轉化為等量屏障\n<在場6名不同【東】幹員>【東】幹員攻擊力+60%，開啟技能時所有【東】幹員額外失去15%當前生命並轉化為等量屏障；當前生命低於50%時，攻擊力額外+120%",
+        "descRaw": "【東】幹員攻擊造成的傷害提升至<@ba.vup>{0:0%}</>，自身<@ba.vup>已損失生命比例</>越高，攻擊造成傷害越高<@autochess.gray>（受層數影響）</>，並獲得【死戰】：戰鬥中首次受到<@ba.vup>致命傷害</>時不撤退，保留<@ba.vup>1</>點生命，持續<@ba.vup>4</>秒，持續時間結束後撤退\n【東】幹員開啟技能時，所有【東】幹員失去<@ba.vup>10%</>當前生命值並轉化為等量屏障\n<在場<@autochess.dgreen>6</>名不同【東】幹員>【東】幹員攻擊力<@ba.vup>+60%</>，開啟技能時所有【東】幹員額外失去<@ba.vup>15%</>當前生命並轉化為等量屏障；當前生命低於<@ba.vup>50%</>時，攻擊力額外<@ba.vup>+120%</>",
+        "_h": "nv8yia"
+      },
+      "bondeffect_ursus": {
+        "name": "烏薩斯",
+        "desc": "【烏薩斯】幹員周圍八格的幹員自然技力恢復速度+40%（不疊加），開啟技能時，其他烏薩斯幹員攻擊力+{0:0.0%}（至多+{1:0%}）（受層數影響）\n<在場6名不同【烏薩斯】幹員>【烏薩斯】幹員周圍八格的幹員自然技力恢復速度進一步提升（不疊加），裝備1個道具時，攻擊造成的傷害提升；裝備2個道具時，攻擊造成的傷害進一步提升",
+        "descRaw": "【烏薩斯】幹員周圍八格的幹員自然技力恢復速度<@ba.vup>+40%</>（不疊加），開啟技能時，其他烏薩斯幹員攻擊力<@ba.vup>+{0:0.0%}</>（至多<@ba.vup>+{1:0%}</>）<@autochess.gray>（受層數影響）</>\n",
+        "_h": "g298ra"
+      },
+      "eff_9_01_e": {
+        "name": "東國鬼面",
+        "desc": "開啟技能時流失10%當前生命，本技能期間攻擊力+30%",
+        "descRaw": "開啟技能時流失<@ba.vdown>10%</>當前生命，本技能期間攻擊力<@ba.vup>+30%</>",
+        "_h": "ewmzli"
+      },
+      "eff_9_02_e": {
+        "name": "殘心一閃",
+        "desc": "攻擊力+40%；若攜帶者為【東】盟約幹員：自身造成物理和法術傷害時，傷害類型轉化為弱點傷害；與東國鬼面同帶：生命值首次低於50%時，獲得相當於生命上限50%的屏障",
+        "descRaw": "攻擊力<@ba.vup>+40%</>；若攜帶者為【東】盟約幹員：自身造成物理和法術傷害時，傷害類型轉化為<$ba.weaknessatk>弱點傷害</>；與東國鬼面同帶：生命值首次低於50%時，獲得相當於生命上限<@ba.vup>50%</>的屏障",
+        "_h": "apm7a4"
+      },
+      "eff_9_03_e": {
+        "name": "烏薩斯軍糧",
+        "desc": "生命上限+25%；每5秒回復相當於生命上限4%的生命",
+        "descRaw": "生命上限<@ba.vup>+25%</>；每5秒回復相當於生命上限<@ba.vup>4%</>的生命",
+        "_h": "tbpoa2"
+      },
+      "eff_9_04_e": {
+        "name": "冰原咆哮",
+        "desc": "攻擊力+45%；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外+4%（最多+20%）；與烏薩斯軍糧同帶：上限提升至+30%",
+        "descRaw": "攻擊力<@ba.vup>+45%</>；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外<@ba.vup>+4%</>（最多<@ba.vup>+20%</>）；與烏薩斯軍糧同帶：上限提升至<@ba.vup>+30%</>",
+        "_h": "84dnwb"
+      }
+    }
+  }
+}

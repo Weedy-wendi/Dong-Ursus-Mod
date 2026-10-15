@@ -1,0 +1,1122 @@
+diff --git a/docs/research/00-INDEX.md b/docs/research/00-INDEX.md
+index 0f4d19c..206e093 100644
+--- a/docs/research/00-INDEX.md
++++ b/docs/research/00-INDEX.md
+@@ -118,6 +118,8 @@ The server draws a disabled bond set **D**: **3 core + 4 add-on** in NORMAL/HARD
+ 
+ **An operator is banned iff all its bonds ∈ D.** At 3 + 4 that averages ≈22 banned operators. The briefing shows lit and greyed bonds plus the banned list; the in-match dropdown shows banned counts per bond. The rule reproduces a real screenshot's counts (7/6/5/5/5/4/3) exactly (01 A2).
+ 
++**Remake adjustment (owner decision 2026-10-13, not official):** with the two custom core bonds (东/乌萨斯) the core pool grew 8 → 10, so the draw is **5 core + 5 add-on** in NORMAL/HARD/ABYSS (config `data/config.json → bans`, built by tools/build-data.mjs) — scaled to keep the average available operators at the 0.2.1 baseline of ≈90 (MC: 0.2.1 3+4 → 22.0 banned / 90.0 available; 10-core 5+5 → 33.5 / 91.5). The draw still only filters the shop pool: a drawn bond stays activatable (computeBonds never reads the ban set) — its members that survive (multi-bond ones via their other bonds, plus 调和's +1) still reach the thresholds; only 阿戈尔 shows a real (2.7 %) risk of not even reaching its lowest tier with 调和. Weight remains a draw-eligibility gate, not a sampler weight.
++
+ ## 7. Contradictions found and resolved
+ 
+ | Topic | Conflict | Resolution |
+diff --git a/docs/research/04-items.json b/docs/research/04-items.json
+index d0218b3..b24a357 100644
+--- a/docs/research/04-items.json
++++ b/docs/research/04-items.json
+@@ -2,9 +2,9 @@
+  "meta": {
+   "season": "act2autochess 卫戍协议：盟约 (下半 data, zh_CN Kengxxiao/ArknightsGameData)",
+   "counts": {
+-   "shopEntries": 59,
+-   "chessEntries": 115,
+-   "equipDistinct": 56,
++   "shopEntries": 63,
++   "chessEntries": 123,
++   "equipDistinct": 60,
+    "magic": 3
+   },
+   "notes": "normal chess id *_a, golden *_b; params = flattened blackboard (duplicate keys suffixed _1). Descriptions stripped of rich-text; effectDescRaw keeps tags."
+@@ -7161,6 +7161,10 @@
+     6,
+     2
+    ]
+-  }
++  },
++  {  "id": "chess_item_9_01_e_a",  "goldenId": "chess_item_9_01_e_b",  "trapId": "trap_9001_dongmask",  "name": "东国鬼面",  "nameEn": "Dong Mask",  "itemType": "EQUIP",  "tier": 2,  "shopLevelSortId": 13,  "hideInShop": false,  "price": 2,  "goldenPrice": 5,  "upgradeNum": 2,  "mergeable": true,  "trapDuration": -1,  "giveBondId": "dongShip",  "giveBondName": "东",  "canGiveBond": false,  "category": "ON_HIT",  "kind": "passive_counter",  "requiresBond": null,  "requiresBondName": null,  "family": null,  "rangeId": "0-1",  "rangeGrids": [   {    "row": 0,    "col": 0   }  ],  "flavor": "东国匠人打造的鬼面，戴上它的人会听见远方的涛声。\n“疼吗？疼就对了——刀快不快，就看这一口气。”",  "talentNotes": [],  "implFormula": "on skillStart: loseHp(carrier, carrier.hp × 10%/20%); during that skill window ATK% += 30%/45% (buff expires with the skill; passive/instant skills have no window and are skipped)" },
++  {  "id": "chess_item_9_02_e_a",  "goldenId": "chess_item_9_02_e_b",  "trapId": "trap_9002_canyin",  "name": "残心一闪",  "nameEn": "Zanshin Flash",  "itemType": "EQUIP",  "tier": 6,  "shopLevelSortId": 14,  "hideInShop": false,  "price": 4,  "goldenPrice": 5,  "upgradeNum": 2,  "mergeable": true,  "trapDuration": -1,  "giveBondId": null,  "giveBondName": null,  "canGiveBond": false,  "category": "BOND_SIGNATURE",  "kind": "passive",  "requiresBond": null,  "requiresBondName": null,  "family": null,  "rangeId": "0-1",  "rangeGrids": [   {    "row": 0,    "col": 0   }  ],  "flavor": "斩击落定之后的静止，才是剑士最锋利的瞬间。\n“残心不乱，一闪足矣。”",  "talentNotes": [],  "implFormula": "ATK% += 40%/60%; [【Dong】 member] each physical/arts hit retypes to 弱点伤害 (weaknessRetype); [with 东国鬼面 carried] once per battle, the first time HP < 50%: gain a shield of 50% max HP" },
++  {  "id": "chess_item_9_03_e_a",  "goldenId": "chess_item_9_03_e_b",  "trapId": "trap_9003_junliang",  "name": "乌萨斯军粮",  "nameEn": "Ursus Ration",  "itemType": "EQUIP",  "tier": 3,  "shopLevelSortId": 15,  "hideInShop": false,  "price": 2,  "goldenPrice": 5,  "upgradeNum": 2,  "mergeable": true,  "trapDuration": -1,  "giveBondId": "ursusShip",  "giveBondName": "乌萨斯",  "canGiveBond": false,  "category": "SURVIVAL",  "kind": "passive",  "requiresBond": null,  "requiresBondName": null,  "family": null,  "rangeId": "0-1",  "rangeGrids": [   {    "row": 0,    "col": 0   }  ],  "flavor": "乌萨斯行军口粮的铁皮罐，打开时总带着一股凛冽的风。\n“吃完了，就该上路了。”",  "talentNotes": [],  "implFormula": "HP% += 25%/50%; every 5s heal the carrier for 4%/5% of max HP" },
++  {  "id": "chess_item_9_04_e_a",  "goldenId": "chess_item_9_04_e_b",  "trapId": "trap_9004_roar",  "name": "冰原咆哮",  "nameEn": "Tundra Roar",  "itemType": "EQUIP",  "tier": 6,  "shopLevelSortId": 16,  "hideInShop": false,  "price": 4,  "goldenPrice": 5,  "upgradeNum": 2,  "mergeable": true,  "trapDuration": -1,  "giveBondId": null,  "giveBondName": null,  "canGiveBond": false,  "category": "BOND_SIGNATURE",  "kind": "passive",  "requiresBond": null,  "requiresBondName": null,  "family": null,  "rangeId": "0-1",  "rangeGrids": [   {    "row": 0,    "col": 0   }  ],  "flavor": "风雪吹过乌萨斯荒原的声音，被乌萨斯人称作大地的咆哮。\n“雪停之前，没有谁能让我们低头。”",  "talentNotes": [],  "implFormula": "ATK% += 45%/65%; [【Ursus】 member] ATK% += 4%/6% per other deployed 【Ursus】 member on the field (incl. 军粮转籍 / 同构体 grants), capped at 20%/30% (30%/45% with 乌萨斯军粮 carried); re-read every 0.5s and on deploy" }
+  ]
+ }
+\ No newline at end of file
+diff --git a/docs/research/07-assets.json b/docs/research/07-assets.json
+index eecf2e6..5e98ef1 100644
+--- a/docs/research/07-assets.json
++++ b/docs/research/07-assets.json
+@@ -24022,6 +24022,12 @@
+     "bytes": 3366
+    },
+    "fallbackCampLogo": null
++  },
++  "ursusShip": {
++   "name": "乌萨斯",
++   "iconId": "icon_ursusShip",
++   "icon": null,
++   "fallbackCampLogo": "https://raw.githubusercontent.com/ArknightsAssets/ArknightsAssets2/cn/assets/dyn/arts/camplogo/logo_ursus.png"
+   }
+  },
+  "items": {
+@@ -25594,4 +25600,4 @@
+    "general/g_ui/g_ui_confirm_h.mp3": "https://raw.githubusercontent.com/ArknightsAssets/ArknightsAssets2/voice/assets/dyn/audio/sound_beta_2/general/g_ui/g_ui_confirm_h.mp3"
+   }
+  }
+-}
+\ No newline at end of file
++}
+diff --git a/public/js/render/spine.js b/public/js/render/spine.js
+index c04e1bd..d7f5dac 100644
+--- a/public/js/render/spine.js
++++ b/public/js/render/spine.js
+@@ -49,6 +49,10 @@ export const MAX_WIND_SPEEDUP = 2.5;
+ 
+ /** Floor for the one-shot window of a skill clip with no Begin / own Idle (a very short clip still gets frames). */
+ const SKILL_CLIP_MIN = 0.2;
++// An attack sequence (a slot's `seq`, 麒麟R夜刀: Attack1→2→3 / Skill_Attack1→…→4) restarts at its first clip after a
++// disengagement: no attack for longer than this multiple of the attack interval means the unit left the fight (owner's
++// spec of 2026-10-15: between attacks it returns to the idle, and the next engagement starts at clip 1 again).
++const SEQUENCE_GAP = 1.4;
+ 
+ /**
+  * Attack clip timing (pure). `loopDur` / `hit` are clip seconds (strike frame at `hit`), `interval` and `lead` game
+@@ -343,6 +347,9 @@ export class SpineActor {
+      */
+     this.clipPerAttack = false;
+     this.wound = false;           // wound up for the coming attack (windUp → attack)
++    this.atkSeq = 0;              // the clip an attack sequence (`seq`) plays next (spine.js _seqClip)
++    this.atkPick = null;          // the roles the pending attack was wound up with (one sequence step per attack)
++    this.lastAttackAt = -Infinity; // the clock of the last wind-up / attack (a gap restarts the sequence)
+     this._applied = false;        // an update has posed the skeleton since its clip last changed (poseHeld)
+     this._posed = false;          // the skeleton was ever posed (a model frozen before that shows its clip's first frame)
+     this._appliedTint = undefined; // the tint that update put on the slots (pixi-spine applies `tint` in update)
+@@ -384,6 +391,8 @@ export class SpineActor {
+ 
+   /** The unit's own roles (the manifest's, its skill slot's clip and the Run cycle applied) under the form in force. */
+   _applyRoles() {
++    this.atkSeq = 0;              // another skill slot / form: its attack sequence starts at its first clip again
++    this.atkPick = null;
+     const anims = this.entry?.anims || {};
+     const clip = Number.isInteger(this.skillIndex) && anims.skills ? anims.skills[String(this.skillIndex)] : null;
+     const run = this.runMode && anims.run ? anims.run : null;
+@@ -547,7 +556,7 @@ export class SpineActor {
+    */
+   windUp(interval, lead, once = false) {
+     if (this.dead || this.mode === 'stun' || this.mode === 'die' || this.mode === 'change' || !(lead >= 0)) return false;
+-    const clip = this._attackClip();
++    const clip = this._seqClip(this._attackClip());
+     if (!clip) return false;
+     // One queued attack owns one wind-up. A later attack may begin while the previous recovery is still playing.
+     if (this.mode === 'attack' && this.current === clip.loop && (once || this.wound)) return false;
+@@ -560,6 +569,8 @@ export class SpineActor {
+     if (!(hit > 0) || lead * plan.ts > hit + 1e-6) return false;
+     if (!once) this.interval = iv;
+     this.mode = 'attack';
++    this.lastAttackAt = this.clock;
++    if (clip.seq) { this.atkSeq++; this.atkPick = clip; }   // this attack owns this sequence step (attack() reuses it)
+     this.attackUntil = this.clock + lead + Math.max(0, loopDur - hit) / plan.ts;
+     this._play(clip.loop, false, { timeScale: plan.tsWind, start: plan.start, mix: 0.06 });
+     this.windTs = plan.ts;
+@@ -575,8 +586,14 @@ export class SpineActor {
+   attack(interval, once = false) {
+     if (this.dead || this.mode === 'stun' || this.mode === 'die' || this.mode === 'change') return;   // a form change plays out
+     if (!once) this.interval = clampN(Number.isFinite(interval) && interval > 0 ? interval : this.interval, 0.08, 8);
+-    const clip = this._attackClip();
++    let clip = this.atkPick;
++    this.atkPick = null;
++    if (!clip) {
++      clip = this._seqClip(this._attackClip());
++      if (clip?.seq) this.atkSeq++;      // no wind-up (a batch that arrived late): this attack takes the next step here
++    }
+     if (!clip) return;
++    this.lastAttackAt = this.clock;
+     const loopDur = this.dur(clip.loop);
+     const per = this.clipPerAttack && !once;
+     // clip per attack: its own speed (ts 1), faster only when the attacks come quicker than the clip
+@@ -620,6 +637,22 @@ export class SpineActor {
+     return null;
+   }
+ 
++  /**
++   * The roles the NEXT attack plays: a slot with a `seq` array (麒麟R夜刀: Attack1→Attack2→Attack3, and her S1
++   * Skill_Attack1→…→4) takes the next clip of that cycle; every other slot returns `clip` unchanged. The cycle
++   * restarts at its first clip after a disengagement — no attack for SEQUENCE_GAP × the attack interval — which is the
++   * idle the unit falls back to between fights (owner's spec, 2026-10-15). One step per attack: windUp peeks here, and
++   * the matching attack() reuses the pick it stored (`atkPick`).
++   * @param {any} clip roles of _attackClip()
++   */
++  _seqClip(clip) {
++    const seq = clip?.seq;
++    if (!Array.isArray(seq) || !seq.length) return clip;
++    if (this.clock - this.lastAttackAt > SEQUENCE_GAP * Math.max(0.08, this.interval)) this.atkSeq = 0;
++    const name = seq[this.atkSeq % seq.length];
++    return this.has(name) ? { ...clip, loop: name } : clip;
++  }
++
+   // Skill loops that are pure stances (no OnAttack in the loop) are still valid attack visuals during a skill;
+   // only an idle-typed skill loop is treated as buff-only.
+   _skillIsBuffOnly() {
+@@ -627,6 +660,16 @@ export class SpineActor {
+     return !!sk && sk.loop === this.roles.idle;
+   }
+ 
++  /**
++   * Still inside the actor's own one-shot skill window (setSkill / update): an instant skill's clip (德克萨斯 剑雨,
++   * 2.167 s) outlives the sim's 0.5 s anim window, and its off event parks the clip via `skillEndPending` instead of
++   * cutting it. A caller reconciling with the sim (units.js sync) must neither re-open the stance nor release it while
++   * this is true — otherwise every later attack plays the skill clip (owner report, 2026-10-15).
++   */
++  skillClipHeld() {
++    return (this.skillClipOnce && this.clock < this.skillBeginUntil) || this.skillEndPending || this.mode === 'skillEnd';
++  }
++
+   /**
+    * The running skill's own idle clip when its attacks are its loop clip (anims skill.idle ≠ skill.loop: 折桠's
+    * Skill_2_Idle beside the Skill_2_Loop jump attack, 史尔特尔's Skill_3_Idle, 耀骑士临光's Skill_3_Idle …): the pose
+@@ -649,6 +692,8 @@ export class SpineActor {
+     on = !!on;
+     if (on === this.skillOn || this.dead) return;
+     this.skillOn = on;
++    this.atkSeq = 0;              // a skill's own sequence starts at its first clip (owner's spec: S1 → Skill_Attack1)
++    this.atkPick = null;
+     const sk = this.roles.skill;
+     if (this.mode === 'stun' || this.mode === 'die') return;
+     // a skill that ends as the unit (re)deploys — 乌尔比安's 【返回】 is a 【移动】 (sim Battle.moveRedeploy) right before
+diff --git a/public/js/render/units.js b/public/js/render/units.js
+index a375e04..474ac12 100644
+--- a/public/js/render/units.js
++++ b/public/js/render/units.js
+@@ -216,6 +216,10 @@ export const SLIDE_FRICTION = 1;
+  * `CharacterAnimator.OnFinish`, when the finish state ends — docs/research/14-death-animations.md).
+  */
+ const DIE_FADE_TAIL = 0.55;
++// Seconds the sim's anim window (snapshot.js animOf → ANIM.SKILL) must stay closed before sync() releases a skill
++// stance it re-derived itself (units.js sync, SKILL_STANCE_GRACE). Longer than a stance passive's attack dip
++// (one animation frame to a couple of attack frames), shorter than the sim's own SKILL_ANIM_WINDOW (0.5 s, skills.js).
++const SKILL_STANCE_GRACE = 0.4;
+ /**
+  * Longest Die clip a death plays out (s): the longest enemy Die clip of data/assets.json is 盐风主教昆图斯's 7.97 s (234
+  * enemy Die clips; the old 1.6 s cap cut 25 of them short — the bosses' most), and the official client plays its clip
+@@ -612,6 +616,7 @@ export class UnitView {
+     this.coinHud = null;
+     this.neg = 0;                 // the share of its cap a negative-HP pool holds, 0 = none (sync; b.snap `neg`, 斩业星熊's 我执)
+     this.flags = 0; this.anim = ANIM.IDLE;
++    this.skillOffAt = undefined;  // actor clock when the sim's anim window last stopped wanting the skill (sync)
+     this.statuses = new Set();
+     this.alive = true;
+     this.dying = 0;               // seconds left of the death fade (0 = not dying)
+@@ -981,6 +986,33 @@ export class UnitView {
+     }
+     if (this.isEnemy && !this.slide?.keepFacing && Math.abs(s.vx) > 0.08) this.visFacing = s.vx < 0 ? -1 : 1;
+     if ((prevFlags ^ this.flags) & UF.SKILL) this.setSkill(!!(this.flags & UF.SKILL));
++    // A stance the sim does not flag is re-derived from the anim code: flagsOf() sets UF.SKILL for an active skill of
++    // kind !== 'passive' only, so a deploy-time passive's stance (麒麟R夜刀, 2026-10-14) has just `animOf` → ANIM.SKILL.
++    // Its 'skill' events land while this view has no actor or a dead one (the first deploy, a redeploy — and
++    // SpineActor.revive clears skillOn), so without this the stance never (re)shows.
++    //
++    // Two guards keep that reconciliation from owning the stance (owner report, 2026-10-15: after 德克萨斯's 剑雨 or
++    // 耀骑士临光's skill every normal attack played the skill clip):
++    //  · ON only while the actor is NOT already playing its own one-shot clip window — an instant skill's clip is much
++    //    longer than the sim's 0.5 s window (spine.js skillClipHeld); re-opening the stance there latched skillOn on.
++    //  · OFF needs the anim window to stay closed for SKILL_STANCE_GRACE: a stance passive's own attacks dip the anim
++    //    to ATTACK between its windows (animOf), and turning it off there would flap the stance on every attack.
++    //    Without the OFF the stance latched on for good, and spine.js _attackClip / _idleName then played the skill
++    //    clips for every later attack and between them.
++    const skillWanted = !!(this.flags & UF.SKILL) || this.anim === ANIM.SKILL;
++    if (this.actor && !this.actor.dead) {
++      if (!this.actor.skillOn && skillWanted && !this.actor.skillClipHeld()) {
++        this.skillOffAt = undefined;
++        this.actor.setSkill(true);
++      } else if (this.actor.skillOn) {
++        if (skillWanted) this.skillOffAt = undefined;
++        else if (this.skillOffAt == null) this.skillOffAt = this.actor.clock;
++        else if (this.actor.clock - this.skillOffAt >= SKILL_STANCE_GRACE && !this.actor.skillClipHeld()) {
++          this.skillOffAt = undefined;
++          this.actor.setSkill(false);
++        }
++      }
++    }
+     if (this.anim === ANIM.DIE && this.alive) this.die();
+     if (this.actor && this.alive) this.actor.setBase(this._baseFromAnim());
+   }
+diff --git a/server/match/gamedata.js b/server/match/gamedata.js
+index c5380d9..7ca1638 100644
+--- a/server/match/gamedata.js
++++ b/server/match/gamedata.js
+@@ -47,7 +47,7 @@ export const DEFAULTS = Object.freeze({
+   dp: { init: 10, perSec: 1, max: 99 },
+   unite: { maxHelpers: 2, templates: { 1: 'act1autochess_escaped_single', 2: 'act1autochess_escaped_multi' } },
+   timers: { infoCheck: 25, bandDraft: 50, bandTurn: 30, battleCheck: 3, spFirst: 30, spTurn: 16 },
+-  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 3, addon: 4 }, HARD: { core: 3, addon: 4 }, ABYSS: { core: 3, addon: 4 } },
++  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 } },
+   bandDraft: { skipsPerPlayer: 1, timeoutBandId: 'band_bldsk' },
+   leftoverFundsKeptByBands: ['band_cannot'],
+ });
+diff --git a/server/sim/battle/deploy.js b/server/sim/battle/deploy.js
+index 12962e7..013c2b0 100644
+--- a/server/sim/battle/deploy.js
++++ b/server/sim/battle/deploy.js
+@@ -71,6 +71,10 @@ export class BattleDeploy {
+     }
+     if (first) this._ev(['spawn', unitInfo(u)]);
+     this._ev(['deploy', u.id]);
++    // a deploy-time passive's 'skill' anim window goes out here — after the 'deploy' event, so the client's
++    // view exists (and stands) when it arrives; fired inside skill.reset it landed before 'spawn' and was lost
++    // (skills.js _startPassive / _firePassiveAnim)
++    if (sk.kind === 'passive' && typeof sk._firePassiveAnim === 'function') sk._firePassiveAnim();
+     if (this._hooks.deploy) this.emit('deploy', { unit: u, initial });
+     // Explicit carry outside the 联防 opening follows this one deployment. The opening itself restores at the end
+     // of Battle.start, so deployment/battle-start gifts do not come on top of it; later redeploys keep their gifts.
+diff --git a/server/sim/content/bonds/core.js b/server/sim/content/bonds/core.js
+index 8b12c71..9bcf1a0 100644
+--- a/server/sim/content/bonds/core.js
++++ b/server/sim/content/bonds/core.js
+@@ -59,6 +59,8 @@ const BUFF_KEYS = Object.freeze({
+   egirShip: 'act1autochess_bond_eff_egir',
+   siracusaShip: 'act2autochess_bond_eff_siracusa',
+   kazimierzShip: 'act2autochess_bond_eff_kazimierz',
++  ursusShip: 'act2autochess_bond_eff_ursus',   // 自定义（2026-10-12 效果正式化）
++  dongShip: 'act2autochess_bond_eff_dong',     // 自定义（2026-10-13 效果正式化）
+ });
+ const SARGON_SHARE_KEY = 'act2autochess_bond_eff_sargon[share]';
+ const VICTORIA_REWARD_KEY = 'bond_layer_added_reward_equip';
+@@ -656,6 +658,167 @@ function installKazimierz(battle, pid, bb, members) {
+ // =====================================================================================================================
+ // entry points
+ 
++// =====================================================================================================================
++// 乌萨斯 (ursusShip — 自定义核心盟约; 2026-10-12 效果正式化, 2026-10-13 用户修订, 2026-10-14 数值修订, 2026-10-15 系数修订)
++//   3: member skill start → every OTHER member on the field gains an additive ATK stack of
++//      atk_per_start + 0.06%·L, the accumulated total capped at atk_cap_base + 0.9%·L (L = the bond's layers,
++//      re-read at each start); the caster also raises the natural SP recovery of every operator on her surrounding
++//      8 tiles by sp_regen = +40% (不叠加 — the highest holds, the shared aura semantics), lasting to the battle end.
++//   6: the SP aura **覆盖**为 sp_regen_6 = +80%（不是叠加）; a member carrying items deals
++//      ×damage_scale_1 (1 item) / ×damage_scale_2 (≥2 items) = 175% / 250%（两档覆盖，非连乘）— the 维多利亚 shape
++//      (S.passiveBuff dmgDealtMul, re-applied on layer gains and deployments; mid-battle item gains re-read at the
++//      next such event, same limitation as 维多利亚).
++// 入口: installUrsus(battle, pid, bb, members); bb 由 data/bonds.json bondeffect_ursus 带来（tools/custom-content.mjs）。
++function installUrsus(battle, pid, bb, members) {
++  const memberSet = new Set(members);
++  const perBase = num(bb.atk_per_start, 0.036);
++  const perLayer = num(bb.atk_per_start_per_layer, 0.0006);
++  const capBase = num(bb.atk_cap_base, 0.54);
++  const capPerLayer = num(bb.atk_cap_per_layer, 0.009);
++  // 自然技力回复光环（不叠加 — 取最高的共享语义）：3 人档 +sp_regen，6 人档**覆盖**为 +sp_regen_6
++  // （2026-10-14 用户修订：40%→80% 是覆盖不是叠加；6 人判定与道具分支同款，开战时定型）
++  const six = reached(battle, pid, 'ursusShip', num(bb.ex_bond_char_cnt, 6));
++  const spRegen = six ? num(bb.sp_regen_6, 0.8) : num(bb.sp_regen, 0.4);
++  const syncAtk = (u) => {
++    const v = (u.mem && u.mem.ursusAtk) || 0;
++    if (v > 0 && u.alive) S.passiveBuff(battle, u, 'bond:ursus:atk', S.directMods({ atk: v }));
++    else battle.removeBuff(u, 'bond:ursus:atk');
++  };
++  // 3: member skill start → the OTHER members' stacks + the caster's 自然技力回复 ring
++  battle.on('skillStart', ({ unit }) => {
++    if (!memberSet.has(unit)) return;
++    const L = S.bondLayers(battle, pid, 'ursusShip');
++    const gain = perBase + perLayer * L;
++    const cap = capBase + capPerLayer * L;
++    for (const m of members) {
++      if (m === unit || !S.onField(m)) continue;   // 「其他」【乌萨斯】干员 — 施放者自己不吃层
++      m.mem = m.mem || {};
++      const cur = m.mem.ursusAtk || 0;
++      const v = Math.min(cap, cur + gain);
++      if (v > cur) { m.mem.ursusAtk = v; syncAtk(m); }
++    }
++    // 自然技力回复速度: 施放者周围八格的干员 +sp_regen（不叠加 — 与技力光环同口径取最高），持续到战斗结束
++    if (!(spRegen > 0)) return;
++    for (const a of S.alliesAround(battle, unit, S.N8)) {
++      if (!S.isOp(a)) continue;
++      const cur = a.findBuff('bond:ursus:sp');
++      if (cur && num(cur.mods?.spRecoveryFlat, 0) >= spRegen - 1e-9) continue;
++      battle.addBuff(a, { key: 'bond:ursus:sp', mods: { spRecoveryFlat: spRegen }, source: unit });
++    }
++  });
++  // 6: items → attack multiplier（1 个 / ≥2 个道具两档**覆盖**，非连乘）
++  if (!six) return;
++  const apply = () => {
++    const one = num(bb.damage_scale_1, 1.5), two = num(bb.damage_scale_2, 2.25);
++    for (const u of members) {
++      const items = S.itemsOf(u).length;
++      const mul = items >= 2 ? two : items >= 1 ? one : 1;
++      if (mul > 1 && u.alive) S.passiveBuff(battle, u, 'bond:ursus:dmg', { dmgDealtMul: mul });
++      else battle.removeBuff(u, 'bond:ursus:dmg');
++    }
++  };
++  apply();
++  onLayers(battle, pid, 'ursusShip', apply);
++  battle.on('deploy', ({ unit }) => { if (memberSet.has(unit)) apply(); });
++}
++
++// =====================================================================================================================
++// 东 (dongShip — 自定义核心盟约, 2026-10-13 效果正式化; 用户口径)
++//   3: every damage a member deals ×(1 + dmg_base + dmg_per_layer·L) ×(1 + dmg_per_lost_hp·lostPct) — L = the bond's
++//      layers and lostPct = the attacker's lost-HP percent, both re-read at each hit (谢拉格's hit-hook shape); every
++//      member holds 【死战】: the first fatal damage of the battle is prevented at 1 HP for deathless_time s (further
++//      fatal damage during it stays prevented at 1 HP), then the member leaves the field AS KNOCKED OUT (retreat with
++//      reason 'killed', 2026-10-14 用户口径 — 不屈等「被击倒时」效果照常触发; redeploy timer runs);
++//      a dollkeeper member (风丸) switches to its <替身> instead (dollSwitch hook, professions.js) — already in doll
++//      form it retreats as usual;
++//      a member's skill start → EVERY on-field member loses hp_loss_ratio of its CURRENT HP (流失 — battle.loseHp, the
++//      loss cannot kill: skipped when it would) and gains an equal 屏障 shield (one shared buff per member, merged).
++//   6: members ATK +atk_6 (直接乘算); skill starts cost the extra hp_loss_ratio_6 (10% + 15% = 25%); while a member is
++//      below atk_low_hp_ratio of its max HP, ATK +atk_low_hp (直接乘算, tick-refreshed like 月盈星亏).
++// 入口: installDong(battle, pid, bb, members); bb 由 data/bonds.json bondeffect_dong 带来（tools/custom-content.mjs）。
++function installDong(battle, pid, bb, members) {
++  const memberSet = new Set(members);
++  const dmgBase = num(bb.dmg_base, 0.15);
++  const dmgPerLayer = num(bb.dmg_per_layer, 0.006);   // 2026-10-14 用户修订：每层 0.7%→0.6%
++  const dmgPerLost = num(bb.dmg_per_lost_hp, 0.002);  // 2026-10-14 用户修订：每 1% 已损失生命 0.4%→0.2%
++  const deathless = num(bb.deathless_time, 4);
++  const loss3 = num(bb.hp_loss_ratio, 0.1);
++  const loss6 = num(bb.hp_loss_ratio_6, 0.15);
++  const atk6 = num(bb.atk_6, 0.6);
++  const atkLow = num(bb.atk_low_hp, 1.2);
++  const lowRatio = num(bb.atk_low_hp_ratio, 0.5);
++  const six = reached(battle, pid, 'dongShip', num(bb.ex_bond_char_cnt, 6));
++  const L = () => S.bondLayers(battle, pid, 'dongShip');
++
++  // 3: damage multiplier — a 'hit' hook per member
++  const onHit = (c) => {
++    const u = c.source, dmg = c.dmg, t = c.target;
++    if (!dmg || !isEnemyTarget(t) || !memberSet.has(u)) return;
++    const lostPct = Math.max(0, 1 - u.hp / Math.max(1, u.s.maxHp)) * 100;
++    dmg.mul *= (1 + dmgBase + dmgPerLayer * L()) * (1 + dmgPerLost * lostPct);
++  };
++  for (const u of members) onUnitHit(battle, u, onHit);
++
++  // 死战 (death priority 10, 与不屈同级): the first fatal damage of the battle → prevented at 1 HP for `deathless` s;
++  // during the buff every further fatal is prevented too, at its end the member leaves as knocked out (reason 'killed').
++  const sworn = new Set();
++  battle.on('fatal', (ctx) => {
++    const u = ctx.unit;
++    if (!memberSet.has(u) || !u.alive) return;
++    if (u.findBuff('bond:dong:deathless')) { ctx.prevented = true; return; }
++    if (ctx.prevented || sworn.has(u)) return;
++    sworn.add(u);
++    ctx.prevented = true;
++    battle.addBuff(u, { key: 'bond:dong:deathless', duration: deathless, visible: true, source: u, tags: ['bond:dong'] });
++    battle.fx('undying', { x: u.x, y: u.y, id: u.id });
++    battle.after(deathless, () => {
++      if (!u.alive || !u.deployed) return;
++      // 傀儡师（风丸）：死战结束 → 切换<替身>作战而不是撤退（2026-10-13 用户口径）。已在替身形态时保持原
++      // 撤退（<替身>被击倒是击倒，但死战窗内全部致命已阻止——走到这里说明是替身形态的正常到期）。
++      if (u.profile?.dollDuration != null && !u.trait?.doll) {
++        battle.emit('dollSwitch', { unit: u, reason: 'bond:dong:deathless' });
++        return;
++      }
++      battle.retreat(u, { reason: 'killed' }); // 死战结束视为被击倒（2026-10-14 用户口径）：death{reason:'killed'} 让
++      // 不屈（含 2 层技力）、克莱门莎等「被击倒时」效果照常触发，deaths 计数与倒地音效也按击倒走
++    }, { owner: u });
++  }, { priority: 10 });
++
++  // skill start → every on-field member's HP-to-shield conversion (流失; the loss never kills)
++  battle.on('skillStart', ({ unit }) => {
++    if (!memberSet.has(unit)) return;
++    const ratio = loss3 + (six ? loss6 : 0);
++    if (!(ratio > 0)) return;
++    for (const m of members) {
++      if (!S.onField(m) || !m.alive) continue;
++      const loss = m.hp * ratio;
++      if (!(loss > 0) || m.hp - loss < 1) continue;
++      battle.loseHp(m, loss, { source: m, tags: ['bond:dong:hpLoss'] });
++      if (!m.alive) continue;
++      const cur = m.findBuff('bond:dong:shield');
++      if (cur) { cur.shield = (cur.shield || 0) + loss; m.markDirty?.(); }
++      else battle.addBuff(m, { key: 'bond:dong:shield', shield: loss, visible: true, source: unit, tags: ['bond:dong'] });
++      S.fxOn(battle, 'buff', m, 'bond:dongShip', 'shield', { amount: loss });
++    }
++  });
++
++  // 6: ATK +60% and the low-HP +120% (below 50% max HP; 2026-10-14 用户修订)
++  if (!six) return;
++  for (const u of members) {
++    if (atk6 > 0) S.passiveBuff(battle, u, 'bond:dong:atk6', S.directMods({ atk: atk6 }));
++    if (atkLow > 0 && lowRatio > 0) {
++      const applyLow = () => {
++        const cur = u.findBuff('bond:dong:lowhp');
++        const on = u.alive && u.hpRatio < lowRatio;
++        if (on && !cur) battle.addBuff(u, { key: 'bond:dong:lowhp', persist: true, allowDead: true, visible: true, mods: S.directMods({ atk: atkLow }), source: u });
++        else if (!on && cur) battle.removeBuff(u, cur);
++      };
++      applyLow();
++      battle.on('tick', applyLow, { owner: u });
++    }
++  }
++}
++
+ const INSTALLERS = Object.freeze({
+   yanShip: installYan,
+   sargonShip: installSargon,
+@@ -665,6 +828,8 @@ const INSTALLERS = Object.freeze({
+   egirShip: installEgir,
+   siracusaShip: installSiracusa,
+   kazimierzShip: installKazimierz,
++  ursusShip: installUrsus, // 自定义（2026-10-12 效果正式化）
++  dongShip: installDong,   // 自定义（2026-10-13 效果正式化）
+ });
+ 
+ export function install(battle) {
+diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
+index 593cf20..3262db9 100644
+--- a/server/sim/content/garrisons/meta.js
++++ b/server/sim/content/garrisons/meta.js
+@@ -430,6 +430,74 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
+ };
+ 
+ 
++// ---------------------------------------------------------------------------------------------
++// 自定义特质（tools/custom-content.mjs 注入，2026-10-12 乌萨斯扩展第二批）。effectKey = 自定义段
++// act2autochess_gar_eff_986/987（黑board valueStr）。与官方 SERVER_ADD_BOND_POSITION 的区别：文案无限定
++// 「已激活」（鸿雪 986「所属盟约层数」）→ requireActive:false；烈夏 987「获得 N 个道具」= 随机道具
++// （官方 SERVER_GAIN_EQUIP 给的是指定 chess，不适用）。
++H['act2autochess_gar_eff_986_a'] = {
++  run(ctx) { positionLayers(ctx, num(ctx.source.bb.count, 4)); },
++};
++H['act2autochess_gar_eff_986_b'] = {
++  run(ctx) { positionLayers(ctx, num(ctx.source.bb.count, 8)); },
++};
++H['act2autochess_gar_eff_987_a'] = {
++  run(ctx) { gainRandomItems(ctx, num(ctx.source.bb.count, 1)); },
++};
++H['act2autochess_gar_eff_987_b'] = {
++  run(ctx) { gainRandomItems(ctx, num(ctx.source.bb.count, 2)); },
++};
++// 2026-10-13 【东】扩展批次（990/991，均 SERVER_GAIN「获得时」）；990 白雪 2026-10-13 二次修订：
++// 「已激活的层数最高的盟约」→ 只在**已激活**的盟约里挑层数最高者。
++H['act2autochess_gar_eff_990_a'] = {
++  run(ctx) { topLayers(ctx, num(ctx.source.bb.count, 3)); },
++};
++H['act2autochess_gar_eff_990_b'] = {
++  run(ctx) { topLayers(ctx, num(ctx.source.bb.count, 6)); },
++};
++H['act2autochess_gar_eff_991_a'] = {
++  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 6)); },
++};
++H['act2autochess_gar_eff_991_b'] = {
++  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 12)); },
++};
++
++/** 自定义 990（白雪）：已激活的盟约里层数最高者 +N（未激活不算；并列 → 盟约表序第一）。 */
++function topLayers(ctx, count) {
++  if (!(count > 0)) return;
++  let best = null, bl = -1;
++  for (const id of bondOrder(ctx)) {
++    if (!ctx.bondActive(id)) continue;
++    const l = ctx.layers(id);
++    if (l > bl) { bl = l; best = id; }
++  }
++  if (best) ctx.addLayers(best, count, { requireActive: true });
++}
++
++/** 自定义 991（吉星）：自身所属盟约全部 +N（未激活也加，鸿雪 986 同口径）。 */
++function ownLayers(ctx, count) {
++  if (!(count > 0)) return;
++  for (const b of metaBonds(ctx, ctx.source.piece)) ctx.addLayers(b, count, { requireActive: false });
++}
++
++/** 自定义 986（鸿雪）：自身和身后干员的所属盟约层数 +N（未激活也加；身后无干员则只有自身）。 */
++function positionLayers(ctx, count) {
++  const me = selfView(ctx);
++  if (!onBoard(me) || !(count > 0)) return;
++  const other = behindPiece(ctx, me);
++  const targets = [me];
++  if (other && other.kind === 'chess' && other.uid !== me.uid) targets.push(other);
++  for (const t of targets) for (const b of metaBonds(ctx, t)) ctx.addLayers(b, count, { requireActive: false });
++}
++
++/** 自定义 987（烈夏）：获得时给玩家 count 个随机道具（投资人按 dispatcher 既有规则重复）。 */
++function gainRandomItems(ctx, count) {
++  for (let i = 0; i < Math.min(10, count); i++) {
++    const id = ctx.rollItem({ maxTier: ctx.shopLevel() });
++    if (id) ctx.grantItem(id);
++  }
++}
++
+ /** effectKey → handler (the registered objects). */
+ export const HANDLERS = Object.freeze(H);
+ 
+diff --git a/server/sim/content/items/battle.js b/server/sim/content/items/battle.js
+index 6c5dd94..4dbc577 100644
+--- a/server/sim/content/items/battle.js
++++ b/server/sim/content/items/battle.js
+@@ -845,6 +845,93 @@ const BY_ITEM = {
+     });
+     S.on('death', (c) => { if (c.unit === u) st.bonus = 0; });
+   },
++
++  // ---- 自制装备（tools/custom-content.mjs ITEMS，2026-10-13：东×2 + 乌萨斯×2）----
++
++  // 东国鬼面 (东副装备): 开启技能时流失 hp_loss_ratio × 当前生命，本技能期间攻击力 +atk。
++  //   流失与【东】盟约的技能烧血独立结算（loseHp 口径，不吃屏障）；ATK buff 的时长 = 该次技能的剩余
++  //   时间——被动技能引擎不 emit skillStart、瞬发技能无窗口，两者都跳过（与盟约烧血的触发面一致）。
++  chess_item_9_01_e(battle, u, rec, S) {
++    const p = bp(rec, MASK_KEY);
++    if (!p) return;
++    const lossRatio = num(p.hp_loss_ratio, 0.1), atkPct = num(p.atk, 0.3);
++    S.on('skillStart', (c) => {
++      if (c.unit !== u || !onField(u) || !u.alive) return;
++      const loss = u.hp * lossRatio;
++      if (loss > 0) battle.loseHp(u, loss, { source: u });
++      const sk = c.skill;
++      const tl = sk && Number.isFinite(sk.timeLeft) ? Math.max(0, sk.timeLeft) : 0;
++      if (tl > 0 && atkPct > 0) S.buff(u, { key: S.key('maskAtk'), duration: tl, refresh: 'replace', mods: directMods({ atk: atkPct }) });
++    });
++  },
++
++  // 残心一闪 (东签名): stat 由 attr_common_global_buff 承载；【东】成员的物/法攻击转化为弱点伤害
++  //   （weaknessRetype，双模机械臂同款）；与东国鬼面同带 → 生命首次低于 50% 时获得 shield_ratio × 生命上限
++  //   屏障（每场战斗一次，跨部署记账 unit.mem；组合判定实时——借出装备也算）。
++  chess_item_9_02_e(battle, u, rec, S) {
++    const p = bp(rec, CANYIN_KEY);
++    if (!p) return;
++    const partner = partnerOf(p);
++    S.on('hit', (c) => {
++      if (c.source !== u || !memberOf(battle, u, 'dongShip')) return;
++      weaknessRetype(c.dmg, u, c.target);
++    }, 5);
++    if (!partner) return;
++    const poll = () => {
++      if (!onField(u) || !u.alive) return;
++      (u.mem = u.mem || {});
++      if (u.mem.canyinShield || !(u.hp < u.s.maxHp * 0.5)) return;
++      if (!carries(battle, u, partner)) return;
++      u.mem.canyinShield = true;
++      const amount = u.s.maxHp * num(p.shield_ratio, 0.5);
++      if (amount > 0) {
++        battle.addBuff(u, { key: S.key('canyinShield'), shield: amount, visible: true, source: u });
++        fxOn(battle, 'buff', u, 'item:canyin', 'shield', { amount });
++      }
++    };
++    S.on('deploy', (c) => { if (c.unit === u) poll(); });
++    S.every(0.5, poll);
++  },
++
++  // 乌萨斯军粮 (乌萨斯副装备): 每 5 秒回复 hp_regen_ratio × 生命上限（生命上限加成由 attr_common_global_buff 承载）。
++  chess_item_9_03_e(battle, u, rec, S) {
++    const p = bp(rec, RATION_KEY);
++    if (!p) return;
++    const regen = num(p.hp_regen_ratio, 0.04);
++    S.every(5, () => {
++      if (!onField(u) || !u.alive) return;
++      const amount = u.s.maxHp * regen;
++      if (amount > 0) battle.heal(u, u, amount, { self: true });
++    });
++  },
++
++  // 冰原咆哮 (乌萨斯签名): stat 由 attr_common_global_buff 承载；【乌萨斯】成员在场每有 1 名其他【乌萨斯】
++  //   盟约干员（含军粮转籍 / 同构体授予）攻击力 +per，至多 cap；与乌萨斯军粮同带 → 上限提升至 cap_combo。
++  //   0.5s 周期重读 + 部署即时刷新（部署/撤退/转籍/借出装备都实时生效；下岗时撤掉 buff）。
++  chess_item_9_04_e(battle, u, rec, S) {
++    const p = bp(rec, ROAR_KEY);
++    if (!p) return;
++    const partner = partnerOf(p);
++    const per = num(p.per, 0.04), cap = num(p.cap, 0.2), capCombo = num(p.cap_combo, 0.3);
++    const key = S.key('roar');
++    const poll = () => {
++      if (!onField(u) || !u.alive || !memberOf(battle, u, 'ursusShip')) { battle.removeBuff(u, key); return; }
++      let n = 0;
++      for (const a of battle.allyUnits) {
++        if (a === u || a.kind !== 'op' || !a.alive || !a.deployed || a.ownerId !== u.ownerId) continue;
++        if (memberOf(battle, a, 'ursusShip')) n++;
++      }
++      const max = partner && carries(battle, u, partner) ? capCombo : cap;
++      const atkPct = Math.min(n * per, max);
++      const cur = u.findBuff(key);
++      if (!(atkPct > 0)) { if (cur) battle.removeBuff(u, cur); return; }
++      if (cur && Math.abs((cur.mods?.atkPct ?? 0) - atkPct) < 1e-9) return;
++      if (cur) battle.removeBuff(u, cur);
++      S.buff(u, { key, persist: true, allowDead: true, refresh: 'replace', mods: directMods({ atk: atkPct }) });
++    };
++    S.on('deploy', (c) => { if (c.unit === u) poll(); });
++    S.every(0.5, poll, { immediate: true });
++  },
+ };
+ 
+ /** 浓缩嗅盐 "免疫晕眩、冻结等特殊状态" — research 04 §4 list (stun/freeze/sleep/levitate/palsy). 寒冷 is a debuff, not a
+@@ -885,6 +972,12 @@ export function hasBattleEffect(rec) {
+   return buffsOf(rec).some((b) => STAT_BUFFS.has(b.bbKey) || BY_BUFF[b.bbKey]);
+ }
+ 
++// ---- 自制装备的行为 buff key（tools/custom-content.mjs ITEMS；普通/进阶共用同一 bbStr.key）----
++const MASK_KEY = 'act2autochess_equip_9_01_global_buff';   // 东国鬼面
++const CANYIN_KEY = 'act2autochess_equip_9_02_global_buff'; // 残心一闪
++const RATION_KEY = 'act2autochess_equip_9_03_global_buff'; // 乌萨斯军粮
++const ROAR_KEY = 'act2autochess_equip_9_04_global_buff';   // 冰原咆哮
++
+ // =====================================================================================================================
+ // grants
+ 
+diff --git a/server/sim/content/kits/index.js b/server/sim/content/kits/index.js
+index a8994d7..156914b 100644
+--- a/server/sim/content/kits/index.js
++++ b/server/sim/content/kits/index.js
+@@ -35,14 +35,16 @@ export const KIT_FILES = Object.freeze([
+     'chess_char_2_05-harold.js', 'chess_char_2_06-papyrs.js', 'chess_char_2_07-ghost.js', 'chess_char_2_08-bubble.js',
+     'chess_char_2_09-humus.js', 'chess_char_2_10-rockr.js', 'chess_char_2_11-kazema.js', 'chess_char_2_12-gravel.js',
+     'chess_char_2_13-tippi.js', 'chess_char_2_14-flower.js', 'chess_char_2_15-akkord.js', 'chess_char_2_16-whitew.js',
+-    'chess_char_2_17-branch.js', 'chess_char_2_18-ashlok.js', 'chess_char_2_19-tinman.js'],
++    'chess_char_2_17-branch.js', 'chess_char_2_18-ashlok.js', 'chess_char_2_19-tinman.js',
++    'chess_char_2_98-botany.js'],
+   // tier 3
+   ['chess_char_3_01-angel.js', 'chess_char_3_02-ayer.js', 'chess_char_3_03-swire.js', 'chess_char_3_04-swire2.js',
+     'chess_char_3_05-skadi.js', 'chess_char_3_06-philae.js', 'chess_char_3_07-forcer.js', 'chess_char_3_08-mint.js',
+     'chess_char_3_09-haini.js', 'chess_char_3_10-pinecn.js', 'chess_char_3_11-snhunt.js', 'chess_char_3_12-blemsh.js',
+     'chess_char_3_13-malist.js', 'chess_char_3_14-slbell.js', 'chess_char_3_15-vodfox.js', 'chess_char_3_16-snakek.js',
+     'chess_char_3_17-shotst.js', 'chess_char_3_18-vulpis.js', 'chess_char_3_19-vigil.js', 'chess_char_3_20-kjera.js',
+-    'chess_char_3_21-archet.js'],
++    'chess_char_3_21-archet.js', 'chess_char_3_96-kichi.js', 'chess_char_3_97-yuki.js', 'chess_char_3_98-leto.js',
++    'chess_char_3_99-gyuki.js'],
+   // tier 4
+   ['chess_char_4_01-rmixer.js', 'chess_char_4_02-mostma.js', 'chess_char_4_03-kjera.js', 'chess_char_4_04-ines.js',
+     'chess_char_4_05-beewax.js', 'chess_char_4_06-kroos2.js', 'chess_char_4_07-bpipe.js', 'chess_char_4_08-rosesa.js',
+@@ -50,21 +52,22 @@ export const KIT_FILES = Object.freeze([
+     'chess_char_4_13-gnosis.js', 'chess_char_4_14-lionhd.js', 'chess_char_4_15-reckpr.js', 'chess_char_4_16-texas2.js',
+     'chess_char_4_17-hsguma.js', 'chess_char_4_18-mudrok.js', 'chess_char_4_19-flamtl.js', 'chess_char_4_20-fartth.js',
+     'chess_char_4_21-plosis.js', 'chess_char_4_22-svrash.js', 'chess_char_4_23-gvial2.js', 'chess_char_4_24-billro.js',
+-    'chess_char_4_25-cetsyr.js', 'chess_char_4_26-bldsk.js'],
++    'chess_char_4_25-cetsyr.js', 'chess_char_4_26-bldsk.js', 'chess_char_4_98-helage.js', 'chess_char_4_99-bgsnow.js'],
+   // tier 5
+   ['chess_char_5_01-excu2.js', 'chess_char_5_02-titi.js', 'chess_char_5_03-blaze2.js', 'chess_char_5_04-bldsk.js',
+     'chess_char_5_05-ulpia.js', 'chess_char_5_06-etlchi.js', 'chess_char_5_07-surtr.js', 'chess_char_5_08-horn.js',
+     'chess_char_5_09-cetsyr.js', 'chess_char_5_10-lisa.js', 'chess_char_5_11-demkni.js', 'chess_char_5_12-dusk.js',
+     'chess_char_5_13-ghost2.js', 'chess_char_5_14-svash2.js', 'chess_char_5_15-thorn2.js', 'chess_char_5_16-plosis.js',
+     'chess_char_5_17-f12yin.js', 'chess_char_5_18-gvial2.js', 'chess_char_5_19-mlynar.js', 'chess_char_5_20-aglina.js',
+-    'chess_char_5_21-sntlla.js', 'chess_char_5_22-nymph.js', 'chess_char_5_23-reckpr.js'],
++    'chess_char_5_21-sntlla.js', 'chess_char_5_22-nymph.js', 'chess_char_5_23-reckpr.js', 'chess_char_5_97-saga.js',
++    'chess_char_5_98-turdus.js', 'chess_char_5_99-veen.js'],
+   // tier 6 (and 盟约·辅助干员 chess_char_1_15, a hidden tier-1 chess always registered with the tier-6 kits)
+   ['chess_char_1_15-pithst.js', 'chess_char_6_01-lemuen.js', 'chess_char_6_02-sbell2.js', 'chess_char_6_03-yu.js',
+     'chess_char_6_04-skadi2.js', 'chess_char_6_05-pasngr.js', 'chess_char_6_06-pepe.js', 'chess_char_6_07-siege2.js',
+     'chess_char_6_08-reed2.js', 'chess_char_6_09-cello.js', 'chess_char_6_10-nymph.js', 'chess_char_6_11-mlyss.js',
+     'chess_char_6_12-rosmon.js', 'chess_char_6_13-angel2.js', 'chess_char_6_14-lumen.js', 'chess_char_6_15-qiubai.js',
+     'chess_char_6_16-halo2.js', 'chess_char_6_17-nearl2.js', 'chess_char_6_18-whitw2.js', 'chess_char_6_19-blkkgt.js',
+-    'chess_char_6_20-agoat2.js'],
++    'chess_char_6_20-agoat2.js', 'chess_char_6_97-yato2.js', 'chess_char_6_98-headb2.js', 'chess_char_6_99-poca.js'],
+ ].map((group) => Object.freeze(group)));
+ 
+ /**
+@@ -82,24 +85,19 @@ export const OPERATOR_KIT_FILES = Object.freeze([
+   'op-siege.js',
+   'op-chen.js',
+   'op-irene.js',
+-  'op-helage.js',
+   'op-shining.js',
+   'op-cgbird.js',
+-  'op-saga.js',
+   'op-amgoat.js',
+   'op-cerber.js',
+   'op-heyak.js',
+-  'op-poca.js',
+   'op-typhon.js',
+   'op-narant.js',
+   'op-logos.js',
+   'op-mantra.js',
+-  'op-veen.js',
+   'op-zuole.js',
+   'op-chyue.js',
+   'op-huang.js',
+   'op-shwaz.js',
+-  'op-bgsnow.js',
+   'op-ifrit.js',
+   'op-aphris.js',
+   'op-lin.js',
+@@ -119,7 +117,6 @@ export const OPERATOR_KIT_FILES = Object.freeze([
+   'op-chen3.js',
+   'op-leizi2.js',
+   'op-vvana.js',
+-  'op-headb2.js',
+   'op-hodrer.js',
+   'op-chen2.js',
+   'op-ray.js',
+diff --git a/server/sim/content/kits/ops/chess_char_2_08-bubble.js b/server/sim/content/kits/ops/chess_char_2_08-bubble.js
+index 1e45131..29f557a 100644
+--- a/server/sim/content/kits/ops/chess_char_2_08-bubble.js
++++ b/server/sim/content/kits/ops/chess_char_2_08-bubble.js
+@@ -20,6 +20,7 @@ export default {
+       talents: [{ install(battle, unit) {
+         onDamagedOn(battle, unit, (ctx) => {
+           if (!byEnemyAttack(ctx) || !unit.alive) return;
++          if (ctx.dmg?.tags?.includes('springCounter')) return;   // 碎铳之簧的反弹不再反反（hookDepth>32 死循环, fuzz battle 83）
+           const src = ctx.source;
+           if (s2 && unit.skill?.active && src.alive) {
+             battle.dealDamage(unit, src, { amount: unit.s.def * num(bb.atk_scale), type: 'phys', isSkill: true, canDodge: false, tags: ['counter'] });
+diff --git a/server/sim/content/kits/ops/op-ironmn.js b/server/sim/content/kits/ops/op-ironmn.js
+index 71cd85d..8cabbf2 100644
+--- a/server/sim/content/kits/ops/op-ironmn.js
++++ b/server/sim/content/kits/ops/op-ironmn.js
+@@ -365,7 +365,7 @@ export default {
+       },
+       talents: [
+         { install(battle, unit) {
+-          // 战地工程师: his device pieces run the device kits (set up here, before the battle starts — as op-bgsnow.js); the
++          // 战地工程师: his device pieces run the device kits (set up here, before the battle starts — as chess_char_4_99-bgsnow.js); the
+           // stock refilled on each of his deployments; his devices leave with him (die_to_kill_token)
+           const st = deviceState(unit);
+           st.cap = cnt;
+diff --git a/server/sim/content/kits/ops/op-typhon.js b/server/sim/content/kits/ops/op-typhon.js
+index 0ee7170..4f2be8d 100644
+--- a/server/sim/content/kits/ops/op-typhon.js
++++ b/server/sim/content/kits/ops/op-typhon.js
+@@ -7,7 +7,7 @@
+ // Sources: character_table / skill_table / battle_equip_table (zh_CN, as built into backups.json); PRTS 提丰 (备注 of 锐如兽牙,
+ // 重如沼泥, 冰原秩序 and “永恒狩猎”); PRTS 分支特性信息 攻城手 ("可对空").
+ // - Trait (攻城手) "优先攻击重量最重的敌人": target priority 'heaviest' (targeting.js); ranged physical arrows that hit air units,
+-//   range 4-3 (as 早露, kits/ops/op-poca.js).
++//   range 4-3 (as 早露, kits/ops/chess_char_6_99-poca.js).
+ // - Module SIE-X 自然的包容: trait "攻击重量较重（重量等级大于等于3）的敌人时，攻击力提升至115%" (the hidden module talent's atk_scale /
+ //   value on 锐如兽牙's index): ×atk_scale on her attacks against an enemy of 重量等级 ≥ value (profile dmgMul); stage 2+ 锐如兽牙's
+ //   numbers (12 % a stack, 10 s) come with the composed talent.
+diff --git a/server/sim/content/kits/ops/op-weedy.js b/server/sim/content/kits/ops/op-weedy.js
+index 2bc59b8..c2b1cf4 100644
+--- a/server/sim/content/kits/ops/op-weedy.js
++++ b/server/sim/content/kits/ops/op-weedy.js
+@@ -274,7 +274,7 @@ export default {
+       },
+       talents: [
+         // 工程蓄水炮 (and 蓄水炮强化, the cannon's own talent): her cannon pieces run the cannon's kit — set up here, before the
+-        // battle starts (Battle._setupUnit with a kit, as op-bgsnow.js does for its 打字机)
++        // battle starts (Battle._setupUnit with a kit, as chess_char_4_99-bgsnow.js does for its 打字机)
+         { install(battle, unit) {
+           for (const t of battle.allyUnits) {
+             if (t.kind !== 'token' || t.defId !== CANNON || t.ownerUnit !== unit || t.alive || t.deployed) continue;
+diff --git a/server/sim/professions.js b/server/sim/professions.js
+index 14187e3..a9c1c50 100644
+--- a/server/sim/professions.js
++++ b/server/sim/professions.js
+@@ -480,6 +480,8 @@ const onFrontLine = (unit, target) => {
+ export const SUB = Object.freeze({
+   // --- SNIPER
+   fastshot: P({ priority: 'fly', dmgMul: (b, u, t) => (t.isFlying ? (u.profile.flyScale ?? 1) : 1) }),
++  // 攻城手: 优先攻击重量最重的敌人 — data targetPriority 'heaviest' (build-data 从特质文本推导)，可对空由特质文本推导
++  siegesniper: P({}),
+   closerange: P({}),
+   longrange: P({ priority: 'lowDef' }),
+   aoesniper: P({ splashRadius: 1.1, projectile: 'bomb' }),
+diff --git a/server/sim/skills.js b/server/sim/skills.js
+index f558aad..b45a6dc 100644
+--- a/server/sim/skills.js
++++ b/server/sim/skills.js
+@@ -292,20 +292,33 @@ export class SkillRuntime {
+     this.active = true;
+     this._applyMods();
+     this._call('onStart', { reason: 'passive' });
+-    // A deploy-time passive (琳琅诗怀雅 S1 仗义疏财 / S2 “见面礼”: kind 'passive' with no duration) never goes through
+-    // `activate()`, so the client saw no 'skill' event at all and its model never played the skill clip the manifest
+-    // carries for it (player report follow-up: the 57 instant clips with no Begin / own Idle — 2 of them passives;
+-    // 凯瑟琳 S1 is `kind: instant` in the sim and already casts). Fire the same bounded window an instant cast uses, so
+-    // the actor plays that clip once and then goes back to its idle with attacks on the normal clip. A passive WITH a
+-    // duration (缄默德克萨斯 S1–S3, 野鬃 S1, 伊内丝 S3, 耀骑士临光 S2) is left alone: the sim keeps it active until
+-    // death, so "how long should its stance show" is a separate question.
+-    if (!this.noSkill && !(this.duration > 0)) {
+-      const b = this.battle;
+-      const u = this.unit;
+-      b._ev(['skill', u.id, 1]);
+-      u.skillAnimUntil = b.time + SKILL_ANIM_WINDOW;
+-      b.after(SKILL_ANIM_WINDOW, () => { if (u.alive) b._ev(['skill', u.id, 0]); }, { owner: u });
+-    }
++    // The 'skill' animation window is NOT fired here: _startPassive runs inside Battle._deploy before the
++    // 'spawn' / 'deploy' events are queued, so the client had no view (first deploy) or a dead actor (a
++    // redeploy) to hand the event to — a deploy-time passive's skill stance never showed at all (麒麟R夜刀
++    // player report, 2026-10-14). deploy.js calls _firePassiveAnim right after the 'deploy' event instead.
++    // Window length: a spec.skillAnim (seconds) wins — a stance the kit wants held (Infinity-scale numbers
++    // allowed, bounded by the battle) — else the old 0.5 s instant window, and only for a passive WITHOUT a
++    // data duration (缄默德克萨斯 S1–S3, 野鬃 S1 … keep showing no stance, unchanged).
++    this._animWin = this.spec.skillAnim != null ? this.spec.skillAnim : (this.duration > 0 ? 0 : SKILL_ANIM_WINDOW);
++  }
++
++  /**
++   * The deploy-time passive's 'skill' anim window, fired by Battle._deploy after its 'deploy' event. The
++   * window belongs to THIS deployment: a raid / 不屈 redeploy landing inside it (or its scheduled off event
++   * outliving the deployment) must not cut the new stance short.
++   */
++  _firePassiveAnim() {
++    const win = this._animWin;
++    this._animWin = 0;
++    if (this.noSkill || !(win > 0)) return;
++    const b = this.battle;
++    const u = this.unit;
++    const dep = u.deploySeq;
++    b._ev(['skill', u.id, 1]);
++    u.skillAnimUntil = b.time + win;
++    b.after(win, () => {
++      if (u.alive && u.deployed && u.deploySeq === dep) b._ev(['skill', u.id, 0]);
++    }, { owner: u });
+   }
+ 
+   _applyMods() {
+diff --git a/tools/assets/anim-roles.mjs b/tools/assets/anim-roles.mjs
+index a5407df..d621e96 100644
+--- a/tools/assets/anim-roles.mjs
++++ b/tools/assets/anim-roles.mjs
+@@ -186,13 +186,49 @@ function skillFamily(names, find, P, numbered) {
+   return { ...clip(loop === begin ? null : begin, loop, loop === end ? null : end), idle: idle ?? null };
+ }
+ 
+-function resolveSkill(names, find, index, attack) {
++/**
++ * Models whose bare Start_N / Skill_N_End clips the launch-clip completion in resolveSkill below is allowed for: a
++ * skeleton may name a skill's launch clip `Start_N` instead of the `Skill_N_Begin` skillFamily looks for, and then the
++ * skill stance shows no launch at all.
++ * - 麒麟R夜刀 (char_1029_yato2): the mod's own operator (2026-10-14).
++ * - Six operators whose skeleton mixes both spellings — their S3 uses Skill_3_Begin and their S2 a bare Start_2 (傀影
++ *   char_1023_ghost2 S2, char_1028_texas2 S2/S3, char_1039_thorn2 S2, char_1502_crosly S2/S3, char_2027_wang S2,
++ *   char_4011_lessng S2). The owner's playtest of 2026-10-15: with `begin` null the launch never plays; with it the
++ *   cast runs Start → skill clip → its numbered End, and an ordinary attack afterwards stays an ordinary attack (no
++ *   Start / End clip is pulled in).
++ * The list stays explicit rather than "any skeleton with Start_N" because the names do not mean the same thing
++ * everywhere: 嵯峨 (char_362_saga) carries Skill_2_* beside a plain Skill, but those belong to her THIRD skill
++ * (SAGA_S2 / SAGA_S3 in assets/spine.mjs), so a bare Start_N there is not skill n's own launch and its numbered End
++ * must not be borrowed either. Drafted as a blanket rule and narrowed to a whitelist on 2026-10-14, widened to the six
++ * operators above on 2026-10-15 (test/render/anim-role-fixes.test.js pins this list against data/assets.json).
++ */
++export const LAUNCH_CLIP_MODELS = new Set([
++  'char_1029_yato2',      // 麒麟R夜刀
++  'char_1023_ghost2',     // 傀影
++  'char_1028_texas2',     // 缄默德克萨斯
++  'char_1039_thorn2',     // 引星棘刺
++  'char_1502_crosly',     // 弑君者
++  'char_2027_wang',       // 望
++  'char_4011_lessng',     // 止颂
++]);
++
++function resolveSkill(names, find, index, attack, launchClips) {
+   const n = index + 1;
+   const pad = String(n).padStart(2, '0');
+   const prefixes = [`Skill_${n}`, `Skill${n}`, `Skill_${pad}`, 'Skill'];
++  // 麒麟R夜刀-style launch clips (char_1029_yato2, 2026-10-14): a bare Start_N is skill n's own launch animation and
++  // Skill_N_End its closing clip, sitting next to the shared Skill_* family — the family resolver only looks for
++  // Skill_N_Begin/Start, so these were left unused and the skill stance showed no launch at all. Filled in when the
++  // family itself has no begin / the numbered End exists, and — for a skill with no clip of its own left (傀影 S2 /
++  // 望 S2 resolve through the ordinary attack clip below) — as the launch of that fallback as well.
++  // Whitelisted per model (LAUNCH_CLIP_MODELS): the names do not mean this on every skeleton — see the list.
++  const launch = launchClips ? find(`Start_${n}`) : null;
+   for (const P of prefixes) {
+     const c = skillFamily(names, find, P, P !== 'Skill');
+     if (c) {
++      if (launch && !c.begin) c.begin = launch;
++      const nEnd = launchClips ? find(`Skill_${n}_End`) : null;
++      if (nEnd && c.end !== nEnd) c.end = nEnd;
+       const { idle, ...rest } = c;
+       return { ...rest, index, idle };
+     }
+@@ -208,7 +244,12 @@ function resolveSkill(names, find, index, attack) {
+       }
+     }
+   }
+-  if (attack) return { ...attack, via: 'attack', index, idle: null };
++  if (attack) {
++    // the skill has no clip of its own: it animates through the ordinary attack, and a bare Start_N is its launch
++    const fallback = { ...attack, via: 'attack', index, idle: null };
++    if (launch) fallback.begin = launch;
++    return fallback;
++  }
+   return null;
+ }
+ 
+@@ -265,6 +306,8 @@ function resolveDie(names, find, form) {
+  * @param {boolean} [opts.numberedSkills] also resolve every numbered skill clip of the skeleton (Skill_01, Skill_2_Loop …)
+  *   after the caller's indices: an enemy's per-skill clips (a multi-skill boss such as 盐风主教昆图斯, Skill_01..04)
+  * @param {Record<string, number>} [opts.durations] animation durations in seconds (prefers animated idles)
++ * @param {string} [opts.modelId] the model's id (character id / enemy id); opts the model into the per-model clip
++ *   completions of LAUNCH_CLIP_MODELS
+  * @returns {Roles}
+  */
+ export function resolveRoles(animationNames, opts = {}) {
+@@ -292,7 +335,7 @@ export function resolveRoles(animationNames, opts = {}) {
+   /** @type {Record<string, SkillClip>} */
+   const skills = {};
+   for (const i of indices) {
+-    const s = resolveSkill(names, find, i, attack);
++    const s = resolveSkill(names, find, i, attack, LAUNCH_CLIP_MODELS.has(opts.modelId ?? ''));
+     if (s) skills[String(i)] = s;
+   }
+   const roles = {
+diff --git a/tools/assets/spine.mjs b/tools/assets/spine.mjs
+index 20d83dd..495035d 100644
+--- a/tools/assets/spine.mjs
++++ b/tools/assets/spine.mjs
+@@ -135,13 +135,70 @@ const PRISONER_GREY_3 = Object.freeze({
+  */
+ const UTAGE_S1 = Object.freeze({ begin: 'Skill_Start', loop: 'Skill_Loop', end: 'Skill_End', index: 0, idle: null });
+ const UTAGE_S2 = Object.freeze({ ...clipOf('Attack', 'attack'), index: 1, idle: null });
++/**
++ * 嵯峨 (char_362_saga): her skeleton has one numbered skill set, Skill_2_Begin / Skill_2_Loop / Skill_2_Idle /
++ * Skill_2_End (a stance with its own idle — 起手、持续、收尾), next to one unnumbered Skill clip (a one-shot swing).
++ * The resolver (by name) gave Skill_2 to her second slot and the plain Skill to her third — but the official client
++ * plays the Skill_2 stance for her THIRD skill 怒目 (a lasting stance) and the plain Skill clip for her second skill
++ * 除恶 (an instant strike): the skeleton's numbering does not follow the skill slots (the owner's playtest of
++ * 2026-10-14). [ASSUMED: by the clips' shapes and the report; the prefab's skill table was not read]
++ */
++const SAGA_S1 = Object.freeze({ begin: null, loop: 'Skill', end: null, index: 0, idle: null });
++const SAGA_S2 = Object.freeze({ begin: null, loop: 'Skill', end: null, index: 1, idle: null });
++const SAGA_S3 = Object.freeze({ begin: 'Skill_2_Begin', loop: 'Skill_2_Loop', end: 'Skill_2_End', index: 2, idle: 'Skill_2_Idle' });
+ export const PREFAB_SPINE_ROLES = Object.freeze({
+   enemy_1116_liprr: PRISONER_GREY_3,
+   enemy_1116_liprr_2: PRISONER_GREY_3,
+   // operators by character id: both the front and the back model
+   char_337_utage: { skill: UTAGE_S2, skills: { 0: UTAGE_S1, 1: UTAGE_S2 } },
++  // 嵯峨 lists a slot per skill index (test/assets.test.js: every skill slot of a chess with more than one skill needs
++  // a clip): S1 充能 is a passive without clips of its own (the resolver's plain Skill), S2 除恶 swings with the
++  // ordinary clips, S3 怒目 holds the Skill_2 stance.
++  char_362_saga: { skills: { 0: SAGA_S1, 1: SAGA_S2, 2: SAGA_S3 } },
++});
++
++/**
++ * Field-level role patches applied AFTER applyRoleFix (processModels): the resolver reads clip names, and a few
++ * skeletons name a skill's *pose* clips in a way that makes the skill's loop the ordinary attack. `via: 'attack'` is
++ * what spine.js reads for that (its `_attackClip` falls back to the unit's own attack roles) while the pose clips keep
++ * playing as the stance (begin → loop/idle → end; `_idleName` still shows the skill's own idle).
++ * The owner's spec of 2026-10-15, per operator: the ordinary attack keeps its own clip during these skills.
++ * id → { skillIndex: partial roles }.
++ */
++export const SKILL_ROLE_PATCHES = Object.freeze({
++  // 耀骑士临光 S2: that slot's only Skill_2_* clip is Skill_2_Die (a knocked-out pose the resolver took for the skill's
++  // clip). Her S2 attacks with the ordinary Attack_* clips and holds no pose of its own — the slot keeps no begin /
++  // end either, or setSkill(true) would queue the attack loop as a stance (spine.js setSkill).
++  char_1014_nearl2: { 1: { begin: null, loop: 'Attack_Loop', end: null, idle: null, via: 'attack' } },
++  // 缄默德克萨斯 S3 剑雨滂沱: the Skill_3_* set is her stance (idle Skill_3_Idle); ordinary attacks stay on Attack.
++  char_1028_texas2: { 2: { via: 'attack' } },
++  // 弑君者 S2: the stance is Start_2 → Skill_2_Idle → Skill_2_End; ordinary attacks stay on Attack_A.
++  char_1502_crosly: { 1: { via: 'attack' } },
++  // 麒麟R夜刀: both her ordinary attack and her S1 are clip CYCLES (spine.js `seq`: one clip per attack, the cycle
++  // restarts at its first clip after the unit falls back to its idle). `attack` keys the model's own attack roles.
++  char_1029_yato2: {
++    attack: { seq: ['Attack1', 'Attack2', 'Attack3'] },
++    0: { seq: ['Skill_Attack1', 'Skill_Attack2', 'Skill_Attack3', 'Skill_Attack4'] },
++  },
+ });
+ 
++/**
++ * `roles` (resolveRoles output) with SKILL_ROLE_PATCHES[id] merged in place: a key is a skill-slot index, or `'attack'`
++ * for the model's own attack roles. `roles.skill` aliases the primary slot, so patching that slot updates both.
++ * @param {string|null} id the model's id (character id / enemy id), null when unknown
++ * @param {any} roles
++ * @returns {any} the same `roles`
++ */
++export function applySkillRolePatches(id, roles) {
++  const patch = id ? SKILL_ROLE_PATCHES[id] : null;
++  if (!patch || !roles) return roles;
++  for (const [key, fields] of Object.entries(patch)) {
++    const target = key === 'attack' ? roles.attack : roles.skills?.[key];
++    if (target) Object.assign(target, fields);
++  }
++  return roles;
++}
++
+ /**
+  * `roles` with the fix of LOCAL_SPINE_ROLES / PREFAB_SPINE_ROLES applied: each fixed role whose clips all exist in `durations` replaces the
+  * resolved one; `missing` lists the roles left as resolved because a clip is missing.
+@@ -193,7 +250,7 @@ export async function localSpineMeta(root, found) {
+       const sk = parseSkel(await readFile(join(root, m.skel)), info.regions);
+       if (!sk.animations.length) throw new Error('skeleton has no animations');
+       if (sk.missingRegions?.length) problems.push(`${id}: ${sk.missingRegions.length} attachment(s) not in atlas (e.g. ${sk.missingRegions[0]})`);
+-      const fixed = applyRoleFix(resolveRoles(sk.animations, { skillIndices: [0], numberedSkills: id.startsWith('enemy_'), durations: sk.durations }), LOCAL_SPINE_ROLES[id], sk.durations);
++      const fixed = applyRoleFix(resolveRoles(sk.animations, { modelId: id, skillIndices: [0], numberedSkills: id.startsWith('enemy_'), durations: sk.durations }), LOCAL_SPINE_ROLES[id], sk.durations);
+       if (fixed.missing.length) problems.push(`${id}: role fix not applied (clip missing) for ${fixed.missing.join(', ')}`);
+       meta[id] = {
+         skel: base(m.skel), atlas: base(m.atlas), textures: info.pages, pma: true,
+@@ -333,9 +390,9 @@ export async function processModels(models, { root, dl, cachePath, download = tr
+     const id = key.startsWith('enemy:') ? key.slice('enemy:'.length) : key.startsWith('op:') ? key.split(':')[1] : null; // op:<char>:front|back
+     // an enemy's numbered skill clips are resolved too (anims.skills: the clip of each skill slot it casts, PR #275);
+     // operators keep the pool's indices (their equipped skill picks among them)
+-    const fixed = applyRoleFix(resolveRoles(sk.animations, { skillIndices: m.skillIndices, numberedSkills: key.startsWith('enemy:'), durations: sk.durations }), id ? PREFAB_SPINE_ROLES[id] : undefined, sk.durations);
++    const fixed = applyRoleFix(resolveRoles(sk.animations, { modelId: id, skillIndices: m.skillIndices, numberedSkills: key.startsWith('enemy:'), durations: sk.durations }), id ? PREFAB_SPINE_ROLES[id] : undefined, sk.durations);
+     if (fixed.missing.length) problems.push(`${m.key}: role fix not applied (clip missing) for ${fixed.missing.join(', ')}`);
+-    const anims = fixed.roles;
++    const anims = applySkillRolePatches(id, fixed.roles);
+     entries.set(m.key, {
+       skel: assetUrl(m.skel.rel),
+       atlas: assetUrl(m.atlas.rel),
+diff --git a/tools/build-data.mjs b/tools/build-data.mjs
+index 48fa3fa..bf24ea7 100644
+--- a/tools/build-data.mjs
++++ b/tools/build-data.mjs
+@@ -40,6 +40,7 @@ import { bandBondIds } from '../shared/bandBonds.js';
+ import { statusKey, composeUnitRecord, standInRecord, unitForm } from '../shared/standIn.js';
+ import { extendedGrid } from '../shared/loadoutRecord.js';
+ import { FULL_RANK, atRank, stripPotential } from '../shared/potential.js';
++import { injectCustomContent, CUSTOM_VISIBLE_CHESS, CUSTOM_BOND_COUNT } from './custom-content.mjs';
+ 
+ // ===== CLI & IO ==================================================================================
+ 
+@@ -3718,7 +3719,7 @@ function buildConfig(ctx, waves, stages, bands, chess, items) {
+       chatCd: ac.constData?.chatCD ?? 1, chatBubble: ac.constData?.chatTime ?? 3, broadcastDelay: ac.constData?.broadcastBeginDelay ?? 1,
+       enterSteps: (Array.isArray(ac.enterStepList) ? ac.enterStepList : Object.values(ac.enterStepList || {})).map((s) => ({ step: s.stepType, time: s.time, hint: s.hintTime, title: s.title })),
+     },
+-    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 3, addon: 4 }, HARD: { core: 3, addon: 4 }, ABYSS: { core: 3, addon: 4 }, TRAINING: { core: 0, addon: 0 },
++    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 }, TRAINING: { core: 0, addon: 0 },
+       rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0; uniform draw' },
+     bandDraft: { skipsPerPlayer: 1, order: 'random', duplicatesAllowed: true, timeoutBandId: 'band_bldsk' },
+     titles: Object.values(act.playerTitleDataDict || {}).map((t) => ({ id: t.id, picId: t.picId, name: t.txt, ...(titleRules[t.id] || {}) })),
+@@ -3881,9 +3882,10 @@ function validateAll(f) {
+     bad.slice(0, 5).forEach((p) => err(`non-finite number at ${p}`));
+   }
+   const visible = Object.values(chess).filter((c) => !c.isGolden && c.visible);
+-  if (Object.keys(bonds).length !== 23) err(`expected 23 bonds, got ${Object.keys(bonds).length}`);
++  const custom = process.env.SP_NO_CUSTOM ? 0 : 1; // SP_NO_CUSTOM=1 时不注入自制内容，断言回退到上游基线（A/B 用）
++  if (Object.keys(bonds).length !== 23 + CUSTOM_BOND_COUNT * custom) err(`expected ${23 + CUSTOM_BOND_COUNT * custom} bonds, got ${Object.keys(bonds).length}`);
+   if (Object.keys(bands).length !== 40) err(`expected 40 bands, got ${Object.keys(bands).length}`);
+-  if (visible.length !== 112) err(`expected 112 visible non-DIY chess, got ${visible.length}`);
++  if (visible.length !== 112 + CUSTOM_VISIBLE_CHESS * custom) err(`expected ${112 + CUSTOM_VISIBLE_CHESS * custom} visible non-DIY chess, got ${visible.length}`);
+   for (const c of Object.values(chess)) {
+     if (!chess[c.baseId]) err(`chess ${c.chessId}: baseId missing`);
+     if (c.goldenId && !chess[c.goldenId]) err(`chess ${c.chessId}: goldenId missing`);
+@@ -4067,6 +4069,7 @@ function validateAll(f) {
+ async function main() {
+   const t0 = Date.now();
+   const ctx = await loadContext();
++  if (!process.env.SP_NO_CUSTOM) injectCustomContent(ctx); // 自制内容（缠丸 + 盟约【东】）：必须在任何 builder 之前注入官方数据表
+   log('building…');
+   // one pass of the operator builders per potential rank (潜能 1–6, ctx.potRank): the full-potential pass is the data,
+   // annotated below with what every lower rank changes (attachPotential)
+diff --git a/tools/fetch-assets.mjs b/tools/fetch-assets.mjs
+index f12d457..49ae8de 100644
+--- a/tools/fetch-assets.mjs
++++ b/tools/fetch-assets.mjs
+@@ -193,6 +193,16 @@ export function dataExtras(backups, chess) {
+     extraOperators[id] = { name: u.name, subProfessionId: u.subProfessionId, nationId: u.nationId, skills: [...skills.values()].sort((a, b) => a.index - b.index) };
+   }
+   for (const c of Object.values(chess || {})) for (const m of c?.modules || []) if (m.typeIcon) moduleTypes.add(m.typeIcon);
++  // chess.json chess whose charId research 07 does not list — a chess a build-time injection added to the season
++  // (tools/custom-content.mjs). Its art follows the same URL patterns (plan.mjs patternOperator) and buildPlan drops
++  // every id research 07 already has, so the operators it knows keep their own record.
++  for (const c of Object.values(chess || {})) {
++    const id = c?.charId;
++    if (!id || c.isDiy || extraOperators[id]) continue;
++    const skills = new Map();
++    for (const s of c.skills || []) if (s.skillId && Number.isInteger(s.index)) skills.set(s.index, { index: s.index, skillId: s.skillId, iconId: s.iconId || s.skillId });
++    extraOperators[id] = { name: c.name, subProfessionId: c.subProfessionId, nationId: c.nationId, skills: [...skills.values()].sort((a, b) => a.index - b.index) };
++  }
+   return { extraOperators, tokenIds: Object.keys(backups?.tokens || {}).sort(), moduleTypes: [...moduleTypes].sort() };
+ }
+ 
+diff --git a/tools/golden.mjs b/tools/golden.mjs
+index a6fb194..0e55d9a 100644
+--- a/tools/golden.mjs
++++ b/tools/golden.mjs
+@@ -726,6 +726,15 @@ export function matchScenarios() {
+   // original outcomes, and add companion seeds that still exercise the complete shop → deployment → battle path.
+   out.push({ id: 'coop2-NORMAL-1-coverage-standins', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 1, human: { notOwned: MATCH_NOT_OWNED } });
+   out.push({ id: 'coop2-NORMAL-5-coverage-diy', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 5, human: { diy: MATCH_DIY, shopLevel: 5 } });
++  // 缠丸 (tools/custom-content.mjs) adds a tier-2 chess to the shared pool, which parts seed 5's shop stream from the one
++  // that fielded 推进之王: a second companion carries the full shop → deployment → battle path again (seeds 1–30 probed;
++  // 3 fields the operator kit at rounds 5 and 6). Seed 5 stays as the outcome regression it now is.
++  out.push({ id: 'coop2-NORMAL-3-coverage-diy', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 3, human: { diy: MATCH_DIY, shopLevel: 5 } });
++  // 乌萨斯第二批 (2026-10-12, 卡池 +5) 分流了 seeds 3/5 的草稿流: seeds 1–300 probed, 26 fields 推进之王 again.
++  out.push({ id: 'coop2-NORMAL-26-coverage-diy', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 26, human: { diy: MATCH_DIY, shopLevel: 5 } });
++  // 麒麟R夜刀时序修订 (2026-10-13: 部署前摇 + S1 六连击按帧排布 + frontKey 修复使 S2 乱舞真正造成伤害)
++  // 再次分流了 seed 26 的草稿流: seeds 27–300 probed, 67 fields 推进之王 (rounds 2–6).
++  out.push({ id: 'coop2-NORMAL-67-coverage-diy', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 67, human: { diy: MATCH_DIY, shopLevel: 5 } });
+   const humanAbout = (h) => (h.notOwned ? ` + 1 human seat (AI 托管) without ${h.notOwned.length} operators (补位 stand-ins)`
+     : ` + 1 human seat (AI 托管) with ${Object.keys(h.diy || {}).length} 自选 picks${h.shopLevel ? ` and its 调度中心 at level ${h.shopLevel} from the first prep` : ''}`);
+   return out.map((m) => ({ ...m, family: 'matches', kind: 'match', about: `${m.mode} ${m.difficulty}, ${m.bots} bot seat(s)${m.human ? humanAbout(m.human) : ''}, seed ${m.seed}${m.clientCombat === false ? ', server-run combat' : ''}${m.boost ? `, LP ${m.boost.lp} and ${m.boost.layers} layers per bond from the first prep` : ''}` }));
+@@ -1033,7 +1042,7 @@ const ABOUT = {
+  * fields (one of them a Hidden Core), six matches (solo 标准 / 绝境, co-op 2 / 4, the boosted Hidden Core run, the 补位
+  * match) and the normal-record stand-in battles.
+  */
+-const FAST_MATCHES = new Set(['solo-FUNNY-1', 'solo-HARD-1', 'coop2-NORMAL-3', 'coop4-ABYSS-7', 'solo-HARD-9-boosted', 'coop2-NORMAL-14-standins', `coop2-NORMAL-${MATCH_DIY_SEED}-diy`, 'coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-5-coverage-diy']);
++const FAST_MATCHES = new Set(['solo-FUNNY-1', 'solo-HARD-1', 'coop2-NORMAL-3', 'coop4-ABYSS-7', 'solo-HARD-9-boosted', 'coop2-NORMAL-14-standins', `coop2-NORMAL-${MATCH_DIY_SEED}-diy`, 'coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-5-coverage-diy', 'coop2-NORMAL-3-coverage-diy']);
+ const FAST_FIELDS = new Set(['boss-boss_1-pair', 'boss-boss_4-solo', 'boss-boss_7-pair', 'hidden-boss_9-pair', 'unite-1', 'unite-2']);
+ export function isFast(sc) {
+   if (sc.family === 'matches') return FAST_MATCHES.has(sc.id);

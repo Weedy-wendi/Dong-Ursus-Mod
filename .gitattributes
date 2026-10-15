@@ -1,0 +1,30 @@
+# ══════════════════════════════════════════════════════════════════
+#  逐字节保真规则
+#  本包内的 patches/*.patch 必须原样取出才能 git apply；PNG 是二进制。
+#  默认关闭一切换行转换（-text），再对文本文件显式声明 LF。
+#  配合仓库本地 core.autocrlf=false 使用。
+# ══════════════════════════════════════════════════════════════════
+
+* -text
+
+# 二进制：不做换行转换、不参与文本 diff
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+
+# 文本：统一 LF（本包全部为 LF、无 BOM）
+*.md          text eol=lf
+*.js          text eol=lf
+*.mjs         text eol=lf
+*.json        text eol=lf
+*.gitignore   text eol=lf
+*.gitattributes text eol=lf
+
+# 补丁：LF 且不做空白清洗（补丁中的尾随空白有意义）
+*.patch       text eol=lf -whitespace
