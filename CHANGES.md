@@ -4,6 +4,43 @@
 
 ---
 
+## 2026-10-16（第二条）· v1.0.1：不再要求「纯净本体」—— status 只查版本与 mod 内容，旧版安装自动回退
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `scripts/mod.mjs` | 新增 `classify()`（三态判定）与 `restorePristine()`（无安装记录时的自动回退）；`status` 结论与输出重写；`install` 前置判定重写；已装同版本且一致时走「无需重装」快路径 |
+| `mod.json` | `version` 1.0.0 → **1.0.1**（指纹集合不变：base.files 85 / patched 73 / owned 29 / removed 12 / generated 22） |
+| `README.md` · `SKILL.md` | 同步新口径（快速开始、更新日志、四条命令说明、注意事项第 7 条） |
+
+### 为什么
+
+玩家手上的本体很少是纯净的：装过旧版 mod、手改过文件、装过别的东西都很常见。原设计把「必须是纯净基线」当硬门槛，逼玩家手工 `git stash`；而**旧版安装没有 `state.json`**，实际上没有别的路可走。
+
+### 怎么判的（只用 mod.json 自带的三组指纹，不依赖 git）
+
+- **本体版本**：`<repo>/package.json` 的 `version` == `mod.json.base.version`（不符直接拒绝，exit 2）
+- **本 mod 内容**：`owned` 的 29 个自有文件在树里 / `removed` 的 12 个被替换文件已删 / 存在 `state.json`
+- **这 85 个「装之前」的文件是否在基线字节上**（容忍 CRLF ↔ LF）
+
+→ 结论四态：版本不符 / 已安装（含漂移计数）/ 树里有 mod 内容但无安装记录 / 与本 mod 无关的改动。
+
+### 怎么验的
+
+复刻树：85 个基线文件 + `package.json` + `server/sim/content/index.js`，`git init` 后模拟一次旧版安装（套两个补丁 + 放 29 个自有文件 + 删 12 个被替换文件 + **不写 state.json**）：
+
+| 步骤 | 结果 |
+|---|---|
+| `status` | 「本 mod 内容：自有文件 29/29 在树里 · 补丁产物 73/73 符合 · 被替换的上游文件已删 12/12」→「树里有本 mod 的内容 → 视为旧版安装 / 手工覆盖」 |
+| `install --dry-run` | 「先用 git 从基线提交 <sha> 还原 85 个文件，再装」；改动前后 `git status --porcelain` 都是 111 项 → **零改动** |
+| `install` | 「回退：git 85 · 备份 0 · 另存 73 个文件 → `.mod-dong-ursus/backup-legacy-<时间>/`」→ 两个补丁**都套用成功**（回退成功的铁证）；之后停在复刻树缺 `tools/` 的 build-data（测试树缺件，与逻辑无关） |
+| 快路径 | 手工写入同版本、无漂移的 `state.json` → `install` 输出「已安装 v1.0.1，与安装时一致：无需重装」 |
+
+本轮只动前置判定，没有重跑完整安装/卸载回归；v1.0.0 那轮的全套矩阵（纯净树往返 install→verify 274/274→uninstall、git 精确卸载后 `git status` 为空、update 的 --check/跨 base/真更新）仍然有效。
+
+---
+
 ## 2026-10-16 · 命令行工具（install / update / uninstall / status）· GPL-3.0-or-later 许可与改动说明
 
 ### 新增

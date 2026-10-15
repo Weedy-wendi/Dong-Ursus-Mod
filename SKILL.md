@@ -72,10 +72,14 @@ node <mod包路径>/scripts/mod.mjs update    <本体仓库> [--check] [--file <
 node <mod包路径>/scripts/mod.mjs uninstall <本体仓库> [--force] [--keep-backup]
 ```
 
-- `install`：先体检（Node ≥22 / git / 本体版本 / **85 个基线文件指纹**）；树上若有旧版安装记录，**先精确还原再装**；装完按 `mod.json` 的 102 个产物指纹复核（**git 退出码不可信**）。缺 git、版本不符、树不纯净 → 拒绝（`--force` 才硬来）。
+- `install`：只要求两件事 —— **本体版本对**（`<repo>/package.json` 的 version == `mod.json.base.version`）与**有 git**。树上已有本 mod 内容时自动分情况处理：
+  · 有安装记录 → 精确还原（git 优先、备份兜底）再装；
+  · 没有记录（旧 `install.mjs` 装的 / 手工覆盖过）→ 自动把这 85 个「装之前」的文件回退到基线再装，当前字节先另存到 `.mod-dong-ursus/backup-legacy-<时间>/`；
+  · 已装同版本且与安装时一致 → 直接说「无需重装」（`--force` 强制重装）。
+  装完按 `mod.json` 的 102 个产物指纹复核（**git 退出码不可信**）。只有「这 85 个文件里与本 mod 无关的改动」才会被拒绝并列出（`--force` 可硬装）。
 - `update`：按方案 B 取 `base-<本体版本>` 分支（分支名可 `--branch` 覆盖），对比包内 `mod.json` 的 `base` 与版本号；只有 base 匹配且版本更高才执行，用**新包自己**跑 `install`，然后同步本地包目录。`--file` 支持本地目录/zip（离线），`--check` 只看不动。
 - `uninstall`：优先 `git checkout <基线提交> -- <文件>`，git 不可用或提交不可达时用 `.mod-dong-ursus/backup/`；**这台电脑改过的文件默认保留并报告**（`--force` 强制还原）。
-- `status`：包版本 / 适配本体 / 基线提交是否可达 / 是否已装 / 漂移与缺失 / 一句话结论。
+- `status`：**本体版本对不对** + **树里有没有本 mod 的内容**（自有文件 N/29、补丁产物 N/73、被替换的上游文件已删 N/12）+ 安装记录与漂移 + 一句话结论。**不要求纯净本体**，结论分四态（版本不符 / 已安装 / 有 mod 内容但无记录 / 与本 mod 无关的改动）。
 - 兼容入口：`scripts/install.mjs` 仍可用（= `mod.mjs install`）。
 
 `<本体>/.mod-dong-ursus/`：`state.json`（这台机器装了什么：每个被触碰文件的装前/装后字节）+ `backup/`（装前副本）。补丁 01 会往本体 `.gitignore` 加一行 `.mod-dong-ursus/`，所以它不出现在 `git status` 里，也不会被 `git clean -fd` 删掉。
@@ -175,7 +179,7 @@ install.mjs 依次执行（全部幂等，重复运行安全）：
    `node_modules`/`.cache`/`public/vendor`，先 `git apply --check` 两个补丁，再完整走一遍 install 流程
    （含 build-data 与 i18n），最后与适配好的树做逐文件哈希比对（应完全一致）。
 6. **不要提交 golden 快照回 mod 包**：golden 是本体版本的函数。
-7. **升级必须走 CLI，不要手工覆盖**：实测把新版补丁直接套到装了旧版 mod 的树上，正向与反向 `--check` 都失败 → `--reject` 落 **71 个 `.rej`**、而真正被改动的文件只有 1 个。`mod.mjs install` 会先按 `.mod-dong-ursus/state.json` 精确还原再装；`update` 负责取包 + 比版本 + 调新包安装。
+7. **升级走 CLI，不要手工覆盖**：实测把新版补丁直接套到装了旧版 mod 的树上，正向与反向 `--check` 都失败 → `--reject` 落 **71 个 `.rej`**、而真正被改动的文件只有 1 个。`mod.mjs install` 自己会处理「树上已有 mod 内容」：有 `.mod-dong-ursus/state.json` 就按记录精确还原；**没有记录**（旧版安装/手工覆盖）就把 `mod.json` 里 `base.files` 那 85 个文件回退到基线（git 优先，其次 `.mod-dong-ursus/backup/`），当前字节另存 `backup-legacy-<时间>/`。`update` 负责取包 + 比版本 + 调新包安装。
 8. **补丁相关的 git 命令必须钉死换行符**：`core.autocrlf=false` + `core.eol=lf`。不钉的话，机器上的全局 autocrlf 会把新增行写成 CRLF——实测在非 git 检出的树上装完，73 个补丁产物全变 CRLF，与本体适配树（LF）逐字节不一致（`scripts/lib/gitops.mjs` 的 `LF` 常量已内建）。另一侧：校验对"仅换行符不同"宽容，Windows 签出的 `.gitignore` 这类文件不会被误判。
 9. **git 的退出码不可信**：`git apply` 在**仓库的子目录**里会静默跳过所有补丁并返回 0；在「恰好等于补丁产物」的树上前向 `--check` 也返回 0。所以套完补丁必须按 `mod.json` 的 `patched` / `owned` 指纹复核（CLI 已内建），别信退出码。
 9. **改过 `files/` 或补丁后要重生成 `mod.json`**：`node tools/make-manifest.mjs --repo <本体源码检出> --base-commit <基线提交> [--version x.y.z]`；指纹取自基线的 git 对象，不取工作区。版本号是 mod 自己的 semver，改动了就往上加（发布分支 `base-<本体版本>`）。

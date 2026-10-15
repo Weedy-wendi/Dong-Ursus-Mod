@@ -7,7 +7,7 @@
 <sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.0-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.1-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
@@ -31,6 +31,8 @@ node <mod 包>/scripts/verify.mjs .        # ③ 验收：274 个用例应全绿
 
 装完直接开局：牌池会多出 13 名预设棋子，【东】/【乌萨斯】按 3 / 6 人档激活，图标、文案、特质、装备全部就位。
 
+> **本体不必是纯净的**：装过旧版 mod、或你手改过相关文件，`install` 都会自己处理 —— 有安装记录就先精确还原，没有记录（旧版安装 / 手工覆盖）就先把这 85 个文件回退到基线（当前字节另存到 `.mod-dong-ursus/backup-legacy-<时间>/`）再装。只有「与本 mod 无关的改动」才会被拒绝并列出。
+
 ### 四条命令
 
 | 命令 | 做什么 | 会不会动本体 |
@@ -45,8 +47,9 @@ node <mod 包>/scripts/verify.mjs .        # ③ 验收：274 个用例应全绿
 ### 三个常见情况
 
 ```bash
-# 提示「本体树与基线不一致」= 树上还留着旧版 mod 的改动，或你手改过：
-git stash push -u -m "mod 快照"          # 可回退；然后重跑 install
+# 提示「这 85 个文件里有内容与基线不符，而且看不出是本 mod 造成的」
+#   = 你手改过 / 装了别的 mod / 本体版本不对：先看它列出的文件，确认与本 mod 无关再决定
+git stash push -u -m "快照"              # 可回退；然后重跑 install
 
 # 没有网络 / GitHub 连不上：用本地包升级
 node <mod 包>/scripts/mod.mjs update . --file <新包.zip 或解压后的目录>
@@ -65,6 +68,13 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 ## 更新日志（Changelog）
 
 本包从 **v1.0.0** 起有自己的版本号（与本体版本解耦）；每条发布对应一个分支 `base-<本体版本>`，`mod.mjs update` 会挑「base 匹配且版本更高」的那条。逐条细节见 [`CHANGES.md`](CHANGES.md)。
+
+### v1.0.1 — 2026-10-16
+
+- **不再要求「纯净本体」**：`status` 改成只回答两件事 —— 本体版本对不对、树里有没有本 mod 的内容；结论分四态：版本不符 / 已安装（含漂移）/ 树里有 mod 内容但无安装记录 / 与本 mod 无关的改动。
+- **旧版安装自动回退**：树上有本 mod 内容但没有安装记录时（旧 `install.mjs` 装的、或手工覆盖过），`install` 会自动把这 85 个文件回退到基线再装 —— 不用再手工 `git stash`。回退优先用 git（连安装时被删掉的 12 个上游文件一起还原），git 不可用则用上一次安装留下的备份；当前字节会先另存到 `.mod-dong-ursus/backup-legacy-<时间>/`，不会悄悄丢东西。
+- **同版本重装变快**：已装同版本且与安装时一致时，`install` 直接说「无需重装」（要强制重装加 `--force`）。
+- `--dry-run` 会在动手前说清「会回退哪些文件、走 git 还是备份」，且**零改动**。
 
 ### v1.0.0 — 2026-10-16
 
@@ -237,7 +247,7 @@ node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>   # 复现「技�
 
 ## 版本与兼容
 
-- **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
+- **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。**不必是纯净的** —— 装过旧版 mod 或手改过相关文件，`install` 会自动回退后重装。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
 - **mod 版本与本体版本解耦**：本包 `version` 是自己的 semver（当前 `v1.0.0`），`base.version` 才是适配的本体版本。发布侧一个本体版本一个分支（`base-0.2.6`），`update` 只挑 base 匹配且版本更高的那条。
 - **一条命令升级 / 卸载**：`mod.mjs update` 按你的本体版本取对应分支的包（源在 `mod.json` 的 `source.repo`，可用 `--source` / `--file` / `--branch` 覆盖）；`mod.mjs uninstall` 精确还原到安装前。**不要**把新版包直接覆盖在装了旧版的树上——实测会落 71 个 `.rej` 且几乎不改内容。
 - **首次 `build-data` 需要网络**：缺 `.cache/gamedata` 时会从 GitHub 拉官方数据表。网络不稳时设 `HTTPS_PROXY`，或直接把本机已装仓库的 `.cache/gamedata/` 整目录拷过来（最快、可离线）。

@@ -14,12 +14,12 @@
 //   · 卸载优先用 git 还原（精确），备份目录兜底（本体不是 git 检出时也能精确还原）。
 //   · 升级按「分支 = base-<本体版本>」选取，包里 mod.json 的 base 再做一次自我声明校验。
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   brief, cmpVersion, copyFile, die, digestFile, ensureDir, exists, head, posix, pruneEmptyDirs,
-  readJson, rmrf, run, say, tempDir, walkFiles, warn,
+  readJson, rmrf, run, say, sha256, tempDir, walkFiles, warn,
 } from './lib/util.mjs';
 import { loadManifest, reportBad, tryLoadManifest, verifySet, verdict } from './lib/manifest.mjs';
 import {
@@ -123,6 +123,100 @@ function backupAll(repo, entries) {
   return n;
 }
 
+// ---------------------------------------------------------------- 三态判定
+//
+// 玩家手上的本体**不必是纯净本体**。这里只回答两件事：
+//   ① 本体版本对不对（在调用方判：<repo>/package.json 的 version == mod.json 的 base.version）
+//   ② 树里有没有本 mod 的内容、处在什么状态
+// 判定用 mod.json 自带的三组指纹，不依赖 git、也不依赖 mod.json 之外的任何东西。
+
+/** 单个文件是否等于期望字节（容忍 CRLF ↔ LF） */
+function matchWanted(abs, want) {
+  const now = digestFile(abs);
+  if (!now) return false;
+  if (now.size === want.size && now.sha256 === want.sha256) return true;
+  try {
+    const s = readFileSync(abs).toString('latin1');
+    if (!s.includes('\r')) return false;
+    const n = Buffer.from(s.replace(/\r\n/g, '\n'), 'latin1');
+    return n.length === want.size && sha256(n) === want.sha256;
+  } catch { return false; }
+}
+
+/**
+ * @returns {{ pristine, modPresent, ownedMatch, ownedTotal, patchedMatch, patchedTotal,
+ *             removedAbsent, removedTotal, pre, state }}
+ *   pristine    这 85 个「装之前」的文件是否都在基线字节上
+ *   modPresent  树里有没有本 mod 的痕迹（安装记录 / 自有文件 / 被删掉的上游文件）
+ */
+function classify(repo, mod, st = loadState(repo)) {
+  const pre = verifySet(repo, mod.base.files);
+  const owned = verifySet(repo, mod.owned);
+  const patched = verifySet(repo, mod.patched);
+  const removedAbsent = (mod.removed ?? []).filter((rel) => !exists(join(repo, ...rel.split('/'))));
+  const ownedMatch = owned.ok.length + owned.eol.length;
+  const patchedMatch = patched.ok.length + patched.eol.length;
+  return {
+    pre, state: st ?? null,
+    pristine: pre.missing.length === 0 && pre.mismatch.length === 0,
+    modPresent: !!st || ownedMatch > 0 || removedAbsent.length > 0,
+    ownedMatch, ownedTotal: Object.keys(mod.owned).length,
+    patchedMatch, patchedTotal: Object.keys(mod.patched).length,
+    removedAbsent: removedAbsent.length, removedTotal: (mod.removed ?? []).length,
+  };
+}
+
+/**
+ * 树上有本 mod 内容、但**没有安装记录**（旧版 install.mjs 装的，或玩家手工覆盖过）时的处理：
+ * 把这 85 个「装之前」的文件恢复成基线字节，之后就能正常套补丁。
+ * 优先 git（精确、且连被删掉的 12 个上游文件一起还原）；git 不可用时退回上一次安装留下的
+ * .mod-dong-ursus/backup/。当前字节先另存一份，避免悄悄丢东西。
+ */
+function restorePristine(repo, mod, { dryRun = false } = {}) {
+  const paths = Object.keys(mod.base.files);
+  const useGit = isRepoRoot(repo) && hasCommit(repo, mod.base.commit);
+  const result = { total: paths.length, fromGit: 0, fromBackup: 0, backedUp: 0, unresolved: [], backupDir: null, plan: '' };
+
+  if (dryRun) {
+    result.plan = useGit
+      ? `用 git 从基线提交 ${String(mod.base.commit).slice(0, 12)} 还原 ${paths.length} 个文件`
+      : `从 .mod-dong-ursus/backup/ 还原 ${paths.length} 个文件（git 不可用）`;
+    return result;
+  }
+
+  // 1) 先把「与基线不同」的当前字节另存（可能含玩家改动）
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const dir = join(stateDir(repo), `backup-legacy-${stamp}`);
+  for (const rel of paths) {
+    const abs = join(repo, ...rel.split('/'));
+    if (!exists(abs) || matchWanted(abs, mod.base.files[rel])) continue;
+    copyFile(abs, join(dir, ...rel.split('/')));
+    result.backedUp++;
+  }
+  result.backupDir = result.backedUp ? posix(relative(repo, dir)) : null;
+
+  // 2) git 还原（含「安装时被删掉」的文件）
+  if (useGit) {
+    const failed = new Set(checkoutPaths(repo, mod.base.commit, paths));
+    for (const rel of paths) {
+      if (failed.has(rel)) continue;
+      if (matchWanted(join(repo, ...rel.split('/')), mod.base.files[rel])) result.fromGit++;
+    }
+  }
+
+  // 3) 剩下的用备份（上一次安装留下的装前副本）
+  for (const rel of paths) {
+    const abs = join(repo, ...rel.split('/'));
+    if (matchWanted(abs, mod.base.files[rel])) continue;
+    const b = backupPath(repo, rel);
+    if (!exists(b)) { result.unresolved.push(rel); continue; }
+    copyFile(b, abs);
+    if (matchWanted(abs, mod.base.files[rel])) result.fromBackup++;
+    else result.unresolved.push(rel);
+  }
+  return result;
+}
+
 // ---------------------------------------------------------------- status
 
 function cmdStatus(repo, flags) {
@@ -139,7 +233,22 @@ function cmdStatus(repo, flags) {
     verdict: '',
   };
 
-  if (st) {
+  const c = mod ? classify(repo, mod, st) : null;
+  out.versionOk = mod ? baseVersion === mod.base.version : null;
+  if (c) {
+    out.modContent = {
+      installedRecord: !!st,
+      present: c.modPresent,
+      ownedMatch: `${c.ownedMatch}/${c.ownedTotal}`,
+      patchedMatch: `${c.patchedMatch}/${c.patchedTotal}`,
+      removedAbsent: `${c.removedAbsent}/${c.removedTotal}`,
+    };
+    out.pristine = { ok: c.pre.ok.length, eol: c.pre.eol.length, missing: c.pre.missing.length, mismatch: c.pre.mismatch.length, mismatchPaths: c.pre.mismatch.slice(0, 10) };
+  }
+
+  if (c && !out.versionOk) {
+    out.verdict = `本体是 v${baseVersion}，这个包适配 v${mod.base.version}：版本不符（请取 base-${baseVersion} 分支的包，或先更新本体）`;
+  } else if (st) {
     const { drifted, missing, eolOnly } = driftCheck(repo, st);
     out.installed = {
       modVersion: st.modVersion, baseVersion: st.baseVersion, installedAt: st.installedAt,
@@ -149,12 +258,14 @@ function cmdStatus(repo, flags) {
     out.verdict = drifted.length || missing.length
       ? `已安装 v${st.modVersion}，但有 ${drifted.length} 个文件被改过、${missing.length} 个文件不见了`
       : `已安装 v${st.modVersion}（干净，与安装时一致）`;
-  } else if (mod) {
-    const v = verifySet(repo, mod.base.files);
-    out.pristine = { ok: v.ok.length, eol: v.eol.length, missing: v.missing.length, mismatch: v.mismatch.length, mismatchPaths: v.mismatch.slice(0, 10) };
-    out.verdict = (!v.missing.length && !v.mismatch.length)
-      ? '未安装；本体树是 v' + mod.base.version + ' 的纯净基线，可以装'
-      : `未安装；本体树与 v${mod.base.version} 基线不一致（${v.missing.length} 缺失 / ${v.mismatch.length} 不同）`;
+  } else if (c?.pristine) {
+    out.verdict = `未安装；本体是 v${mod.base.version} 的基线，可以直接 install`;
+  } else if (c?.modPresent) {
+    out.verdict = `树里有本 mod 的内容但没有安装记录（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里、被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}）` +
+      ' —— 直接 install 会自动把这 85 个文件回退到基线再装，不必手工 stash';
+  } else if (c) {
+    out.verdict = `未安装；这 85 个文件里有 ${c.pre.mismatch.length} 个内容不同、${c.pre.missing.length} 个缺失，且看不出是本 mod 造成的` +
+      ' —— install 会先拒绝并列出它们（确认无关可用 --force 硬装）';
   } else {
     out.verdict = 'mod 包缺少 mod.json，无法判断（先跑 node tools/make-manifest.mjs 生成）';
   }
@@ -175,13 +286,18 @@ function cmdStatus(repo, flags) {
     `· 基线提交${out.git.baseCommitReachable ? '可达（可精确还原）' : '不可达（还原将用备份）'}`);
 
   head('安装状态');
+  if (c && !out.versionOk) warn(`  版本不符：本体 v${baseVersion} ≠ 包要求的 v${mod.base.version}`);
+  if (c) say(`  本 mod 内容：自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里 · 补丁产物 ${c.patchedMatch}/${c.patchedTotal} 符合 · 被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}`);
   if (out.installed) {
-    say(`  v${out.installed.modVersion}（装于 ${out.installed.installedAt}）`);
+    say(`  安装记录：v${out.installed.modVersion}（装于 ${out.installed.installedAt}）`);
     say(`  记录 ${st.entries.length} 项：${Object.entries(out.installed.files).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(' · ')}`);
     if (out.installed.drifted) warn(`  被改过：${brief(out.installed.driftedPaths)}`);
     if (out.installed.missing) warn(`  不见了：${brief(out.installed.missingPaths)}`);
-  } else if (out.pristine) {
-    say(`  无安装记录；纯净度：${out.pristine.ok} 一致${out.pristine.eol ? `（另 ${out.pristine.eol} 个仅换行符不同）` : ''} / ${out.pristine.missing} 缺失 / ${out.pristine.mismatch} 不同`);
+  } else if (c?.pristine) {
+    say(`  无安装记录；这 85 个文件都在基线字节上（${c.pre.ok.length} 一致${c.pre.eol.length ? ` + ${c.pre.eol.length} 仅换行符不同` : ''}）`);
+  } else if (c) {
+    say(`  无安装记录；基线对比：${c.pre.ok.length} 一致 / ${c.pre.missing.length} 缺失 / ${c.pre.mismatch.length} 不同`);
+    if (c.modPresent) say(`  但树里有本 mod 的内容 → 视为「旧版安装 / 手工覆盖」，install 会自动回退后重装`);
   } else say('  无安装记录');
 
   head('结论');
@@ -250,32 +366,66 @@ function cmdInstall(repo, flags) {
   }
   say(`  本体 v${baseVersion} · mod 包 v${mod.version} · git ${gitVersion(repo)}`);
 
-  // 已装旧版 → 先精确还原
+  // 状态判定：玩家的本体不必是纯净本体，只要求「版本对」+「知道树里有什么」
   const st = loadState(repo);
+  const c = classify(repo, mod, st);
+
+  // A. 已装同版本、且与安装时逐字节一致 → 什么都不用做
+  if (st && st.modVersion === mod.version && !flags.force) {
+    const { drifted, missing } = driftCheck(repo, st);
+    if (!drifted.length && !missing.length) {
+      say(`  已安装 v${st.modVersion}，与安装时一致：无需重装（要强制重装：--force）`);
+      say(`  想确认功能就接着跑：node ${posix(join(modRoot, 'scripts', 'verify.mjs'))} ${repo}`);
+      return 0;
+    }
+  }
+
+  if (flags.dryRun) {
+    if (st) say(`  --dry-run：有安装记录 v${st.modVersion} → 会先精确还原，再装 v${mod.version}`);
+    else if (c.pristine) say('  --dry-run：本体是基线 → 直接装');
+    else if (c.modPresent) say(`  --dry-run：树里有本 mod 内容但没有记录 → 先${restorePristine(repo, mod, { dryRun: true }).plan}，再装`);
+    else {
+      reportBad(c.pre, '本体这边有改动，但看不出是本 mod 造成的');
+      say('  --dry-run：install 会拒绝这些改动（确认与本 mod 无关可 --force 硬装）');
+    }
+    return 0;
+  }
+
+  // B. 有安装记录 → 先精确还原（git 优先，备份兜底）
   if (st) {
-    if (st.modVersion === mod.version && !flags.force) say(`  已安装同版本 v${st.modVersion}：先还原再重装（幂等）`);
+    if (st.modVersion === mod.version) say(`  已安装同版本 v${st.modVersion}：先还原再重装（幂等）`);
     else say(`  检测到已安装 v${st.modVersion}：先还原到基线，再装 v${mod.version}`);
     const r = restore(repo, st, { force: flags.force });
     say(`  还原：git ${r.fromGit} · 备份 ${r.fromBackup} · 删除新增 ${r.deleted.length} · 保留改动 ${r.kept.length}`);
     if (r.unresolved.length) die(`还原失败 ${r.unresolved.length} 个文件：${brief(r.unresolved)}\n      用 status 查看，或手工从 .mod-dong-ursus/backup/ 取回`, 5);
-    if (r.kept.length) warn(`保留了 ${r.kept.length} 个被改过的文件（它们会让纯净度校验失败）：${brief(r.kept)}`);
+    if (r.kept.length) warn(`保留了 ${r.kept.length} 个被改过的文件：${brief(r.kept)}`);
+    // C. 没有记录，但树里有本 mod 内容（旧版 install.mjs 装的 / 手工覆盖过）→ 自动回退这 85 个文件
+  } else if (!c.pristine && c.modPresent) {
+    say(`  树里有本 mod 内容但没有安装记录（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里、被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}）`);
+    say(`  按「旧版安装」处理：先把相关文件回退到 v${mod.base.version} 基线，再装 v${mod.version}`);
+    const r = restorePristine(repo, mod);
+    say(`  回退：git ${r.fromGit} · 备份 ${r.fromBackup} · 另存 ${r.backedUp} 个文件${r.backupDir ? ` → ${r.backupDir}` : ''}`);
+    if (r.unresolved.length) {
+      die(`有 ${r.unresolved.length} 个文件没能回退到基线：${brief(r.unresolved)}\n` +
+        `      本体不是 git 检出、或基线提交不可达，且没有上一次安装留下的备份。\n` +
+        `      处理办法：用 git stash / 重新解包本体回到基线；确实要硬装：--force（补丁可能套不上）`, 5);
+    }
   }
 
   const v = verifySet(repo, mod.base.files);
   if (v.missing.length || v.mismatch.length) {
     reportBad(v, '本体树与基线不一致');
     if (!flags.force) {
-      die(`本体树不是 v${mod.base.version} 的纯净基线——本 mod 的补丁只能套在基线上。\n` +
-        `      常见原因：树上还留着旧版 mod 的改动，或你手改过这些文件。\n` +
+      die(`这 85 个文件里有内容与本 mod 适配的 v${mod.base.version} 基线不符，而且看不出是本 mod 造成的` +
+        `（本 mod 的内容会在上面被自动回退）。\n` +
+        `      常见原因：你手改过这些文件、装了别的 mod、或本体版本不对。\n` +
         `      处理办法（任选其一，然后重跑本命令）：\n` +
-        `        · 稳妥（可回退）：git stash push -u -m "mod 快照"\n` +
-        `        · 直接回基线：  git reset --hard ${mod.base.commit} && git clean -fd\n` +
-        `      （确实要在不干净的树上硬装：--force，风险自负）`, 2);
+        `        · 可回退：git stash push -u -m "快照"\n` +
+        `        · 回基线：git reset --hard ${mod.base.commit} && git clean -fd\n` +
+        `        · 确认与本 mod 无关、想硬装：--force（补丁可能套不上，会落 .rej）`, 2);
     }
-    warn('--force：跳过纯净度校验，继续安装');
-  } else say(`  纯净度：${verdict(v)} ✅`);
-
-  if (flags.dryRun) { say('--dry-run：体检通过，未改动任何文件'); return 0; }
+    warn('--force：跳过基线校验，继续安装');
+  } else say(`  基线校验：${verdict(v)} ✅`);
 
   head('2/5 快照与备份');
   const entries = buildEntries(repo, mod);
