@@ -7,7 +7,7 @@
 <sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.3-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.4-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
@@ -51,6 +51,10 @@ node <mod 包>/scripts/verify.mjs .        # ③ 验收：274 个用例应全绿
 #   = 你手改过 / 装了别的 mod / 本体版本不对：先看它列出的文件，确认与本 mod 无关再决定
 git stash push -u -m "快照"              # 可回退；然后重跑 install
 
+# update 分成两侧判定：本体里装的 mod（看 .mod-dong-ursus/state.json）与本地包（看它自己的 mod.json）
+#   包已最新但本体里是旧版 → 只装本体；本体已最新但包旧 → 只刷新包；都最新 → 什么都不做
+node <mod 包>/scripts/mod.mjs update . --check     # 先看它打算做什么
+
 # GitHub 连不上：update 会自动依次尝试 source.repo → source.mirrors（mod.json 里的默认镜像）
 #   → 自动派生的 gitclone 形式；镜像可写完整 URL，也可只写前缀（如 https://ghproxy.net）
 #   临时换镜像/换源（不改包）：
@@ -74,6 +78,14 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 ## 更新日志（Changelog）
 
 本包从 **v1.0.0** 起有自己的版本号（与本体版本解耦）；每条发布对应一个分支 `base-<本体版本>`，`mod.mjs update` 会挑「base 匹配且版本更高」的那条。逐条细节见 [`CHANGES.md`](CHANGES.md)。
+
+### v1.0.4 — 2026-10-16
+
+- **修 `update` 的核心判定**：以前它拿「候选版本」跟**本地包**的版本比，于是「本地包已经是最新、但本体里装的还是旧版」时会直接说「已是最新，无需更新」——本体永远更新不到（实测 bug）。现在**两个对象分开比**：
+  · **本体里的 mod** → 看 `<本体>/.mod-dong-ursus/state.json` 记录的版本；没有安装记录时用**候选自己的指纹**判断树里是不是已经是这份内容；有漂移/缺文件 → 重新装一遍来修复；
+  · **本地 mod 包目录** → 看它自己 `mod.json` 的版本。
+  四种结果各自明确：**只装本体** / **只刷新包** / **两边都做** / **都最新**。`--check` 会先说清「将执行什么」。
+- `update` 的输出改为两行结论（本体里的 mod 怎么样 · 本地包怎么样），任一侧失败都会停下来说明怎么查看/还原。
 
 ### v1.0.3 — 2026-10-16
 

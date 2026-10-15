@@ -80,6 +80,7 @@ node <mod包路径>/scripts/mod.mjs uninstall <本体仓库> [--force] [--keep-b
   这 85 个文件与基线不符时（别的 mod / 你自己的改动）：先让 git 试套一遍，**能干净套上就继续**；套不上才拒绝并指出哪个补丁套不上（`--force` 可硬装，会落 `.rej`）。
 - `update`：按方案 B 取 `base-<本体版本>` 分支（分支名可 `--branch` 覆盖），对比包内 `mod.json` 的 `base` 与版本号；只有 base 匹配且版本更高才执行，用**新包自己**跑 `install`，然后同步本地包目录。
   地址候选顺序：`MOD_SOURCE` → `--source` → `mod.json.source.repo` → `MOD_MIRROR` → `mod.json.source.mirrors` → 自动派生的 `gitclone` 形式。镜像可写完整 URL 或前缀（`https://ghproxy.net` → `https://ghproxy.net/<源地址>`）。拉取失败会列出**远端现有分支**（"没有 base-0.2.6，这个分支还没发布？"就是这一行给的结论）。`--file` 支持本地目录/zip（离线），`--check` 只看不动。
+  **版本判定是双侧的**（这是 v1.0.4 修的 bug）：① **本体里装的 mod** 看 `<本体>/.mod-dong-ursus/state.json` 的 `modVersion`（没有记录时用候选自己的 `patched`/`owned` 指纹判断树里是不是已经是这份内容；有漂移/缺文件则重装修复）→ 决定**要不要装本体**；② **本地包目录**看它自己 `mod.json` 的 `version` → 决定**要不要刷新包**。四种组合各自执行：只装本体 / 只刷新包 / 两边都做 / 都最新（什么都不做）。`--no-sync-package` 关掉 ②；`--force` 让两侧都执行。
 - `uninstall`（两条路，都会做到「本 mod 的东西一个不留」）：
   · **有安装记录** → 按 `state.json` 精确还原（git 优先、备份兜底）；
   · **没有安装记录**（旧版 `install.mjs` 装的 / 手工覆盖过 / 半装）→ 先**反向套补丁**（`git apply -R`，必要时 `-R --3way`）把本 mod 改过的那几段摘掉（同一个文件里别的 mod / 你自己的改动原样留下），再回退被删的上游文件、22 个生成物还原、28 个 mod 新增文件删除、本体原有文件（如 `data/assets.json`）还原、`.mod-dong-ursus/` 清理，收尾打印**残留检查**（只把本 mod 的残留算失败）。

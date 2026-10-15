@@ -719,9 +719,9 @@ function cmdUpdate(repo, flags) {
     const cand = tryLoadManifest(staged.dir);
     if (!cand) die('取回的包里没有可用的 mod.json', 4);
     say(`  来源：${staged.origin}`);
-    say(`  候选：mod v${cand.version}（适配本体 v${cand.base?.version}）· 本地：mod v${local.version}`);
+    say(`  候选：mod v${cand.version}（适配本体 v${cand.base?.version}）· 本地包：v${local.version}`);
 
-    head('2/3 对比包');
+    head('2/3 对比包（本体里装的那份 + 本地包，各自比）');
     if (cand.base?.version !== baseVersion) {
       die(`这个包适配本体 v${cand.base?.version}，你的本体是 v${baseVersion} —— 拒绝安装（跨版本混装会把本体弄坏）`, 2);
     }
@@ -729,22 +729,70 @@ function cmdUpdate(repo, flags) {
       if (!flags.force) die(`基线提交不同：包要求 ${String(cand.base.commit).slice(0, 12)}，本地登记 ${String(local.base.commit).slice(0, 12)}（--force 可忽略）`, 2);
       warn('--force：忽略基线提交不同');
     }
-    const cmp = cmpVersion(cand.version, local.version);
-    if (cmp === 0 && !flags.force) { say('  已是最新版本，无需更新'); return 0; }
-    if (cmp < 0 && !flags.force) { say(`  候选 v${cand.version} 比本地 v${local.version} 旧，忽略（--force 可强制）`); return 0; }
-    if (flags.check) { say(`  --check：可以把 v${local.version} 更新到 v${cand.version}（未执行）`); return 0; }
 
-    head('3/3 更新包（用新包安装 + 同步本地包目录）');
-    const r = run(process.execPath, [join(staged.dir, 'scripts', 'mod.mjs'), 'install', repo], { allowFail: true });
-    if (r.code !== 0) die(`新包安装失败（exit ${r.code}）：本体树可能停在中间状态。\n      用 node ${posix(join(staged.dir, 'scripts', 'mod.mjs'))} status ${repo} 查看；必要时用同一条命令 uninstall 还原`, 5);
-    if (flags.noSyncPackage) say('  --no-sync-package：跳过本地包目录同步');
-    else {
-      const s = syncPackage(modRoot, staged.dir);
-      say(`  本地包目录已同步：写入 ${s.written} 个文件${s.removed.length ? `、删除 ${s.removed.length} 个旧文件` : ''}`);
-      if (s.removed.length) say(`    删除：${brief(s.removed)}`);
+    // ① 本体树里的那份 —— 这才是「游戏里的 mod 要不要更新」的依据
+    const st = loadState(repo);
+    let treeVer = st?.modVersion ?? null;
+    let treeReason = '';
+    let needTree = false;
+    if (treeVer) {
+      const c = cmpVersion(cand.version, treeVer);
+      if (c > 0) { needTree = true; treeReason = `本体里装的是 v${treeVer} → 需要装 v${cand.version}`; }
+      else if (flags.force) { needTree = true; treeReason = '--force'; }
+      else {
+        const { drifted, missing } = driftCheck(repo, st);
+        if (drifted.length || missing.length) {
+          needTree = true;
+          treeReason = `本体里装的 v${treeVer} 已是这个版本，但有 ${drifted.length} 个文件被改过、${missing.length} 个不见了 → 重装修复`;
+        } else if (c < 0) treeReason = `本体里装的 v${treeVer} 比候选更新 → 本体不动`;
+        else treeReason = `本体里已经是 v${treeVer}`;
+      }
+    } else {
+      // 没有安装记录：用**候选自己的指纹**看树里是不是已经是这份内容
+      const pv = verifySet(repo, cand.patched);
+      const ov = verifySet(repo, cand.owned);
+      const rm = (cand.removed ?? []).filter((rel) => exists(join(repo, ...rel.split('/'))));
+      const bad = pv.missing.length + pv.mismatch.length + ov.missing.length + ov.mismatch.length + rm.length;
+      if (bad === 0 && !flags.force) treeReason = '本体里没有安装记录，但内容已经是候选这份 → 本体不动';
+      else { needTree = true; treeReason = flags.force ? '--force' : '本体里没有安装记录（或内容不是候选这份）→ 装上去'; }
     }
+
+    // ② 本地包目录 —— 「包要不要刷新」的依据
+    const cmpPkg = cmpVersion(cand.version, local.version);
+    let needPkg = cmpPkg > 0 || flags.force;
+    let pkgReason = cmpPkg > 0 ? `本地包是 v${local.version} → 需要刷新到 v${cand.version}`
+      : cmpPkg < 0 ? `本地包 v${local.version} 比候选更新 → 本地包不动` : `本地包已经是 v${local.version}`;
+    if (flags.noSyncPackage) { needPkg = false; pkgReason = '--no-sync-package'; }
+
+    say(`  本体里的 mod：${treeReason}`);
+    say(`  本地 mod 包：${pkgReason}`);
+
+    if (!needTree && !needPkg) { say('  本体与本地包都已是这个版本，无需更新'); return 0; }
+    if (flags.check) {
+      say(`  --check：将执行 ${[needTree ? `把本体里的 mod 更新到 v${cand.version}` : '', needPkg ? '刷新本地包目录' : ''].filter(Boolean).join(' + ')}（未执行）`);
+      return 0;
+    }
+
+    head('3/3 更新');
+    if (needTree) {
+      say(`  ① 用候选包对本体树执行 install（先反向摘掉旧版 → 装 v${cand.version}）`);
+      const r = run(process.execPath, [join(staged.dir, 'scripts', 'mod.mjs'), 'install', repo], { allowFail: true });
+      if (r.code !== 0) {
+        die(`新包安装失败（exit ${r.code}）：本体树可能停在中间状态。\n` +
+          `      用 node ${posix(join(staged.dir, 'scripts', 'mod.mjs'))} status ${repo} 查看；必要时用同一条命令 uninstall 还原`, 5);
+      }
+    } else say('  ① 本体不动（已是最新或更新）');
+    if (needPkg) {
+      const s = syncPackage(modRoot, staged.dir);
+      say(`  ② 本地包目录已同步：写入 ${s.written} 个文件${s.removed.length ? `、删除 ${s.removed.length} 个旧文件` : ''}`);
+      if (s.removed.length) say(`    删除：${brief(s.removed)}`);
+    } else say(`  ② 本地包不动（${flags.noSyncPackage ? '--no-sync-package' : '已是最新'}）`);
+
     head('完成');
-    say(`  mod v${local.version} → v${cand.version}（本体 v${baseVersion}）`);
+    const parts = [];
+    if (needTree) parts.push(`本体里的 mod ${treeVer ? `v${treeVer} → ` : ''}v${cand.version}`);
+    if (needPkg) parts.push(`本地包 v${local.version} → v${cand.version}`);
+    say(`  ${parts.join(' · ') || '无改动'}（本体 v${baseVersion}）`);
     return 0;
   } finally {
     if (staged.cleanup) rmrf(staged.cleanup);
