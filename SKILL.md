@@ -1,6 +1,6 @@
 ---
 name: dong-ursus-mod-install
-description: 把【东】+【乌萨斯】自制阵营 mod 包安装/适配到 Stronghold-Protocol 本体仓库。当用户要求安装 mod 包、更新本体后重新适配 mod、排查 mod 安装失败、把本体新改动同步/打包回 mod 包、或询问 mod 包内容与测试方式时使用。覆盖安装、补丁套用/重生成、数据重建、i18n 合并、测试验证与版本冲突处理。
+description: 把【东】+【乌萨斯】自制阵营 mod 包安装/升级/卸载/适配到 Stronghold-Protocol 本体仓库。当用户要求安装 mod 包、升级到新版 mod、卸载 mod、更新本体后重新适配 mod、排查 mod 安装失败、把本体新改动同步/打包回 mod 包、或询问 mod 包内容与测试方式时使用。覆盖命令行（mod.mjs 的 install / update / uninstall / status）、补丁套用/重生成、数据重建、i18n 合并、测试验证与版本冲突处理。
 ---
 
 # 【东】+【乌萨斯】mod 安装技能
@@ -49,13 +49,36 @@ mod-dong-ursus/
 │   └─ 02-tests-calibration.patch  既有测试的计数/口径校准（50 个文件；文件删除不在补丁里，
 │   │                        统一走 install.mjs 的 REMOVED 清单；golden/*.json 快照除外；
 │   │                        补丁里**不得出现 `*.rej`** 这类产物文件）
+├─ mod.json                  包清单：版本 / 适配本体 / 基线指纹 base.files(85) / 补丁产物 patched(73)
+│                            / 自有文件 owned(29) / 删除 removed(12) / 生成物 generated(22) —— 由 tools/make-manifest.mjs 生成
+├─ LICENSE / NOTICE          GPL-3.0-or-later 原文 + 依 §5(a) 的改动说明
 ├─ i18n/                     四语言 overlay（2 盟约 + 28 特质〔26 自制 + 覆盖的官方 garrison_07〕+ 8 装备记录 + 6 条 effects 派生记录）
 │                            + 合并脚本 + rehash-families.mjs
+├─ tools/make-manifest.mjs   生成/刷新 mod.json（发布前跑一次）
 └─ scripts/
-    ├─ install.mjs           一键安装（幂等）
+    ├─ mod.mjs               命令行：install / update / uninstall / status
+    ├─ install.mjs           兼容入口（= mod.mjs install）
+    ├─ lib/                  util · manifest · state · gitops · source · zip
     ├─ verify.mjs            mod 测试子集
     └─ check-anim-roles.mjs  动作角色对账：清单 anims == resolver + 按模型修正表的产物
 ```
+
+## 命令行：install / update / uninstall / status
+
+```bash
+node <mod包路径>/scripts/mod.mjs status    <本体仓库> [--json]          # 只读体检
+node <mod包路径>/scripts/mod.mjs install   <本体仓库> [--dry-run] [--force] [--no-backup]
+node <mod包路径>/scripts/mod.mjs update    <本体仓库> [--check] [--file <zip|目录>] [--source <url>] [--branch <分支>]
+node <mod包路径>/scripts/mod.mjs uninstall <本体仓库> [--force] [--keep-backup]
+```
+
+- `install`：先体检（Node ≥22 / git / 本体版本 / **85 个基线文件指纹**）；树上若有旧版安装记录，**先精确还原再装**；装完按 `mod.json` 的 102 个产物指纹复核（**git 退出码不可信**）。缺 git、版本不符、树不纯净 → 拒绝（`--force` 才硬来）。
+- `update`：按方案 B 取 `base-<本体版本>` 分支（分支名可 `--branch` 覆盖），对比包内 `mod.json` 的 `base` 与版本号；只有 base 匹配且版本更高才执行，用**新包自己**跑 `install`，然后同步本地包目录。`--file` 支持本地目录/zip（离线），`--check` 只看不动。
+- `uninstall`：优先 `git checkout <基线提交> -- <文件>`，git 不可用或提交不可达时用 `.mod-dong-ursus/backup/`；**这台电脑改过的文件默认保留并报告**（`--force` 强制还原）。
+- `status`：包版本 / 适配本体 / 基线提交是否可达 / 是否已装 / 漂移与缺失 / 一句话结论。
+- 兼容入口：`scripts/install.mjs` 仍可用（= `mod.mjs install`）。
+
+`<本体>/.mod-dong-ursus/`：`state.json`（这台机器装了什么：每个被触碰文件的装前/装后字节）+ `backup/`（装前副本）。补丁 01 会往本体 `.gitignore` 加一行 `.mod-dong-ursus/`，所以它不出现在 `git status` 里，也不会被 `git clean -fd` 删掉。
 
 ## 安装方式
 
@@ -152,6 +175,10 @@ install.mjs 依次执行（全部幂等，重复运行安全）：
    `node_modules`/`.cache`/`public/vendor`，先 `git apply --check` 两个补丁，再完整走一遍 install 流程
    （含 build-data 与 i18n），最后与适配好的树做逐文件哈希比对（应完全一致）。
 6. **不要提交 golden 快照回 mod 包**：golden 是本体版本的函数。
+7. **升级必须走 CLI，不要手工覆盖**：实测把新版补丁直接套到装了旧版 mod 的树上，正向与反向 `--check` 都失败 → `--reject` 落 **71 个 `.rej`**、而真正被改动的文件只有 1 个。`mod.mjs install` 会先按 `.mod-dong-ursus/state.json` 精确还原再装；`update` 负责取包 + 比版本 + 调新包安装。
+8. **补丁相关的 git 命令必须钉死换行符**：`core.autocrlf=false` + `core.eol=lf`。不钉的话，机器上的全局 autocrlf 会把新增行写成 CRLF——实测在非 git 检出的树上装完，73 个补丁产物全变 CRLF，与本体适配树（LF）逐字节不一致（`scripts/lib/gitops.mjs` 的 `LF` 常量已内建）。另一侧：校验对"仅换行符不同"宽容，Windows 签出的 `.gitignore` 这类文件不会被误判。
+9. **git 的退出码不可信**：`git apply` 在**仓库的子目录**里会静默跳过所有补丁并返回 0；在「恰好等于补丁产物」的树上前向 `--check` 也返回 0。所以套完补丁必须按 `mod.json` 的 `patched` / `owned` 指纹复核（CLI 已内建），别信退出码。
+9. **改过 `files/` 或补丁后要重生成 `mod.json`**：`node tools/make-manifest.mjs --repo <本体源码检出> --base-commit <基线提交> [--version x.y.z]`；指纹取自基线的 git 对象，不取工作区。版本号是 mod 自己的 semver，改动了就往上加（发布分支 `base-<本体版本>`）。
 
 ## 代码测试方式
 

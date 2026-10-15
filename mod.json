@@ -1,0 +1,832 @@
+{
+  "format": 1,
+  "mod": "dong-ursus",
+  "name": "【东】＋【乌萨斯】盟约 mod",
+  "version": "1.0.0",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
+  "source": {
+    "repo": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
+    "branchPrefix": "base-"
+  },
+  "base": {
+    "version": "0.2.6",
+    "commit": "16a0f9bc082b92f44b8b19c65730863220be9f36",
+    "files": {
+      ".gitignore": {
+        "size": 2026,
+        "sha256": "612bb04102cb89d763bc39aa9dc283303f13ca2cd1c7c5be55d447ddda976586"
+      },
+      "docs/research/00-INDEX.md": {
+        "size": 19998,
+        "sha256": "be7a8280c7912311270a29fef1457984c5c9c1ec31c36f104e08a6f0ab5986f4"
+      },
+      "docs/research/04-items.json": {
+        "size": 223131,
+        "sha256": "8efbdf8234d5b11591427be7611a8e6bdab97617b3cd883e6e7cdaf42b843a07"
+      },
+      "docs/research/07-assets.json": {
+        "size": 1047798,
+        "sha256": "9b752d3aabb4f7a42c0ee3f516f46c866d19fa81ee4b31481530ec11ccf2dd58"
+      },
+      "public/js/render/spine.js": {
+        "size": 48325,
+        "sha256": "a4a9947192a8a47217a7c8d17cbdd804959c639ba481781987e9f41dc203cfff"
+      },
+      "public/js/render/units.js": {
+        "size": 133284,
+        "sha256": "331a0176181951783501f3086198cbd95a1f54ec0e407dd88775f127cc445cf9"
+      },
+      "server/match/gamedata.js": {
+        "size": 30387,
+        "sha256": "3cbcd6ae38348566ef995fcac285cf60d22d0da39ae24ebc1e99c9df40996ab7"
+      },
+      "server/sim/battle/deploy.js": {
+        "size": 14869,
+        "sha256": "d23dd6cdaa09f1738e85d6eae6858b5b92f3088e5a15f1e2a99ce93fb13d0f14"
+      },
+      "server/sim/content/bonds/core.js": {
+        "size": 41944,
+        "sha256": "ed970d044f64df6724a7dbc00bc8312188dfe3f13aa7a46d4ad8e8d3c1176d08"
+      },
+      "server/sim/content/garrisons/meta.js": {
+        "size": 21072,
+        "sha256": "e2a91276d891c075673da0395ebb2fa311dff80298a9325cdc1b93eb3b5bc3b1"
+      },
+      "server/sim/content/items/battle.js": {
+        "size": 51760,
+        "sha256": "3aac2a0c934ed498c5e0a0427d2720383c8affd4c11d45d180100f02fa36dd22"
+      },
+      "server/sim/content/kits/index.js": {
+        "size": 10859,
+        "sha256": "8d243e9823d83f902193b3aaf27a032a4cbf268895509d9ade17eecae9e23b80"
+      },
+      "server/sim/content/kits/ops/chess_char_2_08-bubble.js": {
+        "size": 2176,
+        "sha256": "2de8eea20358ffbb393b4694dbb3ff0783bd2b2a4c00b133bee4cf72d9d0f982"
+      },
+      "server/sim/content/kits/ops/op-bgsnow.js": {
+        "size": 14330,
+        "sha256": "d2cbca4addabc626e69942424eca2b526eaa5ab289fe351fc42c7757e3299ad4"
+      },
+      "server/sim/content/kits/ops/op-headb2.js": {
+        "size": 19832,
+        "sha256": "182e99bfbed2ba3e6447977a4db374801c43bfdb0bac3864bbc3cde010c804b6"
+      },
+      "server/sim/content/kits/ops/op-helage.js": {
+        "size": 8146,
+        "sha256": "f3bc27fa5def94f24cc1b2d5ad0ed791bc943d19e0fc7cdf736c780933ac92cf"
+      },
+      "server/sim/content/kits/ops/op-ironmn.js": {
+        "size": 27438,
+        "sha256": "dacc524edc407458405f9abaa20de45b18dd007dd2ab2a56b20c7e1ee452f974"
+      },
+      "server/sim/content/kits/ops/op-poca.js": {
+        "size": 11702,
+        "sha256": "406167e2168727a3ca03e2085de3431ba47fd0987bf0aba5583c3da042f14d25"
+      },
+      "server/sim/content/kits/ops/op-saga.js": {
+        "size": 16004,
+        "sha256": "f71387592d8d08ca42896532266f811469817cfd2a3558707dfb8e2950b5e71f"
+      },
+      "server/sim/content/kits/ops/op-typhon.js": {
+        "size": 13745,
+        "sha256": "57993cc4de5a36cb95b363e3782e807e06d33a6e16896b28e6dfc17a29c64919"
+      },
+      "server/sim/content/kits/ops/op-veen.js": {
+        "size": 15864,
+        "sha256": "c584c582eccc4f4f4908ae0960b82d76e82eee2634a749e71dd2f0e40ab8452d"
+      },
+      "server/sim/content/kits/ops/op-weedy.js": {
+        "size": 19371,
+        "sha256": "7bf10b7efd8004d37782a7453646cb64cbc5070b565acaea94c3910b7b2e5170"
+      },
+      "server/sim/professions.js": {
+        "size": 45986,
+        "sha256": "89d6fa74153496dca3aa6bd67b6a3549cecd257f5b01bec07f00070417a1404f"
+      },
+      "server/sim/skills.js": {
+        "size": 39789,
+        "sha256": "8e3e4f21a396064441f30e537918e86f300879329853bbd7e6a7986f4e4f1dae"
+      },
+      "test/assets-diy.test.js": {
+        "size": 9845,
+        "sha256": "7314e4e34a1912576bcdf8ac535f408fe4574985d11513c679d0a3b9792e2b40"
+      },
+      "test/backups.test.js": {
+        "size": 28862,
+        "sha256": "76c871671c1584788fc3628f0f559bc51f516e6a302f1726cfa274d9d5abc38d"
+      },
+      "test/content/choices.test.js": {
+        "size": 56593,
+        "sha256": "f41d68da405d139e098e834c06fe610c6e64beb9248dede91726255e995a5cbc"
+      },
+      "test/content/feedback5-protect.test.js": {
+        "size": 5598,
+        "sha256": "1c271195304023a352cb6c86b8a358cd15ef7c109887c6094f3118db95c3fb24"
+      },
+      "test/content/garrisons_battle.test.js": {
+        "size": 44779,
+        "sha256": "3cc35b51e313ee335f4f009b02ab38b24cea2342a13355cf13a2900c628e570b"
+      },
+      "test/content/garrisons_meta.test.js": {
+        "size": 42983,
+        "sha256": "3d5db0fcc7f084512f1a1ecaad9aac5855b571e39a10222f78d2f335fd37f051"
+      },
+      "test/content/items.test.js": {
+        "size": 69024,
+        "sha256": "d9a87b5ed5adacff634c54695d32dc40572464ed2f7eb38d1346f6f232544cd8"
+      },
+      "test/content/kits_alt_t2.test.js": {
+        "size": 40409,
+        "sha256": "0ba017b63e407763377668eba35297f5344f8658280e9a36832b3af59775f2ca"
+      },
+      "test/content/kits_alt_t3.test.js": {
+        "size": 70060,
+        "sha256": "f81323de8c41fd5dbf1cdef849992554c161fcca316e0f5a38b1fe95fdec6938"
+      },
+      "test/content/kits_alt_t4.test.js": {
+        "size": 72959,
+        "sha256": "ab33a3e8b8cefbb82449e5281534bf089163079c62f5ad1750d3ba0e2f594953"
+      },
+      "test/content/kits_alt_t5.test.js": {
+        "size": 83427,
+        "sha256": "f2f0769ce9a930bb1d6d283096de0c23877bb9e4e91c4637cb5fd726c2ad97c8"
+      },
+      "test/content/kits_alt_t6.test.js": {
+        "size": 94670,
+        "sha256": "2c6d5e4c4b44cbbc18582297db971642ac61ea470c8d82a2eea388f2b973c73f"
+      },
+      "test/content/kits_t3.test.js": {
+        "size": 69058,
+        "sha256": "a71e4b7b8d94228f5fa0ef6a18ff0601e3314aa9ed69dd22eaf28ce3df64d5fa"
+      },
+      "test/content/kits_t4.test.js": {
+        "size": 77233,
+        "sha256": "9c8cff11be9c12900fd1b51674960e0859c2a1d21a51dee45126b5ecc3c720f7"
+      },
+      "test/content/kits_t5.test.js": {
+        "size": 83630,
+        "sha256": "45e44586361be02dc95533ec9b311557a1ccc05bc7f4e9844b9ffa2323a13c23"
+      },
+      "test/content/op_bgsnow.test.js": {
+        "size": 19751,
+        "sha256": "5a9dd8675d2b9d760b0b76d3f61f2c798da3a1add0ce5dd8ead8fd1704e5c0d0"
+      },
+      "test/content/op_crosly.test.js": {
+        "size": 19231,
+        "sha256": "a5e832237d5eb3f32d4d071a04e2c7d4185791c9645f3d272b6589894782e6fd"
+      },
+      "test/content/op_haruka.test.js": {
+        "size": 21217,
+        "sha256": "55488e78730b329cd1f04891958eb75b6034f6ac7d034e6c1fc32d2e7ff244dc"
+      },
+      "test/content/op_headb2.test.js": {
+        "size": 21685,
+        "sha256": "15f291badd499909d0f864f8fc3e67a546fdc9b72a9ac5a5e139da69be6895fc"
+      },
+      "test/content/op_helage.test.js": {
+        "size": 16044,
+        "sha256": "3664b56180522a0c0af45ee31bc8b434f4a132bb8e3ca28a80c5c4c61144ebc8"
+      },
+      "test/content/op_hsgma2.test.js": {
+        "size": 28535,
+        "sha256": "fe16a446af4ca1698bc138c79b73a45b29b32b6794b4587f398758dc06838490"
+      },
+      "test/content/op_poca.test.js": {
+        "size": 21973,
+        "sha256": "ddd6b5dcd0d00e4b229455850574b723b245fb78c9e7596cd8eec47a089ad870"
+      },
+      "test/content/op_radian.test.js": {
+        "size": 20861,
+        "sha256": "1a1541bc17ec4a5220d6b41da96752957bc82b84d5a6fe3fa1be7eb41cb815ee"
+      },
+      "test/content/op_saga.test.js": {
+        "size": 22894,
+        "sha256": "782da021c1176506ad1054e0f0f8a63dcf1a22f70b76b6a88627d29a47d9b7b1"
+      },
+      "test/content/op_veen.test.js": {
+        "size": 17188,
+        "sha256": "6bd5a518e82607da4ca98f840a1f6becd7b11606a388e20f048bfd4643a01880"
+      },
+      "test/content/strongest-status-overlap.test.js": {
+        "size": 2844,
+        "sha256": "2008ac81aede0ed9f4ec626827c450bc439acffd96c313c7262aa5733d8de99c"
+      },
+      "test/content/tokens_devices.test.js": {
+        "size": 87061,
+        "sha256": "f52173ee4f4b50666bd065046e206cc51289e2458d8e65e5281d4a3f761070ce"
+      },
+      "test/data.test.js": {
+        "size": 61089,
+        "sha256": "c839de3bde1fe99cca97172873895c74667fc8ddf4dd02446029a9e68e1514a6"
+      },
+      "test/diy.test.js": {
+        "size": 15643,
+        "sha256": "7e215313d482393e1fbd04662f96a55363ec7326ce86018797cc6e45c1cdefd1"
+      },
+      "test/feedback7-voices.test.js": {
+        "size": 13034,
+        "sha256": "1b897c00d9577c8e51f3361ec0ccd97b119ee56ba899ed51ae4a26d97090ebdf"
+      },
+      "test/full-potential.test.js": {
+        "size": 11902,
+        "sha256": "a00cc23d9403f0ccb62c6d57f0cd97b03678c650526c708b4cbadb81ea96b0fc"
+      },
+      "test/golden-diy.test.js": {
+        "size": 2232,
+        "sha256": "c95a400797d95cd84270b474e1a1e7f2488723e0d33a151d9117c2c415da2133"
+      },
+      "test/golden-standins.test.js": {
+        "size": 3860,
+        "sha256": "34db2e47c479ea77e0921dff8c37b95b90c5fdffceebbff36ad246b0f24379e7"
+      },
+      "test/lobby-diy.test.js": {
+        "size": 8107,
+        "sha256": "0a20390c6d37e35cc7e7c3dac9f02cb123dc678b503bc9de53e58b25947ec132"
+      },
+      "test/match/board.test.js": {
+        "size": 18731,
+        "sha256": "979e88e29daf6a1f902d92dc291f9b8a73a4952ed303497ca297fbdbac307d40"
+      },
+      "test/match/bot-smarter.test.js": {
+        "size": 28295,
+        "sha256": "5e24ce011044a44f3b6351695b53d4ccf938caccacce6c4019b3df3fae1c9a56"
+      },
+      "test/match/diy-bonds.test.js": {
+        "size": 7071,
+        "sha256": "ab073e2cae50e390e54c75243f54669a55cd1624f5b55d01414a30a77250e8fa"
+      },
+      "test/match/diy-shop.test.js": {
+        "size": 25511,
+        "sha256": "0c701756458dd235b878c518385c397dcc7bd5201c9776bf38ded0601ba800bc"
+      },
+      "test/match/feedback5-we2-diy-grants.test.js": {
+        "size": 4464,
+        "sha256": "0436bc1a3789ca2f1a3e94baa7dee761f8716dd4d0f9acfeba1cb57bff06995d"
+      },
+      "test/match/funnel-redeploy.test.js": {
+        "size": 3921,
+        "sha256": "749fc8d83c4c0bfe15d860652606b21e04591b27a2f55a430bde732e408189c7"
+      },
+      "test/match/loadout.test.js": {
+        "size": 17294,
+        "sha256": "45cedf0ee16835ecc2f4615aeab4d3aeeb481dedff3ad22aa80cc7df0a074fe2"
+      },
+      "test/match/merge.test.js": {
+        "size": 31469,
+        "sha256": "89dd9a2d1c79b3750bbd8a961dc199089c7bfa93625e4a581046579d376cc07e"
+      },
+      "test/match/morph-bonds.test.js": {
+        "size": 10542,
+        "sha256": "735497c5e726ea99b5bf75cee7bdcf656f038ad3a67f36a892e09b04bdee4cad"
+      },
+      "test/match/playtest6-elite-to-board.test.js": {
+        "size": 27723,
+        "sha256": "d7aebb8893f3a380dd6e0173ba7167a84ebeea02b76138503be496f76278f697"
+      },
+      "test/match/playtest6_summons.test.js": {
+        "size": 16766,
+        "sha256": "5a74e30bf62ed4646dc66e549789d1d567533c778827188e32ac09bf0449c2f0"
+      },
+      "test/match/pool.test.js": {
+        "size": 11006,
+        "sha256": "29c1d63def0b8372dd931f7176a35aee26de595954b938425a7cca501133c0de"
+      },
+      "test/potential.test.js": {
+        "size": 12224,
+        "sha256": "726428277d9737bfad2aa2fb31590c2907ae31d76b710a6b973c98662816167a"
+      },
+      "test/sim/feedback5-countdown-summons.test.js": {
+        "size": 4844,
+        "sha256": "57318ed7e1414020debf6eb2c32f56cdc7aced54187dc949906d9a9a5710e465"
+      },
+      "test/sim/loadout.test.js": {
+        "size": 27091,
+        "sha256": "da1ddd268ce293d9185c58b81c72c1146063c7d0f647dd6cbcbc1a288c60bddf"
+      },
+      "test/sim/robustness.test.js": {
+        "size": 48379,
+        "sha256": "73e15520e64c597268f04d94210fec8a2706581dbd882a496321a1d371a4765f"
+      },
+      "test/sim/trait_attack_speed.test.js": {
+        "size": 25206,
+        "sha256": "9b385133cebb0b912476a43e73b0f3aa27296c102f527cc2e1318e9f15f86d57"
+      },
+      "test/ui/feedback1-gaps.test.js": {
+        "size": 25350,
+        "sha256": "15e454309fbb7e1c8d30d4d74d241cf197a2b625a6704eef11dd243892a16141"
+      },
+      "test/ui/feedback1b-bonds.test.js": {
+        "size": 9213,
+        "sha256": "22e02a23d849300cee7b956337c57563cfaf1786ea4965e043e6b6a84f495343"
+      },
+      "test/ui/loadout.test.js": {
+        "size": 28033,
+        "sha256": "2f695d1158c7820d3a343872b876939f2f03b619268178da25785fc896eb4e63"
+      },
+      "test/ui/match-info.test.js": {
+        "size": 16697,
+        "sha256": "f2d7ea9c2c2c8dc298005e3ffff4aa1e5e0c76ed97aff0e2ac1bf87157b4fca8"
+      },
+      "test/ui/morph-bonds.test.js": {
+        "size": 13544,
+        "sha256": "c74ff56247e22e61d09e6df79c3e7cb125439d01d5585a4fb166538c6213b267"
+      },
+      "tools/assets/anim-roles.mjs": {
+        "size": 15131,
+        "sha256": "720ad48e9e4c3afbdd8c52bc9ae2e0aaaea1cf7728fab498d4ce288d1ce1d96f"
+      },
+      "tools/assets/spine.mjs": {
+        "size": 20705,
+        "sha256": "4f73caf3110b641b80c276b75f0caa2a638c2260ad49d6960a69b9a5cec92f24"
+      },
+      "tools/build-data.mjs": {
+        "size": 261495,
+        "sha256": "1eeaae85256db0f968bb28e42f07687be21fb22909b38aef06053a7210c904be"
+      },
+      "tools/fetch-assets.mjs": {
+        "size": 31604,
+        "sha256": "1427e4175520584446b07e9d405d42f18461ed4fd2cd76e33185f71adf90805d"
+      },
+      "tools/golden.mjs": {
+        "size": 80061,
+        "sha256": "536bcaf5c260db6f700b37ecc5aee02db4c38bd76e115faf5f8529525753e520"
+      }
+    }
+  },
+  "patches": [
+    "patches/01-mod-shared.patch",
+    "patches/02-tests-calibration.patch"
+  ],
+  "build": {
+    "data": "tools/build-data.mjs",
+    "i18n": "tools/build-i18n.mjs",
+    "i18nOptional": true
+  },
+  "i18n": [
+    {
+      "script": "i18n/apply-i18n.mjs"
+    },
+    {
+      "script": "i18n/prune-stale.mjs",
+      "optional": true
+    },
+    {
+      "script": "i18n/rehash-families.mjs"
+    }
+  ],
+  "verify": [
+    "scripts/verify.mjs"
+  ],
+  "owned": {
+    "data/assets.json": {
+      "size": 1338134,
+      "sha256": "ae129cee2e02ee873fb8d62e10436e523adfb5b0f11d3a86d586c70f1e995cdf"
+    },
+    "public/assets/bond/dongShip.png": {
+      "size": 32409,
+      "sha256": "021c9163f998920d5879cf36a1a7f1e6b95c625e45b7effcd9843a976f39ebe1"
+    },
+    "server/sim/content/kits/ops/chess_char_2_98-botany.js": {
+      "size": 10706,
+      "sha256": "fdc597e3346f0a0f6339389b3dac378335affbd9734c57d7759d3cefac7ac4cc"
+    },
+    "server/sim/content/kits/ops/chess_char_3_96-kichi.js": {
+      "size": 7274,
+      "sha256": "777a416a264fdaf580781d90fa61e01f0b57e8ce8f0845dccf5aeb822ee1d292"
+    },
+    "server/sim/content/kits/ops/chess_char_3_97-yuki.js": {
+      "size": 6088,
+      "sha256": "f61d7d3ec510e320db171ae12475576e6340747bfaa6e2d3f83f6d25186eb0cb"
+    },
+    "server/sim/content/kits/ops/chess_char_3_98-leto.js": {
+      "size": 5498,
+      "sha256": "bd307bb789befa36f13fb97bb01b100ef47ea36bf0f8db1ccf76fcfcca37756e"
+    },
+    "server/sim/content/kits/ops/chess_char_3_99-gyuki.js": {
+      "size": 7795,
+      "sha256": "c5e31753cac796918d1287dea2e9a314fc299a160a987ba39a42b1493cd75329"
+    },
+    "server/sim/content/kits/ops/chess_char_4_98-helage.js": {
+      "size": 8589,
+      "sha256": "cf94feead14ddf93a20b3d9bd708206639da67fe0d528f6f73ce8e14638a9346"
+    },
+    "server/sim/content/kits/ops/chess_char_4_99-bgsnow.js": {
+      "size": 10852,
+      "sha256": "99f6bbd8e954883cb111872f17fab171e8e2bad798689604d43a051cd53d163a"
+    },
+    "server/sim/content/kits/ops/chess_char_5_97-saga.js": {
+      "size": 14588,
+      "sha256": "fd9c433b1ce7fd69a05d36d2d6a3fe05e226d7c2573818a77c2f5d623d188287"
+    },
+    "server/sim/content/kits/ops/chess_char_5_98-turdus.js": {
+      "size": 8311,
+      "sha256": "bcc296263fcac70d5d0f35b134aeeeedf67dbf5e167078e25d13f6e6d47a810a"
+    },
+    "server/sim/content/kits/ops/chess_char_5_99-veen.js": {
+      "size": 13097,
+      "sha256": "b6734788443c2a92f7e4f7c82de787880eb75759dc91faa0c1dd99b1d96089de"
+    },
+    "server/sim/content/kits/ops/chess_char_6_97-yato2.js": {
+      "size": 26554,
+      "sha256": "616344150a503cfb9926f2a9b7edc72d4aa31f94c791186b37a26281de7558ea"
+    },
+    "server/sim/content/kits/ops/chess_char_6_98-headb2.js": {
+      "size": 15561,
+      "sha256": "e60cf96ad04c2b5b5b3169e920df2234d4730ee3e6dc816865cb37c0ea83d979"
+    },
+    "server/sim/content/kits/ops/chess_char_6_99-poca.js": {
+      "size": 10001,
+      "sha256": "2fba8d9fababf03dd14fa63962e25ae1a891bd58edc312c399b55631e656d02a"
+    },
+    "test/content/kits_char_2_98.test.js": {
+      "size": 7124,
+      "sha256": "e9098eb3948e1ad6f5ccf9ccb0de976b6029d3f70f6c5e234b85077625ef1a84"
+    },
+    "test/content/kits_char_3_98.test.js": {
+      "size": 4886,
+      "sha256": "267ed074740a65e6967e2539b00ca90fb7549425d1d3229107201a33191b5e09"
+    },
+    "test/content/kits_char_4_98.test.js": {
+      "size": 6200,
+      "sha256": "682aac8ddccfb5ae71a6744231f03c0b2decf8b22f37f043b73a0b90361a4094"
+    },
+    "test/content/kits_char_4_99.test.js": {
+      "size": 5832,
+      "sha256": "014262bf527e7d58d18a6573fb53fc85b6614d50f072efe2d0bb72b6e3d0f65c"
+    },
+    "test/content/kits_char_5_98.test.js": {
+      "size": 6230,
+      "sha256": "cf5643a858891d77418a294e2678c9cf10312f138b766218c06ee0c8cbbee6d4"
+    },
+    "test/content/kits_char_5_99.test.js": {
+      "size": 5213,
+      "sha256": "9135210eaf4aca411b41391a340b26b528cd3d7c084f936c808b2fc95962cf0d"
+    },
+    "test/content/kits_char_6_97.test.js": {
+      "size": 9551,
+      "sha256": "cf7966e812b15ccd4c156085d0ef0829f939b60c4ff7902c4d432efa4f9ed8f2"
+    },
+    "test/content/kits_char_6_98.test.js": {
+      "size": 6616,
+      "sha256": "5c197ce51a98af52b8fbd81a4cf99f525c6ae3a85b006b1c348562e00b09668c"
+    },
+    "test/content/kits_char_6_99.test.js": {
+      "size": 6288,
+      "sha256": "a372c57007150fe700170758a09ffc697db8028bd0516b07a2b55c08542250b7"
+    },
+    "test/content/ursus_bond.test.js": {
+      "size": 7603,
+      "sha256": "99fccadb3c2b44f6912d7389bb034a640cc4574f2e47cf678f3568ea64914570"
+    },
+    "test/render/anim-role-fixes.test.js": {
+      "size": 6768,
+      "sha256": "5809919af6a8d05b9ceb3c0cbebe78e82d7d5b7b13e7681cfe39f279c966be7f"
+    },
+    "test/render/attack-clip-after-skill.test.js": {
+      "size": 8163,
+      "sha256": "56eb227d403a300e641221d0e8444f18975efa772170b59d1339673ce3b714f7"
+    },
+    "test/render/yato2-redeploy-stance.test.js": {
+      "size": 6034,
+      "sha256": "1f3f93d23c4e283b5e6894e9cd86db67a2994ac204233ad7c5c1018e0da51bf7"
+    },
+    "tools/custom-content.mjs": {
+      "size": 48831,
+      "sha256": "ba0595c755fd318dad34740424a442e56b90a6b2e1cef180e6fea676654b0f30"
+    }
+  },
+  "patched": {
+    ".gitignore": {
+      "size": 2133,
+      "sha256": "1976ac2e036a569d7738555254150b64866c3cb27da4cda08630083b647a712a"
+    },
+    "docs/research/00-INDEX.md": {
+      "size": 20808,
+      "sha256": "d360b766832f434879819e1de5084ae75f9a461e69071bae6085848ab640f5db"
+    },
+    "docs/research/04-items.json": {
+      "size": 226866,
+      "sha256": "67afab13c166a4ebc8762ce8ecd89278e3078acda0dcf312154bda952af1b7c3"
+    },
+    "docs/research/07-assets.json": {
+      "size": 1048028,
+      "sha256": "0ef937ee77c6cf5bf68839f13618c865546f7ba7284707ef1e2504d908288ceb"
+    },
+    "public/js/render/spine.js": {
+      "size": 51291,
+      "sha256": "b9705906a141a63f8aeaf6b5e48fd614e2be6638782e38d1cb4f4665e2f5f23b"
+    },
+    "public/js/render/units.js": {
+      "size": 135730,
+      "sha256": "15212567059d69fee23eebfc5e5fef66908067576b89e65ffcad453c4ddc17d6"
+    },
+    "server/match/gamedata.js": {
+      "size": 30387,
+      "sha256": "bda6b0d5b1c86fa379da76a1138393972976a5308338008435d0c3af7d575162"
+    },
+    "server/sim/battle/deploy.js": {
+      "size": 15243,
+      "sha256": "b2bf6fd9e0b3df5f83668cf94dfc398b7383d582845dd520098eae49e67f2387"
+    },
+    "server/sim/content/bonds/core.js": {
+      "size": 52140,
+      "sha256": "2394eb08aaa205efdbaf7bdb43794afb5e4868616ee0116a37da145e345bd2b1"
+    },
+    "server/sim/content/garrisons/meta.js": {
+      "size": 24327,
+      "sha256": "57f601fc96554588766a38164848dbdd93bf6c6635fb82c11e94759d086e29a3"
+    },
+    "server/sim/content/items/battle.js": {
+      "size": 56662,
+      "sha256": "3d5fb9f104566e867a463cd1f901d4ab07ef03d8e069b1ea4257188aa28a7222"
+    },
+    "server/sim/content/kits/index.js": {
+      "size": 11133,
+      "sha256": "22824df30c36dd54ea7d70b7499c77514193aa898797a67d2d2cc8b3e31035a2"
+    },
+    "server/sim/content/kits/ops/chess_char_2_08-bubble.js": {
+      "size": 2323,
+      "sha256": "fffddec09f0aaeec96d8ae117421cdc99bd4fee8b7727ad5542073e4e97069bd"
+    },
+    "server/sim/content/kits/ops/op-ironmn.js": {
+      "size": 27451,
+      "sha256": "7c33888765219b5ba7634bb0da792509ff258113c220372c8a46b66288a1c2cf"
+    },
+    "server/sim/content/kits/ops/op-typhon.js": {
+      "size": 13758,
+      "sha256": "79a28f764c55b222105383414d3adfd836ca6971ed23084932f9107d0895884a"
+    },
+    "server/sim/content/kits/ops/op-weedy.js": {
+      "size": 19384,
+      "sha256": "4b377ee54931bb2d18232b66d7a2fafc3b6f17eb24acea2e86c04dfeb6540397"
+    },
+    "server/sim/professions.js": {
+      "size": 46161,
+      "sha256": "ae1d5167dca8444c4b23b463399734a9b44693bfe5fd7388ebfcb43220279704"
+    },
+    "server/sim/skills.js": {
+      "size": 40240,
+      "sha256": "62b95f624ac4fe25b1fe12e15c409b1d9f2d1d59371d2d14d98227d9671db989"
+    },
+    "test/assets-diy.test.js": {
+      "size": 10309,
+      "sha256": "7512856f4e3f249a9f7b6cc381c4720f4890753351b7456cb8bfb142a6364703"
+    },
+    "test/backups.test.js": {
+      "size": 29682,
+      "sha256": "5e0bfed26013b78716fa7b4800a1790a835cafe4af7bea057d743fe81511c137"
+    },
+    "test/content/choices.test.js": {
+      "size": 56686,
+      "sha256": "0b7df08d59090e66548ea16723f8d705e93fda190427f675766cfa8ba617902b"
+    },
+    "test/content/feedback5-protect.test.js": {
+      "size": 5558,
+      "sha256": "7630228555d8dd299276295ebe6343377e41613e00385bcde991607378b9d34f"
+    },
+    "test/content/garrisons_battle.test.js": {
+      "size": 47576,
+      "sha256": "afdc63b04e10c0e70d4755cbe82cd75a1f7b4866466aef862663dbcc5f030b8e"
+    },
+    "test/content/garrisons_meta.test.js": {
+      "size": 46424,
+      "sha256": "0b76d51abe3fe8b483bee31657b14a145a861df1cea0fb3e949d1802386e49ab"
+    },
+    "test/content/items.test.js": {
+      "size": 73743,
+      "sha256": "a1c8b0f75bf67ffaec072352f7a462e985b0bd220c3f19edb3838eb004f3390f"
+    },
+    "test/content/kits_alt_t2.test.js": {
+      "size": 40409,
+      "sha256": "1ff7abae60bdadf9e145f2995729d3c312a5b8d9a09574118268af7b27b5c769"
+    },
+    "test/content/kits_alt_t3.test.js": {
+      "size": 70138,
+      "sha256": "a42add9f5bd0a76eba40faa48bdc53d52c9aa20f83bb8bac96ecbebf002a5f19"
+    },
+    "test/content/kits_alt_t4.test.js": {
+      "size": 72983,
+      "sha256": "cc4a37631595df6e9437234172891eb5b80fc73551c374a281d1c0b704e1aca9"
+    },
+    "test/content/kits_alt_t5.test.js": {
+      "size": 83475,
+      "sha256": "490c75da89529f6f243ec5ef89c4c7710df49f1e87415834d5e4b22f7174ec39"
+    },
+    "test/content/kits_alt_t6.test.js": {
+      "size": 94701,
+      "sha256": "4acfb696de8c41bbe83dcdcc77ca40490ff5c74d16b579a8ff7ec68006803371"
+    },
+    "test/content/kits_t3.test.js": {
+      "size": 69180,
+      "sha256": "401ac194a6f70a9f897d1a28b547d6286eb36ddf5ebdf0867983ddc69224ed7f"
+    },
+    "test/content/kits_t4.test.js": {
+      "size": 77257,
+      "sha256": "0cb9e675f0a03b5bb89116a2da08cefb6b6ef168006262280d1ad0cc0a5ce08a"
+    },
+    "test/content/kits_t5.test.js": {
+      "size": 83654,
+      "sha256": "54a6050b41758c797f44fcdd557fc036809d0d3f48636eb0e976b38f0bb7ec4c"
+    },
+    "test/content/op_crosly.test.js": {
+      "size": 19283,
+      "sha256": "223083404934df48bf767116d3f1c2c75d2b62d129dfd7f50f935ba88e5e9978"
+    },
+    "test/content/op_haruka.test.js": {
+      "size": 21216,
+      "sha256": "b3f821b4173cdd7b4501fd8ffa23b9bce78867aa615faf188f01a35b5be82d0f"
+    },
+    "test/content/op_hsgma2.test.js": {
+      "size": 28547,
+      "sha256": "66a53f0e11f9f7dd038a3a49c98e10fda35db2e55cb795a707327fb959825eef"
+    },
+    "test/content/op_radian.test.js": {
+      "size": 20900,
+      "sha256": "dd9ac7fe9ca93bc0e7eee682214e04dca7027ce3e22b0d3bd7442793b08621de"
+    },
+    "test/content/strongest-status-overlap.test.js": {
+      "size": 2829,
+      "sha256": "e4ed4d3d172212e7bac1703526019ca9b75ca57a09c3a0d51a903ea24c3a589a"
+    },
+    "test/content/tokens_devices.test.js": {
+      "size": 87396,
+      "sha256": "63e7a616ae281bf9eb80c1073be98c46970947875adb41a86f8aed33bfaa25f9"
+    },
+    "test/data.test.js": {
+      "size": 61412,
+      "sha256": "1fab44a98e8ea463cdbf0a36bceeb86ca6293f7e0fd36cfb6f229205a0d15236"
+    },
+    "test/diy.test.js": {
+      "size": 15887,
+      "sha256": "db9f77351d4f5e7a848cee6e77897e982c6682e83f586ae3f04568d32b219007"
+    },
+    "test/feedback7-voices.test.js": {
+      "size": 13054,
+      "sha256": "dc9e40a0b217a65255f443f6970f8ab6e3ee9ef29f5cb9709d18196843b8f3c5"
+    },
+    "test/full-potential.test.js": {
+      "size": 12123,
+      "sha256": "47e088f5e07457495ecf6f55317e379fcf066396a3cea047ea9953e4e7a40af2"
+    },
+    "test/golden-diy.test.js": {
+      "size": 2545,
+      "sha256": "9f4bc9d5513c34b0e69c3aaffc98c49e60e12a4857981524e430930be5ab2c3e"
+    },
+    "test/golden-standins.test.js": {
+      "size": 4049,
+      "sha256": "f34f3a43e56db5df9563408df21c3abed1dfe527737245cad1c9d58005870add"
+    },
+    "test/lobby-diy.test.js": {
+      "size": 8231,
+      "sha256": "421b159bf6d4c2ace133f6f17bcb48634bc4081b8d8bb253ba0429e7b951c1ed"
+    },
+    "test/match/board.test.js": {
+      "size": 19408,
+      "sha256": "e256995c9194ea056f4d61a5f6a61f9bf57b6b7b6800f281f894f2526b793be6"
+    },
+    "test/match/bot-smarter.test.js": {
+      "size": 28392,
+      "sha256": "339ef1a11db678b78e1a208bbf74c884631ce4186b93ca12d7a4765b9739b8f8"
+    },
+    "test/match/diy-bonds.test.js": {
+      "size": 7253,
+      "sha256": "c2a81949c683c6707f363a884a29e7d85807f5701665b5aa170e90c9875b8d66"
+    },
+    "test/match/diy-shop.test.js": {
+      "size": 25510,
+      "sha256": "049072e466c989c96bc304b6ac090e226fcf8303f489bd7387e2bc9dd8ff35f8"
+    },
+    "test/match/feedback5-we2-diy-grants.test.js": {
+      "size": 4588,
+      "sha256": "5712543473886c46466fc31d402a88d954aea13433da637702b75215437e0992"
+    },
+    "test/match/funnel-redeploy.test.js": {
+      "size": 4075,
+      "sha256": "0aca2a7b8ad78e270b8d427eb3b6bc2e97e74b95695b36fa2f886ad136ea2273"
+    },
+    "test/match/loadout.test.js": {
+      "size": 17294,
+      "sha256": "275da4d4fae753daa987d09f675f6196f1cd7527b82f46fd19698f1f60b4c51b"
+    },
+    "test/match/merge.test.js": {
+      "size": 31616,
+      "sha256": "5032ddf10e455bdd2f7649dfb39210a43cc5d6d2f78cb3c2ff4cc27175755164"
+    },
+    "test/match/morph-bonds.test.js": {
+      "size": 10542,
+      "sha256": "a2fae392957513335de9d49dc2f76ca5679d1faeb28dd917ecade3ac2dbe9eef"
+    },
+    "test/match/playtest6-elite-to-board.test.js": {
+      "size": 27722,
+      "sha256": "858653de2d6271ae81006dc88073d67d4b8be3676bb2ad6cd95daa3f09163c5f"
+    },
+    "test/match/playtest6_summons.test.js": {
+      "size": 16870,
+      "sha256": "d04f1c76509c962e49f346eabe36d253a551607c3f92a9c58d1b87d4f25318d8"
+    },
+    "test/match/pool.test.js": {
+      "size": 11321,
+      "sha256": "c9973255c031c5793801f0aa97299092d7f7eefbf6ed1a2c93cd50b47b27570c"
+    },
+    "test/potential.test.js": {
+      "size": 12438,
+      "sha256": "e8d35467c20a3a33c3ae592a47eba7fa796aa2d7ee4f20955361c0f18327d216"
+    },
+    "test/sim/feedback5-countdown-summons.test.js": {
+      "size": 4902,
+      "sha256": "99f760e3679c8e2fca818b999b40523a6b6812f97be86f8950f0dc7dc7cf0190"
+    },
+    "test/sim/loadout.test.js": {
+      "size": 27091,
+      "sha256": "63f058c79d481554eb7a5096d410cb62bea36184ef307a077beafeefcb673a9b"
+    },
+    "test/sim/robustness.test.js": {
+      "size": 48807,
+      "sha256": "5d468fb03e3e70b679a5d30f3e118563a8e6d85f4b30d967e5785f73a23bb5f6"
+    },
+    "test/sim/trait_attack_speed.test.js": {
+      "size": 25762,
+      "sha256": "aade52ea9721b929a41580755ad4e910ad187dd8eacc5cc96cca697fdb66165d"
+    },
+    "test/ui/feedback1-gaps.test.js": {
+      "size": 25585,
+      "sha256": "4b75754ef654043b9fcd9daacfd3d302f36083b75752eb961b4e3d41a5ccfdfe"
+    },
+    "test/ui/feedback1b-bonds.test.js": {
+      "size": 9223,
+      "sha256": "772fd1d76d817d9af5deeee8e6930fc86d722a1f32ef036170dac24489c2dde5"
+    },
+    "test/ui/loadout.test.js": {
+      "size": 28033,
+      "sha256": "a50b323de6e5ebd611c1ca2bd21cca8b230f41665d8c8fda897c87695aad9d6e"
+    },
+    "test/ui/match-info.test.js": {
+      "size": 16895,
+      "sha256": "57e118f54bb228713a7406b4e64c2e90ac37bd771350378b6905dae3f9bf3f05"
+    },
+    "test/ui/morph-bonds.test.js": {
+      "size": 13586,
+      "sha256": "3212ede02a5b89fba32e016b461a0c2ff07d41ec4ba88e9aafba222883edcd6d"
+    },
+    "tools/assets/anim-roles.mjs": {
+      "size": 18221,
+      "sha256": "07f45d3ccb3573eec7c6ca72ff9b572dfaa5afe7b5eaaa21ab655bcc19c3d052"
+    },
+    "tools/assets/spine.mjs": {
+      "size": 24722,
+      "sha256": "c87a081ae772a82acec32aade574e98b4a0f64ad032551f619250156316f6821"
+    },
+    "tools/build-data.mjs": {
+      "size": 262020,
+      "sha256": "83b91e09dd60346a39f1c8db7885a76261f896fcd0fe0980445b61a3e218e111"
+    },
+    "tools/fetch-assets.mjs": {
+      "size": 32427,
+      "sha256": "b09fa15064f39e4a0b97d2249c45cf5aec8496f14dc76283869e75feb08573ef"
+    },
+    "tools/golden.mjs": {
+      "size": 81265,
+      "sha256": "133660e603e2c66b0392104da2896020497b6623365519667dfb210016eacb96"
+    }
+  },
+  "removed": [
+    "server/sim/content/kits/ops/op-headb2.js",
+    "server/sim/content/kits/ops/op-helage.js",
+    "server/sim/content/kits/ops/op-poca.js",
+    "server/sim/content/kits/ops/op-bgsnow.js",
+    "server/sim/content/kits/ops/op-veen.js",
+    "server/sim/content/kits/ops/op-saga.js",
+    "test/content/op_headb2.test.js",
+    "test/content/op_helage.test.js",
+    "test/content/op_poca.test.js",
+    "test/content/op_bgsnow.test.js",
+    "test/content/op_saga.test.js",
+    "test/content/op_veen.test.js"
+  ],
+  "generated": [
+    "data/assets.json",
+    "data/backups.json",
+    "data/bands.json",
+    "data/bonds.json",
+    "data/bosses.json",
+    "data/chess.json",
+    "data/choices.json",
+    "data/config.json",
+    "data/effects.json",
+    "data/emotes.json",
+    "data/enemies.json",
+    "data/factions.json",
+    "data/garrisons.json",
+    "data/i18n/en.json",
+    "data/i18n/ja.json",
+    "data/i18n/ko.json",
+    "data/i18n/zh-TW.json",
+    "data/items.json",
+    "data/stages.json",
+    "data/tokens.json",
+    "data/tuning.json",
+    "data/waves.json"
+  ]
+}

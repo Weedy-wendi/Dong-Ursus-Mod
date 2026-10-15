@@ -1,0 +1,38 @@
+【东】＋【乌萨斯】盟约 mod —— 改动与版权说明（NOTICE）
+================================================================
+
+本包（Dong-Ursus-Mod，仓库 https://github.com/Weedy-wendi/Dong-Ursus-Mod ）是
+《卫戍协议：盟约》复刻版（Stronghold-Protocol，https://github.com/sganggs/Stronghold-Protocol ）
+的非官方同人 mod。本体以 GNU GPL-3.0-or-later 发布；本包含有对本体的修改，因此同样以
+GNU GPL-3.0-or-later 发布（全文见 LICENSE）。
+
+依 GPL-3.0 第 5(a) 条，此处说明本包对本体做了哪些修改、以及何时做的：
+
+1. 新增文件（本体原本没有，安装时写入）：
+   · tools/custom-content.mjs                       —— 本 mod 的唯一数据源（两条盟约 / 13 名干员 /
+                                                       26 条特质 / 4 件装备 / 机变卡覆盖）
+   · server/sim/content/kits/ops/chess_char_*.js     —— 13 个预设棋子 kit
+   · test/** 下的 mod 自有测试（13 个文件）
+   · public/assets/bond/dongShip.png                —— 【东】盟约图标（取自东国阵营 LOGO）
+   · .mod-dong-ursus/                               —— 安装记录与备份（运行期产物，非源码）
+2. 修改文件：见 patches/01-mod-shared.patch 与 patches/02-tests-calibration.patch，
+   逐文件、逐行的改动都在补丁里（含安装说明注释）。
+3. 删除文件（其机制已转为本包的预设棋子 kit）：见 mod.json 的 removed 字段（6 个上游 kit +
+   6 个对应测试）。
+4. 覆盖文件：files/data/assets.json 是以本体清单为基、合并本 mod 素材条目后的整文件版本。
+5. 生成物：data/*.json 与 data/i18n/*.json 由本体的 tools/build-data.mjs、tools/build-i18n.mjs
+   配合本包的 i18n/ 脚本重新生成，不手工编辑。
+
+完整清单与逐文件校验值（sha256）见本包根目录的 mod.json：
+  base.files  装之前本体应有的字节（85 个文件）
+  patched     补丁产物应有的字节（73 个文件，装完之后与它逐字节一致）
+  owned       files/ 下本包自有文件应有的字节（29 个文件）
+  removed     安装时删除、卸载时还原的上游文件（12 个）
+  generated   由数据管线生成的文件（22 个）
+
+版本与适配：
+  mod 版本见 mod.json 的 version；它适配的本体版本见 mod.json 的 base.version。
+  每个本体版本对应一个发布分支（base-<本体版本>，例如 base-0.2.6）。
+
+免责：本包与鹰角网络 / Hypergryph、以及 Stronghold-Protocol 的作者均无隶属关系；
+游戏素材版权归原权利人所有。本包不含本体自带的美术 / 音频素材（由使用者自己的本体提供）。

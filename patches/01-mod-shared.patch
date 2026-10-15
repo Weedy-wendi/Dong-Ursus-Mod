@@ -1,3 +1,14 @@
+diff --git a/.gitignore b/.gitignore
+index f09e5f3..ec5dc18 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -48,3 +48,6 @@ desktop.ini
+ .claude/
+ # tools/sim-check.mjs: the corpus and its Node traces for /dev/sim-check.html
+ public/dev/simcheck/data/
++
++# 【东】+【乌萨斯】mod：安装记录与装前备份（scripts/mod.mjs 维护）
++.mod-dong-ursus/
 diff --git a/docs/research/00-INDEX.md b/docs/research/00-INDEX.md
 index 0f4d19c..206e093 100644
 --- a/docs/research/00-INDEX.md

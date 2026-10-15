@@ -16,7 +16,10 @@
 
 ```bash
 cd <本体源码检出根>                        # 必须是源码检出，不是 Release 里的 *-lite.zip
-node <mod 包>/scripts/install.mjs .        # 覆盖 → 套补丁 → 重建 data → 合并 i18n；幂等，可重复执行
+node <mod 包>/scripts/mod.mjs status  .    # 体检：本体版本 / 基线纯净度 / 是否已装（只读）
+node <mod 包>/scripts/mod.mjs install .    # 安装：覆盖 → 套补丁 → 重建 data → 合并 i18n
+node <mod 包>/scripts/mod.mjs update  .    # 升级：取 base-<本体版本> 分支的最新包并更新
+node <mod 包>/scripts/mod.mjs uninstall .  # 卸载：精确还原到安装前（git 优先，备份兜底）
 node <mod 包>/scripts/verify.mjs .         # mod 验收子集（20 个测试文件）
 ```
 
@@ -124,6 +127,8 @@ i18n 四连                            build-i18n（迁移本体既有翻译）�
 .
 ├─ SKILL.md                 给 agent 的操作手册（安装 / 适配 / 排障 / 维护）
 ├─ CHANGES.md               逐条修改记录（改了什么 / 为什么 / 怎么验的）
+├─ mod.json                 包清单：版本 / 适配本体 / 基线指纹 / 补丁产物指纹
+├─ LICENSE · NOTICE         GPL-3.0-or-later 原文 + 改动与版权说明
 ├─ files/                   mod 自有文件，整文件覆盖（29 个）
 │   ├─ tools/custom-content.mjs                    唯一数据源
 │   ├─ data/assets.json                            素材清单（含动画角色修正）
@@ -131,10 +136,11 @@ i18n 四连                            build-i18n（迁移本体既有翻译）�
 │   ├─ server/sim/content/kits/ops/chess_char_*_9*.js   13 个 kit
 │   └─ test/**                                     13 个 mod 自有测试
 ├─ patches/                 补丁基线 = 本体该版本的 mod 前提交
-│   ├─ 01-mod-shared.patch   上游共享文件（22 个）
+│   ├─ 01-mod-shared.patch   上游共享文件（23 个，含给本体 .gitignore 加一行）
 │   └─ 02-tests-calibration.patch   既有测试校准（50 个）
 ├─ i18n/                    mod-i18n.json + apply / prune-stale / rehash-families
-└─ scripts/                 install · verify · check-anim-roles · repro-skill-latch
+├─ tools/make-manifest.mjs 生成/刷新 mod.json（发布前跑一次）
+└─ scripts/                 mod（install·update·uninstall·status）· install（兼容入口）· lib · verify · check-anim-roles · repro-skill-latch
 ```
 
 ## 验证与测试
@@ -152,13 +158,14 @@ node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>  # 复现「技�
 ## 版本与兼容
 
 - **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install.mjs` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
+- **一条命令升级 / 卸载**：`mod.mjs update` 按你的本体版本取 `base-<本体版本>` 分支的包（源在 `mod.json` 的 `source.repo`，可用 `--source` / `--file` 覆盖），只有 **base 匹配且版本更高** 才动手；`mod.mjs uninstall` 精确还原到安装前。**不要**把新版包直接覆盖在装了旧版的树上——实测会落 71 个 `.rej` 且几乎不改内容。安装记录与装前备份在 `<本体>/.mod-dong-ursus/`（补丁 01 已把它写进本体 `.gitignore`，`git clean -fd` 不会删）。
 - **首次 `build-data` 需要网络**：缺 `.cache/gamedata` 时会从 GitHub 拉官方数据表。网络不稳时设 `HTTPS_PROXY`，或直接把本机已装仓库的 `.cache/gamedata/` 整目录拷过来（最快、可离线）。
 - **另有一份面向 v0.2.4 的旧包**（历史分支，patch 01 = 17 文件 / patch 02 = 45 文件），与本体 v0.2.4 fork 配套；本包是 0.2.6 版。两者各自独立，不要混用脚本。
 
 <details>
 <summary><b>换本体版本时的适配流程（摘要）</b></summary>
 
-1. 新本体落位（**源码检出**）后：`node scripts/install.mjs <本体仓库根>`；
+1. 新本体落位（**源码检出**）后：`node scripts/mod.mjs status <本体仓库根>` 体检，再 `node scripts/mod.mjs install <本体仓库根>`；
 2. 补丁若产生 `*.rej`：按 `SKILL.md`「冲突处理」的识别标志手工合入；
 3. `node scripts/verify.mjs <本体仓库根>`，计数断言按 `SKILL.md` 清单校准；
 4. 全量测试前先 `node tools/golden.mjs --update`；

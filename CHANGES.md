@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-10-16 · 命令行工具（install / update / uninstall / status）· GPL-3.0-or-later 许可与改动说明
+
+### 新增
+
+| 文件 | 作用 |
+|---|---|
+| `mod.json` | 包清单：`version`（mod 自己的 semver）· `base`（适配的本体版本 + 基线提交 + **85 个装前文件指纹**）· `patched`（73 个补丁产物指纹）· `owned`（29 个自有文件）· `removed`（12 个删除项）· `generated`（22 个生成物）· `source`（发布仓库 + 分支前缀）|
+| `tools/make-manifest.mjs` | 生成/刷新 `mod.json`。指纹**取自基线提交的 git 对象**，不取工作区；`patched` 是「纯净副本 + 套两个补丁」后实测出来的字节 |
+| `scripts/mod.mjs` | 命令行入口，四个子命令：`install` / `update` / `uninstall` / `status` |
+| `scripts/lib/{util,manifest,state,gitops,source,zip}.mjs` | 工具 / 清单校验 / 安装状态与备份 / git 安全封装 / 拉包 / zip 读取 |
+| `LICENSE` · `NOTICE` | GPL-3.0-or-later 原文（取自 SPDX license-list-data 的 GPL-3.0-or-later.txt）与依 §5(a) 的改动说明 |
+| `patch 01` 里的 `.gitignore` | 给本体 `.gitignore` 加一行 `.mod-dong-ursus/`（安装记录与备份不进 `git status`、不被 `git clean -fd` 删） |
+
+`scripts/install.mjs` 改为兼容入口（= `mod.mjs install`）。
+
+### 为什么
+
+- **升级**：本体版本不变时把「最新版 mod」同步进本体，此前只有「重跑 install.mjs」，而它只对**纯净基线**或**同一个 mod 版本**成立。
+- **卸载**：此前没有卸载路径，只能手工 `git` 还原或重新解包本体。
+- `update` 用「每个本体版本一个发布分支 `base-<本体版本>`」（方案 B）：分支由本地本体版本决定，包内 `mod.json.base` 再自我声明一次，两个条件都满足才装，避免跨版本混装。
+
+### 关键实现决定（都有实测依据）
+
+1. **install 只在纯净基线上装**：`mod.json.base.files` 逐字节校验 85 个文件；树上有旧版安装记录时先精确还原。实测「新版补丁直接覆盖旧版树」→ 正向/反向 `--check` 皆失败 → `--reject` 落 **71 个 `.rej`**、只有 1 个文件被改动。
+2. **不信 git 的退出码**：套完补丁按 `patched`+`owned`（102 个文件）复核。实测 `git apply` 在仓库子目录里会静默跳过并返回 0。
+3. **卸载优先 git、备份兜底**：`git checkout <基线提交> -- <文件>`（显式提交，绕开「索引里暂存过 mod」的坑；`.gitignore` 那一行已让状态目录不进索引），git 不可用/提交不可达时用 `.mod-dong-ursus/backup/`；**这台电脑改过的文件默认保留并报告**。
+4. **补丁相关 git 命令钉死 `core.autocrlf=false` + `core.eol=lf`**：否则 git 会用机器上的全局 autocrlf 把新增行写成 CRLF。实测后果：在非 git 检出的树上装完，**73 个补丁产物全是 CRLF**，与本体适配树（LF）逐字节不一致——指纹也因此全错，`status` 会把参考树判成"与基线不符"。修正后才 72/73 对上（剩的 1 个是旧安装尚未应用的 `.gitignore`）。
+5. **校验对 CRLF/LF 差异宽容**：Windows 上 `git archive` / `autocrlf=true` 的签出会让 `.gitignore` 这类文件变 CRLF，逐字节比对会误判——`verifySet` / `driftCheck` 把"只有换行符不同"单独归类，不算不一致。
+6. **git 调用一律带 `GIT_CEILING_DIRECTORIES`**：本体树若恰好是别的 git 仓库的子目录，不挡的话补丁路径会按外层仓库根解析并被静默跳过。
+
+### 怎么验的
+
+- 纯净树往返：`git archive <基线提交>` 解到临时目录 → `install` → `verify` → `uninstall` → 与基线逐文件比对（0 差异）→ 再 `install` 的产物与参考适配树逐字节一致（102 个文件里 101 个相同，唯一差异是 `.gitignore`——旧安装还没拿到这条新补丁）。
+- 版本守卫：把本体 `package.json` 的版本改成别的值 → `install` 拒绝且**树零改动**。
+- 漂移保护：手工改一个被安装的文件 → `uninstall` 报告并保留该文件；`--force` 才还原。
+- git 还原路径：本体 git worktree（基线提交）→ `install` → `uninstall` → `git status --porcelain` 为空。
+- `update`：用 `--file <本地改版目录>` 走完「对比包 → 调新包 install → 同步本地包目录」，并验证 `--check` 不动手、跨 base 版本拒绝。
+
+---
+
 ## 2026-10-16 · 鸿雪 986 付与对象改「身前」；麒麟R夜刀 992 三处数值上调（再部署 -75%、屏障 2×、狂龙症 +50% 攻击）
 
 ### 1. 鸿雪（`garrison_986_a/b`）—— 付与对象：身后 → 身前
