@@ -7,7 +7,7 @@
 <sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.4-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.5-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
@@ -61,6 +61,10 @@ node <mod 包>/scripts/mod.mjs update . --check     # 先看它打算做什么
 $env:MOD_MIRROR = 'https://ghproxy.net https://gitclone.com/github.com/<owner>/<repo>'
 $env:MOD_SOURCE = 'https://github.com/<owner>/<repo>'
 
+# 卸载（默认彻底：mod 自有文件一律删、别的改动保留并列出）
+node <mod 包>/scripts/mod.mjs uninstall .              # 想连"看不出是谁的改动"一起回退：加 --force
+node <mod 包>/scripts/mod.mjs uninstall . --keep-changed   # 保守：被你改过的 mod 文件也留下
+
 # 完全离线：用本地包升级
 node <mod 包>/scripts/mod.mjs update . --file <新包.zip 或解压后的目录>
 
@@ -78,6 +82,14 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 ## 更新日志（Changelog）
 
 本包从 **v1.0.0** 起有自己的版本号（与本体版本解耦）；每条发布对应一个分支 `base-<本体版本>`，`mod.mjs update` 会挑「base 匹配且版本更高」的那条。逐条细节见 [`CHANGES.md`](CHANGES.md)。
+
+### v1.0.5 — 2026-10-16
+
+- **默认卸载 = 彻底删除本 mod 的东西**：mod 自有路径（基线提交里根本没有的文件：13 个 kit、13 个测试、`custom-content.mjs`、`dongShip.png` 等）**一律删除**，不再因为「内容与本包版本不一致」而整文件保留——**更早版本的 mod 文件**、你改过的 mod 文件都属于这一类，正是之前"卸载删不掉"的原因。内容与本包不同的会先另存到 `.mod-dong-ursus/backup-removed-<时间>/` 再删，报告里给出路径。本体原有文件（如 `data/assets.json`）照旧从基线还原。
+- **不误伤别的 mod**：只有「确实是本 mod 的内容」（内容等于本 mod 的补丁产物、或属于安装时被删掉的那 12 个文件）才回退；既不是基线、也不是本 mod 产物的文件（更早版本的 mod / 别的 mod / 你自己改的）**保留并列出**，要连它们一起回退到基线才用 `--force`。
+- **反向套补丁加保护**：树里已经没有本 mod 的补丁产物时直接跳过，不再对整棵树 `-R --reject` 撒出成片 `.rej`。
+- **生成物优先重跑 `build-data`**：`data/*.json` 是「当前源码的函数」，重跑才能保住别的 mod / fork 自己的数据改动（例如 `data/config.json` 里的玩家上限）；工具链不可用或失败时才按基线 `git checkout` 还原。
+- 新增 `--keep-changed`：保守模式，连「被你改过的 mod 自有文件」也留下。
 
 ### v1.0.4 — 2026-10-16
 

@@ -542,15 +542,22 @@ function stripModContent(repo, mod, { dryRun = false, force = false, backup = tr
   const patches = [...(mod.patches ?? [])].reverse();
   let reverted = 0;
   const rejects = [];
+  // 保护：树里已经没有「本 mod 补丁产物」时不要反向套——否则 --reject 会在整棵树上撒 .rej。
+  const pv = verifySet(repo, mod.patched);
+  const ourContent = pv.ok.length + pv.eol.length;
+  let skipped = false;
   if (!dryRun) {
-    for (const p of patches) {
-      const r = revertPatch(repo, join(modRoot, ...p.split('/')));
-      if (r.ok) reverted++;
-      rejects.push(...r.rejects);
+    if (ourContent === 0) { skipped = true; }
+    else {
+      for (const p of patches) {
+        const r = revertPatch(repo, join(modRoot, ...p.split('/')));
+        if (r.ok) reverted++;
+        rejects.push(...r.rejects);
+      }
     }
   }
   const rp = restorePristine(repo, mod, { dryRun, force, backup });
-  return { reverted, total: patches.length, rejects, ...rp };
+  return { reverted, total: patches.length, rejects, skipped, ourContent, ...rp };
 }
 
 /**
@@ -580,32 +587,44 @@ function uninstallWithoutRecord(repo, mod, flags) {
   // 1) 先反向套补丁：把本 mod 的改动从文件里「摘」出来。
   //    这是与别的 mod 共存时的关键——补丁的 hunk 只覆盖我们改过的段落，别处的内容原样留下；
   //    整文件指纹匹配做不到这一点（文件里同时有别人的改动时，指纹对不上，只能整文件保留）。
-  const strip = stripModContent(repo, mod, { force: flags.force, backup: false });
-  say(`  摘除本 mod 改动：反向套补丁 ${strip.reverted}/${mod.patches.length} 个 · 其余回退 git ${strip.fromGit} · 备份 ${strip.fromBackup} · 本机改动保留 ${strip.kept.length}`);
+  //    默认「彻底删除本 mod 的东西」：反向套补丁摘掉我们的 hunk + 回退「确实是本 mod 产物」的文件；
+  //    既不是基线、也不是本 mod 当前产物的文件（更早版本的 mod / 别的 mod / 你自己改的）**保留并列出**，
+  //    要连它们一起回退到基线就加 --force。被覆盖的当前字节会先另存到 backup-legacy-<时间>/。
+  //    --keep-changed 则为更保守的模式：连「被你改过的 mod 自有文件」也留下。
+  const keepChanged = !!flags.keepChanged;
+  const strip = stripModContent(repo, mod, { force: !!flags.force, backup: true });
+  if (strip.skipped) say(`  树里已无本 mod 的补丁产物（0/${Object.keys(mod.patched).length}）→ 跳过反向套补丁`);
+  else say(`  摘除本 mod 改动：反向套补丁 ${strip.reverted}/${strip.total} 个 · 其余回退 git ${strip.fromGit} · 从备份回退 ${strip.fromBackup}`);
+  if (strip.backedUp) say(`  另存 ${strip.backedUp} 个被覆盖的文件 → ${strip.backupDir}`);
+  if (strip.kept.length) {
+    warn(`  有 ${strip.kept.length} 个补丁目标既不是基线、也不是本 mod 当前的产物（更早版本的 mod / 别的 mod / 你自己改的）→ 保留：${brief(strip.kept)}`);
+    warn('  要连它们一起回退到基线：uninstall --force');
+  }
   if (strip.rejects.length) {
     warn(`  有 ${strip.rejects.length} 个段落与别的改动冲突，反向套用留下了 .rej：${brief(strip.rejects)}`);
-    warn('  这些段落需要手工处理（或先用 --force 把整文件回退到基线）');
+    warn('  这些段落需要手工处理（或加 --force 把整文件回退到基线）');
   }
-  if (strip.kept.length) {
-    warn(`  这些文件看着像你自己改的，已保留：${brief(strip.kept)}`);
-    warn('  想把它们也一起回退到基线：再跑一次 uninstall --force');
+  if (strip.unresolved.length) {
+    warn(`  有 ${strip.unresolved.length} 个文件没能回到基线：${brief(strip.unresolved)}`);
+    warn('  （本体不是 git 检出、基线提交不可达，且没有备份）');
   }
 
-  // 2) 生成物（data/*.json 等）：树里还有别的改动 → 重建 data 更合适；否则 git 还原最精确
+  // 2) 生成物（data/*.json 等）：**优先重跑 build-data**——data 是「当前源码的函数」，
+  //    重跑得到的才是与这棵树一致的数据（含别的 mod / fork 自己的改动，例如 data/config.json
+  //    里的玩家上限）；只有工具链不可用或失败时才回退到「按基线 git 还原」。
   const gen = mod.generated ?? [];
-  const otherEdits = classify(repo, mod, null).pre.mismatch;
   const buildData = mod.build?.data ? join(repo, ...mod.build.data.split('/')) : null;
   const restoreGenerated = () => {
     if (!useGit) return;
     const genFail = checkoutPaths(repo, mod.base.commit, gen);
-    say(`  生成物：${gen.length - genFail.length}/${gen.length} 已还原到基线${genFail.length ? `（${genFail.length} 个失败）` : ''}`);
+    say(`  生成物：${gen.length - genFail.length}/${gen.length} 已按基线还原${genFail.length ? `（${genFail.length} 个失败）` : ''}`);
     if (genFail.length) warn(`  没还原：${brief(genFail)}；可删掉 tools/custom-content.mjs 后重跑 node tools/build-data.mjs 重建官方数据`);
   };
-  if (otherEdits.length && buildData && exists(buildData)) {
-    say(`  还有 ${otherEdits.length} 个文件带着别的改动（别的 mod？）→ 重跑 build-data 重建 data，而不是 git 还原`);
+  if (buildData && exists(buildData)) {
+    say('  生成物：重跑 build-data，让 data 与这棵树的源码一致…');
     const rr = run(process.execPath, [buildData], { cwd: repo, allowFail: true });
     if (rr.code !== 0) {
-      warn('  重建 data 失败（本体工具链不完整？）→ 改为按基线还原生成物');
+      warn('  重跑 build-data 失败（工具链不完整？）→ 改为按基线还原生成物');
       restoreGenerated();
     } else {
       const buildI18n = mod.build?.i18n ? join(repo, ...mod.build.i18n.split('/')) : null;
@@ -616,23 +635,36 @@ function uninstallWithoutRecord(repo, mod, flags) {
     }
   } else restoreGenerated();
 
-  // 3) 29 个自有文件：本体原有的还原，本 mod 新增的删除
-  //    注意：data/assets.json 同时在 owned 与 generated 里（它是本体自带的素材清单），
-  //    已由上面的「生成物」一步还原到基线，这里跳过，避免被误判成「玩家改过」。
-  const genSet = new Set(gen);
+  // 3) 29 个自有文件
+  //    · 本体原有的（如 data/assets.json，基线提交里就有）→ 从基线还原；
+  //    · mod 自有路径（基线里根本没有这个文件）→ **一律删除**，不看指纹 —— 那些路径只可能是本 mod
+  //      写的（旧版本的 mod 文件、你自己改过的 mod 文件都算），内容与本包不一致时先另存到
+  //      backup-removed-<时间>/ 再删，免得悄悄丢东西。
   const inBase = new Set(pathsInCommit(repo, mod.base.commit, Object.keys(mod.owned)));
-  let deleted = 0, restored = 0, keptFiles = [], unresolvedFiles = [];
+  const removedDir = join(stateDir(repo), `backup-removed-${new Date().toISOString().replace(/[:.]/g, '-')}`);
+  let deleted = 0, restored = 0, savedFiles = [], keptFiles = [], unresolvedFiles = [];
   for (const rel of Object.keys(mod.owned)) {
     const abs = join(repo, ...rel.split('/'));
-    if (!exists(abs) || genSet.has(rel)) continue;
-    if (!matchWanted(abs, mod.owned[rel]) && !flags.force) { keptFiles.push(rel); continue; }
+    // 注意：data/assets.json 同时在 owned 与 generated 里，而 build-data **不会**重写它
+    //（那是 tools/fetch-assets.mjs 的产物），所以这里也要处理——它在基线提交里 → 从基线还原。
+    if (!exists(abs)) continue;
     if (inBase.has(rel)) {
       const failed = checkoutPaths(repo, mod.base.commit, [rel]);
       if (failed.length) unresolvedFiles.push(rel); else restored++;
-    } else { rmrf(abs); deleted++; }
+      continue;
+    }
+    if (!matchWanted(abs, mod.owned[rel])) {
+      if (keepChanged) { keptFiles.push(rel); continue; }
+      copyFile(abs, join(removedDir, ...rel.split('/')));
+      savedFiles.push(rel);
+    }
+    rmrf(abs);
+    deleted++;
   }
-  say(`  自有文件：删除 ${deleted} · 还原 ${restored}${keptFiles.length ? ` · 保留本机改动 ${keptFiles.length}` : ''}${unresolvedFiles.length ? ` · 未处理 ${unresolvedFiles.length}` : ''}`);
-  if (keptFiles.length) warn(`  这些自有文件被你改过，已保留：${brief(keptFiles)}`);
+  say(`  自有文件：删除 ${deleted} · 还原 ${restored}${savedFiles.length ? ` · 删除前另存 ${savedFiles.length} 个` : ''}` +
+    `${keptFiles.length ? ` · --keep-changed 保留 ${keptFiles.length}` : ''}${unresolvedFiles.length ? ` · 未处理 ${unresolvedFiles.length}` : ''}`);
+  if (savedFiles.length) say(`    另存目录（内容与本包版本不同的 mod 文件）：${posix(relative(repo, removedDir))}`);
+  if (keptFiles.length) warn(`  --keep-changed：这些 mod 文件被你改过，已保留：${brief(keptFiles)}`);
 
   // 4) 清掉状态目录 / 空目录
   pruneEmptyDirs([...Object.keys(mod.owned)].map((rel) => dirname(join(repo, ...rel.split('/')))), repo);
