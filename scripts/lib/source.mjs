@@ -39,14 +39,33 @@ function usefulLine(text) {
     ?? '';
 }
 
-/** 候选远端地址：显式 --source 优先，其次 mod.json 的 source.repo；镜像写法自动补一份 */
-export function candidateUrls({ explicit, manifestRepo }) {
+/**
+ * 候选远端地址，按尝试顺序：
+ *   1. `MOD_SOURCE` 环境变量（临时覆盖，不改包）
+ *   2. `--source <url>`
+ *   3. `mod.json` 的 `source.repo`（规范地址）
+ *   4. `MOD_MIRROR` 环境变量里的镜像（空格/逗号分隔）
+ *   5. `mod.json` 的 `source.mirrors`（包自带的默认镜像）
+ *   6. 自动派生的 gitclone 形式（GitHub 直连被 hosts 屏蔽时的常见绕行）
+ * 镜像可以写成「完整 URL」，也可以只写前缀（如 `https://ghproxy.net`）——后者会拼成
+ * `<前缀>/<规范地址>`，这是加速代理常见的用法。
+ */
+export function candidateUrls({ explicit, manifestRepo, manifestMirrors = [], env = process.env }) {
   const list = [];
   const push = (u) => { const n = normalizeRepoUrl(u); if (n && !list.includes(n)) list.push(n); };
+  const expand = (m) => {
+    const s = String(m ?? '').trim();
+    if (!s) return;
+    if (/^https?:\/\/[^/]+\/?$/.test(s)) { if (manifestRepo) push(`${s.replace(/\/+$/, '')}/${manifestRepo}`); }
+    else push(s);
+  };
+  if (env.MOD_SOURCE) push(env.MOD_SOURCE);
   if (explicit) push(explicit);
   if (manifestRepo) push(manifestRepo);
+  for (const m of String(env.MOD_MIRROR ?? '').split(/[\s,]+/)) expand(m);
+  for (const m of manifestMirrors) expand(m);
   for (const u of [...list]) {
-    // github.com/<o>/<r> → 补一个 gitclone 镜像形式（本机 GitHub 直连被 hosts 屏蔽时的常见绕行）
+    // github.com/<o>/<r> → 补一个 gitclone 镜像形式
     const m = /^https:\/\/github\.com\/(.+)$/.exec(u);
     if (m) push(`https://gitclone.com/github.com/${m[1]}`);
   }
@@ -88,13 +107,14 @@ export function stageFromRepo({ baseVersion, branchPrefix = 'base-', branch: bra
   die(`没能取到 ${branch} 分支的包`, 4);
 }
 
-/** 统一入口：--file 优先，其次远端 */
+/** 统一入口：--file 优先，其次远端（含默认镜像） */
 export function stagePackage({ file, source, manifest, baseVersion, branch = null }) {
   if (file) return stageFromFile(file);
-  const urls = candidateUrls({ explicit: source, manifestRepo: manifest?.source?.repo });
+  const urls = candidateUrls({ explicit: source, manifestRepo: manifest?.source?.repo, manifestMirrors: manifest?.source?.mirrors ?? [] });
   if (!urls.length) die('没有可用的源地址：mod.json 里缺少 source.repo，也没有 --source/--file', 3);
   const br = branch || `${manifest?.source?.branchPrefix ?? 'base-'}${baseVersion}`;
   say(`拉取远端包（分支 ${br}）…`);
+  if (urls.length > 1) say(`  候选地址 ${urls.length} 个：${urls.join(' · ')}`);
   return stageFromRepo({ baseVersion, branchPrefix: manifest?.source?.branchPrefix, branch, urls });
 }
 

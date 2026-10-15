@@ -2,12 +2,15 @@
   "format": 1,
   "mod": "dong-ursus",
   "name": "【东】＋【乌萨斯】盟约 mod",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
   "source": {
     "repo": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
-    "branchPrefix": "base-"
+    "branchPrefix": "base-",
+    "mirrors": [
+      "https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod"
+    ]
   },
   "base": {
     "version": "0.2.6",

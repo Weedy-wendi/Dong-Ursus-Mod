@@ -29,6 +29,16 @@ export function hasCommit(root, sha) {
   return run('git', ['cat-file', '-e', `${sha}^{commit}`], { cwd: root, capture: true, allowFail: true, ceiling: root }).code === 0;
 }
 
+/** 这些路径里哪些是该提交中存在的（用来区分「本体原有文件」与「本 mod 新增文件」） */
+export function pathsInCommit(root, commit, rels) {
+  if (!commit) return [];
+  const out = [];
+  for (const rel of rels) {
+    if (run('git', ['cat-file', '-e', `${commit}:${rel}`], { cwd: root, capture: true, allowFail: true, ceiling: root }).code === 0) out.push(rel);
+  }
+  return out;
+}
+
 /** 从某个提交取出一个 blob 的字节（写进 outFile） */
 export function blobToFile(root, commit, rel, outFile) {
   return runToFile('git', ['cat-file', 'blob', `${commit}:${rel}`], { cwd: root, outFile, ceiling: root });

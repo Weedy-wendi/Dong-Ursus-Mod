@@ -7,7 +7,7 @@
 <sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.1-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.2-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
@@ -51,7 +51,13 @@ node <mod 包>/scripts/verify.mjs .        # ③ 验收：274 个用例应全绿
 #   = 你手改过 / 装了别的 mod / 本体版本不对：先看它列出的文件，确认与本 mod 无关再决定
 git stash push -u -m "快照"              # 可回退；然后重跑 install
 
-# 没有网络 / GitHub 连不上：用本地包升级
+# GitHub 连不上：update 会自动依次尝试 source.repo → source.mirrors（mod.json 里的默认镜像）
+#   → 自动派生的 gitclone 形式；镜像可写完整 URL，也可只写前缀（如 https://ghproxy.net）
+#   临时换镜像/换源（不改包）：
+$env:MOD_MIRROR = 'https://ghproxy.net https://gitclone.com/github.com/<owner>/<repo>'
+$env:MOD_SOURCE = 'https://github.com/<owner>/<repo>'
+
+# 完全离线：用本地包升级
 node <mod 包>/scripts/mod.mjs update . --file <新包.zip 或解压后的目录>
 
 # 只想看看会做什么，不改任何文件
@@ -68,6 +74,13 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 ## 更新日志（Changelog）
 
 本包从 **v1.0.0** 起有自己的版本号（与本体版本解耦）；每条发布对应一个分支 `base-<本体版本>`，`mod.mjs update` 会挑「base 匹配且版本更高」的那条。逐条细节见 [`CHANGES.md`](CHANGES.md)。
+
+### v1.0.2 — 2026-10-16
+
+- **拉取默认走镜像**：`mod.json` 新增 `source.mirrors`，`update` 依次尝试 `source.repo` → `source.mirrors` → 自动派生的 gitclone 形式；镜像可写完整 URL 或**前缀**（`https://ghproxy.net` 会拼成 `<前缀>/<源地址>`）。运行时用 `MOD_MIRROR` / `MOD_SOURCE` 临时覆盖，`--source` 依然优先。失败时会列出**远端实际有哪些分支**。
+- **卸载不再需要安装记录**：没有 `.mod-dong-ursus/state.json` 时，`uninstall` 直接按 `mod.json` 重建「本 mod 加了什么」并全部撤掉 —— 85 个装前文件回退到基线（git 优先、备份兜底）、22 个生成物还原、28 个 mod 新增文件删除、`data/assets.json` 这类本体原有文件还原、`.mod-dong-ursus/` 清理；收尾做**残留检查**（本 mod 指纹应为空、`git status` 应为空）。
+- **本机改动默认保留**：只回退「确实是本 mod 造成的差异」（内容等于本 mod 的产物、或属于安装时被删掉的那 12 个文件）；其余差异视为你自己的改动，保留并报告，`--force` 才强制覆盖。**卸载后不需要再手工删任何东西。**
+- 修掉两处会让无记录卸载在最后一步崩掉的字段名错误。
 
 ### v1.0.1 — 2026-10-16
 
@@ -250,6 +263,7 @@ node <mod 包>/scripts/repro-skill-latch.mjs <本体仓库根>   # 复现「技�
 - **本体必须是 v0.2.6 的源码检出**（补丁基线 `16a0f9b`）：需要 `tools/build-data.mjs`、`tools/build-i18n.mjs` 与 `test/`。**不必是纯净的** —— 装过旧版 mod 或手改过相关文件，`install` 会自动回退后重装。Release 里的整合包 / 精简包（`*-lite.zip`）**装不了这个 mod**——`install` 的前置校验会以「缺少 `tools/build-data.mjs`」直接拒绝，避免改到一半才失败。
 - **mod 版本与本体版本解耦**：本包 `version` 是自己的 semver（当前 `v1.0.0`），`base.version` 才是适配的本体版本。发布侧一个本体版本一个分支（`base-0.2.6`），`update` 只挑 base 匹配且版本更高的那条。
 - **一条命令升级 / 卸载**：`mod.mjs update` 按你的本体版本取对应分支的包（源在 `mod.json` 的 `source.repo`，可用 `--source` / `--file` / `--branch` 覆盖）；`mod.mjs uninstall` 精确还原到安装前。**不要**把新版包直接覆盖在装了旧版的树上——实测会落 71 个 `.rej` 且几乎不改内容。
+- **拉取默认走镜像**：`update` 按 `source.repo` → `source.mirrors`（`mod.json` 自带默认值）→ 自动派生的 gitclone 形式依次尝试；可用 `MOD_SOURCE` / `MOD_MIRROR` / `--source` / `--file` 覆盖。发布分支（`base-<本体版本>`）没建好或镜像缓存没刷新时，会明确告诉你远端现有分支。
 - **首次 `build-data` 需要网络**：缺 `.cache/gamedata` 时会从 GitHub 拉官方数据表。网络不稳时设 `HTTPS_PROXY`，或直接把本机已装仓库的 `.cache/gamedata/` 整目录拷过来（最快、可离线）。
 - **另有一份面向 v0.2.4 的旧包**（历史分支，patch 01 = 17 文件 / patch 02 = 45 文件），与本体 v0.2.4 fork 配套；本包是 0.2.6 版。两者各自独立，不要混用脚本。
 

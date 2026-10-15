@@ -77,8 +77,12 @@ node <mod包路径>/scripts/mod.mjs uninstall <本体仓库> [--force] [--keep-b
   · 没有记录（旧 `install.mjs` 装的 / 手工覆盖过）→ 自动把这 85 个「装之前」的文件回退到基线再装，当前字节先另存到 `.mod-dong-ursus/backup-legacy-<时间>/`；
   · 已装同版本且与安装时一致 → 直接说「无需重装」（`--force` 强制重装）。
   装完按 `mod.json` 的 102 个产物指纹复核（**git 退出码不可信**）。只有「这 85 个文件里与本 mod 无关的改动」才会被拒绝并列出（`--force` 可硬装）。
-- `update`：按方案 B 取 `base-<本体版本>` 分支（分支名可 `--branch` 覆盖），对比包内 `mod.json` 的 `base` 与版本号；只有 base 匹配且版本更高才执行，用**新包自己**跑 `install`，然后同步本地包目录。`--file` 支持本地目录/zip（离线），`--check` 只看不动。
-- `uninstall`：优先 `git checkout <基线提交> -- <文件>`，git 不可用或提交不可达时用 `.mod-dong-ursus/backup/`；**这台电脑改过的文件默认保留并报告**（`--force` 强制还原）。
+- `update`：按方案 B 取 `base-<本体版本>` 分支（分支名可 `--branch` 覆盖），对比包内 `mod.json` 的 `base` 与版本号；只有 base 匹配且版本更高才执行，用**新包自己**跑 `install`，然后同步本地包目录。
+  地址候选顺序：`MOD_SOURCE` → `--source` → `mod.json.source.repo` → `MOD_MIRROR` → `mod.json.source.mirrors` → 自动派生的 `gitclone` 形式。镜像可写完整 URL 或前缀（`https://ghproxy.net` → `https://ghproxy.net/<源地址>`）。拉取失败会列出**远端现有分支**（"没有 base-0.2.6，这个分支还没发布？"就是这一行给的结论）。`--file` 支持本地目录/zip（离线），`--check` 只看不动。
+- `uninstall`（两条路，都会做到「本 mod 的东西一个不留」）：
+  · **有安装记录** → 按 `state.json` 精确还原（git 优先、备份兜底）；
+  · **没有安装记录**（旧版 `install.mjs` 装的 / 手工覆盖过）→ 按 `mod.json` 重建：85 个装前文件回退到基线、22 个生成物还原、28 个 mod 新增文件删除、本体原有文件（如 `data/assets.json`）还原、`.mod-dong-ursus/` 清理，收尾打印**残留检查**（本 mod 指纹应为空、`git status` 应为空）。
+  两条路都**默认保留「看着是玩家自己改的」文件**并报告；`--force` 才强制覆盖。
 - `status`：**本体版本对不对** + **树里有没有本 mod 的内容**（自有文件 N/29、补丁产物 N/73、被替换的上游文件已删 N/12）+ 安装记录与漂移 + 一句话结论。**不要求纯净本体**，结论分四态（版本不符 / 已安装 / 有 mod 内容但无记录 / 与本 mod 无关的改动）。
 - 兼容入口：`scripts/install.mjs` 仍可用（= `mod.mjs install`）。
 
@@ -182,7 +186,8 @@ install.mjs 依次执行（全部幂等，重复运行安全）：
 7. **升级走 CLI，不要手工覆盖**：实测把新版补丁直接套到装了旧版 mod 的树上，正向与反向 `--check` 都失败 → `--reject` 落 **71 个 `.rej`**、而真正被改动的文件只有 1 个。`mod.mjs install` 自己会处理「树上已有 mod 内容」：有 `.mod-dong-ursus/state.json` 就按记录精确还原；**没有记录**（旧版安装/手工覆盖）就把 `mod.json` 里 `base.files` 那 85 个文件回退到基线（git 优先，其次 `.mod-dong-ursus/backup/`），当前字节另存 `backup-legacy-<时间>/`。`update` 负责取包 + 比版本 + 调新包安装。
 8. **补丁相关的 git 命令必须钉死换行符**：`core.autocrlf=false` + `core.eol=lf`。不钉的话，机器上的全局 autocrlf 会把新增行写成 CRLF——实测在非 git 检出的树上装完，73 个补丁产物全变 CRLF，与本体适配树（LF）逐字节不一致（`scripts/lib/gitops.mjs` 的 `LF` 常量已内建）。另一侧：校验对"仅换行符不同"宽容，Windows 签出的 `.gitignore` 这类文件不会被误判。
 9. **git 的退出码不可信**：`git apply` 在**仓库的子目录**里会静默跳过所有补丁并返回 0；在「恰好等于补丁产物」的树上前向 `--check` 也返回 0。所以套完补丁必须按 `mod.json` 的 `patched` / `owned` 指纹复核（CLI 已内建），别信退出码。
-9. **改过 `files/` 或补丁后要重生成 `mod.json`**：`node tools/make-manifest.mjs --repo <本体源码检出> --base-commit <基线提交> [--version x.y.z]`；指纹取自基线的 git 对象，不取工作区。版本号是 mod 自己的 semver，改动了就往上加（发布分支 `base-<本体版本>`）。
+9. **Windows 的 `core.autocrlf` 有两个坑，都已内建处理**：① 套补丁的 git 命令一律钉死 `core.autocrlf=false` + `core.eol=lf`，否则系统级默认（Git for Windows 常为 true）会把补丁新增行写成 CRLF；② 所有指纹比对容忍「仅换行符不同」。另外 `git checkout` 在 `autocrlf=true` 的仓库里会写出 CRLF，补丁会先走 `--ignore-whitespace` 兜底，装完仍以指纹复核为准。
+10. **改过 `files/` 或补丁后要重生成 `mod.json`**：`node tools/make-manifest.mjs --repo <本体源码检出> --base-commit <基线提交> [--version x.y.z]`；指纹取自基线的 git 对象，不取工作区。版本号是 mod 自己的 semver，改动了就往上加（发布分支 `base-<本体版本>`）。
 
 ## 代码测试方式
 

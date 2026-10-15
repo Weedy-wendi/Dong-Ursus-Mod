@@ -4,6 +4,39 @@
 
 ---
 
+## 2026-10-16（第三条）· v1.0.2：拉取默认走镜像；卸载不再需要安装记录
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `scripts/lib/source.mjs` | 候选地址扩展：`MOD_SOURCE` → `--source` → `source.repo` → `MOD_MIRROR` → `source.mirrors` → 自动派生的 gitclone 形式；镜像支持「前缀」写法（`https://ghproxy.net` → `<前缀>/<源地址>`）；打印候选清单 |
+| `scripts/mod.mjs` | `uninstall` 新增「无安装记录」路径：按 `mod.json` 重建并撤掉全部内容 + 残留检查；`restorePristine()` 加「本机改动默认保留」安全线（`--force` 才覆盖）与 `backup` 开关；`uninstall --force` 在「看不出有 mod 内容」时也能强制回基线 |
+| `scripts/lib/gitops.mjs` | 新增 `pathsInCommit()`（区分本体原有文件与 mod 新增文件） |
+| `tools/make-manifest.mjs` | 默认写入 `source.mirrors` |
+| `mod.json` | `version` 1.0.1 → **1.0.2**；`source.mirrors` = `["https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod"]`（指纹集合不变） |
+
+### 为什么
+
+- 玩家机器上 GitHub 常被 hosts 屏蔽或直连不稳，而 `update` 之前只试 `source.repo` + 自动派生的 gitclone 形式；现在包自带默认镜像、并且能临时换。
+- `uninstall` 之前**没有安装记录就罢工**（只打印手工回退步骤）。玩家期望的是「卸载之后这个 mod 加过/改过的东西一个不留」。
+
+### 怎么验的
+
+复刻树 = 85 个装前文件 + 22 个生成物 + `package.json` + `server/sim/content/index.js`，`git init` 后模拟一次旧版安装（套两个补丁 + 放 29 个自有文件 + 删 12 个被替换文件 + **不写 state.json**）：
+
+| 步骤 | 结果 |
+|---|---|
+| `uninstall` | 「装前文件：git 85 · 保留本机改动 0」「生成物：22/22 已还原」「自有文件：删除 28 · 还原 0」「已清理 .mod-dong-ursus/」 |
+| 残留检查 | 「本 mod 指纹：已清空 ✅」「git status：空 ✅」；`dongShip.png` 已删、12 个被替换的上游文件已回来 |
+| 手改一个被安装的文件后再 `uninstall` | 「保留本机改动 1」+ 提示「再跑一次 uninstall --force」；`git status` 只剩那 1 项 |
+| 再 `uninstall --force` | 回到基线：「本 mod 指纹：已清空 ✅」「git status：空 ✅」 |
+| 镜像候选 | `MOD_MIRROR='https://ghproxy.net, https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod'` → 「候选地址 3 个」，前缀被正确拼成 `https://ghproxy.net/https://github.com/Weedy-wendi/Dong-Ursus-Mod`，`mod.json` 的默认镜像与自动派生项去重 |
+
+顺带记一个环境事实：**Git for Windows 的系统级默认是 `core.autocrlf=true`**，所以新 `git init` 的仓库里 `git checkout` 会写出 CRLF（本体仓库自己设了 false）。补丁因此先走 `--ignore-whitespace` 兜底，指纹比对也容忍「仅换行符不同」。
+
+---
+
 ## 2026-10-16（第二条）· v1.0.1：不再要求「纯净本体」—— status 只查版本与 mod 内容，旧版安装自动回退
 
 ### 改了什么

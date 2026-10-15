@@ -26,7 +26,7 @@ import {
   backUp, backupPath, clearState, driftCheck, loadState, saveState, stateDir, statePath, summarize,
 } from './lib/state.mjs';
 import {
-  applyPatch, checkoutPaths, collectRejects, gitAvailable, gitVersion, hasCommit, isRepoRoot, patchTargets,
+  applyPatch, checkoutPaths, collectRejects, gitAvailable, gitVersion, hasCommit, isRepoRoot, patchTargets, pathsInCommit,
 } from './lib/gitops.mjs';
 import { stagePackage } from './lib/source.mjs';
 
@@ -168,44 +168,63 @@ function classify(repo, mod, st = loadState(repo)) {
 
 /**
  * 树上有本 mod 内容、但**没有安装记录**（旧版 install.mjs 装的，或玩家手工覆盖过）时的处理：
- * 把这 85 个「装之前」的文件恢复成基线字节，之后就能正常套补丁。
+ * 把这 85 个「装之前」的文件恢复成基线字节，之后就能正常套补丁 / 彻底卸载。
  * 优先 git（精确、且连被删掉的 12 个上游文件一起还原）；git 不可用时退回上一次安装留下的
- * .mod-dong-ursus/backup/。当前字节先另存一份，避免悄悄丢东西。
+ * .mod-dong-ursus/backup/。
+ *
+ * 安全线：只动「确实是本 mod 造成的差异」——即内容等于本 mod 的产物（mod.patched）、或属于
+ * 安装时被删掉的那 12 个文件。其余差异视为**玩家自己的改动**，默认保留并报告（--force 才覆盖）。
+ * 被覆盖的当前字节会先另存到 .mod-dong-ursus/backup-legacy-<时间>/（backup=false 时不另存）。
  */
-function restorePristine(repo, mod, { dryRun = false } = {}) {
+function restorePristine(repo, mod, { dryRun = false, force = false, backup = true } = {}) {
   const paths = Object.keys(mod.base.files);
+  const removedSet = new Set(mod.removed ?? []);
   const useGit = isRepoRoot(repo) && hasCommit(repo, mod.base.commit);
-  const result = { total: paths.length, fromGit: 0, fromBackup: 0, backedUp: 0, unresolved: [], backupDir: null, plan: '' };
+  const result = { total: paths.length, fromGit: 0, fromBackup: 0, backedUp: 0, kept: [], unresolved: [], backupDir: null, plan: '' };
+
+  // 分类：need = 需要回退/重建的；kept = 视为玩家改动而保留的
+  const need = [];
+  for (const rel of paths) {
+    const abs = join(repo, ...rel.split('/'));
+    if (matchWanted(abs, mod.base.files[rel])) continue;                    // 已经是基线，跳过
+    const isModContent = (!exists(abs) && removedSet.has(rel))              // 被本 mod 删掉的上游文件
+      || (exists(abs) && matchWanted(abs, mod.patched[rel] ?? {}));         // 就是本 mod 的产物
+    if (isModContent || force) need.push(rel);
+    else result.kept.push(rel);
+  }
 
   if (dryRun) {
-    result.plan = useGit
-      ? `用 git 从基线提交 ${String(mod.base.commit).slice(0, 12)} 还原 ${paths.length} 个文件`
-      : `从 .mod-dong-ursus/backup/ 还原 ${paths.length} 个文件（git 不可用）`;
+    result.plan = (useGit
+      ? `用 git 从基线提交 ${String(mod.base.commit).slice(0, 12)} 还原 ${need.length} 个文件`
+      : `从 .mod-dong-ursus/backup/ 还原 ${need.length} 个文件（git 不可用）`)
+      + (result.kept.length ? `；另有 ${result.kept.length} 个文件看着像你自己改的，会保留` : '');
     return result;
   }
 
-  // 1) 先把「与基线不同」的当前字节另存（可能含玩家改动）
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const dir = join(stateDir(repo), `backup-legacy-${stamp}`);
-  for (const rel of paths) {
-    const abs = join(repo, ...rel.split('/'));
-    if (!exists(abs) || matchWanted(abs, mod.base.files[rel])) continue;
-    copyFile(abs, join(dir, ...rel.split('/')));
-    result.backedUp++;
+  // 1) 先把将被覆盖的当前字节另存（可能含玩家改动）
+  if (backup && need.length) {
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const dir = join(stateDir(repo), `backup-legacy-${stamp}`);
+    for (const rel of need) {
+      const abs = join(repo, ...rel.split('/'));
+      if (!exists(abs)) continue;
+      copyFile(abs, join(dir, ...rel.split('/')));
+      result.backedUp++;
+    }
+    result.backupDir = result.backedUp ? posix(relative(repo, dir)) : null;
   }
-  result.backupDir = result.backedUp ? posix(relative(repo, dir)) : null;
 
   // 2) git 还原（含「安装时被删掉」的文件）
-  if (useGit) {
-    const failed = new Set(checkoutPaths(repo, mod.base.commit, paths));
-    for (const rel of paths) {
+  if (useGit && need.length) {
+    const failed = new Set(checkoutPaths(repo, mod.base.commit, need));
+    for (const rel of need) {
       if (failed.has(rel)) continue;
       if (matchWanted(join(repo, ...rel.split('/')), mod.base.files[rel])) result.fromGit++;
     }
   }
 
   // 3) 剩下的用备份（上一次安装留下的装前副本）
-  for (const rel of paths) {
+  for (const rel of need) {
     const abs = join(repo, ...rel.split('/'));
     if (matchWanted(abs, mod.base.files[rel])) continue;
     const b = backupPath(repo, rel);
@@ -383,7 +402,7 @@ function cmdInstall(repo, flags) {
   if (flags.dryRun) {
     if (st) say(`  --dry-run：有安装记录 v${st.modVersion} → 会先精确还原，再装 v${mod.version}`);
     else if (c.pristine) say('  --dry-run：本体是基线 → 直接装');
-    else if (c.modPresent) say(`  --dry-run：树里有本 mod 内容但没有记录 → 先${restorePristine(repo, mod, { dryRun: true }).plan}，再装`);
+    else if (c.modPresent) say(`  --dry-run：树里有本 mod 内容但没有记录 → 先${restorePristine(repo, mod, { dryRun: true, force: flags.force }).plan}，再装`);
     else {
       reportBad(c.pre, '本体这边有改动，但看不出是本 mod 造成的');
       say('  --dry-run：install 会拒绝这些改动（确认与本 mod 无关可 --force 硬装）');
@@ -403,8 +422,9 @@ function cmdInstall(repo, flags) {
   } else if (!c.pristine && c.modPresent) {
     say(`  树里有本 mod 内容但没有安装记录（自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里、被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}）`);
     say(`  按「旧版安装」处理：先把相关文件回退到 v${mod.base.version} 基线，再装 v${mod.version}`);
-    const r = restorePristine(repo, mod);
+    const r = restorePristine(repo, mod, { force: flags.force });
     say(`  回退：git ${r.fromGit} · 备份 ${r.fromBackup} · 另存 ${r.backedUp} 个文件${r.backupDir ? ` → ${r.backupDir}` : ''}`);
+    if (r.kept.length) warn(`保留了 ${r.kept.length} 个看着像你自己改的文件（会让基线校验失败，--force 可强制回退）：${brief(r.kept)}`);
     if (r.unresolved.length) {
       die(`有 ${r.unresolved.length} 个文件没能回退到基线：${brief(r.unresolved)}\n` +
         `      本体不是 git 检出、或基线提交不可达，且没有上一次安装留下的备份。\n` +
@@ -494,17 +514,90 @@ function cmdInstall(repo, flags) {
 
 // ---------------------------------------------------------------- uninstall
 
-function cmdUninstall(repo, flags) {
-  const st = loadState(repo);
-  if (!st) {
-    head('没有安装记录');
-    say(`  找不到 ${posix(statePath(repo))}`);
-    say('  这个 mod 只记录了自己装过什么；没有记录就无法保证「精确还原」。');
-    say('  如果本体是 git 检出、且改动都来自本 mod，可以手工回到基线：');
-    say('    git stash push -u -m "mod 快照"      # 可回退');
-    say('    git reset --hard <基线提交> && git clean -fd');
-    return 3;
+/**
+ * 没有安装记录时的卸载：按 mod.json 重建「本 mod 加了什么」，全部撤掉。
+ *   85 个装前文件 → 回退到基线（git 优先、备份兜底；只动确实是本 mod 造成的差异）
+ *   22 个生成物   → 从基线提交还原
+ *   29 个自有文件 → 本 mod 新增的删掉；本体原有的（如 data/assets.json）还原成基线
+ *   .mod-dong-ursus/ → 删除
+ * 收尾会做残留检查：自有文件 0/N、补丁产物 0/N、被删的上游文件 0/N、git status 为空。
+ */
+function uninstallWithoutRecord(repo, mod, flags) {
+  head('卸载（没有安装记录：按 mod.json 重建）');
+  const c = classify(repo, mod, null);
+  if (!c.modPresent && !flags.force) {
+    say(`  树里找不到本 mod 的内容（自有文件 0/${c.ownedTotal}、补丁产物 ${c.patchedMatch}/${c.patchedTotal}、被替换的上游文件仍缺 ${c.removedAbsent}/${c.removedTotal}）`);
+    say('  没有需要卸载的东西。（想把被保留的本机改动也强制回退：uninstall --force）');
+    return 0;
   }
+  const useGit = isRepoRoot(repo) && hasCommit(repo, mod.base.commit);
+  const hasBackup = exists(join(stateDir(repo), 'backup'));
+  say(`  检测到本 mod 内容：自有文件 ${c.ownedMatch}/${c.ownedTotal} 在树里 · 补丁产物 ${c.patchedMatch}/${c.patchedTotal} 符合 · 被替换的上游文件已删 ${c.removedAbsent}/${c.removedTotal}`);
+  if (!useGit && !hasBackup) {
+    die('本体不是 git 检出（或基线提交不可达），也没有 .mod-dong-ursus/backup/：\n' +
+      '      无法重建「装之前」的字节。请用本体自己的 git 回到基线，或重新解包本体。', 5);
+  }
+
+  // 1) 85 个装前文件
+  const r = restorePristine(repo, mod, { force: flags.force, backup: false });
+  say(`  装前文件：git ${r.fromGit} · 备份 ${r.fromBackup} · 保留本机改动 ${r.kept.length}`);
+  if (r.kept.length) {
+    warn(`  这些文件看着像你自己改的，已保留：${brief(r.kept)}`);
+    warn('  想把它们也一起回退到基线：再跑一次 uninstall --force');
+  }
+
+  // 2) 生成物（data/*.json 等）
+  const gen = mod.generated ?? [];
+  let genFail = [];
+  if (useGit) genFail = checkoutPaths(repo, mod.base.commit, gen);
+  say(`  生成物：${gen.length - genFail.length}/${gen.length} 已还原到基线${genFail.length ? `（${genFail.length} 个失败）` : ''}`);
+  if (genFail.length) warn(`  没还原：${brief(genFail)}；可删掉 tools/custom-content.mjs 后重跑 node tools/build-data.mjs 重建官方数据`);
+
+  // 3) 29 个自有文件：本体原有的还原，本 mod 新增的删除
+  //    注意：data/assets.json 同时在 owned 与 generated 里（它是本体自带的素材清单），
+  //    已由上面的「生成物」一步还原到基线，这里跳过，避免被误判成「玩家改过」。
+  const genSet = new Set(gen);
+  const inBase = new Set(pathsInCommit(repo, mod.base.commit, Object.keys(mod.owned)));
+  let deleted = 0, restored = 0, keptFiles = [], unresolvedFiles = [];
+  for (const rel of Object.keys(mod.owned)) {
+    const abs = join(repo, ...rel.split('/'));
+    if (!exists(abs) || genSet.has(rel)) continue;
+    if (!matchWanted(abs, mod.owned[rel]) && !flags.force) { keptFiles.push(rel); continue; }
+    if (inBase.has(rel)) {
+      const failed = checkoutPaths(repo, mod.base.commit, [rel]);
+      if (failed.length) unresolvedFiles.push(rel); else restored++;
+    } else { rmrf(abs); deleted++; }
+  }
+  say(`  自有文件：删除 ${deleted} · 还原 ${restored}${keptFiles.length ? ` · 保留本机改动 ${keptFiles.length}` : ''}${unresolvedFiles.length ? ` · 未处理 ${unresolvedFiles.length}` : ''}`);
+  if (keptFiles.length) warn(`  这些自有文件被你改过，已保留：${brief(keptFiles)}`);
+
+  // 4) 清掉状态目录 / 空目录
+  pruneEmptyDirs([...Object.keys(mod.owned)].map((rel) => dirname(join(repo, ...rel.split('/')))), repo);
+  clearState(repo, { keepBackup: flags.keepBackup });
+  say(`  ${flags.keepBackup ? '已保留 .mod-dong-ursus/（含旧的备份）' : '已清理 .mod-dong-ursus/'}`);
+
+  // 5) 残留检查
+  head('残留检查');
+  const after = classify(repo, mod, null);
+  const leftover = [];
+  if (after.ownedMatch) leftover.push(`自有文件仍在树里 ${after.ownedMatch}/${after.ownedTotal}`);
+  if (after.patchedMatch) leftover.push(`补丁产物仍符合 ${after.patchedMatch}/${after.patchedTotal}`);
+  if (after.removedAbsent) leftover.push(`被替换的上游文件仍缺 ${after.removedAbsent}/${after.removedTotal}`);
+  if (after.pre.mismatch.length) leftover.push(`基线不一致 ${after.pre.mismatch.length} 个`);
+  say(`  本 mod 指纹：${leftover.length ? leftover.join(' · ') : '已清空 ✅'}`);
+  if (exists(join(repo, '.git'))) {
+    const st = run('git', ['status', '--porcelain'], { cwd: repo, capture: true, allowFail: true });
+    const lines = st.out.split('\n').map((l) => l.trim()).filter(Boolean);
+    say(`  git status：${lines.length ? `${lines.length} 项（例：${lines.slice(0, 3).join(' | ')}）` : '空 ✅'}`);
+    if (lines.length) warn('  这些改动与本 mod 无关（或是你保留的本机改动），需要自己处理');
+  }
+  return (after.ownedMatch + after.patchedMatch + after.removedAbsent + after.pre.mismatch.length) ? 5 : 0;
+}
+
+function cmdUninstall(repo, flags) {
+  const mod = loadManifest(modRoot);
+  const st = loadState(repo);
+  if (!st) return uninstallWithoutRecord(repo, mod, flags);
   head(`卸载 mod v${st.modVersion}（适配本体 v${st.baseVersion}）`);
   const r = restore(repo, st, { force: flags.force, keepChanged: !flags.force });
   say(`  还原：git ${r.fromGit} · 备份 ${r.fromBackup} · 删除新增 ${r.deleted.length} · 保留改动 ${r.kept.length}`);

@@ -124,8 +124,12 @@ for (const [script, optional] of [['i18n/apply-i18n.mjs', false], ['i18n/prune-s
 }
 const verify = ['scripts/verify.mjs'].filter((s) => exists(join(modRoot, ...s.split('/'))));
 
-const source = existing?.source ?? { repo: 'https://github.com/Weedy-wendi/Dong-Ursus-Mod', branchPrefix: 'base-' };
+// 默认镜像：GitHub 直连不稳/被屏蔽时，update 会按 source.repo → source.mirrors → 自动派生的
+// gitclone 形式依次尝试。运行时可用 MOD_MIRROR（空格/逗号分隔，可写完整 URL 或前缀）临时覆盖。
+const DEFAULT_MIRRORS = ['https://gitclone.com/github.com/Weedy-wendi/Dong-Ursus-Mod'];
+const source = { ...(existing?.source ?? { repo: 'https://github.com/Weedy-wendi/Dong-Ursus-Mod', branchPrefix: 'base-' }) };
 if (opt.source) source.repo = opt.source;
+if (!Array.isArray(source.mirrors) || !source.mirrors.length) source.mirrors = DEFAULT_MIRRORS;
 
 const manifest = {
   format: 1,
