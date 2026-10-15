@@ -94,16 +94,16 @@
         "_h": "htht3p"
       },
       "garrison_986_a": {
-        "desc": "At the end of each preparation phase: +4 layers to every bond of herself and the operator behind her",
-        "descRaw": "At the end of each preparation phase: +4 layers to every bond of herself and the operator behind her",
+        "desc": "At the end of each preparation phase: +4 layers to every bond of herself and the operator in front of her",
+        "descRaw": "At the end of each preparation phase: +4 layers to every bond of herself and the operator in front of her",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "e5e5mz"
+        "_h": "dudumz"
       },
       "garrison_986_b": {
-        "desc": "At the end of each preparation phase: +8 layers to every bond of herself and the operator behind her",
-        "descRaw": "At the end of each preparation phase: +8 layers to every bond of herself and the operator behind her",
+        "desc": "At the end of each preparation phase: +8 layers to every bond of herself and the operator in front of her",
+        "descRaw": "At the end of each preparation phase: +8 layers to every bond of herself and the operator in front of her",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "2h2hmz"
+        "_h": "5q5qmz"
       },
       "garrison_987_a": {
         "desc": "When gained: gain 1 item",
@@ -166,16 +166,16 @@
         "_h": "2x2xjf"
       },
       "garrison_992_a": {
-        "desc": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%, but she loses 100 HP per second",
-        "descRaw": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%, but she loses 100 HP per second",
+        "desc": "While in battle: redeployment time -75%; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%; on deployment, lose 50% of her current HP and gain a barrier equal to twice the HP lost, ATK +50%, but she loses 100 HP per second",
+        "descRaw": "While in battle: redeployment time -75%; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%; on deployment, lose 50% of her current HP and gain a barrier equal to twice the HP lost, ATK +50%, but she loses 100 HP per second",
         "eventTypeDesc": "Combat",
-        "_h": "f5f53p"
+        "_h": "dodo3p"
       },
       "garrison_992_b": {
-        "desc": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +2%, but she loses 100 HP per second",
-        "descRaw": "While in battle: redeployment time -50%; on deployment, lose 50% of her current HP and gain an equal barrier; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +2%, but she loses 100 HP per second",
+        "desc": "While in battle: redeployment time -75%; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +2%; on deployment, lose 50% of her current HP and gain a barrier equal to twice the HP lost, ATK +50%, but she loses 100 HP per second",
+        "descRaw": "While in battle: redeployment time -75%; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +2%; on deployment, lose 50% of her current HP and gain a barrier equal to twice the HP lost, ATK +50%, but she loses 100 HP per second",
         "eventTypeDesc": "Combat",
-        "_h": "bmbm3p"
+        "_h": "ydyd3p"
       },
       "garrison_07_a": {
         "descRaw": "For every 3 stacks added to [Ægir] or [Dong] Alliances, this Operator gains <@ba.vup>+1%</> ATK",
@@ -394,16 +394,16 @@
         "_h": "htht3p"
       },
       "garrison_986_a": {
-        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+4",
-        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "desc": "<休整期结束时>自身和身前干员的所属盟约层数+4",
+        "descRaw": "<休整期结束时>自身和身前干员的所属盟约层数+4",
         "eventTypeDesc": "持続スタック",
-        "_h": "e5e5mz"
+        "_h": "dudumz"
       },
       "garrison_986_b": {
-        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+8",
-        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "desc": "<休整期结束时>自身和身前干员的所属盟约层数+8",
+        "descRaw": "<休整期结束时>自身和身前干员的所属盟约层数+8",
         "eventTypeDesc": "持続スタック",
-        "_h": "2h2hmz"
+        "_h": "5q5qmz"
       },
       "garrison_987_a": {
         "desc": "<获得干员时>获得1个道具",
@@ -466,16 +466,16 @@
         "_h": "2x2xjf"
       },
       "garrison_992_a": {
-        "desc": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%、ただし毎秒100のHPを失う",
-        "descRaw": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%、ただし毎秒100のHPを失う",
+        "desc": "<戦闘中>再配置時間-75%；【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%；配置時に現在HPの50%を失い、失ったHPの2倍のバリアを獲得、攻撃力+50%、ただし毎秒100のHPを失う",
+        "descRaw": "<戦闘中>再配置時間-75%；【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%；配置時に現在HPの50%を失い、失ったHPの2倍のバリアを獲得、攻撃力+50%、ただし毎秒100のHPを失う",
         "eventTypeDesc": "戦闘能力",
-        "_h": "f5f53p"
+        "_h": "dodo3p"
       },
       "garrison_992_b": {
-        "desc": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+2%、ただし毎秒100のHPを失う",
-        "descRaw": "<戦闘中>再配置時間-50%；配置時に現在HPの50%を失い、同量のバリアを獲得。【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+2%、ただし毎秒100のHPを失う",
+        "desc": "<戦闘中>再配置時間-75%；【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+2%；配置時に現在HPの50%を失い、失ったHPの2倍のバリアを獲得、攻撃力+50%、ただし毎秒100のHPを失う",
+        "descRaw": "<戦闘中>再配置時間-75%；【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+2%；配置時に現在HPの50%を失い、失ったHPの2倍のバリアを獲得、攻撃力+50%、ただし毎秒100のHPを失う",
         "eventTypeDesc": "戦闘能力",
-        "_h": "bmbm3p"
+        "_h": "ydyd3p"
       },
       "garrison_07_a": {
         "descRaw": "【エーギル】・【東】の合計加算数3ごとに、攻撃力<@ba.vup>+1%</>",
@@ -694,16 +694,16 @@
         "_h": "htht3p"
       },
       "garrison_986_a": {
-        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+4",
-        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "desc": "<休整期结束时>自身和身前干员的所属盟约层数+4",
+        "descRaw": "<休整期结束时>自身和身前干员的所属盟约层数+4",
         "eventTypeDesc": "지속 스택",
-        "_h": "e5e5mz"
+        "_h": "dudumz"
       },
       "garrison_986_b": {
-        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+8",
-        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "desc": "<休整期结束时>自身和身前干员的所属盟约层数+8",
+        "descRaw": "<休整期结束时>自身和身前干员的所属盟约层数+8",
         "eventTypeDesc": "지속 스택",
-        "_h": "2h2hmz"
+        "_h": "5q5qmz"
       },
       "garrison_987_a": {
         "desc": "<获得干员时>获得1个道具",
@@ -766,16 +766,16 @@
         "_h": "2x2xjf"
       },
       "garrison_992_a": {
-        "desc": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +1%, 대신 매초 HP 100을 잃음",
-        "descRaw": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +1%, 대신 매초 HP 100을 잃음",
+        "desc": "<전투 중> 재배치 시간 -75%; [동][기습][불굴]의 합계 스택 3마다 공격력 +1%; 배치 시 현재 HP의 50%를 잃고 잃은 HP의 2배에 해당하는 방어막을 획득, 공격력 +50%, 대신 매초 HP 100을 잃음",
+        "descRaw": "<전투 중> 재배치 시간 -75%; [동][기습][불굴]의 합계 스택 3마다 공격력 +1%; 배치 시 현재 HP의 50%를 잃고 잃은 HP의 2배에 해당하는 방어막을 획득, 공격력 +50%, 대신 매초 HP 100을 잃음",
         "eventTypeDesc": "전투 능력",
-        "_h": "f5f53p"
+        "_h": "dodo3p"
       },
       "garrison_992_b": {
-        "desc": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +2%, 대신 매초 HP 100을 잃음",
-        "descRaw": "<전투 중> 재배치 시간 -50%; 배치 시 현재 HP의 50%를 잃고 동량의 방어막 획득. [동][기습][불굴]의 합계 스택 3마다 공격력 +2%, 대신 매초 HP 100을 잃음",
+        "desc": "<전투 중> 재배치 시간 -75%; [동][기습][불굴]의 합계 스택 3마다 공격력 +2%; 배치 시 현재 HP의 50%를 잃고 잃은 HP의 2배에 해당하는 방어막을 획득, 공격력 +50%, 대신 매초 HP 100을 잃음",
+        "descRaw": "<전투 중> 재배치 시간 -75%; [동][기습][불굴]의 합계 스택 3마다 공격력 +2%; 배치 시 현재 HP의 50%를 잃고 잃은 HP의 2배에 해당하는 방어막을 획득, 공격력 +50%, 대신 매초 HP 100을 잃음",
         "eventTypeDesc": "전투 능력",
-        "_h": "bmbm3p"
+        "_h": "ydyd3p"
       },
       "garrison_07_a": {
         "descRaw": "[에기르]/[동] 맹약이 3회 중첩할 때마다 공격력 <@ba.vup>+1%</>",
@@ -994,16 +994,16 @@
         "_h": "htht3p"
       },
       "garrison_986_a": {
-        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+4",
-        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+4",
+        "desc": "<休整期结束时>自身和身前干员的所属盟约层数+4",
+        "descRaw": "<休整期结束时>自身和身前干员的所属盟约层数+4",
         "eventTypeDesc": "持續疊加",
-        "_h": "e5e5mz"
+        "_h": "dudumz"
       },
       "garrison_986_b": {
-        "desc": "<休整期结束时>自身和身后干员的所属盟约层数+8",
-        "descRaw": "<休整期结束时>自身和身后干员的所属盟约层数+8",
+        "desc": "<休整期结束时>自身和身前干员的所属盟约层数+8",
+        "descRaw": "<休整期结束时>自身和身前干员的所属盟约层数+8",
         "eventTypeDesc": "持續疊加",
-        "_h": "2h2hmz"
+        "_h": "5q5qmz"
       },
       "garrison_987_a": {
         "desc": "<获得干员时>获得1个道具",
@@ -1066,16 +1066,16 @@
         "_h": "2x2xjf"
       },
       "garrison_992_a": {
-        "desc": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
-        "descRaw": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
+        "desc": "<戰鬥中>再部署時間-75%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並獲得等同於損失生命值2倍的屏障，攻擊力+50%，但每秒失去100點生命",
+        "descRaw": "<戰鬥中>再部署時間-75%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並獲得等同於損失生命值2倍的屏障，攻擊力+50%，但每秒失去100點生命",
         "eventTypeDesc": "作戰能力",
-        "_h": "f5f53p"
+        "_h": "dodo3p"
       },
       "garrison_992_b": {
-        "desc": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+2%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
-        "descRaw": "<戰鬥中>再部署時間-50%；【東】【突襲】【不屈】每疊3層，自身攻擊力+2%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並轉化為等量屏障，每秒失去100點生命",
+        "desc": "<戰鬥中>再部署時間-75%；【東】【突襲】【不屈】每疊3層，自身攻擊力+2%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並獲得等同於損失生命值2倍的屏障，攻擊力+50%，但每秒失去100點生命",
+        "descRaw": "<戰鬥中>再部署時間-75%；【東】【突襲】【不屈】每疊3層，自身攻擊力+2%；部署時獲得【狂龍症】：立刻失去當前生命值的50%並獲得等同於損失生命值2倍的屏障，攻擊力+50%，但每秒失去100點生命",
         "eventTypeDesc": "作戰能力",
-        "_h": "bmbm3p"
+        "_h": "ydyd3p"
       },
       "garrison_07_a": {
         "descRaw": "【阿戈爾】、【東】每疊加3層，本幹員攻擊力<@ba.vup>+1%</>",

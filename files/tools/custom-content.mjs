@@ -259,16 +259,17 @@ const GARRISONS = {
   },
   'garrison_986_a': {
     // 休整期事件走 SERVER_PREP_FIN（garrison_47 同型）；文案无限定「已激活」→ 自定义处理器按 requireActive:false 加层
-    garrisonDesc: '<休整期结束时>自身和身后干员的所属盟约层数+4',
+    // 2026-10-16 用户修订：付与对象由「身后」改为「身前」（bbStr.dir 随之改 front；实现在 meta.js positionLayers）
+    garrisonDesc: '<休整期结束时>自身和身前干员的所属盟约层数+4',
     eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'SERVER_ADD_BOND_POSITION', battleRuneKey: null,
-    bb: { count: 4 }, bbStr: { dir: 'behind', conditionkey: 'character_target_inboard' },
+    bb: { count: 4 }, bbStr: { dir: 'front', conditionkey: 'character_target_inboard' },
   },
   'garrison_986_b': {
-    garrisonDesc: '<休整期结束时>自身和身后干员的所属盟约层数+8',
+    garrisonDesc: '<休整期结束时>自身和身前干员的所属盟约层数+8',
     eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'SERVER_ADD_BOND_POSITION', battleRuneKey: null,
-    bb: { count: 8 }, bbStr: { dir: 'behind', conditionkey: 'character_target_inboard' },
+    bb: { count: 8 }, bbStr: { dir: 'front', conditionkey: 'character_target_inboard' },
   },
   'garrison_987_a': {
     // 获得事件走 SERVER_GAIN（garrison_25 同型展示）；道具随机（自定义处理器 rollItem）
@@ -333,14 +334,16 @@ const GARRISONS = {
     bb: { count: 12 },
   },
   'garrison_992_a': {
-    // 麒麟R夜刀：再部署-50% + 部署转屏障 + 每叠3层【东】【突袭】【不屈】加攻并流血（真效果在 kit；损失生命不加盾；
+    // 麒麟R夜刀：再部署-75% + 部署转屏障(2×损失) + 【狂龙症】攻击力+50% + 每叠3层【东】【突袭】【不屈】加攻并流血
+    // （真效果在 kit；损失生命不加盾；
     // 2026-10-14 三次修订：检测盟约改为【东】【突袭】【不屈】——层数按已激活者合计（未激活不计入），流失 50→100）
-    garrisonDesc: '<战斗中>再部署时间-50%；【东】【突袭】【不屈】每叠3层，自身攻击力+1%；部署时获得【狂龙症】：立刻失去当前生命值的50%并转化为等量屏障，每秒失去100点生命',
+    // 2026-10-16 用户修订：再部署 -50%→-75%；屏障 1×损失→2×损失；新增【狂龙症】攻击力 +50%
+    garrisonDesc: '<战斗中>再部署时间-75%；【东】【突袭】【不屈】每叠3层，自身攻击力+1%；部署时获得【狂龙症】：立刻失去当前生命值的50%并获得等同于损失生命值2倍的屏障，攻击力+50%，但每秒失去100点生命',
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_992_b': {
-    garrisonDesc: '<战斗中>再部署时间-50%；【东】【突袭】【不屈】每叠3层，自身攻击力+2%；部署时获得【狂龙症】：立刻失去当前生命值的50%并转化为等量屏障，每秒失去100点生命',
+    garrisonDesc: '<战斗中>再部署时间-75%；【东】【突袭】【不屈】每叠3层，自身攻击力+2%；部署时获得【狂龙症】：立刻失去当前生命值的50%并获得等同于损失生命值2倍的屏障，攻击力+50%，但每秒失去100点生命',
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },

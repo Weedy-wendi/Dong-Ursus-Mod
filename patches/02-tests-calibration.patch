@@ -217,27 +217,34 @@ index fbb8ec4..02ed878 100644
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/garrisons_meta.test.js b/test/content/garrisons_meta.test.js
-index b6782a3..eefced1 100644
+index b6782a3..a503f81 100644
 --- a/test/content/garrisons_meta.test.js
 +++ b/test/content/garrisons_meta.test.js
-@@ -884,6 +884,67 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
+@@ -884,6 +884,74 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
    for (const k of keys) assert.ok(REG.has(`garrison:${k}`), k);
  });
  
-+test('自定义 986 (鸿雪): 休整期结束时, 自身和身后干员的所属盟约层数 +4/_b +8 (无需激活, behind one tile)', () => {
++test('自定义 986 (鸿雪): 休整期结束时, 自身和身前干员的所属盟约层数 +4/_b +8 (无需激活; 2026-10-16 身后→身前)', () => {
 +  const s = setup();
 +  s.acquire('chess_char_4_99_a');
 +  give(s.m, s.ps, 'chess_char_4_99_a', 'board', [10, 4]);
-+  give(s.m, s.ps, 'chess_char_1_10_a', 'board', [10, 3]);   // 古米 behind her (she faces RIGHT → col 3)
++  give(s.m, s.ps, 'chess_char_1_10_a', 'board', [10, 5]);   // 古米 in front of her (she faces RIGHT → col 5)
 +    s.prepEnd();
 +  // 鸿雪: ursusShip + preciShip +4 each; 古米: ursusShip + steadShip +4 each (requireActive: false)
 +  const g = s.gainsNow();
 +  assert.deepEqual(g, { ursusShip: 8, preciShip: 4, steadShip: 4 }, JSON.stringify(g));   // 鸿雪 +4×2, 古米 +4×2
 +  cover('garrison_986_a');
++  // 身后那一格不再被加层（2026-10-16：付与对象改为身前一格）
++  const u = setup();
++  u.acquire('chess_char_4_99_a');
++  give(u.m, u.ps, 'chess_char_4_99_a', 'board', [10, 4]);
++  give(u.m, u.ps, 'chess_char_1_10_a', 'board', [10, 3]);   // 古米 behind her → 不加层
++  u.prepEnd();
++  assert.deepEqual(u.gainsNow(), { ursusShip: 4, preciShip: 4 }, JSON.stringify(u.gainsNow()));
 +  const t = setup();
 +  t.acquire('chess_char_4_99_b');
 +  give(t.m, t.ps, 'chess_char_4_99_b', 'board', [10, 4]);
-+  give(t.m, t.ps, 'chess_char_1_10_a', 'board', [10, 3]);
++  give(t.m, t.ps, 'chess_char_1_10_a', 'board', [10, 5]);
 +  t.prepEnd();
 +  assert.deepEqual(t.gainsNow(), { ursusShip: 16, preciShip: 8, steadShip: 8 }, JSON.stringify(t.gainsNow()));
 +  cover('garrison_986_b');

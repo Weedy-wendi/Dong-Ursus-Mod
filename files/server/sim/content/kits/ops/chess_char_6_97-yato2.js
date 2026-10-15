@@ -36,10 +36,11 @@
 //   - 模组 EXE-Y（精锐 stage1）：特性追加「周围四格没有友方干员时攻击力+10%」（traitBb.atk）。
 //   - 干员自身效果【采集单第 8 项】麒麟之魂（garrison_992，2026-10-14 用户修订：加「再部署时间-50%」；
 //     同日三次修订：层池 =【东】【突袭】【不屈】——**已激活者**的层数合计（未激活的不计入；全部未激活则
-//     无加成也不流血），流失 50→100/秒）：
-//     再部署时间-50%（乘算 s.redeployMul）；部署时失去当前生命值的 50% 并转化为等量屏障；
-//     层数合计每叠 3 层，自身攻击力 +1/2%，但每秒失去 100 点生命（流失，不转化屏障；「每秒」= 干员秒 =
-//     引擎秒）。⚠️ 她自己的干员效果（reason 'op' 由加层方标注）。「已激活/层数」内联读
+//     无加成也不流血），流失 50→100/秒；2026-10-16 用户修订：再部署 -50%→-75%、屏障 1×→2× 损失量、
+//     【狂龙症】期间攻击力 +50%）：
+//     再部署时间-75%（乘算 s.redeployMul）；部署时失去当前生命值的 50% 并获得**损失量 2 倍**的屏障；
+//     层数合计每叠 3 层，自身攻击力 +1/2%，【狂龙症】期间另 +50% 攻击力，但每秒失去 100 点生命（流失，
+//     不转化屏障；「每秒」= 干员秒 = 引擎秒）。⚠️ 她自己的干员效果（reason 'op' 由加层方标注）。「已激活/层数」内联读
 //     battle.getPlayer(pid).bonds[id]（kit 禁 import support/index.js —— kits_layout.test.js）。
 //     攻击加成与流血按合计层数生效（加成随层实时变化，tick 刷新）；屏障在部署扣除后立刻获得，可被消耗。
 
@@ -287,13 +288,14 @@ export default {
         }, { owner: unit });
 
         // ---- 干员自身效果：麒麟之魂（无条件安装，先于模组分支）----
-        // 再部署时间-50%（2026-10-14 用户口径；乘算进 s.redeployMul，deploy.js 的 respawn 计时读取）；
-        // 部署时失去当前生命值的 50% → 等量屏障；【东】【突袭】（均需已激活，2026-10-14 二次修订）每叠 3 层
-        // [ASSUMED: 两盟约层数合计] 攻击力 +1/2%（tick 随层刷新），生效起每秒失去 50 点生命（流失，不转化屏障）。
-        battle.addBuff(unit, { key: 'trait:yato2:redeploy', persist: true, allowDead: true, mods: { redeployMul: 0.5 }, tags: ['trait'] });
+        // 再部署时间-75%（2026-10-16 用户修订 50%→75%；乘算进 s.redeployMul，deploy.js 的 respawn 计时读取）；
+        // 部署时失去当前生命值的 50% → **2 倍于损失量**的屏障；【东】【突袭】【不屈】（均需已激活，2026-10-14 二次修订）
+        // 每叠 3 层 [ASSUMED: 三盟约层数合计] 攻击力 +1/2%（tick 随层刷新），生效起每秒失去 100 点生命（流失，不转化屏障）。
+        battle.addBuff(unit, { key: 'trait:yato2:redeploy', persist: true, allowDead: true, mods: { redeployMul: 0.25 }, tags: ['trait'] });
         const per = golden ? 0.02 : 0.01;
         // ---- 【狂龙症】(trait:yato2:oni)：部署（含各种方式的再部署）时获得，自身死亡或撤退时结束，**只允许一层** ----
-        // 瞬时：失去当前生命 50% → 等量屏障；持续：每秒流失 100 点生命（由 every(1) 按"这面 buff 在不在"驱动）。
+        // 瞬时：失去当前生命 50% → 屏障 = 损失量的 2 倍；持续：攻击力 +50%，且每秒流失 100 点生命
+        // （由 every(1) 按"这面 buff 在不在"驱动；2026-10-16 用户修订：屏障 1×→2×、新增攻击力 +50%）。
         // 不屈/突袭那种原地再部署没有死过 → buff 还在 → 不重复挂第二层、也不重复扣那 50%（业主口径 2026-10-15）。
         const ONI = 'trait:yato2:oni';
         const grantOni = () => {
@@ -301,12 +303,13 @@ export default {
           const loss = unit.hp * 0.5;
           if (loss > 0 && unit.hp - loss >= 1) {
             unit.hp -= loss;
+            const gain = loss * 2;                              // 屏障 = 损失生命值的 2 倍（2026-10-16 用户口径）
             const cur = unit.findBuff('garrison:yato2:shield');
-            if (cur) { cur.shield = (cur.shield || 0) + loss; unit.markDirty?.(); }
-            else battle.addBuff(unit, { key: 'garrison:yato2:shield', shield: loss, visible: true, source: unit, tags: ['garrison'] });
+            if (cur) { cur.shield = (cur.shield || 0) + gain; unit.markDirty?.(); }
+            else battle.addBuff(unit, { key: 'garrison:yato2:shield', shield: gain, visible: true, source: unit, tags: ['garrison'] });
             battle.fx('buff', { x: unit.x, y: unit.y, id: unit.id, kind: 'yato2:shield' });
           }
-          battle.addBuff(unit, { key: ONI, visible: true, source: unit, tags: ['trait'] });
+          battle.addBuff(unit, { key: ONI, visible: true, source: unit, mods: { atkPct: 0.5 }, tags: ['trait'] });
         };
         const dropOni = () => { const b = unit.findBuff(ONI); if (b) battle.removeBuff(unit, b); };
         // ownerId 只用于读盟约层数，不该决定"部署失血 + 上狂龙症"是否发生（旧实现在这里 return，

@@ -4,6 +4,64 @@
 
 ---
 
+## 2026-10-16 · 鸿雪 986 付与对象改「身前」；麒麟R夜刀 992 三处数值上调（再部署 -75%、屏障 2×、狂龙症 +50% 攻击）
+
+### 1. 鸿雪（`garrison_986_a/b`）—— 付与对象：身后 → 身前
+
+| 项 | 改前 | 改后 |
+|---|---|---|
+| 文案（`files/tools/custom-content.mjs`） | `<休整期结束时>自身和身后干员的所属盟约层数+4/8` | `<休整期结束时>自身和**身前**干员的所属盟约层数+4/8` |
+| `bbStr.dir` | `behind` | `front` |
+| 实装（`patches/01` → `server/sim/content/garrisons/meta.js`） | `positionLayers()` 用 `behindPiece(ctx, me)` | 用 `frontPiece(ctx, me)` |
+
+触发时机（`SERVER_PREP_FIN` = 休整期结束时）、层数（+4 / +8）与 `requireActive:false`（未激活也加）口径均不变。
+
+### 2. 麒麟R夜刀（`garrison_992_a/b`）—— 三处数值上调
+
+| 项 | 改前 | 改后 |
+|---|---|---|
+| 再部署时间 | -50%（`s.redeployMul` 0.5） | **-75%**（**0.25**） |
+| 【狂龙症】部署屏障 | 等量于损失生命（1×） | **损失生命值的 2 倍** |
+| 【狂龙症】攻击力 | 无 | **+50%** |
+| 【东】【突袭】【不屈】每叠 3 层攻击力 | +1% / +2% | 不变 |
+| 【狂龙症】每秒流失 | 100 点 | 不变 |
+
+改动点：`files/server/sim/content/kits/ops/chess_char_6_97-yato2.js`（`mods.redeployMul` 0.5 → 0.25、屏障 `loss` → `loss*2`、ONI buff 增 `mods.atkPct: 0.5`）+ `files/tools/custom-content.mjs` 的文案源。
+
+### 3. 四语言 overlay（`i18n/mod-i18n.json`）
+
+986_a/986_b/992_a/992_b 共 **16 条**（4 语言 × 4 条）的 `desc`/`descRaw` 随机制改写；`_h` 按重建后的 `data/garrisons.json` zh 文本重算（不改文案的 `eventTypeDesc` 与其余字节）：
+
+| 记录 | 旧 `_h` | 新 `_h` |
+|---|---|---|
+| `garrison_986_a` | `e5e5mz` | `dudumz` |
+| `garrison_986_b` | `2h2hmz` | `5q5qmz` |
+| `garrison_992_a` | `f5f53p` | `dodo3p` |
+| `garrison_992_b` | `bmbm3p` | `ydyd3p` |
+
+`ja` / `ko` / `zh-TW` 的 986 两条本来就是中文（未翻译），本次只随机制改「身后→身前」，未代写译文。
+
+### 4. 测试
+
+| 项 | 结果 |
+|---|---|
+| `test/content/garrisons_meta.test.js` 986 用例 | 付与目标改到身前那格（`[10,5]`），并补一条「身后那格不再被加层」的反向断言 |
+| `files/test/content/kits_char_6_97.test.js` | 新增「再部署 -75% / 屏障 = 损失 2 倍 / 狂龙症 attack +50%」数值用例 |
+| 同文件旧用例「重生再部署后 cast 仍 active」 | 原断言按 **-50%** 的再部署时间标定（写在 `t=11`）：-75% 后单位 t≈5.5 s 就重部署、cast 于 t≈9.9 s 结束 → 改为「逐步推进到刚重部署那一刻」再断言（机制未回归，仅标定失效） |
+| `node --test`（garrisons_meta / kits_char_6_97 / kits_char_4_99 / i18n-data） | 全部通过（i18n `stale=0`） |
+| `scripts/verify.mjs`（20 个测试文件） | **274 / 274**（2026-10-16） |
+
+### 验证（纯净基线 `16a0f9b` 的独立工作树）
+
+| 检查 | 结果 |
+|---|---|
+| `git apply --check` 两个补丁 | 均 **exit 0** |
+| 应用后与参考树逐字节对比 | **72 / 72 个目标文件 hash 完全一致** |
+| 应用后是否产生 `*.rej` | **0** |
+| 补丁目标数 | 01 = 22 文件、02 = 50 文件（未变） |
+
+---
+
 ## 2026-10-15（第四条）· 【乌萨斯】每层系数 0.06% / 0.9% ＋ 补齐两个打包缺陷（补丁缺 `spine.js`、测试文件重复声明）
 
 ### 1. 【乌萨斯】3 人盟约公式改系数（只动系数，其他机制不动）

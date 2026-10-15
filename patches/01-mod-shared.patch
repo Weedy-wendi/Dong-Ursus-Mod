@@ -458,10 +458,10 @@ index 8b12c71..9bcf1a0 100644
  
  export function install(battle) {
 diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
-index 593cf20..3262db9 100644
+index 593cf20..0e69e33 100644
 --- a/server/sim/content/garrisons/meta.js
 +++ b/server/sim/content/garrisons/meta.js
-@@ -430,6 +430,74 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
+@@ -430,6 +430,75 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
  };
  
  
@@ -515,11 +515,12 @@ index 593cf20..3262db9 100644
 +  for (const b of metaBonds(ctx, ctx.source.piece)) ctx.addLayers(b, count, { requireActive: false });
 +}
 +
-+/** 自定义 986（鸿雪）：自身和身后干员的所属盟约层数 +N（未激活也加；身后无干员则只有自身）。 */
++/** 自定义 986（鸿雪）：自身和身前干员的所属盟约层数 +N（未激活也加；身前无干员则只有自身）。
++ *  2026-10-16 用户修订：付与对象由「身后一格」改为「身前一格」（behindPiece → frontPiece）。 */
 +function positionLayers(ctx, count) {
 +  const me = selfView(ctx);
 +  if (!onBoard(me) || !(count > 0)) return;
-+  const other = behindPiece(ctx, me);
++  const other = frontPiece(ctx, me);
 +  const targets = [me];
 +  if (other && other.kind === 'chess' && other.uid !== me.uid) targets.push(other);
 +  for (const t of targets) for (const b of metaBonds(ctx, t)) ctx.addLayers(b, count, { requireActive: false });

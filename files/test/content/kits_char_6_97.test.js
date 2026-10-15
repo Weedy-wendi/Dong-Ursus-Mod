@@ -1,8 +1,9 @@
 // test/content/kits_char_6_97.test.js — 麒麟R夜刀 (chess_char_6_97, 自定义 6★ 处决者) kit tests: kit identity,
 // S2 乱舞 / S3 空中回旋乱舞 as deploy-time duration casts (2026-10-14 用户修订: 怒潮凛冬 S3 同款 —— 正式 cast、
 // 空放不需要接敌、技能条倒数、mods/flags 随 cast 起终), the hit frames inside the Skill_2 animation window
-// (1 干员秒 = 1 引擎秒, 2026-10-14 实测修订 —— SP/DP 1/秒、攻击间隔 1:1), and the redeploy regression
-// (a stale bullet step of an earlier cast must not outlive its deployment).
+// (1 干员秒 = 1 引擎秒, 2026-10-14 实测修订 —— SP/DP 1/秒、攻击间隔 1:1), the redeploy regression
+// (a stale bullet step of an earlier cast must not outlive its deployment), and 麒麟之魂 (garrison_992)
+// 的数值（2026-10-16 用户修订：再部署 -75%、【狂龙症】屏障 = 损失生命 2 倍、攻击力 +50%）。
 // Run: node --test test/content/kits_char_6_97.test.js
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -126,10 +127,28 @@ test('normal respawn redeploy re-arms the S2 乱舞 cast (skill active, disarm, 
   const u = h.unit(1);
   h.run(1);
   h.b.kill(u);
-  h.run(10);   // respawnTime 6 s + DP：自动重部署
+  // respawnTime 6 s × 【麒麟之魂】-75% = 1.5 s（2026-10-16 起；DP 不足时以 DP 为准）——逐步推进到刚重部署那一刻。
+  // 不按固定时刻断言（旧写法在 t=11 断言 cast 仍 active，是按 -50% 的再部署时间标定的；-75% 后 cast 已结束）
+  for (let t = 0; !u.alive && t < 30; t += 0.25) h.run(0.25);
   assert.ok(u.alive, 'redeployed after the respawn timer');
   assert.ok(u.skill.active, 'cast re-armed');
   assert.ok(u.s.flags.disarm, 'disarm from the fresh cast');
   assert.ok(Math.abs(u.skill.duration - 4.433) < 1e-9, 'fresh duration');
+  done(h);
+});
+
+test('麒麟之魂 (garrison_992, 2026-10-16 用户修订): 再部署 -75%、【狂龙症】屏障 = 损失生命 2 倍、攻击力 +50%', () => {
+  const h = makeBattle({ defs: { enemies: ENEMIES }, units: [{ chessId: A, row: 10, col: 5 }], autoFinish: false, timeLimit: 30 });
+  h.run(0.2);
+  const u = h.unit(1);
+  assert.equal(u.s.redeployMul, 0.25, '再部署时间 -75%');
+  const loss = u.s.maxHp * 0.5;
+  assert.ok(Math.abs(u.hp - loss) < 1e-6, `部署时失去当前生命值的 50%（hp ${u.hp} vs ${loss}）`);
+  const shield = u.findBuff('garrison:yato2:shield');
+  assert.ok(shield, '【狂龙症】部署时给屏障');
+  assert.ok(Math.abs(shield.shield - loss * 2) < 1e-6, `屏障 = 损失生命值的 2 倍（${shield.shield} vs ${loss * 2}）`);
+  const oni = u.findBuff('trait:yato2:oni');
+  assert.ok(oni, '【狂龙症】已挂上');
+  assert.equal(oni.mods.atkPct, 0.5, '【狂龙症】攻击力 +50%');
   done(h);
 });
