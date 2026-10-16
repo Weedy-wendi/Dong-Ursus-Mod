@@ -7,10 +7,10 @@
 //   恶鬼之力   S2 (skchr_gyuki_2)：防御力降至 0、攻击力 +90%(Lv4) / +105%(Lv7) — bb.atk
 //   DRE-Y 断竹插花作品 (模组)：生命+270 攻击+35 由数据承载；特性追加 —— 被击倒时不撤退且回复所有生命，
 //     但生命上限 -60%、攻击速度 +30（单次部署只触发 1 次）[ASSUMED: 模组 1 级]
-//   干员自身效果【采集单第 8 项】恶鬼血战（2026-10-14 用户修订：单血线 70%，按盟约分档 ——【东】+8/16、【不屈】
-//   +4/8，只加**已激活**的自身盟约 —— 加层目标回到第三次口径）：每场战斗自身生命值首次降低至 70% 以下时，使
-//   **自身所属盟约中已激活者** 按档加层（reason 'op'；「已激活」内联读 battle.getPlayer(pid).bonds[id].active —— kit 禁
-//   import support/index.js —— kits_layout.test.js）。
+//   干员自身效果【采集单第 8 项】恶鬼血战（2026-10-16 用户修订：单血线 70%，**自身已激活的盟约统一 +12/24**
+//   —— 取消 2026-10-14 的按盟约分档：【东】与【不屈】各 +12（普通）/ +24（精锐）；加层目标仍是**已激活**的自身盟约）：
+//   每场战斗自身生命值首次降低至 70% 以下时，使 **自身所属盟约中已激活者** 加层（reason 'op'；「已激活」内联读
+//   battle.getPlayer(pid).bonds[id].active —— kit 禁 import support/index.js —— kits_layout.test.js）。
 //
 // 注：无畏者的分支特性「可以且优先攻击自身阻挡的单位」由职业/索敌层承担（server/sim/professions.js fearless），
 // 本 kit 不重复实现。
@@ -28,8 +28,9 @@ const MOD_ASPD = 30;
 const MOD_FIRED = 'gyuki:moduleFired';
 /** 干员自身效果（恶鬼血战）：70% 血线每场战斗一次的标记（mem 键）。 */
 const THR_70 = 'gyuki:thr70';
-/** 干员自身效果（恶鬼血战）：血线加的层数（2026-10-14 用户修订：按盟约分档 ——【东】+8/16、【不屈】+4/8）。 */
-const TH = (golden) => ({ dongShip: golden ? 16 : 8, indomShip: golden ? 8 : 4 });
+/** 干员自身效果（恶鬼血战）：血线加的层数（2026-10-16 用户修订：取消按盟约分档，自身**已激活**的盟约统一
+ *  +12（普通）/ +24（精锐））。 */
+const TH = (golden) => (golden ? 24 : 12);
 
 /** 干员的所属盟约（chess 记录 bonds，data/chess.json 直挂字段）。 */
 const ownBonds = (u) => (Array.isArray(u.def?.bonds) ? u.def.bonds : Array.isArray(u.def?.raw?.bonds) ? u.def.raw.bonds : []);
@@ -38,8 +39,8 @@ const ownBonds = (u) => (Array.isArray(u.def?.bonds) ? u.def.bonds : Array.isArr
  * 干员自身效果（恶鬼血战）：生命首次降到 70% 以下时，给「目标自身所属盟约中已激活者」加层（每场战斗一次；
  * 2026-10-13 第五次修订：加层目标回到已激活口径，内联读 battle.getPlayer(pid).bonds[id].active —— kit 禁
  * import support/index.js —— kits_layout.test.js）。
- * `th` = 加层数值：数字（所有已激活盟约同一档）或 { bondId: 层数 }（按盟约分档，2026-10-14 用户修订：
- * 缠丸【东】+8/16、【不屈】+4/8）；未列出的已激活盟约按 0 处理。
+ * `th` = 加层数值：数字（所有已激活盟约同一档）或 { bondId: 层数 }（按盟约分档）；未列出的已激活盟约按 0 处理。
+ * 缠丸当前用数字档（2026-10-16 用户修订：+12/24，原先的按盟约分档已取消）。
  * `keys` = mem 标记键前缀（同一干员身上多个来源的特质互不共用触发次数）。
  */
 export function hpThresholdLayers(battle, unit, target, { th, keys }) {

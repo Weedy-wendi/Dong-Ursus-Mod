@@ -263,6 +263,32 @@ index c5380d9..7ca1638 100644
    bandDraft: { skipsPerPlayer: 1, timeoutBandId: 'band_bldsk' },
    leftoverFundsKeptByBands: ['band_cannot'],
  });
+diff --git a/server/match/match/spDraft.js b/server/match/match/spDraft.js
+index bf30c1b..aaf531d 100644
+--- a/server/match/match/spDraft.js
++++ b/server/match/match/spDraft.js
+@@ -182,8 +182,9 @@ export class MatchSpDraft {
+     return b.id;
+   }
+ 
+-  /** Random item id: a choices.json server pool ({ pool }), a tier, or ≤ maxTier shop-eligible items. */
+-  rollItemId({ pool = null, tier = null, maxTier = 6, shopLevel = 6 } = {}) {
++  /** Random item id: a choices.json server pool ({ pool }), a tier, or ≤ maxTier shop-eligible items minus
++   *  `exclude` (a Set/array of ids — 自定义 987 烈夏的排除名单，2026-10-16). */
++  rollItemId({ pool = null, tier = null, maxTier = 6, shopLevel = 6, exclude = null } = {}) {
+     const pools = this.gd.choices.pools && typeof this.gd.choices.pools === 'object' ? this.gd.choices.pools : {};
+     const p = typeof pool === 'string' && Object.hasOwn(pools, pool) ? pools[pool] : null;
+     const rng = this.rngMeta;
+@@ -202,7 +203,8 @@ export class MatchSpDraft {
+       else list = tierList(1, p.maxTier === 'shopLevel' ? Math.max(1, Math.min(6, shopLevel)) : 6);
+       return this.itemPool.pick(rng, list);
+     }
+-    const list = Number.isInteger(tier) ? tierList(tier, tier) : tierList(1, Math.max(1, Math.min(6, maxTier)));
++    const list = (Number.isInteger(tier) ? tierList(tier, tier) : tierList(1, Math.max(1, Math.min(6, maxTier))))
++      .filter((id) => !(exclude && (typeof exclude.has === 'function' ? exclude.has(id) : exclude.includes(id))));
+     return this.itemPool.pick(rng, list);
+   }
+ 
 diff --git a/server/sim/battle/deploy.js b/server/sim/battle/deploy.js
 index 12962e7..013c2b0 100644
 --- a/server/sim/battle/deploy.js
@@ -279,7 +305,7 @@ index 12962e7..013c2b0 100644
      // Explicit carry outside the 联防 opening follows this one deployment. The opening itself restores at the end
      // of Battle.start, so deployment/battle-start gifts do not come on top of it; later redeploys keep their gifts.
 diff --git a/server/sim/content/bonds/core.js b/server/sim/content/bonds/core.js
-index 8b12c71..9bcf1a0 100644
+index 8b12c71..afb2f0c 100644
 --- a/server/sim/content/bonds/core.js
 +++ b/server/sim/content/bonds/core.js
 @@ -59,6 +59,8 @@ const BUFF_KEYS = Object.freeze({
@@ -291,14 +317,15 @@ index 8b12c71..9bcf1a0 100644
  });
  const SARGON_SHARE_KEY = 'act2autochess_bond_eff_sargon[share]';
  const VICTORIA_REWARD_KEY = 'bond_layer_added_reward_equip';
-@@ -656,6 +658,167 @@ function installKazimierz(battle, pid, bb, members) {
+@@ -656,6 +658,168 @@ function installKazimierz(battle, pid, bb, members) {
  // =====================================================================================================================
  // entry points
  
 +// =====================================================================================================================
 +// 乌萨斯 (ursusShip — 自定义核心盟约; 2026-10-12 效果正式化, 2026-10-13 用户修订, 2026-10-14 数值修订, 2026-10-15 系数修订)
 +//   3: member skill start → every OTHER member on the field gains an additive ATK stack of
-+//      atk_per_start + 0.06%·L, the accumulated total capped at atk_cap_base + 0.9%·L (L = the bond's layers,
++//      atk_per_start + 0.12%·L, the accumulated total capped at atk_cap_base + 1.2%·L (L = the bond's layers,
++//      (2026-10-16 用户修订：3.6%+0.06%·L → 5.4%+0.12%·L，上限 0.9%→1.2%·L；上限基础 54% 不变)
 +//      re-read at each start); the caster also raises the natural SP recovery of every operator on her surrounding
 +//      8 tiles by sp_regen = +40% (不叠加 — the highest holds, the shared aura semantics), lasting to the battle end.
 +//   6: the SP aura **覆盖**为 sp_regen_6 = +80%（不是叠加）; a member carrying items deals
@@ -308,10 +335,10 @@ index 8b12c71..9bcf1a0 100644
 +// 入口: installUrsus(battle, pid, bb, members); bb 由 data/bonds.json bondeffect_ursus 带来（tools/custom-content.mjs）。
 +function installUrsus(battle, pid, bb, members) {
 +  const memberSet = new Set(members);
-+  const perBase = num(bb.atk_per_start, 0.036);
-+  const perLayer = num(bb.atk_per_start_per_layer, 0.0006);
++  const perBase = num(bb.atk_per_start, 0.054);
++  const perLayer = num(bb.atk_per_start_per_layer, 0.0012);
 +  const capBase = num(bb.atk_cap_base, 0.54);
-+  const capPerLayer = num(bb.atk_cap_per_layer, 0.009);
++  const capPerLayer = num(bb.atk_cap_per_layer, 0.012);
 +  // 自然技力回复光环（不叠加 — 取最高的共享语义）：3 人档 +sp_regen，6 人档**覆盖**为 +sp_regen_6
 +  // （2026-10-14 用户修订：40%→80% 是覆盖不是叠加；6 人判定与道具分支同款，开战时定型）
 +  const six = reached(battle, pid, 'ursusShip', num(bb.ex_bond_char_cnt, 6));
@@ -375,7 +402,7 @@ index 8b12c71..9bcf1a0 100644
 +// 入口: installDong(battle, pid, bb, members); bb 由 data/bonds.json bondeffect_dong 带来（tools/custom-content.mjs）。
 +function installDong(battle, pid, bb, members) {
 +  const memberSet = new Set(members);
-+  const dmgBase = num(bb.dmg_base, 0.15);
++  const dmgBase = num(bb.dmg_base, 0.25);   // 2026-10-16 用户修订：15%→25%
 +  const dmgPerLayer = num(bb.dmg_per_layer, 0.006);   // 2026-10-14 用户修订：每层 0.7%→0.6%
 +  const dmgPerLost = num(bb.dmg_per_lost_hp, 0.002);  // 2026-10-14 用户修订：每 1% 已损失生命 0.4%→0.2%
 +  const deathless = num(bb.deathless_time, 4);
@@ -459,7 +486,7 @@ index 8b12c71..9bcf1a0 100644
  const INSTALLERS = Object.freeze({
    yanShip: installYan,
    sargonShip: installSargon,
-@@ -665,6 +828,8 @@ const INSTALLERS = Object.freeze({
+@@ -665,6 +829,8 @@ const INSTALLERS = Object.freeze({
    egirShip: installEgir,
    siracusaShip: installSiracusa,
    kazimierzShip: installKazimierz,
@@ -469,10 +496,10 @@ index 8b12c71..9bcf1a0 100644
  
  export function install(battle) {
 diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
-index 593cf20..0e69e33 100644
+index 593cf20..9b7b373 100644
 --- a/server/sim/content/garrisons/meta.js
 +++ b/server/sim/content/garrisons/meta.js
-@@ -430,6 +430,75 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
+@@ -430,6 +430,99 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
  };
  
  
@@ -537,10 +564,34 @@ index 593cf20..0e69e33 100644
 +  for (const t of targets) for (const b of metaBonds(ctx, t)) ctx.addLayers(b, count, { requireActive: false });
 +}
 +
-+/** 自定义 987（烈夏）：获得时给玩家 count 个随机道具（投资人按 dispatcher 既有规则重复）。 */
++/**
++ * 自定义 987（烈夏）随机道具池的排除名单（2026-10-16 用户口径）：6 阶道具（由 maxTier 封顶 5 覆盖）、信标、
++ * 博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及**普通维式重锤以外**的维式重锤
++ * （战栗/坚固/加速/灼燃 —— 普通维式重锤 chess_item_1_01_e_a 保留）。id 取自 data/items.json；其中画卷/教鞭
++ * （6 阶）、突变细胞与部分维式重锤本就不在商店池（tools/build-data.mjs 的 SHOP_EXCLUDED_ITEMS / isShopItem），
++ * 列全只为口径完整、便于日后核对。
++ */
++const LETO_ITEM_EXCLUDE = new Set([
++  'chess_item_5_04_e_a',   // 信标
++  'chess_item_5_05_e_a',   // 拟态物质
++  'chess_item_5_06_e_a',   // 博士投影
++  'chess_item_5_07_e_a',   // 商业包装方案
++  'chess_item_5_08_e_a',   // 突变细胞
++  'chess_item_5_09_e_a',   // 天马之盔
++  'chess_item_6_02_m',     // 画卷（6 阶）
++  'chess_item_6_03_m',     // 教鞭（6 阶）
++  'chess_item_2_03_e_a',   // 战栗维式重锤
++  'chess_item_3_09_e_a',   // 坚固维式重锤
++  'chess_item_3_10_e_a',   // 加速维式重锤
++  'chess_item_4_09_e_a',   // 灼燃维式重锤
++]);
++
++/** 自定义 987（烈夏）：获得时给玩家 count 个随机道具（投资人按 dispatcher 既有规则重复）。
++ *  2026-10-16 用户修订：从池子里排除 LETO_ITEM_EXCLUDE，并且不再出现 6 阶道具（maxTier 封顶 5）。 */
 +function gainRandomItems(ctx, count) {
++  const maxTier = Math.min(5, Math.max(1, Math.floor(num(ctx.shopLevel?.(), 6))));
 +  for (let i = 0; i < Math.min(10, count); i++) {
-+    const id = ctx.rollItem({ maxTier: ctx.shopLevel() });
++    const id = ctx.rollItem({ maxTier, exclude: LETO_ITEM_EXCLUDE });
 +    if (id) ctx.grantItem(id);
 +  }
 +}

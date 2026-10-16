@@ -1,6 +1,6 @@
-// test/content/ursus_bond.test.js — 乌萨斯核心盟约 (ursusShip, 自定义, 2026-10-15 系数修订) battle tests:
-// 3人 — a member's skill start gives every OTHER on-field member an additive ATK stack of +3.6 % + 0.06 % × bond
-// layers (accumulated, capped at 54 % + 0.9 % × live layers) and raises the natural SP recovery of the operators on
+// test/content/ursus_bond.test.js — 乌萨斯核心盟约 (ursusShip, 自定义, 2026-10-16 系数修订) battle tests:
+// 3人 — a member's skill start gives every OTHER on-field member an additive ATK stack of +5.4 % + 0.12 % × bond
+// layers (accumulated, capped at 54 % + 1.2 % × live layers) and raises the natural SP recovery of the operators on
 // the caster's surrounding 8 tiles by 40 % (不叠加 — the highest holds); 6人 — the SP aura 覆盖为 80 % and a member
 // carrying 1/2 items deals ×1.75/×2.5 with attacks. Run: node --test test/content/ursus_bond.test.js
 import { test } from 'node:test';
@@ -36,8 +36,8 @@ test('3人: a member skill start stacks ATK on every OTHER on-field member (the 
   for (const who of [CHAR.helage, CHAR.headb2]) {   // the other two fielded members
     const b = byChar(h, who).findBuff('bond:ursus:atk');
     assert.ok(b, `${who}: holds the ATK stack`);
-    assert.ok(b.mods.atkPct >= 0.036 - 1e-9 && b.mods.atkPct <= 0.036 + 0.0006 * L + 1e-9,
-      `${who}: one start → +3.6 % (+0.06 % × ${L}), got ${b.mods.atkPct}`);
+    assert.ok(b.mods.atkPct >= 0.054 - 1e-9 && b.mods.atkPct <= 0.054 + 0.0012 * L + 1e-9,
+      `${who}: one start → +5.4 % (+0.12 % × ${L}), got ${b.mods.atkPct}`);
   }
   done(h);
 });
@@ -65,7 +65,7 @@ test('3人: the stacks accumulate toward the cap 54 % + 0.9 % × live layers', (
   // 齐鸣 adds ≤8 layers/battle (2026-10-14 cap)
   const poca = byChar(h, CHAR.poca);
   const grants = h.hooksOf('skillStart').filter((c) => c.unit !== poca).length;
-  const min = grants * 0.036, max = Math.min(0.54 + 0.009 * L, grants * (0.036 + 0.0006 * 8));
+  const min = grants * 0.054, max = Math.min(0.54 + 0.012 * L, grants * (0.054 + 0.0012 * 8));
   assert.ok(b.mods.atkPct >= min - 1e-9 && b.mods.atkPct <= max + 1e-9,
     `grants ${grants}: ${b.mods.atkPct} within [${min.toFixed(4)}, ${max.toFixed(4)}] (layers ${L})`);
   done(h);

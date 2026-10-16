@@ -205,22 +205,22 @@ const GARRISONS = {
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_981_a': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+1（每场战斗每种最多叠加8层，需盟约已激活）',
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+2（每场战斗每种最多叠加8层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_981_b': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+2（每场战斗每种最多叠加16层，需盟约已激活）',
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+4（每场战斗每种最多叠加16层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_982_a': {
-    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+2（每场战斗最多叠加8层，需盟约已激活）',
+    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+3（每场战斗最多叠加9层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_982_b': {
-    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+4（每场战斗最多叠加16层，需盟约已激活）',
+    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+6（每场战斗最多叠加18层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
@@ -237,12 +237,12 @@ const GARRISONS = {
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_984_a': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+1（每场战斗每种最多叠加8层，需盟约已激活）',
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+2（每场战斗每种最多叠加8层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_984_b': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+2（每场战斗每种最多叠加16层，需盟约已激活）',
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+4（每场战斗每种最多叠加16层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
@@ -273,37 +273,37 @@ const GARRISONS = {
   },
   'garrison_987_a': {
     // 获得事件走 SERVER_GAIN（garrison_25 同型展示）；道具随机（自定义处理器 rollItem）
-    garrisonDesc: '<获得干员时>获得1个道具',
+    garrisonDesc: '<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）',
     eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
     effectType: 'GAIN_ITEM', battleRuneKey: null,
     bb: { count: 1 },
   },
   'garrison_987_b': {
-    garrisonDesc: '<获得干员时>获得2个道具',
+    garrisonDesc: '<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）',
     eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
     effectType: 'GAIN_ITEM', battleRuneKey: null,
     bb: { count: 2 },
   },
   // ---- 2026-10-13 【东】扩展批次（988-992）----
   'garrison_988_a': {
-    // 缠丸：单血线 70%（2026-10-14 用户修订：按盟约分档 ——【东】+8、【不屈】+4；加层目标保持**已激活**的自身盟约）
-    garrisonDesc: '<战斗中>每场战斗自身生命值首次降低至70%以下时，使自身已激活的【东】+8层、【不屈】+4层',
+    // 缠丸：单血线 70%（2026-10-16 用户修订：取消按盟约分档，统一「自身已激活的盟约 +12/24」；加层目标保持**已激活**的自身盟约）
+    garrisonDesc: '<战斗中>每场战斗自身生命值首次降低至70%以下时，使自身已激活的盟约+12层',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_988_b': {
-    garrisonDesc: '<战斗中>每场战斗自身生命值首次降低至70%以下时，使自身已激活的【东】+16层、【不屈】+8层',
+    garrisonDesc: '<战斗中>每场战斗自身生命值首次降低至70%以下时，使自身已激活的盟约+24层',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_989_a': {
-    // 嵯峨：特质授予自身与身前干员（各按其所属盟约结算，一场战斗一次；2026-10-14 用户修订：+12→+8）
-    garrisonDesc: '<战斗中>自身和身前的干员获得特质：每场战斗生命值首次降低至70%以下时，使自身已激活的盟约+8层',
+    // 嵯峨：特质授予自身与身前干员（各按其所属盟约结算，一场战斗一次；2026-10-16 用户修订：+8/16→+12/24）
+    garrisonDesc: '<战斗中>自身和身前的干员获得特质：每场战斗生命值首次降低至70%以下时，使自身已激活的盟约+12层',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_989_b': {
-    garrisonDesc: '<战斗中>自身和身前的干员获得特质：每场战斗生命值首次降低至70%以下时，使自身已激活的盟约+16层',
+    garrisonDesc: '<战斗中>自身和身前的干员获得特质：每场战斗生命值首次降低至70%以下时，使自身已激活的盟约+24层',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
@@ -377,9 +377,9 @@ const BONDS = {
     desc: '【东】干员<@ba.vup>攻击造成的伤害</>提升，自身<@ba.vup>已损失生命比例</>越高，攻击造成伤害越高<@autochess.gray>（受层数影响）</>，并获得【死战】：战斗中首次受到<@ba.vup>致命伤害</>时不撤退，保留<@ba.vup>1</>点生命，持续<@ba.vup>4</>秒，持续时间结束后撤退\n【东】干员开启技能时，所有【东】干员失去<@ba.vup>10%</>当前生命值并转化为等量屏障\n<在场<@autochess.dgreen>6</>名不同【东】干员>【东】干员<@ba.vup>攻击力</>提升，开启技能时所有【东】干员额外失去<@ba.vup>15%</>当前生命并转化为等量屏障；当前生命低于<@ba.vup>50%</>时，<@ba.vup>攻击力</>额外提升',
     effectDesc: '【东】干员攻击造成的伤害提升至<@ba.vup>{0:0%}</>，自身<@ba.vup>已损失生命比例</>越高，攻击造成伤害越高<@autochess.gray>（受层数影响）</>，并获得【死战】：战斗中首次受到<@ba.vup>致命伤害</>时不撤退，保留<@ba.vup>1</>点生命，持续<@ba.vup>4</>秒，持续时间结束后撤退\n【东】干员开启技能时，所有【东】干员失去<@ba.vup>10%</>当前生命值并转化为等量屏障\n<在场<@autochess.dgreen>6</>名不同【东】干员>【东】干员攻击力<@ba.vup>+60%</>，开启技能时所有【东】干员额外失去<@ba.vup>15%</>当前生命并转化为等量屏障；当前生命低于<@ba.vup>50%</>时，攻击力额外<@ba.vup>+120%</>',
     bb: {
-      dmg_base: 0.15,        // 伤害倍率基础（×(1+15%+…)）（2026-10-14 用户修订：25%→15%）
-      dmg_per_layer: 0.007,  // 每层盟约层数 +0.7%（2026-10-14 二次修订：0.6%→0.7%）
-      dmg_disp_base: 1.15,   // 显示键：effectDesc 占位符用（1+基础）——「提升至115%+0.7%×层数」的整体结果
+      dmg_base: 0.25,        // 伤害倍率基础（×(1+25%+…)）（2026-10-16 用户修订：15%→25%，公式 (1+25%+0.7%×层数)×(1+0.4%×已损失生命比例)）
+      dmg_per_layer: 0.007,  // 每层盟约层数 +0.7%（2026-10-16 不变）
+      dmg_disp_base: 1.25,   // 显示键：effectDesc 占位符用（1+基础）——「提升至125%+0.7%×层数」的整体结果
       dmg_disp_per: 0.007,   // 显示键：每层 +0.7%（2026-10-14 二次修订：0.6%→0.7%）
       dmg_per_lost_hp: 0.004, // 每损失 1% 生命 +0.4%（×(1+0.4%×已损失生命比例)；2026-10-14 用户修订：0.2%→0.4%）
       deathless_time: 4,     // 死战持续 4s
@@ -418,10 +418,10 @@ const BONDS = {
     desc: '【乌萨斯】干员周围八格的干员<@ba.vup>自然技力恢复速度</>提升（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>提升</><@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员<@ba.vup>自然技力恢复速度</>进一步提升（不叠加），装备<@ba.vup>1</>个道具时，<@ba.vup>攻击造成的伤害</>提升；装备<@ba.vup>2</>个道具时，<@ba.vup>攻击造成的伤害</>进一步提升',
     effectDesc: '【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+40%</>（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>+{0:0.0%}</>（至多<@ba.vup>+{1:0%}</>）<@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+80%</>（不叠加），装备<@ba.vup>1</>个道具时攻击造成的伤害提升至<@ba.vup>175%</>；装备<@ba.vup>2</>个道具时提升至<@ba.vup>250%</>',
     bb: {
-      atk_per_start: 0.036,   // 每次开技能 +3.6%（直接乘算，叠加）
-      atk_per_start_per_layer: 0.0006, // 每层盟约层数每次多 +0.06%（2026-10-15 用户修订：1%→0.06%）
-      atk_cap_base: 0.54,     // 叠层上限基础值
-      atk_cap_per_layer: 0.009, // 每层盟约层数上限 +0.9%（2026-10-15 用户修订：1%→0.9%，上限=54%+0.9%×层数）
+      atk_per_start: 0.054,   // 每次开技能 +5.4%（直接乘算，叠加）（2026-10-16 用户修订：3.6%→5.4%）
+      atk_per_start_per_layer: 0.0012, // 每层盟约层数每次多 +0.12%（2026-10-16 用户修订：0.06%→0.12%）
+      atk_cap_base: 0.54,     // 叠层上限基础值（2026-10-16 不变）
+      atk_cap_per_layer: 0.012, // 每层盟约层数上限 +1.2%（2026-10-16 用户修订：0.9%→1.2%，上限=54%+1.2%×层数）
       sp_regen: 0.4,          // 周围八格自然技力回复速度 +40%（不叠加；3人档）
       sp_regen_6: 0.8,        // 6人档：覆盖为 +80%（2026-10-14 用户修订：不是叠加，是 40%→80% 覆盖）
       damage_scale_1: 1.75,   // 6人：带 1 个道具的攻击倍率（2026-10-14 用户修订：150%→175%）

@@ -1,6 +1,6 @@
 // test/content/kits_char_4_98.test.js — 赫拉格 (chess_char_4_98, 自定义 6★ 武者, tier 4) kit tests:
 // form + kit identity, the musha trait heal, T1 月盈星亏's berserk ASPD, and the operator's own effect
-// 老将刀意 (each kill → +2/+4 layers on the activated 【乌萨斯】【远见】only, capped 8/16 per battle
+// 老将刀意 (each kill → +3/+6 layers on the activated 【乌萨斯】【远见】only, capped 9/18 per battle
 // (2026-10-14 用户修订)).
 // Run: node --test test/content/kits_char_4_98.test.js
 import { test } from 'node:test';
@@ -69,7 +69,7 @@ test('月盈星亏: 坚忍 ASPD up to min_attack_speed, linear in the HP lost up
   done(h);
 });
 
-test('老将刀意: each kill gives the activated 【乌萨斯】【远见】+2 layers, capped 8 per battle (normal); an inactive bond gains nothing', () => {
+test('老将刀意: each kill gives the activated 【乌萨斯】【远见】+3 layers, capped 9 per battle (normal); an inactive bond gains nothing', () => {
   const field = (bonds, n = 5) => makeBattle({
     defs: { enemies: ENEMIES }, units: [{ chessId: A, row: 10, col: 5 }],
     enemies: [{ key: 'e_fodder', pos: [10, 6], count: n, interval: 1.5 }],
@@ -77,13 +77,13 @@ test('老将刀意: each kill gives the activated 【乌萨斯】【远见】+2 
     bonds,
   });
   const killsOf = (h, u) => h.hooksOf('kill').filter((c) => c.killer === u);
-  // 5 fodder in his range: 5 kills × +2 = 10 → the cap 8 (2026-10-14 用户修订) holds the layers at 8
+  // 5 fodder in his range: 5 kills × +3 = 15 → the cap 9 (2026-10-16 用户修订) holds the layers at 9
   const h = field({ visiShip: bondOn(true), raidShip: bondOn(true), ursusShip: bondOn(true) });
   const u = h.unit(1);
   h.runUntil(() => killsOf(h, u).length >= 5, 50);
   assert.ok(killsOf(h, u).length >= 5, '5 kills happen');
-  assert.equal(layers(h, 'visiShip'), 8, `远见 capped at 8, got ${layers(h, 'visiShip')}`);
-  assert.equal(layers(h, 'ursusShip'), 8, `乌萨斯 capped at 8, got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'visiShip'), 9, `远见 capped at 9, got ${layers(h, 'visiShip')}`);
+  assert.equal(layers(h, 'ursusShip'), 9, `乌萨斯 capped at 9, got ${layers(h, 'ursusShip')}`);
   assert.equal(layers(h, 'raidShip'), 0, '突袭 is not part of the effect');
   done(h);
 
@@ -96,7 +96,7 @@ test('老将刀意: each kill gives the activated 【乌萨斯】【远见】+2 
   done(h2);
 });
 
-test('老将刀意 (精锐): each kill gives +4 layers, capped 16 per battle', () => {
+test('老将刀意 (精锐): each kill gives +6 layers, capped 18 per battle', () => {
   const h = makeBattle({
     defs: { enemies: ENEMIES }, units: [{ chessId: B, row: 10, col: 5 }],
     enemies: [{ key: 'e_fodder', pos: [10, 6], count: 4, interval: 1.5 }],
@@ -106,7 +106,7 @@ test('老将刀意 (精锐): each kill gives +4 layers, capped 16 per battle', (
   const u = h.unit(1);
   const killsOf = (h, u) => h.hooksOf('kill').filter((c) => c.killer === u);
   h.runUntil(() => killsOf(h, u).length >= 4, 50);
-  assert.equal(layers(h, 'visiShip'), 16, `远见 = 4 kills × 4 (cap 16), got ${layers(h, 'visiShip')}`);
-  assert.equal(layers(h, 'ursusShip'), 16, `乌萨斯 = 4 kills × 4 (cap 16), got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'visiShip'), 18, `远见 = 4 kills × 6 = 24 → cap 18, got ${layers(h, 'visiShip')}`);
+  assert.equal(layers(h, 'ursusShip'), 18, `乌萨斯 = 4 kills × 6 = 24 → cap 18, got ${layers(h, 'ursusShip')}`);
   done(h);
 });

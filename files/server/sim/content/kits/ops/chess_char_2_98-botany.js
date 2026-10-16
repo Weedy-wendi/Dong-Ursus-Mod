@@ -22,8 +22,8 @@
 //     她 'elementHit' 的 mul ×ep_damage_scale（pithst 同一特性的乘算口径）。
 //   - 干员自身效果【采集单第 8 项】乌萨斯齐鸣：每次开启技能时（S1/S2 均触发 —— skillStart），攻击范围内
 //     每有 1 名【乌萨斯】干员（def.raw.nationId 'ursus'，op-closur 先例；含她自己），使【乌萨斯】【助力】
-//     各 +1（普通）/ +2（精锐）层；每场战斗每个盟约最多经此叠加 8（普通）/ 16（精锐）层（2026-10-14 用户
-//     修订：4/8→8/16）[ASSUMED: 上限按盟约各自计]；**需盟约已激活才叠层**（2026-10-11 用户确认），未激活的
+//     各 +2（普通）/ +4（精锐）层（2026-10-16 用户修订：1/2→2/4）；每场战斗每个盟约最多经此叠加
+//     8（普通）/ 16（精锐）层（不变）[ASSUMED: 上限按盟约各自计]；**需盟约已激活才叠层**（2026-10-11 用户确认），未激活的
 //     盟约不提供层数；reason 'op'。「已激活」判定内联读 battle.getPlayer(pid).bonds[id].active
 //     （kit 禁 import support/index.js —— kits_layout.test.js）。
 
@@ -58,8 +58,8 @@ export default {
     const b2 = bbOf(chess, S2);
     const s2rec = skillRec(chess, S2);
     const epScale = num(tb.ep_damage_scale, 1);
-    const cryPer = chess?.isGolden ? 2 : 1;
-    const cryCap = chess?.isGolden ? 16 : 8;   // 每场每盟约上限（2026-10-14 用户修订：4/8→8/16）
+    const cryPer = chess?.isGolden ? 4 : 2;   // 每次开启技能每名【乌萨斯】加的层数（2026-10-16 用户修订：1/2→2/4）
+    const cryCap = chess?.isGolden ? 16 : 8;  // 每场每盟约上限（2026-10-16 不变：8/16）
 
     // S1 谐波破坏（默认）：下次攻击 + 侵蚀附伤 + 条件额外段
     const s1Spec = {
@@ -105,8 +105,8 @@ export default {
       talents: [{
         install(battle, unit) {
           // ---- 干员自身效果：乌萨斯齐鸣（无条件安装，先于天赋/模组分支）----
-          // 开启技能时（S1/S2 均触发）：范围内每个【乌萨斯】干员 → 已激活的【乌萨斯】【助力】各 +1/+2 层，
-          // 每场战斗每个盟约最多 4/8 层（unit.mem 记账，跨部署累计 —— unit 是每场战斗的作用域）。
+          // 开启技能时（S1/S2 均触发）：范围内每个【乌萨斯】干员 → 已激活的【乌萨斯】【助力】各 +2/+4 层，
+          // 每场战斗每个盟约最多 8/16 层（unit.mem 记账，跨部署累计 —— unit 是每场战斗的作用域）。
           battle.on('skillStart', (c) => {
             if (c.unit !== unit || unit.ownerId == null || !up(unit)) return;
             unit.mem = unit.mem || {};

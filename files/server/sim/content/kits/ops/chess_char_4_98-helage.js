@@ -18,8 +18,8 @@
 //     隐藏模组天赋（index 0 的 damage_resistance / hp_ratio）—— 庇护取最高（tier1.js holdProtect）。
 //     003「热的雪」未选用：tb.hp_ratio 缺省时免死钩子静默不装。
 //   - 干员自身效果【采集单第 8 项】老将刀意：本干员每击杀一个敌人，使**已激活的**【乌萨斯】【远见】层数
-//     +2（普通）/ +4（精锐），每场战斗每盟约最多经此叠加 8（普通）/ 16（精锐）层（2026-10-14 用户修订：
-//     原「闪避时 +1/+2、无上限」）。⚠️ 这是赫拉格自己的干员效果（reason 'op'），不是盟约效果；
+//     +3（普通）/ +6（精锐），每场战斗每盟约最多经此叠加 9（普通）/ 18（精锐）层（2026-10-16 用户修订：
+//     2/4 与 8/16 → 3/6 与 9/18）。⚠️ 这是赫拉格自己的干员效果（reason 'op'），不是盟约效果；
 //     bonds/ 下无任何新实现。击杀事件 = 引擎 'kill'（deploy.js：emit('kill', { killer, victim })）。
 //     「已激活」判定内联读 battle.getPlayer(pid).bonds[id].active（kit 禁 import support/index.js ——
 //     kits_layout.test.js；这是 support 的 bondActive 的最小内联版）。
@@ -42,8 +42,8 @@ export default {
     const t0 = talentAt(chess, 0), t1 = talentAt(chess, 1), t2 = talentAt(chess, 2);
     const tb = traitBb(chess);
     const b1 = bbOf(chess, S1), b2 = bbOf(chess, S2), b3 = bbOf(chess, S3);
-    const killGain = chess?.isGolden ? 4 : 2;   // 每次击杀加的层数（2026-10-14 用户修订：1/2→2/4）
-    const killCap = chess?.isGolden ? 16 : 8;   // 每场战斗每盟约上限（2026-10-14 用户修订：新增）
+    const killGain = chess?.isGolden ? 6 : 3;   // 每次击杀加的层数（2026-10-16 用户修订：2/4→3/6）
+    const killCap = chess?.isGolden ? 18 : 9;   // 每场战斗每盟约上限（2026-10-16 用户修订：8/16→9/18）
 
     const s2Spec = {
       kind: 'duration',
@@ -90,7 +90,7 @@ export default {
       ],
       install(battle, unit) {
         // ---- 干员自身效果：老将刀意（必须在模组分支之前，无条件安装）----
-        // 每击杀一个敌人 → 已激活的【乌萨斯】【远见】各 +2/+4 层，每场战斗每盟约最多 8/16 层
+        // 每击杀一个敌人 → 已激活的【乌萨斯】【远见】各 +3/+6 层，每场战斗每盟约最多 9/18 层
         // （unit.mem 按盟约分键记账，跨部署累计 —— unit 是每场战斗的作用域；2026-10-14 用户修订）。
         battle.on('kill', (c) => {
           if (c.killer !== unit || unit.ownerId == null) return;

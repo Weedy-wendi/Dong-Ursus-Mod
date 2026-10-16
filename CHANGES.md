@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-10-16（第七条）· 七项数值修订（用户口径）
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | ① 【东】`bb.dmg_base` 0.15→**0.25**、显示键 `dmg_disp_base` 1.15→**1.25**（每层 0.7%、每 1% 已损生命 0.4% 不变）② 缠丸 988 / 嵯峨 989 的 `garrisonDesc` 统一成「**自身已激活的盟约 +12/24**」（取消 2026-10-14 的按盟约分档）③ 【乌萨斯】`atk_per_start` 0.036→**0.054**、`atk_per_start_per_layer` 0.0006→**0.0012**、`atk_cap_per_layer` 0.009→**0.012**（`atk_cap_base` 54% 不变）④ 赫拉格 982 文案 **+3/6、上限 9/18** ⑤ 伯塔尼 981 / 乌啾 984 文案 **+2/4**（上限仍 8/16）⑥ 烈夏 987 文案写明排除名单 |
+| `files/server/sim/content/kits/ops/chess_char_3_99-gyuki.js`、`chess_char_5_97-saga.js` | `TH` 统一 `golden ? 24 : 12`（缠丸原为 { dongShip: 16/8, indomShip: 8/4 } 分档） |
+| `files/.../chess_char_4_98-helage.js` | `killGain` 4/2→**6/3**、`killCap` 16/8→**18/9** |
+| `files/.../chess_char_2_98-botany.js`、`chess_char_5_98-turdus.js` | 每次开技每名【乌萨斯】加的层数 2/1→**4/2**（`cryCap`/`layerCap` 仍 16/8） |
+| `files/.../chess_char_5_98-turdus.js` | **范围键修正**：`a.tileR * 1000 + a.tileC` → `a.tileR * COLS + a.tileC`（引擎建 `rangeKeySet` 用的是 `r*COLS+c`；原写法永远匹配不上，导致「范围内每名【乌萨斯】」实际只数到她自己） |
+| `patches/01-mod-shared.patch` | 本体侧四处：`bonds/core.js` 东/乌萨斯兜底默认值 + 注释；`garrisons/meta.js` 新增 `LETO_ITEM_EXCLUDE` 名单与 `maxTier cap 5`；**新目标** `server/match/match/spDraft.js` 的 `rollItemId({ exclude })` |
+| `files/test/content/dong_bond.test.js`（新）、`kits_char_{2,4,5}_98.test.js`、`ursus_bond.test.js` | 【东】伤害公式新增测试；三条特质的期望值按新数值改写 |
+| `i18n/mod-i18n.json` | 12 条特质 × 4 语言的 `desc`/`descRaw` 按各自语言改数值并重算 `_h`（144 行） |
+| `scripts/verify.mjs` | 测试清单加 `test/content/dong_bond.test.js` |
+| `mod.json` | 重新生成指纹：`patched` 73→**74**（+spDraft.js）、`owned` 29→**30**（+dong_bond.test.js） |
+
+### 为什么
+
+用户第七条口径给出的七项数值（【东】3 人公式、缠丸/嵯峨叠层、乌萨斯 3 人公式、赫拉格/伯塔尼/乌啾加层、烈夏道具池）。
+烈夏那条用 `rollItemId({ maxTier, exclude })` 实现：排除名单 12 个 id，其中 7 个（突变细胞、画卷、教鞭、战栗/坚固/加速/灼燃维式重锤）本来就不在商店池里（`isShopItem` 要求 `!isGolden && !shopExcluded`），列全只为口径完整；真正被移出池子的是 **13 件 6 阶 + 5 件 5 阶**（信标/拟态物质/博士投影/商业包装方案/天马之盔），池子 55→37。
+普通维式重锤 `chess_item_1_01_e_a` 保留。
+
+### 怎么验的
+
+| 步骤 | 结果 |
+|---|---|
+| `node tools/build-data.mjs` | chess 292 / bonds 25 / garrisons 275 / items 123（计数不变，只改数值）；10 条既有 warning（模组 trap 缺表等） |
+| data 抽查 | `bondeffect_dong.bb` = 0.25 / 0.007 / 1.25 / 0.004；`bondeffect_ursus.bb` = 0.054 / 0.0012 / 0.54 / 0.012；12 条 garrison 文案为新值 |
+| i18n 四连 | build-i18n 23781/24313（97.8%）→ apply-i18n en 44 / ja 38 / ko 38 / zh-TW 38 → prune-stale 3/4/4/4 → rehash-families 12 处；`test/i18n-data.test.js` **stale=0** |
+| `node --test`（本次相关 6 个文件） | 31 项：**29 pass / 2 fail**（两条是我自己测试写法的假失败，已在下一次修掉） |
+| 修完后重跑 `kits_char_2_98 / kits_char_5_98` | **9 pass / 0 fail** |
+| `scripts/verify.mjs`（mod 测试子集 21 个文件） | 276 项：**273 pass / 3 fail**，3 条全部是本体树里**别人正在写的雷姆必拓（rimBillitonShip）WIP** 造成的（`data.test.js` 期望 26 盟约、`backups.test.js` 的 rim 计数、`build-data` 完整性自检），与本条改动无关 |
+| 补丁回环 | 新版 `patches/01`：24 个文件 / 76680 B / rim 命中 0；`git apply --check` + 实套到纯净基线后 **24/24 文件与预期状态逐字节一致** |
+| `tools/make-manifest.mjs` | 补丁在纯净副本上套用成功、0 `.rej`；`base.files 86 · patched 74 · owned 30` |
+
+**测试写法说明**：伯塔尼/乌啾这两条特质的原测试依赖「自然攒满技力开技」，但该阵型 110 s 内根本不会开技，旧断言其实是 `0 == 0` 通过。现在改成 `battle.emit('skillStart', { unit })` 直接触发（先 `step(1)` 让单位部署完成），断言真实数值。
+
+---
+
 ## 2026-10-16（第六条）· v1.0.5：卸载默认「彻底删除本 mod 的东西」，且不误伤别的 mod
 
 ### 改了什么

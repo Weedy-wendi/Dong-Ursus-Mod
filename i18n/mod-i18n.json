@@ -34,28 +34,28 @@
         "_h": "wxwx3p"
       },
       "garrison_981_a": {
-        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to the active 【Ursus】 and 【Support】 bonds (each capped at 8 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to the active 【Ursus】 and 【Support】 bonds (each capped at 8 per battle; the bonds must be active)",
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 8 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 8 per battle; the bonds must be active)",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "nxnxmz"
+        "_h": "e2e2mz"
       },
       "garrison_981_b": {
-        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 16 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 16 per battle; the bonds must be active)",
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +4 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 16 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +4 layers to the active 【Ursus】 and 【Support】 bonds (each capped at 16 per battle; the bonds must be active)",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "0p0pmz"
+        "_h": "qfqfmz"
       },
       "garrison_982_a": {
-        "desc": "While in battle: each time she kills an enemy, +2 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 8 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she kills an enemy, +2 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 8 per battle; the bonds must be active)",
+        "desc": "While in battle: each time she kills an enemy, +3 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 9 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she kills an enemy, +3 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 9 per battle; the bonds must be active)",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "xsxsmz"
+        "_h": "3c3cmz"
       },
       "garrison_982_b": {
-        "desc": "While in battle: each time she kills an enemy, +4 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 16 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she kills an enemy, +4 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 16 per battle; the bonds must be active)",
+        "desc": "While in battle: each time she kills an enemy, +6 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 18 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she kills an enemy, +6 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 18 per battle; the bonds must be active)",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "m5m5mz"
+        "_h": "yhyhmz"
       },
       "garrison_983_a": {
         "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Precision】 bonds, her ATK +1%",
@@ -70,16 +70,16 @@
         "_h": "jhjh3p"
       },
       "garrison_984_a": {
-        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to 【Ursus】 and 【Swiftness】 (each capped at 8 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +1 layer to 【Ursus】 and 【Swiftness】 (each capped at 8 per battle; the bonds must be active)",
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to 【Ursus】 and 【Swiftness】 (each capped at 8 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to 【Ursus】 and 【Swiftness】 (each capped at 8 per battle; the bonds must be active)",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "3w3wmz"
+        "_h": "ffffmz"
       },
       "garrison_984_b": {
-        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to 【Ursus】 and 【Swiftness】 (each capped at 16 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +2 layers to 【Ursus】 and 【Swiftness】 (each capped at 16 per battle; the bonds must be active)",
+        "desc": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +4 layers to 【Ursus】 and 【Swiftness】 (each capped at 16 per battle; the bonds must be active)",
+        "descRaw": "While in battle: each time she activates a skill, for every 【Ursus】 operator in her attack range, +4 layers to 【Ursus】 and 【Swiftness】 (each capped at 16 per battle; the bonds must be active)",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "8a8amz"
+        "_h": "jcjcmz"
       },
       "garrison_985_a": {
         "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Arcane】 bonds, her ATK +1%",
@@ -106,40 +106,40 @@
         "_h": "5q5qmz"
       },
       "garrison_987_a": {
-        "desc": "When gained: gain 1 item",
-        "descRaw": "When gained: gain 1 item",
+        "desc": "When gained: gain 1 item (excluding tier-6 items, Transmitter, Doctor Hologram, Mimic Matter, Dusk's Scroll, Commercial Packaging Plan, Pointing Stick, Pegasian Helm, Mutated Cells, and any Victorian Hammer other than the plain one)",
+        "descRaw": "When gained: gain 1 item (excluding tier-6 items, Transmitter, Doctor Hologram, Mimic Matter, Dusk's Scroll, Commercial Packaging Plan, Pointing Stick, Pegasian Helm, Mutated Cells, and any Victorian Hammer other than the plain one)",
         "eventTypeDesc": "One-shot stacking",
-        "_h": "cocojf"
+        "_h": "8t8tjf"
       },
       "garrison_987_b": {
-        "desc": "When gained: gain 2 items",
-        "descRaw": "When gained: gain 2 items",
+        "desc": "When gained: gain 2 items (excluding tier-6 items, Transmitter, Doctor Hologram, Mimic Matter, Dusk's Scroll, Commercial Packaging Plan, Pointing Stick, Pegasian Helm, Mutated Cells, and any Victorian Hammer other than the plain one)",
+        "descRaw": "When gained: gain 2 items (excluding tier-6 items, Transmitter, Doctor Hologram, Mimic Matter, Dusk's Scroll, Commercial Packaging Plan, Pointing Stick, Pegasian Helm, Mutated Cells, and any Victorian Hammer other than the plain one)",
         "eventTypeDesc": "One-shot stacking",
-        "_h": "n7n7jf"
+        "_h": "xexejf"
       },
       "garrison_988_a": {
-        "desc": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +8 stacks and [Resilient] gains +4 stacks",
-        "descRaw": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +8 stacks and [Resilient] gains +4 stacks",
+        "desc": "While in battle: the first time her own HP drops below 70% each battle, each of her activated bonds gains +12 stacks",
+        "descRaw": "While in battle: the first time her own HP drops below 70% each battle, each of her activated bonds gains +12 stacks",
         "eventTypeDesc": "Can stack",
-        "_h": "ninimz"
+        "_h": "rbrbmz"
       },
       "garrison_988_b": {
-        "desc": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +16 stacks and [Resilient] gains +8 stacks",
-        "descRaw": "While in battle: the first time her own HP drops below 70% each battle, her activated [Dong] bond gains +16 stacks and [Resilient] gains +8 stacks",
+        "desc": "While in battle: the first time her own HP drops below 70% each battle, each of her activated bonds gains +24 stacks",
+        "descRaw": "While in battle: the first time her own HP drops below 70% each battle, each of her activated bonds gains +24 stacks",
         "eventTypeDesc": "Can stack",
-        "_h": "ljljmz"
+        "_h": "g8g8mz"
       },
       "garrison_989_a": {
-        "desc": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +8 stacks",
-        "descRaw": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +8 stacks",
+        "desc": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +12 stacks",
+        "descRaw": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +12 stacks",
         "eventTypeDesc": "Can stack",
-        "_h": "5959mz"
+        "_h": "9y9ymz"
       },
       "garrison_989_b": {
-        "desc": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +16 stacks",
-        "descRaw": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +16 stacks",
+        "desc": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +24 stacks",
+        "descRaw": "While in battle: she and the Operator in front of her gain the trait — the first time their HP drops below 70% each battle, each of their activated bonds gains +24 stacks",
         "eventTypeDesc": "Can stack",
-        "_h": "9m9mmz"
+        "_h": "spspmz"
       },
       "garrison_990_a": {
         "desc": "When gained: +3 layers to the activated bond with the most layers",
@@ -334,28 +334,28 @@
         "_h": "wxwx3p"
       },
       "garrison_981_a": {
-        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+2（各戦闘で各最大8層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+2（各戦闘で各最大8層、同盟発動中のみ）",
         "eventTypeDesc": "持続スタック",
-        "_h": "nxnxmz"
+        "_h": "e2e2mz"
       },
       "garrison_981_b": {
-        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+4（各戦闘で各最大16層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、発動中の【ウルサス】【支援】のレベル+4（各戦闘で各最大16層、同盟発動中のみ）",
         "eventTypeDesc": "持続スタック",
-        "_h": "0p0pmz"
+        "_h": "qfqfmz"
       },
       "garrison_982_a": {
-        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+2（各戦闘で最大8層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+2（各戦闘で最大8層、同盟発動中のみ）",
+        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+3（各戦闘で最大9層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+3（各戦闘で最大9層、同盟発動中のみ）",
         "eventTypeDesc": "持続スタック",
-        "_h": "xsxsmz"
+        "_h": "3c3cmz"
       },
       "garrison_982_b": {
-        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+4（各戦闘で最大16層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+4（各戦闘で最大16層、同盟発動中のみ）",
+        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+6（各戦闘で最大18層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+6（各戦闘で最大18層、同盟発動中のみ）",
         "eventTypeDesc": "持続スタック",
-        "_h": "m5m5mz"
+        "_h": "yhyhmz"
       },
       "garrison_983_a": {
         "desc": "<戦闘中>発動中の【ウルサス】と【精密】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
@@ -370,16 +370,16 @@
         "_h": "jhjh3p"
       },
       "garrison_984_a": {
-        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+1（各戦闘で各最大8層、同盟発動中のみ）",
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+2（各戦闘で各最大8層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+2（各戦闘で各最大8層、同盟発動中のみ）",
         "eventTypeDesc": "持続スタック",
-        "_h": "3w3wmz"
+        "_h": "ffffmz"
       },
       "garrison_984_b": {
-        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+2（各戦闘で各最大16層、同盟発動中のみ）",
+        "desc": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+4（各戦闘で各最大16層、同盟発動中のみ）",
+        "descRaw": "<戦闘中>スキル発動時、攻撃範囲内の【ウルサス】オペレーター1人につき、【ウルサス】【迅速】のレベル+4（各戦闘で各最大16層、同盟発動中のみ）",
         "eventTypeDesc": "持続スタック",
-        "_h": "8a8amz"
+        "_h": "jcjcmz"
       },
       "garrison_985_a": {
         "desc": "<戦闘中>発動中の【ウルサス】と【魔術】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
@@ -406,40 +406,40 @@
         "_h": "5q5qmz"
       },
       "garrison_987_a": {
-        "desc": "<获得干员时>获得1个道具",
-        "descRaw": "<获得干员时>获得1个道具",
+        "desc": "<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
+        "descRaw": "<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
         "eventTypeDesc": "単発スタック",
-        "_h": "cocojf"
+        "_h": "8t8tjf"
       },
       "garrison_987_b": {
-        "desc": "<获得干员时>获得2个道具",
-        "descRaw": "<获得干员时>获得2个道具",
+        "desc": "<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
+        "descRaw": "<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
         "eventTypeDesc": "単発スタック",
-        "_h": "n7n7jf"
+        "_h": "xexejf"
       },
       "garrison_988_a": {
-        "desc": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+8スタック、【不屈】に+4スタック",
-        "descRaw": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+8スタック、【不屈】に+4スタック",
+        "desc": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の盟約に+12スタック",
+        "descRaw": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の盟約に+12スタック",
         "eventTypeDesc": "重複可能",
-        "_h": "ninimz"
+        "_h": "rbrbmz"
       },
       "garrison_988_b": {
-        "desc": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+16スタック、【不屈】に+8スタック",
-        "descRaw": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の【東】に+16スタック、【不屈】に+8スタック",
+        "desc": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の盟約に+24スタック",
+        "descRaw": "<戦闘中>自身のHPが初めて70%未満まで低下した時、発動中の自身の盟約に+24スタック",
         "eventTypeDesc": "重複可能",
-        "_h": "ljljmz"
+        "_h": "g8g8mz"
       },
       "garrison_989_a": {
-        "desc": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+8スタック",
-        "descRaw": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+8スタック",
+        "desc": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+12スタック",
+        "descRaw": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+12スタック",
         "eventTypeDesc": "重複可能",
-        "_h": "5959mz"
+        "_h": "9y9ymz"
       },
       "garrison_989_b": {
-        "desc": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+16スタック",
-        "descRaw": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+16スタック",
+        "desc": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+24スタック",
+        "descRaw": "<戦闘中>自身と目の前のオペレーターは特性を獲得：戦闘中HPが初めて70%未満まで低下した時、発動中の自身の盟約に+24スタック",
         "eventTypeDesc": "重複可能",
-        "_h": "9m9mmz"
+        "_h": "spspmz"
       },
       "garrison_990_a": {
         "desc": "<獲得時>発動中の盟約のうち最も層の多いもの+3層",
@@ -634,28 +634,28 @@
         "_h": "wxwx3p"
       },
       "garrison_981_a": {
-        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +2（전투당 각 최대 8층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +2（전투당 각 최대 8층, 동맹 발동 필요）",
         "eventTypeDesc": "지속 스택",
-        "_h": "nxnxmz"
+        "_h": "e2e2mz"
       },
       "garrison_981_b": {
-        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +4（전투당 각 최대 16층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 발동 중인 【우르서스】【지원】 레이어 +4（전투당 각 최대 16층, 동맹 발동 필요）",
         "eventTypeDesc": "지속 스택",
-        "_h": "0p0pmz"
+        "_h": "qfqfmz"
       },
       "garrison_982_a": {
-        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +2（전투당 최대 8층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +2（전투당 최대 8층, 동맹 발동 필요）",
+        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +3（전투당 최대 9층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +3（전투당 최대 9층, 동맹 발동 필요）",
         "eventTypeDesc": "지속 스택",
-        "_h": "xsxsmz"
+        "_h": "3c3cmz"
       },
       "garrison_982_b": {
-        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +4（전투당 최대 16층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +4（전투당 최대 16층, 동맹 발동 필요）",
+        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +6（전투당 최대 18층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +6（전투당 최대 18층, 동맹 발동 필요）",
         "eventTypeDesc": "지속 스택",
-        "_h": "m5m5mz"
+        "_h": "yhyhmz"
       },
       "garrison_983_a": {
         "desc": "<전투 중> 발동 중인 【우르서스】와 【정밀】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
@@ -670,16 +670,16 @@
         "_h": "jhjh3p"
       },
       "garrison_984_a": {
-        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +1（전투당 각 최대 8층, 동맹 발동 필요）",
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +2（전투당 각 최대 8층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +2（전투당 각 최대 8층, 동맹 발동 필요）",
         "eventTypeDesc": "지속 스택",
-        "_h": "3w3wmz"
+        "_h": "ffffmz"
       },
       "garrison_984_b": {
-        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +2（전투당 각 최대 16층, 동맹 발동 필요）",
+        "desc": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +4（전투당 각 최대 16층, 동맹 발동 필요）",
+        "descRaw": "<전투 중> 스킬 발동 시, 공격 범위 내 【우르서스】 오퍼레이터 1명당 【우르서스】【신속】 레이어 +4（전투당 각 최대 16층, 동맹 발동 필요）",
         "eventTypeDesc": "지속 스택",
-        "_h": "8a8amz"
+        "_h": "jcjcmz"
       },
       "garrison_985_a": {
         "desc": "<전투 중> 발동 중인 【우르서스】와 【비술】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
@@ -706,40 +706,40 @@
         "_h": "5q5qmz"
       },
       "garrison_987_a": {
-        "desc": "<获得干员时>获得1个道具",
-        "descRaw": "<获得干员时>获得1个道具",
+        "desc": "<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
+        "descRaw": "<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
         "eventTypeDesc": "단발 스택",
-        "_h": "cocojf"
+        "_h": "8t8tjf"
       },
       "garrison_987_b": {
-        "desc": "<获得干员时>获得2个道具",
-        "descRaw": "<获得干员时>获得2个道具",
+        "desc": "<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
+        "descRaw": "<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
         "eventTypeDesc": "단발 스택",
-        "_h": "n7n7jf"
+        "_h": "xexejf"
       },
       "garrison_988_a": {
-        "desc": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +8스택, [불굴] +4스택",
-        "descRaw": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +8스택, [불굴] +4스택",
+        "desc": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +12스택",
+        "descRaw": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +12스택",
         "eventTypeDesc": "중복 가능",
-        "_h": "ninimz"
+        "_h": "rbrbmz"
       },
       "garrison_988_b": {
-        "desc": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +16스택, [불굴] +8스택",
-        "descRaw": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 [동] +16스택, [불굴] +8스택",
+        "desc": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +24스택",
+        "descRaw": "<전투 중> 자신의 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +24스택",
         "eventTypeDesc": "중복 가능",
-        "_h": "ljljmz"
+        "_h": "g8g8mz"
       },
       "garrison_989_a": {
-        "desc": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +8스택",
-        "descRaw": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +8스택",
+        "desc": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +12스택",
+        "descRaw": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +12스택",
         "eventTypeDesc": "중복 가능",
-        "_h": "5959mz"
+        "_h": "9y9ymz"
       },
       "garrison_989_b": {
-        "desc": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +16스택",
-        "descRaw": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +16스택",
+        "desc": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +24스택",
+        "descRaw": "<전투 중> 자신과 앞의 오퍼레이터가 특성 획득: 전투 중 HP가 처음으로 70% 미만으로 떨어졌을 때, 발동 중인 자신의 동맹 +24스택",
         "eventTypeDesc": "중복 가능",
-        "_h": "9m9mmz"
+        "_h": "spspmz"
       },
       "garrison_990_a": {
         "desc": "<획득 시> 발동 중인 동맹 중 가장 많은 레이어의 동맹 +3레이어",
@@ -934,28 +934,28 @@
         "_h": "wxwx3p"
       },
       "garrison_981_a": {
-        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
-        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+2（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+2（每場戰鬥每種最多疊加8層，需盟約已激活）",
         "eventTypeDesc": "持續疊加",
-        "_h": "nxnxmz"
+        "_h": "e2e2mz"
       },
       "garrison_981_b": {
-        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
-        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+4（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使已激活的【烏薩斯】【助力】層數+4（每場戰鬥每種最多疊加16層，需盟約已激活）",
         "eventTypeDesc": "持續疊加",
-        "_h": "0p0pmz"
+        "_h": "qfqfmz"
       },
       "garrison_982_a": {
-        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+2（每場戰鬥最多疊加8層，需盟約已激活）",
-        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+2（每場戰鬥最多疊加8層，需盟約已激活）",
+        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+3（每場戰鬥最多疊加9層，需盟約已激活）",
+        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+3（每場戰鬥最多疊加9層，需盟約已激活）",
         "eventTypeDesc": "持續疊加",
-        "_h": "xsxsmz"
+        "_h": "3c3cmz"
       },
       "garrison_982_b": {
-        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+4（每場戰鬥最多疊加16層，需盟約已激活）",
-        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+4（每場戰鬥最多疊加16層，需盟約已激活）",
+        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+6（每場戰鬥最多疊加18層，需盟約已激活）",
+        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+6（每場戰鬥最多疊加18層，需盟約已激活）",
         "eventTypeDesc": "持續疊加",
-        "_h": "m5m5mz"
+        "_h": "yhyhmz"
       },
       "garrison_983_a": {
         "desc": "<戰鬥中>己方已激活的【烏薩斯】與【精準】的盟約層數每合計達到3層，自身攻擊力+1%",
@@ -970,16 +970,16 @@
         "_h": "jhjh3p"
       },
       "garrison_984_a": {
-        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
-        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+1（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+2（每場戰鬥每種最多疊加8層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+2（每場戰鬥每種最多疊加8層，需盟約已激活）",
         "eventTypeDesc": "持續疊加",
-        "_h": "3w3wmz"
+        "_h": "ffffmz"
       },
       "garrison_984_b": {
-        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
-        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+2（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "desc": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+4（每場戰鬥每種最多疊加16層，需盟約已激活）",
+        "descRaw": "<戰鬥中>每次開啟技能時，攻擊範圍內每有1名【烏薩斯】幹員，使【烏薩斯】【迅捷】層數+4（每場戰鬥每種最多疊加16層，需盟約已激活）",
         "eventTypeDesc": "持續疊加",
-        "_h": "8a8amz"
+        "_h": "jcjcmz"
       },
       "garrison_985_a": {
         "desc": "<戰鬥中>己方已激活的【烏薩斯】與【奧術】的盟約層數每合計達到3層，自身攻擊力+1%",
@@ -1006,40 +1006,40 @@
         "_h": "5q5qmz"
       },
       "garrison_987_a": {
-        "desc": "<获得干员时>获得1个道具",
-        "descRaw": "<获得干员时>获得1个道具",
+        "desc": "<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
+        "descRaw": "<获得干员时>获得1个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
         "eventTypeDesc": "單次疊加",
-        "_h": "cocojf"
+        "_h": "8t8tjf"
       },
       "garrison_987_b": {
-        "desc": "<获得干员时>获得2个道具",
-        "descRaw": "<获得干员时>获得2个道具",
+        "desc": "<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
+        "descRaw": "<获得干员时>获得2个道具（不含6阶道具、信标、博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及普通维式重锤以外的维式重锤）",
         "eventTypeDesc": "單次疊加",
-        "_h": "n7n7jf"
+        "_h": "xexejf"
       },
       "garrison_988_a": {
-        "desc": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+8層、【不屈】+4層",
-        "descRaw": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+8層、【不屈】+4層",
+        "desc": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的盟約+12層",
+        "descRaw": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的盟約+12層",
         "eventTypeDesc": "持續疊加",
-        "_h": "ninimz"
+        "_h": "rbrbmz"
       },
       "garrison_988_b": {
-        "desc": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+16層、【不屈】+8層",
-        "descRaw": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的【東】+16層、【不屈】+8層",
+        "desc": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的盟約+24層",
+        "descRaw": "<戰鬥中>每場戰鬥自身生命值首次降低至70%以下時，使自身已激活的盟約+24層",
         "eventTypeDesc": "持續疊加",
-        "_h": "ljljmz"
+        "_h": "g8g8mz"
       },
       "garrison_989_a": {
-        "desc": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+8層",
-        "descRaw": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+8層",
+        "desc": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+12層",
+        "descRaw": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+12層",
         "eventTypeDesc": "持續疊加",
-        "_h": "5959mz"
+        "_h": "9y9ymz"
       },
       "garrison_989_b": {
-        "desc": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+16層",
-        "descRaw": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+16層",
+        "desc": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+24層",
+        "descRaw": "<戰鬥中>自身和身前的幹員獲得特質：每場戰鬥生命值首次降低至70%以下時，使自身已激活的盟約+24層",
         "eventTypeDesc": "持續疊加",
-        "_h": "9m9mmz"
+        "_h": "spspmz"
       },
       "garrison_990_a": {
         "desc": "<獲得干員時>已激活的層數最高的盟約+3層",

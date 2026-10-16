@@ -15,10 +15,11 @@
 //     agoat2 先例）→ 治疗的所有目标获得迷彩 12s（battle camou，buffs.js）。
 //   - 模组 XAH-X（精锐 stage1，数据承载 attr {hp165,atk38} + 特性 falloff 覆写）。
 //   - 干员自身效果【采集单第 8 项】病床巡视（garrison_984）：每次开启技能时，攻击范围内每有 1 名【乌萨斯】干员
-//     （def.raw.nationId 'ursus'，含她自己），使已激活的【乌萨斯】【迅捷】层数 +1（普通）/ +2（精锐）——每场
-//     战斗每种盟约最多 12/24 层（unit.mem 记账，同 op-botany 乌萨斯齐鸣的写法与口径）。
+//     （def.raw.nationId 'ursus'，含她自己），使已激活的【乌萨斯】【迅捷】层数 +2（普通）/ +4（精锐）
+//     （2026-10-16 用户修订：1/2→2/4）——每场战斗每种盟约最多 8/16 层（unit.mem 记账，同 op-botany 乌萨斯齐鸣的写法与口径）。
 
 import { num, talentBb, skillRec, up } from '../shared/tier1.js';
+import { COLS } from '../../../constants.js';
 
 const S1 = 'skchr_turdus_1';
 const S2 = 'skchr_turdus_2';
@@ -26,8 +27,10 @@ const JUMP_KEY = 'talent:turdus:ownJump';
 
 const bbOf = (chess, id) => skillRec(chess, id)?.bb ?? {};
 const isUrsus = (a) => !!a && a.kind === 'op' && (a.def?.raw?.nationId ?? a.def?.nationId) === 'ursus';
+// 2026-10-16 修正：范围键是 r*COLS+c（queries.js 建 rangeKeySet、tokens.js/tier6.js 都这么算），
+// 原来写死 1000 永远匹配不上 → 「范围内每名【乌萨斯】」实际只数到她自己（A 档永远 +1 人）。
 const inRangeOf = (unit, a) => !!(unit.rangeKeySet && a && Number.isInteger(a.tileR) && Number.isInteger(a.tileC)
-  && unit.rangeKeySet.has(a.tileR * 1000 + a.tileC));
+  && unit.rangeKeySet.has(a.tileR * COLS + a.tileC));
 /** 久病良医: candidates bb {0:1.25,1:1.25}——官方字段缺相位区分，按解锁相位取 E1/E2（PRTS 110%/120%）。 */
 const OWN_JUMP = (chess) => (chess?.isGolden ? 1.2 : 1.1);
 
@@ -35,8 +38,8 @@ export default {
   chess_char_5_98_a: (bb, chess) => {
     const t0 = talentBb(chess, 0);
     const b1 = bbOf(chess, S1), b2 = bbOf(chess, S2);
-    const layerPer = chess?.isGolden ? 2 : 1;
-    const layerCap = chess?.isGolden ? 16 : 8;
+    const layerPer = chess?.isGolden ? 4 : 2;   // 每次开启技能每名【乌萨斯】加的层数（2026-10-16 用户修订：1/2→2/4）
+    const layerCap = chess?.isGolden ? 16 : 8;  // 每场每盟约上限（2026-10-16 不变：8/16）
 
     /** S2: the one immediate heal — lowest-hp injured ally in range (herself included), one target. */
     const pickPatient = (battle, unit) => {
@@ -113,8 +116,8 @@ export default {
       ],
       install(battle, unit) {
         // ---- 干员自身效果：病床巡视（无条件安装，先于模组分支）----
-        // 每次开启技能时：范围内每有 1 名【乌萨斯】干员（含她自己）→ 已激活的【乌萨斯】【迅捷】各 +1/+2 层，
-        // 每场战斗每种最多 12/24 层（unit.mem 记账，跨部署累计——unit 是每场战斗的作用域）。
+        // 每次开启技能时：范围内每有 1 名【乌萨斯】干员（含她自己）→ 已激活的【乌萨斯】【迅捷】各 +2/+4 层，
+        // 每场战斗每种最多 8/16 层（unit.mem 记账，跨部署累计——unit 是每场战斗的作用域）。
         battle.on('skillStart', (c) => {
           if (c.unit !== unit || unit.ownerId == null || !up(unit)) return;
           unit.mem = unit.mem || {};

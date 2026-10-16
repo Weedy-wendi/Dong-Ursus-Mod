@@ -13,6 +13,7 @@ const files = [
   'test/backups.test.js',         // 自定义预设棋子的 backup 行（146/87 计数 + skip 守卫）
   'test/i18n-data.test.js',       // 四语言 overlay stale=0
   'test/content/ursus_bond.test.js',   // 【乌萨斯】盟约（叠攻/周边技回/带装备倍率）
+  'test/content/dong_bond.test.js',    // 【东】盟约（3人 伤害公式：基础/每层/已损失生命比例）
   'test/content/garrisons_meta.test.js', // 特质 prep 侧（含 988-992 自定义处理器）
   'test/content/garrisons_battle.test.js', // 特质战斗侧 + 覆盖率
   'test/content/items.test.js',   // 四件装备（行为 + 123 计数 + 覆盖率）

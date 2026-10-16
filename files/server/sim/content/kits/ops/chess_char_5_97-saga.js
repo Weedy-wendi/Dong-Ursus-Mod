@@ -11,9 +11,9 @@
 //     检测击杀其中重伤单位（killer 嵯峨）。
 //   - S3 怒目（默认，见 chess.json defaultSkillIndex 2）：持续回费、间隔 +0.5、距离 +1、ATK +atk、同时攻击阻挡
 //     的所有敌人、目标低于 attack@hp_ratio 追加一次攻击。
-//   - 干员自身效果【采集单第 8 项】同门切磋（garrison_989，2026-10-14 用户修订：单血线 70%，+8/16，
+//   - 干员自身效果【采集单第 8 项】同门切磋（garrison_989，2026-10-16 用户修订：单血线 70%，+12/24，
 //     只加**已激活**的自身盟约 —— 加层目标回到第三次口径）：自身和身前的干员获得特质 —— 每场战斗生命值首次
-//     降低至 70% 以下时，使**该干员自身所属盟约中已激活者** +8/16。⚠️ 她自己的干员效果（reason 'op' 由加层方标注）。
+//     降低至 70% 以下时，使**该干员自身所属盟约中已激活者** +12/24。⚠️ 她自己的干员效果（reason 'op' 由加层方标注）。
 //     口径 [ASSUMED]：部署时判定身前干员（身前无干员则只授予自身）；每来源独立记账（与缠丸的特质互不占用）。
 
 import { num, talentBb, moduleBb, traitBb, skillRec, toggleBuff, batMod, giveSp, up } from '../shared/tier1.js';
@@ -33,8 +33,8 @@ const X6 = Object.freeze([[2, 0], [1, 0], [0, -2], [0, -1], [0, 0], [0, 1], [0, 
 /** 除恶's selection: ground enemies only ("地面敌人"), 重伤 ones included (no skipEnemy). */
 const GROUND = Object.freeze({ canHitFly: false, groundOnly: true });
 
-/** 干员自身效果（同门切磋）：血线加层数值（普通形态 / 精锐形态）：70% 线 → +8/16（2026-10-14 用户修订）。 */
-const TH = (golden) => (golden ? 16 : 8);
+/** 干员自身效果（同门切磋）：血线加层数值（普通形态 / 精锐形态）：70% 线 → +12/24（2026-10-16 用户修订）。 */
+const TH = (golden) => (golden ? 24 : 12);
 
 /** Is `e` 重伤 (whoever put it there)? */
 export const isDying = (e) => !!(e && typeof e.findBuff === 'function' && e.findBuff(DYING));
