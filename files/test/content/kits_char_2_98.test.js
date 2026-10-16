@@ -1,7 +1,7 @@
 // test/content/kits_char_2_98.test.js — 伯塔尼 (chess_char_2_98, 自定义 5★ 巫役, tier 2) kit tests:
 // form + kit identity, S1 谐波破坏's erosion rider and its conditional extra segment, the RIT-X module's
 // ×ep_damage_scale vs elite enemies, T1 背弃沉默's ASPD stacks on an erosion burst, and the operator's own
-// effect 乌萨斯齐鸣 (every skill start → +2/+4 layers per ursus operator in range, activated bonds only, 8/16 cap).
+// effect 乌萨斯齐鸣 (every skill start → +3/+6 【乌萨斯】 layers per ursus operator in range, activated bond only, 12/24 cap).
 // Run: node --test test/content/kits_char_2_98.test.js
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -89,7 +89,7 @@ test('背弃沉默: an erosion burst inside her range stacks the ASPD talent (�
   done(h);
 });
 
-test('乌萨斯齐鸣: every skill start gives the activated 【乌萨斯】/【助力】+2 per ursus operator in range (cap 8, normal)', () => {
+test('乌萨斯齐鸣 (2026-10-17 用户修订): every skill start gives the activated 【乌萨斯】+3 per ursus operator in range (cap 12, normal)', () => {
   const field = (bonds) => makeBattle({
     defs: { enemies: ENEMIES },
     units: [
@@ -105,16 +105,17 @@ test('乌萨斯齐鸣: every skill start gives the activated 【乌萨斯】/【
   h.step(1);   // 先推进一帧：单位部署完、盟约装好，处理器里的 up(unit) 才为真
   // 开技事件直接 emit：与 5_98 同理——等自然攒技力等不到，旧断言其实是 0 == 0 通过。
   const castOnce = () => { h.b.emit('skillStart', { unit: u }); h.run(0.05); };
-  // 范围内 2 名【乌萨斯】（她自己 + 赫拉格）× 每人 +2 = +4（2026-10-16 用户修订：1/2 → 2/4）
+  // 范围内 2 名【乌萨斯】（她自己 + 赫拉格）× 每人 +3 = +6（2026-10-17 用户修订：2/4 → 3/6）
   castOnce();
-  assert.equal(layers(h, 'ursusShip'), 4, `乌萨斯 1 次开技 = 2 人 × 2 = 4, got ${layers(h, 'ursusShip')}`);
-  assert.equal(layers(h, 'deputShip'), 4, '助力 mirrors 乌萨斯');
-  // 2 次开技即到本场上限 8（2026-10-16：上限不变）
+  assert.equal(layers(h, 'ursusShip'), 6, `乌萨斯 1 次开技 = 2 人 × 3 = 6, got ${layers(h, 'ursusShip')}`);
+  // 2026-10-17 用户修订：加层目标由【乌萨斯】【助力】收窄为**仅【乌萨斯】**——助力不再被喂
+  assert.equal(layers(h, 'deputShip'), 0, `助力不再被喂, got ${layers(h, 'deputShip')}`);
+  // 2 次开技即到本场上限 12（2026-10-17：8/16 → 12/24）
   castOnce();
-  assert.equal(layers(h, 'ursusShip'), 8, `乌萨斯 2 次开技 = 8, got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'ursusShip'), 12, `乌萨斯 2 次开技 = 12（到本场上限）, got ${layers(h, 'ursusShip')}`);
   castOnce();
-  assert.equal(layers(h, 'ursusShip'), 8, `乌萨斯 capped at 8, got ${layers(h, 'ursusShip')}`);
-  assert.equal(layers(h, 'deputShip'), 8, '助力 mirrors 乌萨斯');
+  assert.equal(layers(h, 'ursusShip'), 12, `乌萨斯 capped at 12, got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'deputShip'), 0, '助力始终为 0');
   done(h);
 
   // inactive bonds gain nothing (2026-10-11 用户确认: 需盟约激活才叠层)

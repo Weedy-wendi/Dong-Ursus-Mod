@@ -11,8 +11,9 @@
 //     每次命中刷新）；期间溅射半径缩小为 0.75（PRTS ※开启后飞镖溅射范围缩小为半径 0.75）、飞镖可对其移动路径
 //     中的敌人造成伤害（溅射层天然覆盖弹道路径 [ASSUMED]）。
 //   - 模组 ART-Y（精锐 stage1）：特性追加「攻击时无视敌人100点防御力」→ mods.defIgnoreFlat（moduleBb）。
-//   - 干员自身效果【采集单第 8 项】武库清点（garrison_990）：<获得干员时>**已激活的**层数最高的盟约 +3/6
-//     （2026-10-13 二次修订：未激活的盟约不参与；并列 → 盟约表序第一）—— prep 事件，
+//   - 干员自身效果【采集单第 8 项】武库清点（garrison_990）：<获得干员时>**自身所属盟约** +4/8
+//     （2026-10-17 用户修订：原「已激活的层数最高的盟约 +3/6」→ 与吉星 991 同口径：自身全部所属盟约、
+//     未激活也加，不挑层数最高者）—— prep 事件，
 //     走 garrisons/meta.js 自定义处理器 act2autochess_gar_eff_990_a/b（SERVER_GAIN），本 kit（战斗侧）不含它。
 
 import { num, talentBb, skillRec, traitBb, moduleOn, batMod } from '../shared/tier1.js';

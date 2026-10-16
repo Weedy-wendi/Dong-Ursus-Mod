@@ -1,7 +1,7 @@
 // test/content/kits_char_5_98.test.js — 乌啾 (chess_char_5_98, 自定义 5★ 链愈师, tier 5) kit tests:
 // form + kit identity (S2 “捉迷藏！” default, chain-heal profile, XAH-X on the elite), S2's hp loss + immediate
 // heal + HoT + 迷彩, T1 久病良医's own-jump boost + the extra un-falloff jump, and the operator's own effect
-// 病床巡视 (every skill start → +2/+4 【乌萨斯】【迅捷】 layers per ursus operator in range, activated only, 8/16 cap).
+// 病床巡视 (every skill start → +3/+6 【乌萨斯】【迅捷】 layers per ursus operator in range, activated only, 12/24 cap).
 // Run: node --test test/content/kits_char_5_98.test.js
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -78,7 +78,7 @@ test('久病良医: receiving her own heal heals for ×1.1 (normal) and adds one
   done(h);
 });
 
-test('病床巡视: every skill start gives the activated 【乌萨斯】/【迅捷】+2 per ursus operator in range (cap 8, normal)', () => {
+test('病床巡视 (2026-10-17 用户修订): every skill start gives the activated 【乌萨斯】/【迅捷】+3 per ursus operator in range (cap 12, normal)', () => {
   const field = (bonds) => makeBattle({
     defs: { enemies: { e_dummy: dummy('e_dummy') } },
     units: [
@@ -94,16 +94,16 @@ test('病床巡视: every skill start gives the activated 【乌萨斯】/【迅
   // 开技事件直接 emit：这个阵型里她的 S2 在 110 s 内自然攒不满技力，等自然开技只会让断言双双为 0
   // （旧版本就是这样 0 == 0 通过的）；emit 是引擎自己的事件入口，最终仍由 kit 里那个处理器加层。
   const castOnce = () => { h.b.emit('skillStart', { unit: u }); h.run(0.05); };
-  // 范围内 2 名【乌萨斯】（她自己 + 赫拉格）× 每人 +2 = +4（2026-10-16 用户修订：1/2 → 2/4）
+  // 范围内 2 名【乌萨斯】（她自己 + 赫拉格）× 每人 +3 = +6（2026-10-17 用户修订：2/4 → 3/6）
   castOnce();
-  assert.equal(layers(h, 'ursusShip'), 4, `乌萨斯 1 次开技 = 2 人 × 2 = 4, got ${layers(h, 'ursusShip')}`);
-  assert.equal(layers(h, 'swiftShip'), 4, '迅捷 mirrors 乌萨斯');
-  // 2 次开技即到本场上限 8（2026-10-16：上限不变）
+  assert.equal(layers(h, 'ursusShip'), 6, `乌萨斯 1 次开技 = 2 人 × 3 = 6, got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'swiftShip'), 6, '迅捷 mirrors 乌萨斯');
+  // 2 次开技即到本场上限 12（2026-10-17：8/16 → 12/24）
   castOnce();
-  assert.equal(layers(h, 'ursusShip'), 8, `乌萨斯 2 次开技 = 8, got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'ursusShip'), 12, `乌萨斯 2 次开技 = 12（到本场上限）, got ${layers(h, 'ursusShip')}`);
   castOnce();
-  assert.equal(layers(h, 'ursusShip'), 8, `乌萨斯 capped at 8, got ${layers(h, 'ursusShip')}`);
-  assert.equal(layers(h, 'swiftShip'), 8, '迅捷 mirrors 乌萨斯');
+  assert.equal(layers(h, 'ursusShip'), 12, `乌萨斯 capped at 12, got ${layers(h, 'ursusShip')}`);
+  assert.equal(layers(h, 'swiftShip'), 12, '迅捷 mirrors 乌萨斯');
   done(h);
   // inactive bonds gain nothing
   const h2 = field({ ursusShip: bondOn(false), swiftShip: bondOn(false) });

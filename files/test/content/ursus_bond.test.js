@@ -1,7 +1,7 @@
-// test/content/ursus_bond.test.js — 乌萨斯核心盟约 (ursusShip, 自定义, 2026-10-16 系数修订) battle tests:
+// test/content/ursus_bond.test.js — 乌萨斯核心盟约 (ursusShip, 自定义, 2026-10-17 系数修订) battle tests:
 // 3人 — a member's skill start gives every OTHER on-field member an additive ATK stack of +5.4 % + 0.12 % × bond
 // layers (accumulated, capped at 54 % + 1.2 % × live layers) and raises the natural SP recovery of the operators on
-// the caster's surrounding 8 tiles by 40 % (不叠加 — the highest holds); 6人 — the SP aura 覆盖为 80 % and a member
+// the caster's surrounding 8 tiles by 40 % (不叠加 — the highest holds); 6人 — the SP aura 覆盖为 100 % and a member
 // carrying 1/2 items deals ×1.75/×2.5 with attacks. Run: node --test test/content/ursus_bond.test.js
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -42,7 +42,7 @@ test('3人: a member skill start stacks ATK on every OTHER on-field member (the 
   done(h);
 });
 
-test('3人: the stacks accumulate toward the cap 54 % + 0.9 % × live layers', () => {
+test('3人: the stacks accumulate toward the cap 54 % + 1.2 % × live layers', () => {
   const h = makeBattle({
     defs: { enemies: { e_dummy: dummy('e_dummy') } },
     units: [
@@ -61,11 +61,11 @@ test('3人: the stacks accumulate toward the cap 54 % + 0.9 % × live layers', (
   const b = byChar(h, CHAR.poca).findBuff('bond:ursus:atk');
   assert.ok(b, 'the stack buff exists');
   // accumulated: every member's skill start (sp凛冬's S2 is an SP_FULL auto-cast at deploy — it counts too) grants
-  // 早露 one stack of (3.6 % + 0.06 % × live L); 早露/麒麟R夜刀(被动) never start a skill themselves, and her own
-  // 齐鸣 adds ≤8 layers/battle (2026-10-14 cap)
+  // 早露 one stack of (5.4 % + 0.12 % × live L); 早露/麒麟R夜刀(被动) never start a skill themselves, and her own
+  // 齐鸣 adds ≤12 layers/battle (2026-10-17 用户修订：8 → 12)
   const poca = byChar(h, CHAR.poca);
   const grants = h.hooksOf('skillStart').filter((c) => c.unit !== poca).length;
-  const min = grants * 0.054, max = Math.min(0.54 + 0.012 * L, grants * (0.054 + 0.0012 * 8));
+  const min = grants * 0.054, max = Math.min(0.54 + 0.012 * L, grants * (0.054 + 0.0012 * 12));
   assert.ok(b.mods.atkPct >= min - 1e-9 && b.mods.atkPct <= max + 1e-9,
     `grants ${grants}: ${b.mods.atkPct} within [${min.toFixed(4)}, ${max.toFixed(4)}] (layers ${L})`);
   done(h);
@@ -97,6 +97,30 @@ test('3人: the skill start raises the natural SP recovery of the surrounding 8 
   h.run(0.2);
   const sp2 = near.findBuff('bond:ursus:sp');
   assert.ok(sp2 && Math.abs(sp2.mods.spRecoveryFlat - 0.4) < 1e-6, 'the SP recovery value never stacks');
+  done(h);
+});
+
+test('6人: the SP aura 覆盖为 100 %（2026-10-17 用户修订：80 %→100 %，仍为覆盖不是叠加）', () => {
+  const h = makeBattle({
+    defs: { enemies: { e_dummy: dummy('e_dummy') } },
+    units: [
+      { chessId: 'chess_char_2_98_a', row: 10, col: 4 },   // 伯塔尼 (caster)
+      { chessId: 'chess_char_4_98_a', row: 10, col: 5 },   // 赫拉格 — adjacent
+      { chessId: 'chess_char_6_98_a', row: 10, col: 6 },
+      { chessId: 'chess_char_6_99_a', row: 11, col: 4 },
+      { chessId: 'chess_char_5_98_a', row: 11, col: 5 },
+      { chessId: 'chess_char_5_99_a', row: 11, col: 6 },
+    ],
+    enemies: [{ key: 'e_dummy', pos: [10, 3] }], autoFinish: false, timeLimit: 240, captureNoisy: true, seed: 41,
+    bonds: { ursusShip: { count: 6, active: true, tier: 2, layers: 0 } },
+  });
+  h.step(1);
+  const caster = byChar(h, CHAR.botany);
+  const near = byChar(h, CHAR.helage);   // adjacent (col 5 vs 4)
+  h.b.emit('skillStart', { unit: caster });
+  h.run(0.05);
+  const sp = near.findBuff('bond:ursus:sp');
+  assert.ok(sp && Math.abs(sp.mods.spRecoveryFlat - 1.0) < 1e-6, `6人档: SP recovery +1.0/s，got ${sp && sp.mods.spRecoveryFlat}`);
   done(h);
 });
 

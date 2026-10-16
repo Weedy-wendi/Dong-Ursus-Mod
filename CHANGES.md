@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-10-17（第八条）· 七项数值 / 机制修订（用户口径）
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | ① 【东】`bb.dmg_base` 0.25→**0.45**、`dmg_per_layer` 0.007→**0.006**、`dmg_per_lost_hp` 0.004→**0.003**（显示键 `dmg_disp_base` 1.25→**1.45**、`dmg_disp_per` 0.007→**0.006**）；公式 = `×(1+45%+0.6%×层数)×(1+0.3%×已损失生命比例)` ② 【乌萨斯】`sp_regen_6` 0.8→**1.0**（6 人档技回 80%→100%，仍是覆盖不是叠加）+ `effectDesc` 文案 ③ 嵯峨 `bondIds` `steadShip`→**`swiftShip`**（【东】【坚守】→【东】【迅捷】） ④ 伯塔尼 981 文案：加层目标由【乌萨斯】【助力】收窄为**仅【乌萨斯】**、+2/4→**+3/6**、上限 8/16→**12/24** ⑤ 乌啾 984 文案：+2/4→**+3/6**、上限 8/16→**12/24** ⑥ 白雪 990 文案：「已激活的层数最高的盟约 +3/6」→「**自身所属盟约 +4/8**（无需激活盟约）」，`bb.count` 3/6→4/8 ⑦ 麒麟R夜刀 992 文案：屏障 → **90% 物理与法术减伤** |
+| `files/server/sim/content/kits/ops/chess_char_2_98-botany.js` | `CRY_BONDS`（乌萨斯+助力两元组）→ 单一 `CRY_BOND = 'ursusShip'`；`cryPer` 4/2→**6/3**、`cryCap` 16/8→**24/12**（unit.mem 记账键沿用 `botanyCryUrsus`） |
+| `files/server/sim/content/kits/ops/chess_char_5_98-turdus.js` | `layerPer` 4/2→**6/3**、`layerCap` 16/8→**24/12**（加层目标仍为【乌萨斯】【迅捷】两盟约） |
+| `files/server/sim/content/kits/ops/chess_char_6_97-yato2.js` | 【狂龙症】`grantOni()` **去掉屏障分支**：部署时仍失去当前生命 50%，但改为挂 `mods = { atkPct: 0.5, physTakenMul: 0.1, artsTakenMul: 0.1 }` —— 90% 物理/法术减伤（庇护语义，只减物理与法术，不动真伤），持续到死亡/撤退；`garrison:yato2:shield` 这个 key 已无引用 |
+| `files/server/sim/content/kits/ops/chess_char_3_97-yuki.js` | 注释同步（990 新口径；战斗侧不含该特质） |
+| `patches/01-mod-shared.patch` | `bonds/core.js`：【东】`dmg_base/dmg_per_layer/dmg_per_lost_hp` 兜底默认值与注释、【乌萨斯】`sp_regen_6` 兜底 1.0。`garrisons/meta.js`：990 处理器改用 `ownLayers`（与 991 吉星同口径），删除已无用的 `topLayers()`；**并清除一个阻断性语法错误**——`gainRandomItems()` 闭包后多出一个 `}`，`node --check` 报 `SyntaxError: Unexpected token '}'`，即装完的 mod 一 `import` 这个模块就崩（特质/备战侧整条链不可用） |
+| `files/test/content/{dong_bond,ursus_bond,kits_char_2_98,kits_char_5_98,kits_char_6_97}.test.js`、`patches/02`（`garrisons_meta.test.js`） | 期望值按新数值改写；990 测试改成「自身所属盟约全部 +4/8（无需激活）」；`ursus_bond` 的叠层上限断言里 `0.0012×8`→**`0.0012×12`**（齐鸣上限 8→12 会把单次最大加层从 6.36% 抬到 6.84%） |
+| `i18n/mod-i18n.json` | 8 条特质 × 4 语言 `desc/descRaw` 改数值重算 `_h`；【乌萨斯】盟约 `effectDesc/effectDescRaw` × 4 语言（+100%，并把 ja/ko/zh-TW 缺的 6 人档那半句补齐）；`effects.bondeffect_ursus` 的 `desc/descRaw` 对齐成该盟约的 effectDesc（与 `apply-i18n.mjs` 的派生口径一致） |
+| `mod.json` | `version` 1.0.5 → **1.0.6**；指纹集合不变（`base.files 85 · patched 73 · owned 30 · removed 12 · generated 22`） |
+
+### 为什么
+
+用户第八条口径给出的七项改动（见上表 ①–⑦）。两处需要点明的执行口径：
+
+- **伯塔尼按字面执行**：加层目标**收窄为仅【乌萨斯】**（原为【乌萨斯】【助力】两盟约各加）。乌啾那条用户点名了【乌萨斯】【迅捷】两盟约、伯塔尼只点名【乌萨斯】，因此判断为有意收窄；**若本意是保留助力**，把 `CRY_BOND` 改回两元组、译文里补回【助力】即可。
+- **满级/普通形态**：`+3/6`、`12/24`、`+4/8` 一律「普通/精锐」两档（`_a` 取小值、`_b` 取大值），与项目内既有写法一致。
+
+`meta.js` 的多余 `}` 是 2026-10-16 第七条改动后遗留（当时未复跑测试，所以 patch 01 里也带着它）——不修的话 `install` 会稳定产出坏文件。
+
+### 怎么验的
+
+| 步骤 | 结果 |
+|---|---|
+| `node tools/build-data.mjs` | 计数不变：chess 292 / bonds 25 / garrisons 275 / items 123 / effects 371；10 条既有 warning（模组 trap 缺表等） |
+| data 抽查 | `bondeffect_dong.bb` = 0.45 / 0.006 / 1.45 / 0.006 / 0.003；`bondeffect_ursus.bb.sp_regen_6` = 1、`effectDesc` 含 `+100%`；`chess_char_5_97_a/b.bonds` = `["dongShip","swiftShip"]`；981/984/990/992 的 6 条 garrison 文案为新值 |
+| `node --check` | 7 个改动文件全部通过（改动前 `garrisons/meta.js` 报 `Unexpected token '}'`） |
+| i18n | 8 条特质 + 盟约 effectDesc + effects 派生记录 × 4 语言重写并重算 `_h`；`node --test test/i18n-data.test.js` **11/11 pass**（`stale=0`、`applied=leaves`） |
+| `node --test`（本次相关 7 个文件） | 95 项：**94 pass / 1 fail** → 唯一失败是 `ursus_bond` 那条**测试自身的旧上界**（齐鸣上限 8→12 后单次最大加层变大），改成 `0.0012×12` 后 **5/5 pass** |
+| `scripts/verify.mjs`（mod 测试子集） | 277 项：**277 pass / 0 fail** |
+| 补丁回环 | `patches/01` 23 个目标 / **70522 B**、`patches/02` 50 个目标 / **90541 B**；与上一个提交逐行 diff，`01` 只有 core.js/meta.js 那 4 段 hunk、`02` 只有 `garrisons_meta.test.js` 的 990 用例 |
+| `tools/make-manifest.mjs` | 两个补丁在纯净基线上套用成功、0 `.rej`；`base.files 85 · patched 73 · owned 30 · removed 12 · generated 22` |
+
+---
+
 ## 2026-10-16（第七条）· 七项数值修订（用户口径）
 
 ### 改了什么

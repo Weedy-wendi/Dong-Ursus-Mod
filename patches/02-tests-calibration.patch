@@ -217,10 +217,10 @@ index fbb8ec4..02ed878 100644
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/garrisons_meta.test.js b/test/content/garrisons_meta.test.js
-index b6782a3..a503f81 100644
+index b6782a3..7f90318 100644
 --- a/test/content/garrisons_meta.test.js
 +++ b/test/content/garrisons_meta.test.js
-@@ -884,6 +884,74 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
+@@ -884,6 +884,69 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
    for (const k of keys) assert.ok(REG.has(`garrison:${k}`), k);
  });
  
@@ -261,24 +261,19 @@ index b6782a3..a503f81 100644
 +  cover('garrison_987_b');
 +});
 +
-+test('自定义 990 (白雪): 获得干员时, 已激活的层数最高的盟约 +3/_b +6 (未激活不算; 已激活并列 → 盟约表序第一)', () => {
-+  // 没有任何已激活盟约 → 不加层（2026-10-13 二次修订：加「已激活」限定）
++test('自定义 990 (白雪): 获得干员时, 自身所属盟约全部 +4/_b +8 (无需激活, 与吉星 991 同口径)', () => {
++  // 2026-10-17 用户修订：原「已激活的层数最高的盟约 +3/6」→「自身所属盟约 +4/8」，且不再要求已激活
 +  const s = setup();
 +  s.acquire('chess_char_3_97_a');
-+  assert.deepEqual(s.gainsNow(), {}, JSON.stringify(s.gainsNow()));
++  assert.deepEqual(s.gainsNow(), { dongShip: 4, skillfulShip: 4 }, JSON.stringify(s.gainsNow()));
 +  cover('garrison_990_a');
-+  // 已激活者里挑层数最高：未激活的高层盟约不参与；全 0 层并列 → 盟约表序第一
++  // 别的已激活盟约（层数多）不参与，也不影响自身所属盟约的加层
 +  const t = setup();
 +  t.activate('yanShip', 'siracusaShip');
 +  t.ps.layers.siracusaShip = 10;
 +  t.acquire('chess_char_3_97_b');
-+  assert.deepEqual(t.gainsNow(), { siracusaShip: 6 }, JSON.stringify(t.gainsNow()));
++  assert.deepEqual(t.gainsNow(), { dongShip: 8, skillfulShip: 8 }, JSON.stringify(t.gainsNow()));
 +  cover('garrison_990_b');
-+  const u = setup();
-+  u.activate('yanShip', 'siracusaShip');   // both 0 layers → bond order decides
-+  u.acquire('chess_char_3_97_a');
-+  assert.deepEqual(u.gainsNow(), { yanShip: 3 }, JSON.stringify(u.gainsNow()));
-+  cover('garrison_990_a');
 +});
 +
 +test('自定义 991 (吉星): 获得干员时, 自身所属盟约全部 +6/_b +12 (未激活也加, 鸿雪 986 同口径)', () => {

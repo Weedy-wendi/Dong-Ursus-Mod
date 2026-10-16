@@ -1,5 +1,5 @@
-// test/content/dong_bond.test.js — 【东】核心盟约 (dongShip, 自定义, 2026-10-16 系数修订) battle tests:
-// 3人 — 成员的每次伤害 ×(1 + 25% + 0.7% × 盟约层数) × (1 + 0.4% × 自身已损失生命比例)：
+// test/content/dong_bond.test.js — 【东】核心盟约 (dongShip, 自定义, 2026-10-17 公式修订) battle tests:
+// 3人 — 成员的每次伤害 ×(1 + 45% + 0.6% × 盟约层数) × (1 + 0.3% × 自身已损失生命比例)：
 // 层数与已损失生命比例都在**每次命中时**实时读取（谢拉格同型 hit 钩子）；非成员不吃加成。
 // 文案与参数在 tools/custom-content.mjs 的 BONDS.dongShip（bb.dmg_base / dmg_per_layer / dmg_per_lost_hp）。
 // Run: node --test test/content/dong_bond.test.js
@@ -23,12 +23,12 @@ const defsOf = (list) => {
   return { chess, enemies: { e_dummy: dummy } };
 };
 
-test('东 3人: members deal ×(1 + 25% + 0.7%×层数) × (1 + 0.4%×已损失生命比例) per hit (2026-10-16 系数修订)', () => {
+test('东 3人: members deal ×(1 + 45% + 0.6%×层数) × (1 + 0.3%×已损失生命比例) per hit (2026-10-17 公式修订)', () => {
   const bb = bondBb('dongShip');
-  assert.equal(bb.dmg_base, 0.25, '伤害基础 25%');
-  assert.equal(bb.dmg_per_layer, 0.007, '每层 +0.7%');
-  assert.equal(bb.dmg_per_lost_hp, 0.004, '每损失 1% 生命 +0.4%');
-  assert.equal(bb.dmg_disp_base, 1.25, '显示键 = 1 + 基础（effectDesc「提升至{0:0%}」）');
+  assert.equal(bb.dmg_base, 0.45, '伤害基础 45%');
+  assert.equal(bb.dmg_per_layer, 0.006, '每层 +0.6%');
+  assert.equal(bb.dmg_per_lost_hp, 0.003, '每损失 1% 生命 +0.3%');
+  assert.equal(bb.dmg_disp_base, 1.45, '显示键 = 1 + 基础（effectDesc「提升至{0:0%}」）');
   const h = makeBattle({
     defs: defsOf([['d1_a', ['dongShip']], ['d2_a', ['dongShip']], ['d3_a', ['dongShip']], ['n1_a', ['preciShip']]]),
     units: [
@@ -42,13 +42,13 @@ test('东 3人: members deal ×(1 + 25% + 0.7%×层数) × (1 + 0.4%×已损失�
   const a = h.unit('d1_a'), n = h.unit('n1_a');
   const e = h.enemies()[0];
   /** 期望倍率：层数 L、已损失生命百分比 lostPct。 */
-  const mul = (L, lostPct) => (1 + 0.25 + 0.007 * L) * (1 + 0.004 * lostPct);
+  const mul = (L, lostPct) => (1 + 0.45 + 0.006 * L) * (1 + 0.003 * lostPct);
 
-  // 满血：已损失生命比例 0 → 只吃 (1+25%+0.7%×10)
-  close(h.b.dealDamage(a, e, { amount: 1000, type: 'true' }), 1000 * mul(10, 0), 1e-6, '满血：×(1+25%+0.7%×10)');
-  // 掉到 40% 血：比例实时参与 → ×(1+0.4%×60)
+  // 满血：已损失生命比例 0 → 只吃 (1+45%+0.6%×10)
+  close(h.b.dealDamage(a, e, { amount: 1000, type: 'true' }), 1000 * mul(10, 0), 1e-6, '满血：×(1+45%+0.6%×10)');
+  // 掉到 40% 血：比例实时参与 → ×(1+0.3%×60)
   a.hp = a.s.maxHp * 0.4;
-  close(h.b.dealDamage(a, e, { amount: 1000, type: 'true' }), 1000 * mul(10, 60), 1e-6, '损失 60% 生命：×(1+25%+0.7%×10)×(1+0.4%×60)');
+  close(h.b.dealDamage(a, e, { amount: 1000, type: 'true' }), 1000 * mul(10, 60), 1e-6, '损失 60% 生命：×(1+45%+0.6%×10)×(1+0.3%×60)');
   // 层数也是每次命中实时读取
   h.b.addLayers('p1', 'dongShip', 20, 'test');
   close(h.b.dealDamage(a, e, { amount: 1000, type: 'true' }), 1000 * mul(30, 60), 1e-6, '实时层数 30');

@@ -279,7 +279,7 @@ index 12962e7..013c2b0 100644
      // Explicit carry outside the 联防 opening follows this one deployment. The opening itself restores at the end
      // of Battle.start, so deployment/battle-start gifts do not come on top of it; later redeploys keep their gifts.
 diff --git a/server/sim/content/bonds/core.js b/server/sim/content/bonds/core.js
-index 8b12c71..afb2f0c 100644
+index 8b12c71..48e82ee 100644
 --- a/server/sim/content/bonds/core.js
 +++ b/server/sim/content/bonds/core.js
 @@ -59,6 +59,8 @@ const BUFF_KEYS = Object.freeze({
@@ -302,7 +302,7 @@ index 8b12c71..afb2f0c 100644
 +//      (2026-10-16 用户修订：3.6%+0.06%·L → 5.4%+0.12%·L，上限 0.9%→1.2%·L；上限基础 54% 不变)
 +//      re-read at each start); the caster also raises the natural SP recovery of every operator on her surrounding
 +//      8 tiles by sp_regen = +40% (不叠加 — the highest holds, the shared aura semantics), lasting to the battle end.
-+//   6: the SP aura **覆盖**为 sp_regen_6 = +80%（不是叠加）; a member carrying items deals
++//   6: the SP aura **覆盖**为 sp_regen_6 = +100%（不是叠加；2026-10-17 用户修订：80%→100%）; a member carrying items deals
 +//      ×damage_scale_1 (1 item) / ×damage_scale_2 (≥2 items) = 175% / 250%（两档覆盖，非连乘）— the 维多利亚 shape
 +//      (S.passiveBuff dmgDealtMul, re-applied on layer gains and deployments; mid-battle item gains re-read at the
 +//      next such event, same limitation as 维多利亚).
@@ -314,9 +314,9 @@ index 8b12c71..afb2f0c 100644
 +  const capBase = num(bb.atk_cap_base, 0.54);
 +  const capPerLayer = num(bb.atk_cap_per_layer, 0.012);
 +  // 自然技力回复光环（不叠加 — 取最高的共享语义）：3 人档 +sp_regen，6 人档**覆盖**为 +sp_regen_6
-+  // （2026-10-14 用户修订：40%→80% 是覆盖不是叠加；6 人判定与道具分支同款，开战时定型）
++  // （2026-10-17 用户修订：80%→100%，仍是覆盖不是叠加；6 人判定与道具分支同款，开战时定型）
 +  const six = reached(battle, pid, 'ursusShip', num(bb.ex_bond_char_cnt, 6));
-+  const spRegen = six ? num(bb.sp_regen_6, 0.8) : num(bb.sp_regen, 0.4);
++  const spRegen = six ? num(bb.sp_regen_6, 1.0) : num(bb.sp_regen, 0.4);
 +  const syncAtk = (u) => {
 +    const v = (u.mem && u.mem.ursusAtk) || 0;
 +    if (v > 0 && u.alive) S.passiveBuff(battle, u, 'bond:ursus:atk', S.directMods({ atk: v }));
@@ -361,7 +361,7 @@ index 8b12c71..afb2f0c 100644
 +}
 +
 +// =====================================================================================================================
-+// 东 (dongShip — 自定义核心盟约, 2026-10-13 效果正式化; 用户口径)
++// 东 (dongShip — 自定义核心盟约, 2026-10-13 效果正式化; 用户口径; 2026-10-17 数值修订 45% / 0.6%·L / 0.3%·lostPct)
 +//   3: every damage a member deals ×(1 + dmg_base + dmg_per_layer·L) ×(1 + dmg_per_lost_hp·lostPct) — L = the bond's
 +//      layers and lostPct = the attacker's lost-HP percent, both re-read at each hit (谢拉格's hit-hook shape); every
 +//      member holds 【死战】: the first fatal damage of the battle is prevented at 1 HP for deathless_time s (further
@@ -376,9 +376,9 @@ index 8b12c71..afb2f0c 100644
 +// 入口: installDong(battle, pid, bb, members); bb 由 data/bonds.json bondeffect_dong 带来（tools/custom-content.mjs）。
 +function installDong(battle, pid, bb, members) {
 +  const memberSet = new Set(members);
-+  const dmgBase = num(bb.dmg_base, 0.25);   // 2026-10-16 用户修订：15%→25%
-+  const dmgPerLayer = num(bb.dmg_per_layer, 0.006);   // 2026-10-14 用户修订：每层 0.7%→0.6%
-+  const dmgPerLost = num(bb.dmg_per_lost_hp, 0.002);  // 2026-10-14 用户修订：每 1% 已损失生命 0.4%→0.2%
++  const dmgBase = num(bb.dmg_base, 0.45);   // 2026-10-17 用户修订：25%→45%
++  const dmgPerLayer = num(bb.dmg_per_layer, 0.006);   // 2026-10-17 用户修订：每层 0.7%→0.6%
++  const dmgPerLost = num(bb.dmg_per_lost_hp, 0.003);  // 2026-10-17 用户修订：每 1% 已损失生命 0.4%→0.3%
 +  const deathless = num(bb.deathless_time, 4);
 +  const loss3 = num(bb.hp_loss_ratio, 0.1);
 +  const loss6 = num(bb.hp_loss_ratio_6, 0.15);
@@ -470,10 +470,10 @@ index 8b12c71..afb2f0c 100644
  
  export function install(battle) {
 diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
-index 593cf20..a66cf35 100644
+index 593cf20..3779fea 100644
 --- a/server/sim/content/garrisons/meta.js
 +++ b/server/sim/content/garrisons/meta.js
-@@ -430,6 +430,108 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
+@@ -430,6 +430,95 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
  };
  
  
@@ -494,13 +494,13 @@ index 593cf20..a66cf35 100644
 +H['act2autochess_gar_eff_987_b'] = {
 +  run(ctx) { gainRandomItems(ctx, num(ctx.source.bb.count, 2)); },
 +};
-+// 2026-10-13 【东】扩展批次（990/991，均 SERVER_GAIN「获得时」）；990 白雪 2026-10-13 二次修订：
-+// 「已激活的层数最高的盟约」→ 只在**已激活**的盟约里挑层数最高者。
++// 2026-10-13 【东】扩展批次（990/991，均 SERVER_GAIN「获得时」）。990 白雪 2026-10-17 用户修订：
++// 「已激活的层数最高的盟约」→「自身所属盟约」（不挑层数最高、不要求已激活），+3/6→+4/8 → 与 991 吉星同口径（ownLayers）。
 +H['act2autochess_gar_eff_990_a'] = {
-+  run(ctx) { topLayers(ctx, num(ctx.source.bb.count, 3)); },
++  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 4)); },
 +};
 +H['act2autochess_gar_eff_990_b'] = {
-+  run(ctx) { topLayers(ctx, num(ctx.source.bb.count, 6)); },
++  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 8)); },
 +};
 +H['act2autochess_gar_eff_991_a'] = {
 +  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 6)); },
@@ -509,19 +509,7 @@ index 593cf20..a66cf35 100644
 +  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 12)); },
 +};
 +
-+/** 自定义 990（白雪）：已激活的盟约里层数最高者 +N（未激活不算；并列 → 盟约表序第一）。 */
-+function topLayers(ctx, count) {
-+  if (!(count > 0)) return;
-+  let best = null, bl = -1;
-+  for (const id of bondOrder(ctx)) {
-+    if (!ctx.bondActive(id)) continue;
-+    const l = ctx.layers(id);
-+    if (l > bl) { bl = l; best = id; }
-+  }
-+  if (best) ctx.addLayers(best, count, { requireActive: true });
-+}
-+
-+/** 自定义 991（吉星）：自身所属盟约全部 +N（未激活也加，鸿雪 986 同口径）。 */
++/** 自定义 991（吉星）；990（白雪，2026-10-17 起同口径）：自身所属盟约全部 +N（未激活也加，鸿雪 986 同口径）。 */
 +function ownLayers(ctx, count) {
 +  if (!(count > 0)) return;
 +  for (const b of metaBonds(ctx, ctx.source.piece)) ctx.addLayers(b, count, { requireActive: false });
@@ -576,7 +564,6 @@ index 593cf20..a66cf35 100644
 +    }
 +    if (id) ctx.grantItem(id);
 +  }
-+}
 +}
 +
  /** effectKey → handler (the registered objects). */

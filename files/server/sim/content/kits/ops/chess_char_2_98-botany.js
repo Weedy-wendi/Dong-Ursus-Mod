@@ -21,9 +21,10 @@
 //   - 模组 RIT-X（精锐）「对精英和领袖敌人造成的元素损伤提升18%」（trait bb ep_damage_scale）：
 //     她 'elementHit' 的 mul ×ep_damage_scale（pithst 同一特性的乘算口径）。
 //   - 干员自身效果【采集单第 8 项】乌萨斯齐鸣：每次开启技能时（S1/S2 均触发 —— skillStart），攻击范围内
-//     每有 1 名【乌萨斯】干员（def.raw.nationId 'ursus'，op-closur 先例；含她自己），使【乌萨斯】【助力】
-//     各 +2（普通）/ +4（精锐）层（2026-10-16 用户修订：1/2→2/4）；每场战斗每个盟约最多经此叠加
-//     8（普通）/ 16（精锐）层（不变）[ASSUMED: 上限按盟约各自计]；**需盟约已激活才叠层**（2026-10-11 用户确认），未激活的
+//     每有 1 名【乌萨斯】干员（def.raw.nationId 'ursus'，op-closur 先例；含她自己），使已激活的【乌萨斯】
+//     层数 +3（普通）/ +6（精锐）层（2026-10-17 用户修订：原为【乌萨斯】【助力】各 +2/+4 → 收窄为仅
+//     【乌萨斯】并改为 +3/+6）；每场战斗最多经此叠加 12（普通）/ 24（精锐）层（同批修订：8/16→12/24）
+//     [ASSUMED: 上限按盟约各自计]；**需盟约已激活才叠层**（2026-10-11 用户确认），未激活的
 //     盟约不提供层数；reason 'op'。「已激活」判定内联读 battle.getPlayer(pid).bonds[id].active
 //     （kit 禁 import support/index.js —— kits_layout.test.js）。
 
@@ -44,11 +45,9 @@ const erosionFree = (t) => !!t && !t.findBuff('erosionBurst') && !((t.elem?.eros
 const inRangeOf = (unit, a) => !!(unit.rangeKeySet && a && Number.isInteger(a.tileR) && Number.isInteger(a.tileC)
   && unit.rangeKeySet.has(a.tileR * COLS + a.tileC));
 
-/** 干员自身效果：开启技能时每个范围内【乌萨斯】干员给两盟约的层数 / 本场每盟约上限（普通 / 精锐）。 */
-const CRY_BONDS = Object.freeze([
-  ['ursusShip', 'botanyCryUrsus'],
-  ['deputShip', 'botanyCryDeput'],
-]);
+/** 干员自身效果：开启技能时每个范围内【乌萨斯】干员给的层数 / 本场上限（普通 / 精锐）。
+ *  2026-10-17 用户修订：加层目标收窄为仅【乌萨斯】（原【乌萨斯】【助力】），+2/4→+3/6、8/16→12/24。 */
+const CRY_BOND = 'ursusShip';
 
 export default {
   chess_char_2_98_a: (bb, chess) => {
@@ -58,8 +57,8 @@ export default {
     const b2 = bbOf(chess, S2);
     const s2rec = skillRec(chess, S2);
     const epScale = num(tb.ep_damage_scale, 1);
-    const cryPer = chess?.isGolden ? 4 : 2;   // 每次开启技能每名【乌萨斯】加的层数（2026-10-16 用户修订：1/2→2/4）
-    const cryCap = chess?.isGolden ? 16 : 8;  // 每场每盟约上限（2026-10-16 不变：8/16）
+    const cryPer = chess?.isGolden ? 6 : 3;   // 每次开启技能每名【乌萨斯】加的层数（2026-10-17 用户修订：2/4→3/6）
+    const cryCap = chess?.isGolden ? 24 : 12; // 每场上限（2026-10-17 用户修订：8/16→12/24）
 
     // S1 谐波破坏（默认）：下次攻击 + 侵蚀附伤 + 条件额外段
     const s1Spec = {
@@ -105,8 +104,8 @@ export default {
       talents: [{
         install(battle, unit) {
           // ---- 干员自身效果：乌萨斯齐鸣（无条件安装，先于天赋/模组分支）----
-          // 开启技能时（S1/S2 均触发）：范围内每个【乌萨斯】干员 → 已激活的【乌萨斯】【助力】各 +2/+4 层，
-          // 每场战斗每个盟约最多 8/16 层（unit.mem 记账，跨部署累计 —— unit 是每场战斗的作用域）。
+          // 开启技能时（S1/S2 均触发）：范围内每个【乌萨斯】干员 → 已激活的【乌萨斯】+3/+6 层，
+          // 每场战斗最多 12/24 层（unit.mem 记账，跨部署累计 —— unit 是每场战斗的作用域）。
           battle.on('skillStart', (c) => {
             if (c.unit !== unit || unit.ownerId == null || !up(unit)) return;
             unit.mem = unit.mem || {};
@@ -114,15 +113,13 @@ export default {
             if (!ps) return;
             const n = battle.allyUnits.filter((a) => a !== unit ? (a.alive && a.deployed && !a.hidden && isUrsus(a) && inRangeOf(unit, a)) : true).length;
             if (!(n > 0)) return;
-            for (const [id, memKey] of CRY_BONDS) {
-              const st = ps.bonds?.[id];
-              if (!st || !st.active) continue;        // 「需盟约已激活才叠层」（2026-10-11 用户确认）
-              const used = num(unit.mem[memKey], 0);
-              const add = Math.min(n * cryPer, Math.max(0, cryCap - used));
-              if (!(add > 0)) continue;
-              const got = battle.addLayers(unit.ownerId, id, add, 'op', { source: unit });
-              if (got > 0) unit.mem[memKey] = used + got;
-            }
+            const st = ps.bonds?.[CRY_BOND];
+            if (!st || !st.active) return;             // 「需盟约已激活才叠层」（2026-10-11 用户确认）
+            const used = num(unit.mem.botanyCryUrsus, 0);
+            const add = Math.min(n * cryPer, Math.max(0, cryCap - used));
+            if (!(add > 0)) return;
+            const got = battle.addLayers(unit.ownerId, CRY_BOND, add, 'op', { source: unit });
+            if (got > 0) unit.mem.botanyCryUrsus = used + got;
           }, { owner: unit });
 
           // ---- T1 背弃沉默：范围内敌人侵蚀损伤爆发 → 攻速叠层（≤3）----

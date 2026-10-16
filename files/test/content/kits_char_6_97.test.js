@@ -3,7 +3,7 @@
 // 空放不需要接敌、技能条倒数、mods/flags 随 cast 起终), the hit frames inside the Skill_2 animation window
 // (1 干员秒 = 1 引擎秒, 2026-10-14 实测修订 —— SP/DP 1/秒、攻击间隔 1:1), the redeploy regression
 // (a stale bullet step of an earlier cast must not outlive its deployment), and 麒麟之魂 (garrison_992)
-// 的数值（2026-10-16 用户修订：再部署 -75%、【狂龙症】屏障 = 损失生命 2 倍、攻击力 +50%）。
+// 的数值（2026-10-17 用户修订：再部署 -75%、【狂龙症】攻击力 +50% 且 90% 物理/法术减伤，不再给屏障）。
 // Run: node --test test/content/kits_char_6_97.test.js
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -137,18 +137,23 @@ test('normal respawn redeploy re-arms the S2 乱舞 cast (skill active, disarm, 
   done(h);
 });
 
-test('麒麟之魂 (garrison_992, 2026-10-16 用户修订): 再部署 -75%、【狂龙症】屏障 = 损失生命 2 倍、攻击力 +50%', () => {
+test('麒麟之魂 (garrison_992, 2026-10-17 用户修订): 再部署 -75%、【狂龙症】攻击力 +50% + 90% 物理/法术减伤（不再给屏障）、每秒流失 100', () => {
   const h = makeBattle({ defs: { enemies: ENEMIES }, units: [{ chessId: A, row: 10, col: 5 }], autoFinish: false, timeLimit: 30 });
   h.run(0.2);
   const u = h.unit(1);
   assert.equal(u.s.redeployMul, 0.25, '再部署时间 -75%');
   const loss = u.s.maxHp * 0.5;
   assert.ok(Math.abs(u.hp - loss) < 1e-6, `部署时失去当前生命值的 50%（hp ${u.hp} vs ${loss}）`);
-  const shield = u.findBuff('garrison:yato2:shield');
-  assert.ok(shield, '【狂龙症】部署时给屏障');
-  assert.ok(Math.abs(shield.shield - loss * 2) < 1e-6, `屏障 = 损失生命值的 2 倍（${shield.shield} vs ${loss * 2}）`);
+  // 2026-10-17 用户修订：屏障去掉，改为 90% 物理/法术减伤
+  assert.equal(u.findBuff('garrison:yato2:shield'), null, '【狂龙症】不再给屏障');
   const oni = u.findBuff('trait:yato2:oni');
   assert.ok(oni, '【狂龙症】已挂上');
   assert.equal(oni.mods.atkPct, 0.5, '【狂龙症】攻击力 +50%');
+  assert.ok(Math.abs(u.s.physTakenMul - 0.1) < 1e-9, `90% 物理减伤（physTakenMul ${u.s.physTakenMul}）`);
+  assert.ok(Math.abs(u.s.artsTakenMul - 0.1) < 1e-9, `90% 法术减伤（artsTakenMul ${u.s.artsTakenMul}）`);
+  // 每秒流失 100 点生命
+  const hp0 = u.hp;
+  h.run(1.05);
+  assert.ok(hp0 - u.hp >= 99 && hp0 - u.hp <= 101, `每秒流失 100 点生命（掉了 ${hp0 - u.hp}）`);
   done(h);
 });

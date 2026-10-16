@@ -57,7 +57,7 @@ const CHESS = {
     shopSortId: 911,
     defaultSkillIndex: 2,               // S3 怒目（签名技）
     moduleId: 'uniequip_003_saga',      // sol-x 何处寻驮？（002 是 SOL-Y 身向云泥，未选用）
-    bondIds: ['dongShip', 'steadShip'], // 【东】【坚守】（2026-10-13 用户修订，原【东】【不屈】）
+    bondIds: ['dongShip', 'swiftShip'], // 【东】【迅捷】（2026-10-17 用户修订，原【东】【坚守】）
     garrisonIds: ['garrison_989_a', 'garrison_989_b'], // 特质：同门切磋
   },
   'chess_char_6_97': {
@@ -205,12 +205,13 @@ const GARRISONS = {
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_981_a': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+2（每场战斗每种最多叠加8层，需盟约已激活）',
+    // 伯塔尼：2026-10-17 用户修订——加层目标由【乌萨斯】【助力】收窄为仅【乌萨斯】，+2/4→+3/6、上限 8/16→12/24
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】层数+3（每场战斗最多叠加12层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_981_b': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】【助力】层数+4（每场战斗每种最多叠加16层，需盟约已激活）',
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使已激活的【乌萨斯】层数+6（每场战斗最多叠加24层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
@@ -237,12 +238,13 @@ const GARRISONS = {
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_984_a': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+2（每场战斗每种最多叠加8层，需盟约已激活）',
+    // 乌啾：2026-10-17 用户修订——+2/4→+3/6、上限 8/16→12/24（加层目标仍为【乌萨斯】【迅捷】）
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+3（每场战斗每种最多叠加12层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_984_b': {
-    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+4（每场战斗每种最多叠加16层，需盟约已激活）',
+    garrisonDesc: '<战斗中>每次开启技能时，攻击范围内每有1名【乌萨斯】干员，使【乌萨斯】【迅捷】层数+6（每场战斗每种最多叠加24层，需盟约已激活）',
     eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
@@ -308,17 +310,18 @@ const GARRISONS = {
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_990_a': {
-    // 白雪：获得时（SERVER_GAIN），已激活的层数最高的盟约（2026-10-13 二次修订：加「已激活」限定）
-    garrisonDesc: '<获得干员时>已激活的层数最高的盟约+3层',
+    // 白雪：获得时（SERVER_GAIN）。2026-10-17 用户修订：「已激活的层数最高的盟约」→「自身所属盟约」
+    // （不再要求已激活、不再挑层数最高者 → 见 meta.js ownLayers，与吉星 991 同口径），+3/6→+4/8
+    garrisonDesc: '<获得干员时>自身所属盟约+4层（无需激活盟约）',
     eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: null,
-    bb: { count: 3 },
+    bb: { count: 4 },
   },
   'garrison_990_b': {
-    garrisonDesc: '<获得干员时>已激活的层数最高的盟约+6层',
+    garrisonDesc: '<获得干员时>自身所属盟约+8层（无需激活盟约）',
     eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: null,
-    bb: { count: 6 },
+    bb: { count: 8 },
   },
   'garrison_991_a': {
     // 吉星：获得时，自身所属盟约全部 +N（**不需要已激活**，未激活也加，鸿雪 986 同口径）
@@ -334,16 +337,17 @@ const GARRISONS = {
     bb: { count: 12 },
   },
   'garrison_992_a': {
-    // 麒麟R夜刀：再部署-75% + 部署转屏障(2×损失) + 【狂龙症】攻击力+50% + 每叠3层【东】【突袭】【不屈】加攻并流血
-    // （真效果在 kit；损失生命不加盾；
-    // 2026-10-14 三次修订：检测盟约改为【东】【突袭】【不屈】——层数按已激活者合计（未激活不计入），流失 50→100）
-    // 2026-10-16 用户修订：再部署 -50%→-75%；屏障 1×损失→2×损失；新增【狂龙症】攻击力 +50%
-    garrisonDesc: '<战斗中>再部署时间-75%；【东】【突袭】【不屈】每叠3层，自身攻击力+1%；部署时获得【狂龙症】：立刻失去当前生命值的50%并获得等同于损失生命值2倍的屏障，攻击力+50%，但每秒失去100点生命',
+    // 麒麟R夜刀：再部署-75% + 【狂龙症】(攻击力+50% + 90% 物理/法术减伤 + 每秒流失 100 生命) +
+    // 每叠3层【东】【突袭】【不屈】加攻（真效果在 kit）
+    // 2026-10-14 三次修订：检测盟约改为【东】【突袭】【不屈】——层数按已激活者合计（未激活不计入），流失 50→100
+    // 2026-10-16 用户修订：再部署 -50%→-75%；新增【狂龙症】攻击力 +50%
+    // 2026-10-17 用户修订：【狂龙症】不再给「等同于损失生命值2倍的屏障」，改为 90% 物理与法术伤害减免
+    garrisonDesc: '<战斗中>再部署时间-75%；【东】【突袭】【不屈】每叠3层，自身攻击力+1%；部署时获得【狂龙症】：立刻失去当前生命值的50%，攻击力+50%并获得90%物理与法术减伤，但每秒失去100点生命',
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_992_b': {
-    garrisonDesc: '<战斗中>再部署时间-75%；【东】【突袭】【不屈】每叠3层，自身攻击力+2%；部署时获得【狂龙症】：立刻失去当前生命值的50%并获得等同于损失生命值2倍的屏障，攻击力+50%，但每秒失去100点生命',
+    garrisonDesc: '<战斗中>再部署时间-75%；【东】【突袭】【不屈】每叠3层，自身攻击力+2%；部署时获得【狂龙症】：立刻失去当前生命值的50%，攻击力+50%并获得90%物理与法术减伤，但每秒失去100点生命',
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
@@ -377,11 +381,11 @@ const BONDS = {
     desc: '【东】干员<@ba.vup>攻击造成的伤害</>提升，自身<@ba.vup>已损失生命比例</>越高，攻击造成伤害越高<@autochess.gray>（受层数影响）</>，并获得【死战】：战斗中首次受到<@ba.vup>致命伤害</>时不撤退，保留<@ba.vup>1</>点生命，持续<@ba.vup>4</>秒，持续时间结束后撤退\n【东】干员开启技能时，所有【东】干员失去<@ba.vup>10%</>当前生命值并转化为等量屏障\n<在场<@autochess.dgreen>6</>名不同【东】干员>【东】干员<@ba.vup>攻击力</>提升，开启技能时所有【东】干员额外失去<@ba.vup>15%</>当前生命并转化为等量屏障；当前生命低于<@ba.vup>50%</>时，<@ba.vup>攻击力</>额外提升',
     effectDesc: '【东】干员攻击造成的伤害提升至<@ba.vup>{0:0%}</>，自身<@ba.vup>已损失生命比例</>越高，攻击造成伤害越高<@autochess.gray>（受层数影响）</>，并获得【死战】：战斗中首次受到<@ba.vup>致命伤害</>时不撤退，保留<@ba.vup>1</>点生命，持续<@ba.vup>4</>秒，持续时间结束后撤退\n【东】干员开启技能时，所有【东】干员失去<@ba.vup>10%</>当前生命值并转化为等量屏障\n<在场<@autochess.dgreen>6</>名不同【东】干员>【东】干员攻击力<@ba.vup>+60%</>，开启技能时所有【东】干员额外失去<@ba.vup>15%</>当前生命并转化为等量屏障；当前生命低于<@ba.vup>50%</>时，攻击力额外<@ba.vup>+120%</>',
     bb: {
-      dmg_base: 0.25,        // 伤害倍率基础（×(1+25%+…)）（2026-10-16 用户修订：15%→25%，公式 (1+25%+0.7%×层数)×(1+0.4%×已损失生命比例)）
-      dmg_per_layer: 0.007,  // 每层盟约层数 +0.7%（2026-10-16 不变）
-      dmg_disp_base: 1.25,   // 显示键：effectDesc 占位符用（1+基础）——「提升至125%+0.7%×层数」的整体结果
-      dmg_disp_per: 0.007,   // 显示键：每层 +0.7%（2026-10-14 二次修订：0.6%→0.7%）
-      dmg_per_lost_hp: 0.004, // 每损失 1% 生命 +0.4%（×(1+0.4%×已损失生命比例)；2026-10-14 用户修订：0.2%→0.4%）
+      dmg_base: 0.45,        // 伤害倍率基础（×(1+45%+…)）（2026-10-17 用户修订：公式 (1+45%+0.6%×层数)×(1+0.3%×已损失生命比例)）
+      dmg_per_layer: 0.006,  // 每层盟约层数 +0.6%（2026-10-17 用户修订：0.7%→0.6%）
+      dmg_disp_base: 1.45,   // 显示键：effectDesc 占位符用（1+基础）——「提升至145%+0.6%×层数」的整体结果
+      dmg_disp_per: 0.006,   // 显示键：每层 +0.6%（2026-10-17 用户修订：0.7%→0.6%）
+      dmg_per_lost_hp: 0.003, // 每损失 1% 生命 +0.3%（×(1+0.3%×已损失生命比例)；2026-10-17 用户修订：0.4%→0.3%）
       deathless_time: 4,     // 死战持续 4s
       hp_loss_ratio: 0.1,    // 3人：开技能时所有【东】失 10% 当前生命 → 等量屏障
       hp_loss_ratio_6: 0.15, // 6人：额外失 15%
@@ -416,14 +420,14 @@ const BONDS = {
     // formatBondEffect（public/js/ui/richText.js）解析为 bb[base] + bb[perStack]×层数 的实算数值，
     // 不再显示「+54%+1.2%×盟约层数」这类公式原文（与官方 炎/卡西米尔 同一机制）。
     desc: '【乌萨斯】干员周围八格的干员<@ba.vup>自然技力恢复速度</>提升（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>提升</><@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员<@ba.vup>自然技力恢复速度</>进一步提升（不叠加），装备<@ba.vup>1</>个道具时，<@ba.vup>攻击造成的伤害</>提升；装备<@ba.vup>2</>个道具时，<@ba.vup>攻击造成的伤害</>进一步提升',
-    effectDesc: '【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+40%</>（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>+{0:0.0%}</>（至多<@ba.vup>+{1:0%}</>）<@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+80%</>（不叠加），装备<@ba.vup>1</>个道具时攻击造成的伤害提升至<@ba.vup>175%</>；装备<@ba.vup>2</>个道具时提升至<@ba.vup>250%</>',
+    effectDesc: '【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+40%</>（不叠加），开启技能时，其他乌萨斯干员攻击力<@ba.vup>+{0:0.0%}</>（至多<@ba.vup>+{1:0%}</>）<@autochess.gray>（受层数影响）</>，直到战斗结束\n<在场<@autochess.dgreen>6</>名不同【乌萨斯】干员>【乌萨斯】干员周围八格的干员自然技力恢复速度<@ba.vup>+100%</>（不叠加），装备<@ba.vup>1</>个道具时攻击造成的伤害提升至<@ba.vup>175%</>；装备<@ba.vup>2</>个道具时提升至<@ba.vup>250%</>',
     bb: {
       atk_per_start: 0.054,   // 每次开技能 +5.4%（直接乘算，叠加）（2026-10-16 用户修订：3.6%→5.4%）
       atk_per_start_per_layer: 0.0012, // 每层盟约层数每次多 +0.12%（2026-10-16 用户修订：0.06%→0.12%）
       atk_cap_base: 0.54,     // 叠层上限基础值（2026-10-16 不变）
       atk_cap_per_layer: 0.012, // 每层盟约层数上限 +1.2%（2026-10-16 用户修订：0.9%→1.2%，上限=54%+1.2%×层数）
       sp_regen: 0.4,          // 周围八格自然技力回复速度 +40%（不叠加；3人档）
-      sp_regen_6: 0.8,        // 6人档：覆盖为 +80%（2026-10-14 用户修订：不是叠加，是 40%→80% 覆盖）
+      sp_regen_6: 1.0,        // 6人档：覆盖为 +100%（2026-10-17 用户修订：80%→100%；仍为覆盖不是叠加）
       damage_scale_1: 1.75,   // 6人：带 1 个道具的攻击倍率（2026-10-14 用户修订：150%→175%）
       damage_scale_2: 2.5,    // 6人：带 ≥2 个道具的攻击倍率（覆盖制，非连乘；225%→250%）
     },

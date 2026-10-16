@@ -15,8 +15,9 @@
 //     agoat2 先例）→ 治疗的所有目标获得迷彩 12s（battle camou，buffs.js）。
 //   - 模组 XAH-X（精锐 stage1，数据承载 attr {hp165,atk38} + 特性 falloff 覆写）。
 //   - 干员自身效果【采集单第 8 项】病床巡视（garrison_984）：每次开启技能时，攻击范围内每有 1 名【乌萨斯】干员
-//     （def.raw.nationId 'ursus'，含她自己），使已激活的【乌萨斯】【迅捷】层数 +2（普通）/ +4（精锐）
-//     （2026-10-16 用户修订：1/2→2/4）——每场战斗每种盟约最多 8/16 层（unit.mem 记账，同 op-botany 乌萨斯齐鸣的写法与口径）。
+//     （def.raw.nationId 'ursus'，含她自己），使已激活的【乌萨斯】【迅捷】层数 +3（普通）/ +6（精锐）
+//     （2026-10-17 用户修订：2/4→3/6）——每场战斗每种盟约最多 12/24 层（同批修订：8/16→12/24）
+//     （unit.mem 记账，同 op-botany 乌萨斯齐鸣的写法与口径）。
 
 import { num, talentBb, skillRec, up } from '../shared/tier1.js';
 import { COLS } from '../../../constants.js';
@@ -38,8 +39,8 @@ export default {
   chess_char_5_98_a: (bb, chess) => {
     const t0 = talentBb(chess, 0);
     const b1 = bbOf(chess, S1), b2 = bbOf(chess, S2);
-    const layerPer = chess?.isGolden ? 4 : 2;   // 每次开启技能每名【乌萨斯】加的层数（2026-10-16 用户修订：1/2→2/4）
-    const layerCap = chess?.isGolden ? 16 : 8;  // 每场每盟约上限（2026-10-16 不变：8/16）
+    const layerPer = chess?.isGolden ? 6 : 3;   // 每次开启技能每名【乌萨斯】加的层数（2026-10-17 用户修订：2/4→3/6）
+    const layerCap = chess?.isGolden ? 24 : 12; // 每场每盟约上限（2026-10-17 用户修订：8/16→12/24）
 
     /** S2: the one immediate heal — lowest-hp injured ally in range (herself included), one target. */
     const pickPatient = (battle, unit) => {
@@ -116,8 +117,8 @@ export default {
       ],
       install(battle, unit) {
         // ---- 干员自身效果：病床巡视（无条件安装，先于模组分支）----
-        // 每次开启技能时：范围内每有 1 名【乌萨斯】干员（含她自己）→ 已激活的【乌萨斯】【迅捷】各 +2/+4 层，
-        // 每场战斗每种最多 8/16 层（unit.mem 记账，跨部署累计——unit 是每场战斗的作用域）。
+        // 每次开启技能时：范围内每有 1 名【乌萨斯】干员（含她自己）→ 已激活的【乌萨斯】【迅捷】各 +3/+6 层，
+        // 每场战斗每种最多 12/24 层（unit.mem 记账，跨部署累计——unit 是每场战斗的作用域）。
         battle.on('skillStart', (c) => {
           if (c.unit !== unit || unit.ownerId == null || !up(unit)) return;
           unit.mem = unit.mem || {};
