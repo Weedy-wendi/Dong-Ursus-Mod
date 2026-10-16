@@ -15,16 +15,16 @@
 | `files/.../chess_char_4_98-helage.js` | `killGain` 4/2→**6/3**、`killCap` 16/8→**18/9** |
 | `files/.../chess_char_2_98-botany.js`、`chess_char_5_98-turdus.js` | 每次开技每名【乌萨斯】加的层数 2/1→**4/2**（`cryCap`/`layerCap` 仍 16/8） |
 | `files/.../chess_char_5_98-turdus.js` | **范围键修正**：`a.tileR * 1000 + a.tileC` → `a.tileR * COLS + a.tileC`（引擎建 `rangeKeySet` 用的是 `r*COLS+c`；原写法永远匹配不上，导致「范围内每名【乌萨斯】」实际只数到她自己） |
-| `patches/01-mod-shared.patch` | 本体侧四处：`bonds/core.js` 东/乌萨斯兜底默认值 + 注释；`garrisons/meta.js` 新增 `LETO_ITEM_EXCLUDE` 名单与 `maxTier cap 5`；**新目标** `server/match/match/spDraft.js` 的 `rollItemId({ exclude })` |
+| `patches/01-mod-shared.patch` | 本体侧两处，都只用本体已有接口（**不新增补丁目标**）：`bonds/core.js` 东/乌萨斯兜底默认值 + 注释；`garrisons/meta.js` 新增 `LETO_ITEM_EXCLUDE` 名单、`maxTier` 封顶 5、以及**重试采样**实现排除 |
 | `files/test/content/dong_bond.test.js`（新）、`kits_char_{2,4,5}_98.test.js`、`ursus_bond.test.js` | 【东】伤害公式新增测试；三条特质的期望值按新数值改写 |
 | `i18n/mod-i18n.json` | 12 条特质 × 4 语言的 `desc`/`descRaw` 按各自语言改数值并重算 `_h`（144 行） |
 | `scripts/verify.mjs` | 测试清单加 `test/content/dong_bond.test.js` |
-| `mod.json` | 重新生成指纹：`patched` 73→**74**（+spDraft.js）、`owned` 29→**30**（+dong_bond.test.js） |
+| `mod.json` | 重新生成指纹：`owned` 29→**30**（+dong_bond.test.js）；`patched` 仍 **73**、`base.files` 仍 **85**、`removed`/`generated` 不变 |
 
 ### 为什么
 
 用户第七条口径给出的七项数值（【东】3 人公式、缠丸/嵯峨叠层、乌萨斯 3 人公式、赫拉格/伯塔尼/乌啾加层、烈夏道具池）。
-烈夏那条用 `rollItemId({ maxTier, exclude })` 实现：排除名单 12 个 id，其中 7 个（突变细胞、画卷、教鞭、战栗/坚固/加速/灼燃维式重锤）本来就不在商店池里（`isShopItem` 要求 `!isGolden && !shopExcluded`），列全只为口径完整；真正被移出池子的是 **13 件 6 阶 + 5 件 5 阶**（信标/拟态物质/博士投影/商业包装方案/天马之盔），池子 55→37。
+烈夏那条用**重试采样**实现（`ctx.rollItem({ maxTier: 5 })` 抽到排除项就再抽，最多 12 次）——故意**不去改本体 `rollItemId` 的接口**：本体共享文件在 fork 上常被改写，实测 IncreasePlayerCapacity fork 把 `server/match/match/spDraft.js` 整个重写（15496 B / 该段 114→154 行），一旦把它列为补丁目标，那个 fork 就会因为「85 个装前文件里 1 个与基线不符」被拒装（正向/反向 check 全失败、提示 `--force`）。排除名单 12 个 id，其中 7 个（突变细胞、画卷、教鞭、战栗/坚固/加速/灼燃维式重锤）本来就不在商店池里（`isShopItem` 要求 `!isGolden && !shopExcluded`），列全只为口径完整；真正被移出池子的是 **13 件 6 阶 + 5 件 5 阶**（信标/拟态物质/博士投影/商业包装方案/天马之盔），池子 55→37。
 普通维式重锤 `chess_item_1_01_e_a` 保留。
 
 ### 怎么验的
@@ -37,8 +37,9 @@
 | `node --test`（本次相关 6 个文件） | 31 项：**29 pass / 2 fail**（两条是我自己测试写法的假失败，已在下一次修掉） |
 | 修完后重跑 `kits_char_2_98 / kits_char_5_98` | **9 pass / 0 fail** |
 | `scripts/verify.mjs`（mod 测试子集 21 个文件） | 276 项：**273 pass / 3 fail**，3 条全部是本体树里**别人正在写的雷姆必拓（rimBillitonShip）WIP** 造成的（`data.test.js` 期望 26 盟约、`backups.test.js` 的 rim 计数、`build-data` 完整性自检），与本条改动无关 |
-| 补丁回环 | 新版 `patches/01`：24 个文件 / 76680 B / rim 命中 0；`git apply --check` + 实套到纯净基线后 **24/24 文件与预期状态逐字节一致** |
-| `tools/make-manifest.mjs` | 补丁在纯净副本上套用成功、0 `.rej`；`base.files 86 · patched 74 · owned 30` |
+| 补丁回环 | `patches/01`：**23 个文件 / 75587 B** / 不含 spDraft.js / rim 命中 0；`git apply --check` + 实套到纯净基线后 **23/23 文件与预期状态逐字节一致** |
+| `tools/make-manifest.mjs` | 补丁在纯净副本上套用成功、0 `.rej`；`base.files 85 · patched 73 · owned 30` |
+| 那个 fork 上 `--dry-run` | `mod.mjs install <IncreasePlayerCapacity fork> --dry-run` → 「本体是基线 → 直接装」（修前：85 一致 / 1 内容不同 → 补丁套不上） |
 
 **测试写法说明**：伯塔尼/乌啾这两条特质的原测试依赖「自然攒满技力开技」，但该阵型 110 s 内根本不会开技，旧断言其实是 `0 == 0` 通过。现在改成 `battle.emit('skillStart', { unit })` 直接触发（先 `step(1)` 让单位部署完成），断言真实数值。
 

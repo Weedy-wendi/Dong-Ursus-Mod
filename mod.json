@@ -45,10 +45,6 @@
         "size": 30387,
         "sha256": "3cbcd6ae38348566ef995fcac285cf60d22d0da39ae24ebc1e99c9df40996ab7"
       },
-      "server/match/match/spDraft.js": {
-        "size": 13539,
-        "sha256": "ff5fcfca60c8aacfe459e48b353dd74f73be4be7efe48c011e48d7c6b57e915b"
-      },
       "server/sim/battle/deploy.js": {
         "size": 14869,
         "sha256": "d23dd6cdaa09f1738e85d6eae6858b5b92f3088e5a15f1e2a99ce93fb13d0f14"
@@ -538,10 +534,6 @@
       "size": 30387,
       "sha256": "bda6b0d5b1c86fa379da76a1138393972976a5308338008435d0c3af7d575162"
     },
-    "server/match/match/spDraft.js": {
-      "size": 13767,
-      "sha256": "a67bff45729ebbad7a74613386223de0fcf288e7feaf332b639dfa2d3b8ed65f"
-    },
     "server/sim/battle/deploy.js": {
       "size": 15243,
       "sha256": "b2bf6fd9e0b3df5f83668cf94dfc398b7383d582845dd520098eae49e67f2387"
@@ -551,8 +543,8 @@
       "sha256": "364223eed5675ffcadab9c2bac2cd86edd0f4f821b2035e84fa7a0114e51abaa"
     },
     "server/sim/content/garrisons/meta.js": {
-      "size": 25774,
-      "sha256": "c132cee9a4005b4d2958416f777e7c82ebd917dc7a97ea4416117c1e53c92ce6"
+      "size": 26245,
+      "sha256": "efc8a736ba7a72886fc5683bc360436b07d938ce3e30a8fde64bb5325029a6e8"
     },
     "server/sim/content/items/battle.js": {
       "size": 56662,
