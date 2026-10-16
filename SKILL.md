@@ -16,7 +16,7 @@ description: 把【东】+【乌萨斯】自制阵营 mod 包安装/升级/卸�
 mod-dong-ursus/
 ├─ SKILL.md                  本技能
 ├─ README.md                 内容与数值速查（人工阅读）
-├─ files/                    mod 自有文件（整文件覆盖/新增，29 个）
+├─ files/                    mod 自有文件（整文件覆盖/新增，30 个）
 │   ├─ tools/custom-content.mjs                 注入管线（mod 的唯一数据源，整文件 mod 所有）
 │   ├─ data/assets.json                         素材 manifest（整文件覆盖：含麒麟R夜刀技能动画、
 │   │                        嵯峨 S2/S3 动画互换修正等 anims 映射；若本体升级带出新素材条目，
@@ -24,10 +24,10 @@ mod-dong-ursus/
 │   ├─ public/assets/bond/dongShip.png           【东】盟约图标（本体素材集缺这一张，装完即补上；
 │   │                        内容 = 东国阵营 LOGO `ui/campLogo/logo_higashi.png`，sha256 021C9163…、32409 B）
 │   ├─ server/sim/content/kits/ops/chess_char_*.js  13 个 kit
-│   └─ test/content/kits_char_*.test.js + ursus_bond.test.js + test/render/yato2-redeploy-stance.test.js
-│      + test/render/anim-role-fixes.test.js + test/render/attack-clip-after-skill.test.js    13 个 mod 测试
+│   └─ test/content/kits_char_*.test.js + ursus_bond.test.js + dong_bond.test.js + test/render/yato2-redeploy-stance.test.js
+│      + test/render/anim-role-fixes.test.js + test/render/attack-clip-after-skill.test.js    14 个 mod 测试
 ├─ patches/                  （基线 = 该版本体源码检出的 mod 前提交；见「维护」一节）
-│   ├─ 01-mod-shared.patch   上游共享文件的 mod 修改（22 个文件），含 **fork 基线接线**：
+│   ├─ 01-mod-shared.patch   上游共享文件的 mod 修改（24 个文件），含 **fork 基线接线**：
 │   │                        · bonds/core.js（installDong/installUrsus）、garrisons/meta.js、
 │   │                          items/battle.js、kits/index.js、professions.js、
 │   │                          match/gamedata.js（bans 5+5，与 build-data 生成的 config.json 双保险）、
@@ -49,8 +49,8 @@ mod-dong-ursus/
 │   └─ 02-tests-calibration.patch  既有测试的计数/口径校准（50 个文件；文件删除不在补丁里，
 │   │                        统一走 install.mjs 的 REMOVED 清单；golden/*.json 快照除外；
 │   │                        补丁里**不得出现 `*.rej`** 这类产物文件）
-├─ mod.json                  包清单：版本 / 适配本体 / 基线指纹 base.files(85) / 补丁产物 patched(73)
-│                            / 自有文件 owned(29) / 删除 removed(12) / 生成物 generated(22) —— 由 tools/make-manifest.mjs 生成
+├─ mod.json                  包清单：版本 / 适配本体 / 基线指纹 base.files(86) / 补丁产物 patched(74)
+│                            / 自有文件 owned(30) / 删除 removed(12) / 生成物 generated(22) —— 由 tools/make-manifest.mjs 生成
 ├─ LICENSE / NOTICE          GPL-3.0-or-later 原文 + 依 §5(a) 的改动说明
 ├─ i18n/                     四语言 overlay（2 盟约 + 28 特质〔26 自制 + 覆盖的官方 garrison_07〕+ 8 装备记录 + 6 条 effects 派生记录）
 │                            + 合并脚本 + rehash-families.mjs
@@ -74,16 +74,16 @@ node <mod包路径>/scripts/mod.mjs uninstall <本体仓库> [--force] [--keep-b
 
 - `install`：只要求两件事 —— **本体版本对**（`<repo>/package.json` 的 version == `mod.json.base.version`）与**有 git**。树上已有本 mod 内容时自动分情况处理：
   · 有安装记录 → 精确还原（git 优先、备份兜底）再装；
-  · 没有记录（旧 `install.mjs` 装的 / 手工覆盖过）→ 自动把这 85 个「装之前」的文件回退到基线再装，当前字节先另存到 `.mod-dong-ursus/backup-legacy-<时间>/`；
+  · 没有记录（旧 `install.mjs` 装的 / 手工覆盖过）→ 自动把这 86 个「装之前」的文件回退到基线再装，当前字节先另存到 `.mod-dong-ursus/backup-legacy-<时间>/`；
   · 已装同版本且与安装时一致 → 直接说「无需重装」（`--force` 强制重装）。
-  装完按 `mod.json` 的 102 个产物指纹复核（**git 退出码不可信**）。
-  这 85 个文件与基线不符时（别的 mod / 你自己的改动）：先让 git 试套一遍，**能干净套上就继续**；套不上才拒绝并指出哪个补丁套不上（`--force` 可硬装，会落 `.rej`）。
+  装完按 `mod.json` 的 104 个产物指纹复核（**git 退出码不可信**）。
+  这 86 个文件与基线不符时（别的 mod / 你自己的改动）：先让 git 试套一遍，**能干净套上就继续**；套不上才拒绝并指出哪个补丁套不上（`--force` 可硬装，会落 `.rej`）。
 - `update`：按方案 B 取 `base-<本体版本>` 分支（分支名可 `--branch` 覆盖），对比包内 `mod.json` 的 `base` 与版本号；只有 base 匹配且版本更高才执行，用**新包自己**跑 `install`，然后同步本地包目录。
   地址候选顺序：`MOD_SOURCE` → `--source` → `mod.json.source.repo` → `MOD_MIRROR` → `mod.json.source.mirrors` → 自动派生的 `gitclone` 形式。镜像可写完整 URL 或前缀（`https://ghproxy.net` → `https://ghproxy.net/<源地址>`）。拉取失败会列出**远端现有分支**（"没有 base-0.2.6，这个分支还没发布？"就是这一行给的结论）。`--file` 支持本地目录/zip（离线），`--check` 只看不动。
   **版本判定是双侧的**（这是 v1.0.4 修的 bug）：① **本体里装的 mod** 看 `<本体>/.mod-dong-ursus/state.json` 的 `modVersion`（没有记录时用候选自己的 `patched`/`owned` 指纹判断树里是不是已经是这份内容；有漂移/缺文件则重装修复）→ 决定**要不要装本体**；② **本地包目录**看它自己 `mod.json` 的 `version` → 决定**要不要刷新包**。四种组合各自执行：只装本体 / 只刷新包 / 两边都做 / 都最新（什么都不做）。`--no-sync-package` 关掉 ②；`--force` 让两侧都执行。
 - `uninstall`（两条路，都会做到「本 mod 的东西一个不留」）：
   · **有安装记录** → 按 `state.json` 精确还原（git 优先、备份兜底）；
-  · **没有安装记录**（旧版 `install.mjs` 装的 / 手工覆盖过 / 半装）→ 先**反向套补丁**（`git apply -R`，必要时 `-R --3way`）把本 mod 改过的那几段摘掉（同一个文件里别的 mod / 你自己的改动原样留下），再回退被删的上游文件、22 个生成物还原、28 个 mod 新增文件删除、本体原有文件（如 `data/assets.json`）还原、`.mod-dong-ursus/` 清理，收尾打印**残留检查**（只把本 mod 的残留算失败）。
+  · **没有安装记录**（旧版 `install.mjs` 装的 / 手工覆盖过 / 半装）→ 先**反向套补丁**（`git apply -R`，必要时 `-R --3way`）把本 mod 改过的那几段摘掉（同一个文件里别的 mod / 你自己的改动原样留下），再回退被删的上游文件、22 个生成物还原、29 个 mod 新增文件删除、本体原有文件（如 `data/assets.json`）还原、`.mod-dong-ursus/` 清理，收尾打印**残留检查**（只把本 mod 的残留算失败）。
   生成物怎么处理：**优先重跑 `build-data`** —— `data/*.json` 是「当前源码的函数」，重跑才能保住别的 mod / fork 自己的数据改动（例如 `data/config.json` 里的玩家上限）；工具链不可用或失败时才按基线 `git checkout` 还原。
   默认**彻底删除本 mod 的东西**：
   · mod 自有路径（基线提交里不存在的文件）**一律删除**，不看指纹——更早版本的 mod 文件、你改过的 mod 文件也删；内容与本包不同的先另存到 `.mod-dong-ursus/backup-removed-<时间>/` 再删（报告里给路径）；
@@ -91,7 +91,7 @@ node <mod包路径>/scripts/mod.mjs uninstall <本体仓库> [--force] [--keep-b
   · 只有「确实是本 mod 的内容」（内容等于本 mod 补丁产物、或属于安装时被删掉的那 12 个文件）才回退，别的改动（更早版本的 mod / 别的 mod / 你自己改的）**保留并列出**；
   · `--force`：连那些保留的文件一起回退到基线；`--keep-changed`：更保守（被你改过的 mod 自有文件也留下）。
   · 树里已无本 mod 补丁产物时**跳过反向套补丁**（不会撒 .rej）。
-- `status`：**本体版本对不对** + **树里有没有本 mod 的内容**（自有文件 N/29、补丁产物 N/73、被替换的上游文件已删 N/12）+ 安装记录与漂移 + 一句话结论。**不要求纯净本体**。结论优先级：版本不符 → 有安装记录 → **检测到本 mod 内容**（再分「完整」与「不完整（半装）」）→ 纯净基线 → 与本 mod 无关的改动。残留检查只把本 mod 的残留算失败。
+- `status`：**本体版本对不对** + **树里有没有本 mod 的内容**（自有文件 N/30、补丁产物 N/74、被替换的上游文件已删 N/12）+ 安装记录与漂移 + 一句话结论。**不要求纯净本体**。结论优先级：版本不符 → 有安装记录 → **检测到本 mod 内容**（再分「完整」与「不完整（半装）」）→ 纯净基线 → 与本 mod 无关的改动。残留检查只把本 mod 的残留算失败。
 - 兼容入口：`scripts/install.mjs` 仍可用（= `mod.mjs install`）。
 
 `<本体>/.mod-dong-ursus/`：`state.json`（这台机器装了什么：每个被触碰文件的装前/装后字节）+ `backup/`（装前副本）。补丁 01 会往本体 `.gitignore` 加一行 `.mod-dong-ursus/`，所以它不出现在 `git status` 里，也不会被 `git clean -fd` 删掉。
@@ -112,7 +112,7 @@ node <mod包路径>/scripts/install.mjs .
 ```
 
 install.mjs 依次执行（全部幂等，重复运行安全）：
-1. 覆盖/新增 `files/` 下 29 个 mod 自有文件（含整文件覆盖 `tools/custom-content.mjs` 与
+1. 覆盖/新增 `files/` 下 30 个 mod 自有文件（含整文件覆盖 `tools/custom-content.mjs` 与
    `data/assets.json`——若你在本体侧改过这两个文件，先 diff 备份）；
 2. 删除被替换的上游自选 kit：`op-headb2/op-helage/op-poca/op-bgsnow/op-veen/op-saga.js` 与旧测试
    `op_headb2/op_helage/op_poca/op_bgsnow/op_saga/op_veen.test.js`（他们的机制已转成预设棋子 kit）；
@@ -191,8 +191,8 @@ install.mjs 依次执行（全部幂等，重复运行安全）：
    `node_modules`/`.cache`/`public/vendor`，先 `git apply --check` 两个补丁，再完整走一遍 install 流程
    （含 build-data 与 i18n），最后与适配好的树做逐文件哈希比对（应完全一致）。
 6. **不要提交 golden 快照回 mod 包**：golden 是本体版本的函数。
-7. **升级走 CLI，不要手工覆盖**：实测把新版补丁直接套到装了旧版 mod 的树上，正向与反向 `--check` 都失败 → `--reject` 落 **71 个 `.rej`**、而真正被改动的文件只有 1 个。`mod.mjs install` 自己会处理「树上已有 mod 内容」：有 `.mod-dong-ursus/state.json` 就按记录精确还原；**没有记录**（旧版安装/手工覆盖）就把 `mod.json` 里 `base.files` 那 85 个文件回退到基线（git 优先，其次 `.mod-dong-ursus/backup/`），当前字节另存 `backup-legacy-<时间>/`。`update` 负责取包 + 比版本 + 调新包安装。
-8. **补丁相关的 git 命令必须钉死换行符**：`core.autocrlf=false` + `core.eol=lf`。不钉的话，机器上的全局 autocrlf 会把新增行写成 CRLF——实测在非 git 检出的树上装完，73 个补丁产物全变 CRLF，与本体适配树（LF）逐字节不一致（`scripts/lib/gitops.mjs` 的 `LF` 常量已内建）。另一侧：校验对"仅换行符不同"宽容，Windows 签出的 `.gitignore` 这类文件不会被误判。
+7. **升级走 CLI，不要手工覆盖**：实测把新版补丁直接套到装了旧版 mod 的树上，正向与反向 `--check` 都失败 → `--reject` 落 **71 个 `.rej`**、而真正被改动的文件只有 1 个。`mod.mjs install` 自己会处理「树上已有 mod 内容」：有 `.mod-dong-ursus/state.json` 就按记录精确还原；**没有记录**（旧版安装/手工覆盖）就把 `mod.json` 里 `base.files` 那 86 个文件回退到基线（git 优先，其次 `.mod-dong-ursus/backup/`），当前字节另存 `backup-legacy-<时间>/`。`update` 负责取包 + 比版本 + 调新包安装。
+8. **补丁相关的 git 命令必须钉死换行符**：`core.autocrlf=false` + `core.eol=lf`。不钉的话，机器上的全局 autocrlf 会把新增行写成 CRLF——实测在非 git 检出的树上装完，74 个补丁产物全变 CRLF，与本体适配树（LF）逐字节不一致（`scripts/lib/gitops.mjs` 的 `LF` 常量已内建）。另一侧：校验对"仅换行符不同"宽容，Windows 签出的 `.gitignore` 这类文件不会被误判。
 9. **git 的退出码不可信**：`git apply` 在**仓库的子目录**里会静默跳过所有补丁并返回 0；在「恰好等于补丁产物」的树上前向 `--check` 也返回 0。所以套完补丁必须按 `mod.json` 的 `patched` / `owned` 指纹复核（CLI 已内建），别信退出码。
 9. **Windows 的 `core.autocrlf` 有两个坑，都已内建处理**：① 套补丁的 git 命令一律钉死 `core.autocrlf=false` + `core.eol=lf`，否则系统级默认（Git for Windows 常为 true）会把补丁新增行写成 CRLF；② 所有指纹比对容忍「仅换行符不同」。另外 `git checkout` 在 `autocrlf=true` 的仓库里会写出 CRLF，补丁会先走 `--ignore-whitespace` 兜底，装完仍以指纹复核为准。
 10. **改过 `files/` 或补丁后要重生成 `mod.json`**：`node tools/make-manifest.mjs --repo <本体源码检出> --base-commit <基线提交> [--version x.y.z]`；指纹取自基线的 git 对象，不取工作区。版本号是 mod 自己的 semver，改动了就往上加（发布分支 `base-<本体版本>`）。
