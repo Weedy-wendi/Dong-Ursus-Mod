@@ -20,16 +20,20 @@
 
 ## 快速开始（Quick Start）
 
-**前提**：本体是 **v0.2.6 的源码检出**（`git clone` 或源码包，**不是** Release 里的 `*-lite.zip`）、装了 `git`、Node.js **≥ 22**。
+**前提**：
+本体是 **v0.2.6**（`git clone` 或源码包，**不是** Release 里的 `*-lite.zip`，轻量版无法安装）
+node版本要求：Node.js **≥ 22**。
 
 ```bash
-cd <本体源码检出根>                            # 必须是源码检出，不是 Release 里的 *-lite.zip
+cd <游戏本体根目录>                            # 不是 Release 里的 *-lite.zip，轻量版lite无法安装
 
-node <mod 包>/scripts/mod.mjs status    .   # ① 检查状态（只读）
-node <mod 包>/scripts/mod.mjs install   .   # ② 一键安装
-node <mod 包>/scripts/mod.mjs update    .   # ③ 更新到最新包（没有新版就什么都不做）
-node <mod 包>/scripts/mod.mjs uninstall .   # ④ 卸载（默认彻底删掉本 mod 的东西）
-node <mod 包>/scripts/verify.mjs        .   # ⑤ 验收：274 个用例应全绿
+#运行mod的检查、安装、更新和卸载
+#安装示例：node E:/tmp/Dong-Ursus-Mod/scripts/mod.mjs install
+node <mod包地址>/scripts/mod.mjs status    .   # ① 检查状态（只读）
+node <mod包地址>/scripts/mod.mjs install   .   # ② 一键安装
+node <mod包地址>/scripts/mod.mjs update    .   # ③ 从github拉取最新资源更新到最新包（没有新版就什么都不做）
+node <mod包地址>/scripts/mod.mjs uninstall .   # ④ 卸载（默认彻底删掉本 mod 的东西）
+node <mod包地址>/scripts/verify.mjs        .   # ⑤ 验收mod：274 个用例应全绿
 ```
 
 装完直接开局：牌池会多出 13 名预设棋子，【东】/【乌萨斯】按 3 / 6 人档激活，图标、文案、特质、装备全部就位。
@@ -186,7 +190,7 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 
 ## 干员 ×13
 
-| 干员 | 档 | 盟约 | 特质 |
+| 干员 | Tire | 盟约 | 特质 |
 |---|---|---|---|
 | 伯塔尼 | 2 | 乌萨斯 | 病床巡视 981（开技时范围内每名【乌萨斯】+2/4 层，每盟约每场上限 8/16 层） |
 | 吉星 | 3 | 东 | 鸿运当头 991（自身盟约 +6/12，无需激活） |
