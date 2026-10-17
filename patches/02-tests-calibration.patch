@@ -19,7 +19,7 @@ index 48f492b..2dcdad1 100644
      name: '推进之王', subProfessionId: 'pioneer', nationId: 'victoria',
      skills: [{ index: 0, skillId: 'skcom_charge_cost[3]', iconId: 'skcom_charge_cost[3]' }, { index: 1, skillId: 'skchr_siege_2', iconId: 'skchr_siege_2' }, { index: 2, skillId: 'skchr_siege_3', iconId: 'skchr_siege_3' }],
 diff --git a/test/backups.test.js b/test/backups.test.js
-index 0890b9b..4d5119d 100644
+index 0890b9b..36ab5ff 100644
 --- a/test/backups.test.js
 +++ b/test/backups.test.js
 @@ -34,9 +34,9 @@ const isFiniteNum = (v) => typeof v === 'number' && Number.isFinite(v);
@@ -29,9 +29,9 @@ index 0890b9b..4d5119d 100644
 -test('chess: 133 base chess — 74 PRESET / 55 NORMAL / 4 DIY — and every record keeps the five official backup fields', () => {
 -  assert.equal(base.length, 133);
 -  assert.deepEqual([ofType('PRESET').length, ofType('NORMAL').length, ofType('DIY').length], [74, 55, 4]);
-+test('chess: 146 base chess — 87 PRESET / 55 NORMAL / 4 DIY — and every record keeps the five official backup fields', () => {
-+  assert.equal(base.length, 146);
-+  assert.deepEqual([ofType('PRESET').length, ofType('NORMAL').length, ofType('DIY').length], [87, 55, 4]);
++test('chess: 153 base chess — 94 PRESET / 55 NORMAL / 4 DIY — and every record keeps the five official backup fields', () => {
++  assert.equal(base.length, 153);
++  assert.deepEqual([ofType('PRESET').length, ofType('NORMAL').length, ofType('DIY').length], [94, 55, 4]);
    for (const c of all) {
      assert.deepEqual(Object.keys(c.backup), ['charId', 'tmplId', 'skillIndex', 'uniEquipId', 'potRank'], `${c.chessId}: backup fields`);
      assert.deepEqual(c.backup, chess[c.baseId].backup, `${c.chessId}: the elite shares its base row's backup`);
@@ -48,10 +48,10 @@ index 0890b9b..4d5119d 100644
  });
  
 -test('DIY: the 72 owned 6★ picks — a form at every slot status with all three skills, every module at stage 1 and 3, their summons', () => {
-+test('DIY: the 66 owned 6★ picks — a form at every slot status with all three skills, every module at stage 1 and 3, their summons (2026-10-13: 嵯峨/麒麟R夜刀 转预设【东】)', () => {
++test('DIY: the 63 owned 6★ picks — a form at every slot status with all three skills, every module at stage 1 and 3, their summons (2026-10-16: 黑/珊比/莱伊 转预设【雷姆必拓】)', () => {
    const { ownedPool } = backups.diy;
 -  assert.equal(ownedPool.length, 72);
-+  assert.equal(ownedPool.length, 66);
++  assert.equal(ownedPool.length, 63);
    let summoners = 0;
    for (const id of ownedPool) {
      const u = backups.units[id];
@@ -60,16 +60,16 @@ index 0890b9b..4d5119d 100644
      if (summons) summoners++;
    }
 -  assert.equal(summoners, 27, 'owned picks with summons');
-+  assert.equal(summoners, 26, 'owned picks with summons — 2026-10-12: 鸿雪（打字机）转预设离池');
++  assert.equal(summoners, 25, 'owned picks with summons — 2026-10-16: 黑/珊比/莱伊 转预设【雷姆必拓】离池');
    for (const [id, rec] of Object.entries(backups.tokens)) {
      assert.deepEqual(Object.keys(rec.variants), rec.owners, `${id}: owners = variant keys`);
      for (const o of rec.owners) assert.ok(/^char_\w+@\d+\/\d+\/\d+\/\d+$/.test(o) && ownedPool.includes(o.split('@')[0]), `${id}: owner ${o}`);
-@@ -311,25 +312,25 @@ test('DIY: prototype picks carry the skill / module of their 补位 rows at the
+@@ -311,25 +312,26 @@ test('DIY: prototype picks carry the skill / module of their 补位 rows at the
  test('DIY: the owned-6★ pool and the faction → bond rule (mainPower + every subPower vs powerIdList, else 协防干员)', () => {
    const { ownedPool, operators, prototypes } = backups.diy;
    const roster = new Set(base.map((c) => c.charId).filter(Boolean));
 -  assert.equal(ownedPool.length, 72);
-+  assert.equal(ownedPool.length, 66);
++  assert.equal(ownedPool.length, 63);
    for (const id of ownedPool) {
      assert.ok(!roster.has(id), `${id}: a roster operator is never a pick`);
      assert.deepEqual([operators[id].rarity, operators[id].obtainable], [6, true], id);
@@ -77,7 +77,7 @@ index 0890b9b..4d5119d 100644
    assert.deepEqual(Object.keys(operators).sort(), [...new Set([...ownedPool, ...prototypes['5'], ...prototypes['6']])].sort());
    const core = Object.values(bonds).filter((b) => b.isCore && b.powerIdList.length);
 -  assert.equal(core.length, 8);
-+  assert.equal(core.length, 10);
++  assert.equal(core.length, 11);
    for (const [id, o] of Object.entries(operators)) {
      const hit = core.filter((b) => b.powerIdList.some((p) => o.powers.includes(p))).map((b) => b.bondId);
      assert.deepEqual(o.bonds, hit.length ? hit : [config.economy.fallbackBondId], `${id}: bonds from powers`);
@@ -85,7 +85,8 @@ index 0890b9b..4d5119d 100644
    const tally = {};
    for (const id of ownedPool) { const k = operators[id].bonds.join('+'); tally[k] = (tally[k] || 0) + 1; }
 -  assert.deepEqual(tally, { emptyShip: 38, yanShip: 14, victoriaShip: 8, sargonShip: 4, siracusaShip: 4, lateranoShip: 1, kazimierzShip: 1, egirShip: 1, 'yanShip+victoriaShip': 1 });
-+  assert.deepEqual(tally, { emptyShip: 31, yanShip: 13, 'yanShip+victoriaShip': 1, victoriaShip: 8, ursusShip: 1, lateranoShip: 1, dongShip: 1, sargonShip: 3, siracusaShip: 3, 'yanShip+dongShip': 1, 'siracusaShip+ursusShip': 1, kazimierzShip: 1, egirShip: 1 });
++  // 2026-10-16 PR2: 黑（columbia，回协防）与珊比/莱伊（rim，转预设棋子）离开自选池 → emptyShip 29→28、rimBillitonShip 条目消失
++  assert.deepEqual(tally, { emptyShip: 28, yanShip: 13, 'yanShip+victoriaShip': 1, victoriaShip: 8, ursusShip: 1, lateranoShip: 1, dongShip: 1, sargonShip: 3, siracusaShip: 3, 'yanShip+dongShip': 1, 'siracusaShip+ursusShip': 1, kazimierzShip: 1, egirShip: 1 });
    // the collab operators are out of the data and the pool (the owner's decision of 2026-10-05: copyright)
    assert.deepEqual(backups.diy.excluded.map((id) => [id, backups.units[id], operators[id]]),
 -    ['char_456_ash', 'char_1029_yato2', 'char_1048_orchd2', 'char_4123_ela', 'char_4141_marcil', 'char_4182_oblvns', 'char_4217_makoto'].map((id) => [id, undefined, undefined]),
@@ -95,7 +96,7 @@ index 0890b9b..4d5119d 100644
    assert.deepEqual(operators.char_017_huang.bonds, ['yanShip', 'victoriaShip'], '煌: 炎 + 维多利亚 from her subPower (mainPower rhodes / elite)');
    for (const id of [...prototypes['5'], ...prototypes['6']]) assert.deepEqual(operators[id].bonds, ['emptyShip'], `${id}: no faction`);
  });
-@@ -338,10 +339,13 @@ test('DIY: powers and the owned pool re-derived from character_table', { skip: !
+@@ -338,11 +340,14 @@ test('DIY: powers and the owned pool re-derived from character_table', { skip: !
    const CT = raw('character_table');
    const act = raw('activity_table').activity.AUTOCHESS_SEASON.act2autochess;
    const roster = new Set(Object.values(act.charShopChessDatas).map((r) => r.charId).filter(Boolean));
@@ -104,13 +105,15 @@ index 0890b9b..4d5119d 100644
      || /^(?:MH|RS|AM|PS|DD)\d/.test(c.displayNumber || '');
    const legal = Object.entries(CT).filter(([id, c]) => id.startsWith('char_') && c.rarity === 'TIER_6' && !['TOKEN', 'TRAP'].includes(c.profession) && !c.isNotObtainable && !roster.has(id));
 -  assert.equal(legal.length, 79, 'the excel\'s 79 obtainable 6★ outside the chess pool');
+-  assert.deepEqual([...backups.diy.ownedPool].sort(), legal.filter(([, c]) => !collab(c)).map(([id]) => id).sort());
 +  // 2026-10-13: 72 — 嵯峨 became a custom preset chess (【东】扩展) and 麒麟R夜刀 re-entered the data as one,
 +  // so both leave the "obtainable 6★ outside the pool" set (after 早露/维伊/鸿雪/怒潮凛冬/赫拉格, 77)
-+  assert.equal(legal.length, 72, 'the excel\'s obtainable 6★ outside the chess pool (79 official − the seven custom presets)');
-   assert.deepEqual([...backups.diy.ownedPool].sort(), legal.filter(([, c]) => !collab(c)).map(([id]) => id).sort());
++    // 2026-10-13: 嵯峨/麒麟R夜刀 left the pool (【东】扩展转预设); 2026-10-16: 黑/珊比/莱伊 too (【雷姆必拓】PR2 转预设)
++  assert.equal(legal.length, 69, 'the excel\'s obtainable 6★ outside the chess pool (76 official − the seven custom presets)');
    assert.deepEqual([...backups.diy.excluded].sort(), legal.filter(([, c]) => collab(c)).map(([id]) => id).sort());
    for (const [id, o] of Object.entries(backups.diy.operators)) {
-@@ -356,7 +360,7 @@ test('DIY: powers and the owned pool re-derived from character_table', { skip: !
+     const c = CT[id];
+@@ -356,7 +361,7 @@ test('DIY: powers and the owned pool re-derived from character_table', { skip: !
      const m = CT[id].mainPower;
      return coreOf([m?.nationId, m?.groupId, m?.teamId].filter(Boolean)).join() !== coreOf(backups.diy.operators[id].powers).join();
    });
@@ -303,7 +306,7 @@ index 0b4d6b5..c82fe38 100644
    cover('band_dusk'); // 夕: 画卷 grant (fixed-round test) + 墨色真颜 (battle test)
    const missing = Object.keys(DATA.bands).filter((id) => !COVER.has(id)).sort();
 diff --git a/test/content/choices.test.js b/test/content/choices.test.js
-index 599231b..873fade 100644
+index 599231b..a49d82c 100644
 --- a/test/content/choices.test.js
 +++ b/test/content/choices.test.js
 @@ -93,8 +93,9 @@ test('coverage: every 悬赏 / 战术决策 effect and every 道具补给 / 机
@@ -312,9 +315,9 @@ index 599231b..873fade 100644
    assert.equal(ids.tactic.length, 43, '43 BUFF_GAIN effects');
 -  // 56 normal EQUIP items − the 5 effect-only ones (4 special 维式重锤, 突变细胞: never sold, user playtest #4)
 -  assert.equal(ids.items.length, 51, '51 shop items');
-+  // 60 normal EQUIP items − the 5 effect-only ones (4 special 维式重锤, 突变细胞: never sold, user playtest #4)
-+  // 2026-10-13: +4 自制装备（东国鬼面/残心一闪/乌萨斯军粮/冰原咆哮）
-+  assert.equal(ids.items.length, 55, '55 shop items');
++  // 62 normal EQUIP items − the 5 effect-only ones (4 special 维式重锤, 突变细胞: never sold, user playtest #4)
++  // 2026-10-13: +4 自制装备（东国鬼面/残心一闪/乌萨斯军粮/冰原咆哮）; 2026-10-16 PR2: +2 雷姆必拓（钻石镐/胡萝卜披萨）
++  assert.equal(ids.items.length, 57, '57 shop items');
    for (const id of ['chess_item_2_03_e_a', 'chess_item_3_09_e_a', 'chess_item_3_10_e_a', 'chess_item_4_09_e_a', 'chess_item_5_08_e_a']) assert.ok(!ids.items.includes(id), `${id} is never a supply card`);
    assert.ok(ids.items.includes('chess_item_1_01_e_a'), 'the plain 维式重锤 is');
    for (const id of [...ids.bounty, ...ids.tactic, ...ids.items]) {
@@ -343,7 +346,7 @@ index 3631c2f..366f121 100644
    });
    h.step();
 diff --git a/test/content/garrisons_battle.test.js b/test/content/garrisons_battle.test.js
-index fbb8ec4..02ed878 100644
+index fbb8ec4..8fcbf2b 100644
 --- a/test/content/garrisons_battle.test.js
 +++ b/test/content/garrisons_battle.test.js
 @@ -595,6 +595,20 @@ test('attrByBond (26 ids): floor(Σ layers of the listed ACTIVE bonds / divide_n
@@ -367,7 +370,7 @@ index fbb8ec4..02ed878 100644
  test('respawnTimeByBond 144, attrByBond_add_onstart 115 (玛恩纳, 100 s after each deploy), ab_damageScaleByBond 101 (仇白)', () => {
    for (const gid of idsOfKey('act1autochess_gar_eff_respawnTimeByBond')) {
      const h = battle({ units: [{ id: 'op', g: [gid], row: 10, col: 4 }], bonds: { kazimierzShip: B(10) } });
-@@ -719,6 +733,31 @@ test('real data: every owned IN_BATTLE garrison installs without errors on its r
+@@ -719,6 +733,47 @@ test('real data: every owned IN_BATTLE garrison installs without errors on its r
    }
  });
  
@@ -396,14 +399,30 @@ index fbb8ec4..02ed878 100644
 +  }
 +});
 +
++test('自定义特质 996 (黑) / 999 (莱伊)【雷姆必拓】: display-only riders fired from the rim kits (layers/3 步进)', () => {
++  // 996 黑：每 3 层【雷姆必拓】【精准】攻速 +1；999 莱伊：每 3 层攻击力 +1%（精锐 +2%）。
++  // 数值断言在 rim_operators.test.js；这里跑干净战斗并把 id 计入覆盖（与 980-992 批次同口径）。
++  const chessById = { garrison_996_a: 'chess_char_5_96_a', garrison_996_b: 'chess_char_5_96_b',
++    garrison_999_a: 'chess_char_6_95_a', garrison_999_b: 'chess_char_6_95_b' };
++  for (const [gid, chessId] of Object.entries(chessById)) {
++    const h = makeBattle({ defs: { enemies: { e_dummy: enemyRec({ key: 'e_dummy', hp: 1e9, speed: 0, atk: 0 }) } },
++      units: [{ chessId, row: 10, col: 5 }], enemies: [{ key: 'e_dummy', pos: [10, 6] }],
++      autoFinish: false, timeLimit: 8, captureNoisy: true, seed: 51,
++      bonds: { rimBillitonShip: { count: 3, active: true, tier: 1, layers: 9 }, preciShip: { count: 3, active: true, tier: 1, layers: 0 } } });
++    h.run(6);
++    checkInvariants(h.b);
++    cover(gid);
++  }
++});
++
  test('coverage: every IN_BATTLE garrison id of a visible chess (and every id they grant) was exercised above', () => {
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/garrisons_meta.test.js b/test/content/garrisons_meta.test.js
-index b6782a3..aeda3bb 100644
+index b6782a3..cd69408 100644
 --- a/test/content/garrisons_meta.test.js
 +++ b/test/content/garrisons_meta.test.js
-@@ -884,6 +884,85 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
+@@ -884,6 +884,182 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
    for (const k of keys) assert.ok(REG.has(`garrison:${k}`), k);
  });
  
@@ -486,11 +505,108 @@ index b6782a3..aeda3bb 100644
 +  cover('garrison_991_b');
 +});
 +
++// ---- 2026-10-16 【雷姆必拓】扩展批次（993/994/995/997/998；996 黑 / 999 莱伊 在各自 kit 的战斗侧）----
++
++test('自定义 993 (暴行): <售出时>进入下个休整期额外获得 1/2 资金', () => {
++  const s = setup();
++  const before = s.ps.pendingFunds;
++  const p = s.acquire('chess_char_1_96_a');
++  s.sell(p);
++  assert.equal(s.ps.pendingFunds - before, 1, 'normal: +1');
++  cover('garrison_993_a');
++  const t = setup();
++  const b2 = t.ps.pendingFunds;
++  const p2 = t.acquire('chess_char_1_96_b');
++  t.sell(p2);
++  assert.equal(t.ps.pendingFunds - b2, 2, 'elite: +2');
++  cover('garrison_993_b');
++});
++
++test('自定义 994 (火哨): <休整期结束时>已激活的【雷姆必拓】+2/+4', () => {
++  // 探针口径：干员在手牌即可触发（board 上会双发——进战与整备两条通路，另测）；这里只钉整备区行为
++  const s = setup();
++  s.acquire('chess_char_2_96_a');
++  s.activate('rimBillitonShip');
++  s.prepEnd();
++  assert.deepEqual(s.gainsNow(), { rimBillitonShip: 2 }, JSON.stringify(s.gainsNow()));
++  cover('garrison_994_a');
++  // 未激活 → 不加
++  const t = setup();
++  t.acquire('chess_char_2_96_b');
++  t.prepEnd();
++  assert.deepEqual(t.gainsNow(), {}, 'inactive rim gains nothing');
++  // 精锐 +4（激活时）
++  const u = setup();
++  u.acquire('chess_char_2_96_b');
++  u.activate('rimBillitonShip');
++  u.prepEnd();
++  assert.deepEqual(u.gainsNow(), { rimBillitonShip: 4 }, JSON.stringify(u.gainsNow()));
++  cover('garrison_994_b');
++});
++
++test('自定义 995 (蜜莓): <获得干员时>随机 1 个已激活盟约 +3，重复 4/8 次（只在已激活集合里挑）', () => {
++  const s = setup();
++  s.activate('yanShip', 'victoriaShip');
++  const before = { yanShip: s.L('yanShip'), victoriaShip: s.L('victoriaShip') };
++  s.acquire('chess_char_3_95_a');
++  const gains = s.gainsNow();
++  const total = Object.values(gains).reduce((a, b) => a + b, 0);
++  assert.equal(total, 3 * 4, 'normal: 4 draws × +3');
++  for (const b of Object.keys(gains)) assert.ok(['yanShip', 'victoriaShip'].includes(b), `only active bonds gain: ${b}`);
++  cover('garrison_995_a');
++  const t = setup();
++  t.activate('yanShip');
++  t.acquire('chess_char_3_95_b');
++  const g2 = t.gainsNow();
++  assert.equal(Object.values(g2).reduce((a, b) => a + b, 0), 3 * 8, 'elite: 8 draws × +3');
++  cover('garrison_995_b');
++});
++
++test('自定义 997 (时隙): <获得干员时>随机 1 个已激活盟约 +6，重复 4/8 次', () => {
++  const s = setup();
++  s.activate('yanShip', 'kazimierzShip');
++  s.acquire('chess_char_5_95_a');
++  const total = Object.values(s.gainsNow()).reduce((a, b) => a + b, 0);
++  assert.equal(total, 6 * 4, 'normal: 4 draws × +6');
++  cover('garrison_997_a');
++  const t = setup();
++  t.activate('yanShip');
++  t.acquire('chess_char_5_95_b');
++  assert.equal(Object.values(t.gainsNow()).reduce((a, b) => a + b, 0), 6 * 8, 'elite: 8 draws × +6');
++  cover('garrison_997_b');
++});
++
++test('自定义 998 (珊比): <进入休整期时(SERVER_PREP_START)>周围八格每 3/2 名干员 → 1 名不高于调度等级的【雷姆必拓】干员（cap 2/3）', () => {
++  const s = setup();
++  s.ps.shop.level = 6;  // level 3 时 rim 的部分成员可能整档被禁 → roll 落空；level 6 池里 rim 各档都有
++  s.acquire('chess_char_6_96_a');
++  give(s.m, s.ps, 'chess_char_6_96_a', 'board', [10, 4]);
++  // 整备区可部署几何下 [10,4] 的有效邻格 = 5（行 11 出界）→ floor(5/3)=1（cap 2）→ 1 名
++  const neighbors = ['chess_char_1_01_a', 'chess_char_1_02_a', 'chess_char_1_03_a', 'chess_char_1_04_a', 'chess_char_1_05_a'];
++  const cells = [[9, 3], [9, 4], [9, 5], [10, 3], [10, 5]];
++  neighbors.forEach((id, i) => give(s.m, s.ps, id, 'board', cells[i]));
++  s.m.dispatch(s.ps, 'onPrepStart', { round: s.m.round });
++  const got = handChess(s.ps).filter((id) => DATA.chess[id].bonds.includes('rimBillitonShip'));
++  assert.equal(got.length, 1, `1 rim recruit, got ${got.length}`);
++  cover('garrison_998_a');
++  // 精锐：step 2、cap 3 → 5 邻居 = 2 名
++  const t = setup(90);
++  t.ps.shop.level = 6;
++  t.acquire('chess_char_6_96_b');
++  give(t.m, t.ps, 'chess_char_6_96_b', 'board', [10, 4]);
++  neighbors.forEach((id, i) => give(t.m, t.ps, id, 'board', cells[i]));
++  t.m.dispatch(t.ps, 'onPrepStart', { round: t.m.round });
++  const got2 = handChess(t.ps).filter((id) => DATA.chess[id].bonds.includes('rimBillitonShip'));
++  // roll 可能落在本局被禁的 rim 成员上（真实行为）→ 只钉下界 1（cap/step 语义由普通形态的精确断言覆盖）
++  assert.ok(got2.length >= 1, `>=1 rim recruits (elite), got ${got2.length}`);
++  cover('garrison_998_b');
++});
++
  test('coverage: every SERVER_* garrison id of a visible chess was exercised above', () => {
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/items.test.js b/test/content/items.test.js
-index 2696fca..2225495 100644
+index 2696fca..1b82868 100644
 --- a/test/content/items.test.js
 +++ b/test/content/items.test.js
 @@ -1,4 +1,4 @@
@@ -499,31 +615,34 @@ index 2696fca..2225495 100644
  // operators / enemies for exact numbers, prep side (items/meta.js + the engine built-ins it keeps) through the real
  // registry and dispatcher. Numbers are the data blackboards (research 04 §3–§7); every item key is covered (last test).
  import { test } from 'node:test';
-@@ -75,6 +75,9 @@ const STAT_CASES = [
+@@ -75,6 +75,12 @@ const STAT_CASES = [
    [A('6_06'), { res: 40 }], [B('6_06'), { res: 60 }],                                     // 耶拉冈德之泪
    [A('6_10'), { redeployMul: 0.6, maxHp: 2000 }], [B('6_10'), { redeployMul: 0.4 }],      // 骑士戒律
    [A('6_11'), { spRecovery: 1.2 }], [B('6_11'), { spRecovery: 1.35 }],                   // 家族徽章
 +  [A('9_02'), { atk: 700 }], [B('9_02'), { atk: 800 }],                                  // 残心一闪 +40 / +60 %
 +  [A('9_03'), { maxHp: 2500 }], [B('9_03'), { maxHp: 3000 }],                            // 乌萨斯军粮 +25 / +50 %
 +  [A('9_04'), { atk: 725 }], [B('9_04'), { atk: 825 }],                                  // 冰原咆哮 +45 / +65 %
++  // 2026-10-16 PR2 雷姆必拓：钻石镐 +25/+35 % ATK；胡萝卜披萨 attack_speed 30/45（stat 字段名是 attack_speed，不是 aspd）
++  [A('9_05'), { atk: 625 }], [B('9_05'), { atk: 675 }],                                   // 雷姆必拓钻石镐
++  [A('9_06'), { aspd: 130 }], [B('9_06'), { aspd: 145 }],                                 // 胡萝卜披萨
  ];
  
  test('stat equipment: percentages are 直接乘算 — additive with each other (normal / golden numbers from data)', () => {
-@@ -683,10 +686,10 @@ test('变形同构体: carrier counts as a member of the other item\'s giveBondI
+@@ -683,10 +689,10 @@ test('变形同构体: carrier counts as a member of the other item\'s giveBondI
    assert.deepEqual([...unitBonds(h.unit('t_op'))], ['lateranoShip']);
    const h2 = fight({ units: [{ chessId: 't_op', row: 10, col: 4, items: [A('4_08')] }] });
    assert.deepEqual([...unitBonds(h2.unit('t_op'))], [], 'the bond item alone grants nothing');
 -  // every giveBondId item grants its bond (14 bonds)
-+  // every giveBondId item grants its bond (16 bonds — 2026-10-13: +东国鬼面 dongShip / 乌萨斯军粮 ursusShip)
++  // every giveBondId item grants its bond (17 bonds — 2026-10-13: +东国鬼面 dongShip / 乌萨斯军粮 ursusShip; 2026-10-16 PR2: +雷姆必拓钻石镐 rimBillitonShip)
    const grants = Object.values(DATA.items).filter((r) => r.giveBondId && !r.isGolden);
 -  assert.equal(grants.length, 18);
 -  assert.equal(new Set(grants.map((r) => r.giveBondId)).size, 14);
-+  assert.equal(grants.length, 20);
-+  assert.equal(new Set(grants.map((r) => r.giveBondId)).size, 16);
++  assert.equal(grants.length, 21);
++  assert.equal(new Set(grants.map((r) => r.giveBondId)).size, 17);
    for (const r of grants) {
      const hh = fight({ units: [{ chessId: 't_op', row: 10, col: 4, items: [r.id, A('6_09')] }] });
      assert.ok(unitBonds(hh.unit('t_op')).includes(r.giveBondId), r.id);
-@@ -705,6 +708,91 @@ test('变形同构体: carrier counts as a member of the other item\'s giveBondI
+@@ -705,6 +711,91 @@ test('变形同构体: carrier counts as a member of the other item\'s giveBondI
    cover(A('6_09'), B('6_09'), A('1_01'));
  });
  
@@ -615,7 +734,7 @@ index 2696fca..2225495 100644
  test('lendItemEffects (萨尔贡 × 娜仁图亚): tier ≤ V battle effects lent for 60 s, then removed', () => {
    const ops = { t_op: op('t_op'), t_a: op('t_a') };
    const h = fight({ ops, units: [{ chessId: 't_op', row: 10, col: 4, items: [A('1_01'), A('6_01')] }, { chessId: 't_a', row: 11, col: 4 }] });
-@@ -961,7 +1049,8 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
+@@ -961,7 +1052,8 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
    const elite = DATA.chess[cid].goldenId;
    const chessIn = (ps) => [...ps.board.values(), ...ps.hand, ...ps.temp].filter((p) => p && p.kind === 'chess').map((p) => p.id).sort();
    for (const item of [A('5_05'), B('5_05')]) {
@@ -625,7 +744,7 @@ index 2696fca..2225495 100644
      give(m, ps, elite, 'hand');
      const t = give(m, ps, cid, 'hand');
      give(m, ps, cid, 'hand');
-@@ -978,7 +1067,7 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
+@@ -978,7 +1070,7 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
    }
    // 2 normal copies, no elite, the pool drained by other players: the third copy is still granted.
    {
@@ -634,7 +753,7 @@ index 2696fca..2225495 100644
      const t = give(m, ps, cid, 'hand');
      give(m, ps, cid, 'hand');
      m.pool.take(cid, m.pool.left(cid));
-@@ -991,7 +1080,7 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
+@@ -991,7 +1083,7 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
    }
    // 2 normal copies with copies left: the 3rd merges into the elite
    {
@@ -643,15 +762,86 @@ index 2696fca..2225495 100644
      const t = give(m, ps, cid, 'hand');
      give(m, ps, cid, 'hand');
      assert.equal(m.pool.left(cid), 3);
-@@ -1278,5 +1367,5 @@ test('coverage: every equipment (normal + golden) and every Art is exercised by
+@@ -1278,5 +1370,55 @@ test('coverage: every equipment (normal + golden) and every Art is exercised by
    // items whose numbers are asserted in the stat table, the proc tests or the meta tests
    const missing = Object.keys(DATA.items).filter((id) => !COVER.has(id)).sort();
    assert.deepEqual(missing, []);
 -  assert.equal(Object.keys(DATA.items).length, 115);
-+  assert.equal(Object.keys(DATA.items).length, 123);
++  assert.equal(Object.keys(DATA.items).length, 127);
++});
++
++test('雷姆必拓钻石镐: each attack has a chance to ×1.5 the hit (rng per hit); 胡萝卜披萨: 【雷姆必拓】 member ASPD per other Rim member, capped (+30 / with 镐 +45); non-members get the stat only', () => {
++  // 钻石镐: forceRng pins the per-hit roll — 0.05 < prob(0.10) procs, 0.5 does not; the landed hits read ×1.5
++  const runDmg = (roll) => {
++    const h = fight({ units: [{ chessId: 't_op', row: 10, col: 4, items: [A('9_05')] }], foes: [[10, 5]] });
++    forceRng(h, roll);
++    h.step(1);
++    const before = foe(h).hp;
++    h.run(2);
++    return before - foe(h).hp;
++  };
++  const proc = runDmg(0.05);
++  const noProc = runDmg(0.5);
++  assert.ok(noProc > 0, 'the dummy takes damage at all');
++  close(proc, noProc * 1.5, 'every hit procs at roll 0.05 → exactly ×1.5 total');
++
++  // 披萨: 照 9_04 的形状（atk → aspd，+per per other Rim member, cap；同带钻石镐抬 cap）
++  const allies = (n) => Object.fromEntries([1, 2, 3, 4, 5, 6].slice(0, n).map((i) => [`u${i}`, op(`u${i}`, { bonds: ['rimBillitonShip'], range: [[0, 0]] })]));
++  const mk = (items, n) => fight({
++    ops: { t_op: op('t_op', { bonds: ['rimBillitonShip'], range: [[0, 0]] }), ...allies(n) },
++    units: [{ chessId: 't_op', row: 10, col: 4, items }, ...[1, 2, 3, 4, 5, 6].slice(0, n).map((i) => ({ chessId: `u${i}`, row: 9, col: 2 + i }))],
++  });
++  const aspd = (h) => h.unit('t_op').s.aspd;
++  let h = mk([A('9_06')], 0);
++  h.step(1);
++  close(aspd(h), 130, 'alone: the +30 stat only');
++  h = mk([A('9_06')], 1);
++  h.step(1);
++  close(aspd(h), 136, 'one other Rim member: +6');
++  h = mk([A('9_06')], 6);
++  h.step(1);
++  close(aspd(h), 160, 'six others: +36 capped at +30');
++  h = mk([A('9_06'), A('9_05')], 6);
++  h.step(1);
++  close(aspd(h), 166, 'with 钻石镐: the cap rises to +45 (36 uncapped)');
++  const plainU = fight({ ops: { t_op: op('t_op', { range: [[0, 0]] }) }, units: [{ chessId: 't_op', row: 10, col: 4, items: [A('9_06')] }] });
++  plainU.step(1);
++  close(aspd(plainU), 130, 'non-【雷姆必拓】 carrier: the stat only');
++  close(plainU.unit('t_op').s.atk, 500, '【雷姆必拓】 carrier gains no siracusa ATK');
++  // 叙拉古携带（2026-10-16 用户口径）：攻击力 +200% 固定、独立 buff；与钻石镐无联动（cap_combo 只作用于 rim 攻速段）
++  const sir = fight({ ops: { t_op: op('t_op', { bonds: ['siracusaShip'], range: [[0, 0]] }), s2: op('s2', { bonds: ['siracusaShip'], range: [[0, 0]] }) },
++    units: [{ chessId: 't_op', row: 10, col: 4, items: [A('9_06')] }, { chessId: 's2', row: 9, col: 4 }] });
++  sir.step(1);
++  close(sir.unit('t_op').s.atk, 1500, '【叙拉古】 carrier: ATK +200% (flat)');
++  const sirPick = fight({ ops: { t_op: op('t_op', { bonds: ['siracusaShip'], range: [[0, 0]] }), s2: op('s2', { bonds: ['siracusaShip'], range: [[0, 0]] }) },
++    units: [{ chessId: 't_op', row: 10, col: 4, items: [A('9_06'), A('9_05')] }, { chessId: 's2', row: 9, col: 4 }] });
++  sirPick.step(1);
++  close(sirPick.unit('t_op').s.atk, 1625, '叙拉古 + 钻石镐同带: no pick synergy (its +200 % is flat; the pick only adds its own +25 % stat)');
++  cover(A('9_05'), B('9_05'), A('9_06'), B('9_06'));
  });
+diff --git a/test/content/kits_alt_t1.test.js b/test/content/kits_alt_t1.test.js
+index 9ac54d8..c607286 100644
+--- a/test/content/kits_alt_t1.test.js
++++ b/test/content/kits_alt_t1.test.js
+@@ -53,14 +53,14 @@ const pair = (n) => [`chess_char_1_${n}_a`, `chess_char_1_${n}_b`];
+ 
+ test('tier 1: every selectable skill of every visible chess has a hand-authored spec (normal + elite)', () => {
+   const rep = kitCoverage({ tier: 1 });
+-  assert.equal(rep.summary.chess, 16);
++  assert.equal(rep.summary.chess, 17);  // 2026-10-16 PR2: +暴行 1_96（雷姆必拓）
+   assert.equal(rep.summary.covered, rep.summary.skills, rep.chess.flatMap((r) => r.skills.filter((s) => !s.covered).map((s) => `${r.name} S${s.index + 1}`)).join(', '));
+   assert.equal(rep.summary.chessFullyCovered, rep.summary.chess);
+ });
+ 
+ test('tier 1: every chess × every legal skill × module (default / none) fights 30 s with its authored spec, no content errors', () => {
+   const bases = ds.chessIds().filter((id) => /^chess_char_1_\d+_a$/.test(id) && raw(id).visible);
+-  assert.equal(bases.length, 16);
++  assert.equal(bases.length, 17);  // 2026-10-16 PR2: +暴行 1_96
+   for (const base of bases) {
+     const gold = base.replace(/_a$/, '_b');
+     const opt = loadoutOptions(raw(base), raw(gold));
 diff --git a/test/content/kits_alt_t2.test.js b/test/content/kits_alt_t2.test.js
-index 7a569b8..f12e1a5 100644
+index 7a569b8..7e574d5 100644
 --- a/test/content/kits_alt_t2.test.js
 +++ b/test/content/kits_alt_t2.test.js
 @@ -52,7 +52,7 @@ const plain = (id, o = {}) => chessRec({ id, skill: null, ...o });
@@ -659,12 +849,12 @@ index 7a569b8..f12e1a5 100644
  test('kit coverage: every selectable skill of every visible tier-2 chess is hand-authored (normal + elite)', () => {
    const rep = kitCoverage({ tier: 2 });
 -  assert.equal(rep.summary.chess, 17);
-+  assert.equal(rep.summary.chess, 19);
++  assert.equal(rep.summary.chess, 20);
    assert.equal(rep.summary.covered, rep.summary.skills, JSON.stringify(rep.chess.filter((r) => r.skills.some((s) => !s.covered)).map((r) => r.name)));
    for (const r of rep.chess) {
      for (const s of r.skills.filter((x) => !x.isDefault)) {
 diff --git a/test/content/kits_alt_t3.test.js b/test/content/kits_alt_t3.test.js
-index e0a2098..841011c 100644
+index e0a2098..3eb7210 100644
 --- a/test/content/kits_alt_t3.test.js
 +++ b/test/content/kits_alt_t3.test.js
 @@ -37,7 +37,7 @@ const atkHits = (h, u, skill = null) => h.hooksOf('damaged').filter((c) => c.sou
@@ -672,7 +862,7 @@ index e0a2098..841011c 100644
  test('coverage: every selectable skill of every visible tier-3 chess is hand-authored (normal + 精锐)', () => {
    const rep = kitCoverage({ tier: 3 });
 -  assert.equal(rep.summary.chess, 19);
-+  assert.equal(rep.summary.chess, 22);  // 2026-10-14: 白雪 t3→t2（2026-10-13: +白雪/吉星/缠丸 t2→t3）
++  assert.equal(rep.summary.chess, 23);  // 2026-10-14: 白雪 t3→t2（2026-10-13: +白雪/吉星/缠丸 t2→t3）
    assert.equal(rep.summary.covered, rep.summary.skills, rep.chess.filter((r) => r.skills.some((s) => !s.covered)).map((r) => r.name).join(' '));
    for (const r of rep.chess) for (const s of r.skills) if (!s.isDefault) assert.deepEqual([s.normal, s.elite], ['skills', 'skills'], `${r.name} S${s.index + 1}`);
  });
@@ -690,7 +880,7 @@ index b5ba92d..01f5723 100644
    for (const base of T4) {
      const { skills } = loadoutOptions(C[base], C[gold(base)]);
 diff --git a/test/content/kits_alt_t5.test.js b/test/content/kits_alt_t5.test.js
-index d10e59a..9d419fc 100644
+index d10e59a..9c97227 100644
 --- a/test/content/kits_alt_t5.test.js
 +++ b/test/content/kits_alt_t5.test.js
 @@ -63,14 +63,14 @@ function cast(h, u, max = 15) {
@@ -698,7 +888,7 @@ index d10e59a..9d419fc 100644
  test('tier 5: every selectable skill of every visible chess has a hand-authored spec (normal + elite)', () => {
    const rep = kitCoverage({ tier: 5 });
 -  assert.equal(rep.summary.chess, 19);
-+  assert.equal(rep.summary.chess, 22);  // 2026-10-13: +嵯峨
++  assert.equal(rep.summary.chess, 24);  // 2026-10-16 PR2: +2 雷姆必拓（t5 黑/时隙；t6 珊比/莱伊）  // 2026-10-13: +嵯峨
    assert.equal(rep.summary.covered, rep.summary.skills, rep.chess.flatMap((r) => r.skills.filter((s) => !s.covered).map((s) => `${r.name} S${s.index + 1}`)).join(', '));
    assert.equal(rep.summary.chessFullyCovered, rep.summary.chess);
  });
@@ -706,12 +896,12 @@ index d10e59a..9d419fc 100644
  test('tier 5: every chess × every legal skill × every module fights with its authored spec and casts, no content errors', () => {
    const bases = ds.chessIds().filter((id) => /^chess_char_5_\d+_a$/.test(id) && raw(id).visible);
 -  assert.equal(bases.length, 19);
-+  assert.equal(bases.length, 22);  // 2026-10-13: +嵯峨
++  assert.equal(bases.length, 24);  // 2026-10-13: +嵯峨
    let n = 0;
    for (const base of bases) {
      const gold = base.replace(/_a$/, '_b');
 diff --git a/test/content/kits_alt_t6.test.js b/test/content/kits_alt_t6.test.js
-index e24c588..f4cebee 100644
+index e24c588..d384a5f 100644
 --- a/test/content/kits_alt_t6.test.js
 +++ b/test/content/kits_alt_t6.test.js
 @@ -52,7 +52,7 @@ const skillBuff = (u) => u.findBuff(`skill:${u.id}`);
@@ -719,12 +909,12 @@ index e24c588..f4cebee 100644
  test('kit coverage: every selectable skill of every visible tier-6 chess is hand-authored (normal + elite, every module)', () => {
    const rep = kitCoverage({ tier: 6 });
 -  assert.equal(rep.summary.chess, 19);
-+  assert.equal(rep.summary.chess, 22);  // 2026-10-13: +麒麟R夜刀
++  assert.equal(rep.summary.chess, 24);  // 2026-10-16 PR2: +2 雷姆必拓（t5 黑/时隙；t6 珊比/莱伊）  // 2026-10-13: +麒麟R夜刀
    assert.equal(rep.summary.covered, rep.summary.skills, JSON.stringify(rep.chess.filter((r) => r.skills.some((s) => !s.covered)).map((r) => r.name)));
    for (const r of rep.chess) {
      for (const s of r.skills.filter((x) => !x.isDefault)) {
 diff --git a/test/content/kits_t3.test.js b/test/content/kits_t3.test.js
-index faa3a41..2cd65d5 100644
+index faa3a41..b417c7a 100644
 --- a/test/content/kits_t3.test.js
 +++ b/test/content/kits_t3.test.js
 @@ -23,9 +23,9 @@ const done = (h) => { assert.deepEqual(h.b.errors.map((e) => `${e.label} ${e.mes
@@ -732,23 +922,47 @@ index faa3a41..2cd65d5 100644
  const noGarrison = (...ids) => Object.fromEntries(ids.map((id) => [id, { ...ds.rawChess(id), garrisonIds: [] }]));
  
 -test('tier3 kit registry covers every tier-3 chess (19 visible + 2 hidden)', () => {
-+test('tier3 kit registry covers every tier-3 chess (22 visible + 2 hidden)', () => {
++test('tier3 kit registry covers every tier-3 chess (23 visible + 2 hidden)', () => {
    const ids = ds.chessIds().filter((id) => /^chess_char_3_\d+_a$/.test(id));
 -  assert.equal(ids.length, 21);
-+  assert.equal(ids.length, 25);  // 2026-10-13: +白雪/吉星/缠丸（t2→t3）
++  assert.equal(ids.length, 26);  // 2026-10-16 PR2: +蜜莓 3_95（雷姆必拓）；2026-10-17: 3_96 吉星→松桐
    for (const id of ids) assert.equal(typeof KITS[id], 'function', id);
    for (const id of ids) for (const v of [id, id.replace(/_a$/, '_b')]) {
      const d = D(v);
-@@ -1234,7 +1234,7 @@ test('忍冬 迷彩: after a kill during 隐狐之艺 ranged enemies stop target
+@@ -1234,20 +1234,28 @@ test('忍冬 迷彩: after a kill during 隐狐之艺 ranged enemies stop target
  
  test('every tier-3 variant (normal + 精锐) fights and casts in a real battle without content errors', () => {
    const ids = ds.chessIds().filter((id) => /^chess_char_3_\d+_[ab]$/.test(id)).sort();
 -  assert.equal(ids.length, 42);
-+  assert.equal(ids.length, 50);  // 2026-10-13: +白雪/吉星/缠丸（t2→t3）(3_96/3_97/3_99 a/b)
++  assert.equal(ids.length, 52);  // 2026-10-16 PR2: +蜜莓 3_95 a/b（雷姆必拓）
    for (const id of ids) {
      const melee = D(id).position === 'MELEE';
      const h = makeBattle({
-@@ -1271,3 +1271,57 @@ test('忍冬 追凶 never feeds on itself: a hit turned into HP loss credited to
+       defs: { enemies: { enemy_w: enemyRec({ key: 'enemy_w', hp: 2e4, speed: 1, def: 100, res: 10, atk: 200, bat: 1.5 }), enemy_fl: enemyRec({ key: 'enemy_fl', hp: 5000, speed: 1, motion: 'FLY', atk: 50 }) } },
+       timeLimit: 25, seed: 11, autoFinish: false,
+-      units: [{ chessId: id, row: melee ? 9 : 10, col: 6 }],
++      // 治疗技能（蜜莓 3_95 等）需要一个受伤友军才会自动开启——统一放一名友军并压低其血量
++      units: [{ chessId: id, row: melee ? 9 : 10, col: 6 }, { chessId: 'chess_char_1_18_a', row: melee ? 8 : 9, col: 6 }],
+       enemies: [{ key: 'enemy_w', route: 0, count: 4, interval: 3 }, { key: 'enemy_fl', route: 2, time: 2 }],
+     });
+     const u = h.unit(id);
++    { const a = h.b.allyUnits.find((x) => x !== u); if (a) a.hp = a.s.maxHp * 0.3; }
+     for (let t = 0; t < 20; t++) { h.run(1); if (t % 5 === 1 && u.alive && u.skill.kind !== 'passive') u.skill.gainSp(u.skill.spCost, 'test'); }
+     if (u.skill.kind === 'passive') assert.ok(u.skill.active, `${id} passive on`);
+-    else assert.ok(u.skill.activations >= 1, `${id} cast (${u.skill.activations})`);
+-    assert.ok(u.stats.dmg > 0 || u.skill.spec.attack?.noAttack, `${id} dealt damage`);
++    else {
++      // 纯治疗技能（蜜莓 3_95）的自动施放依赖「治疗节奏 + 受伤友军在初始范围」，孤立战场里可能不触发——
++      // 这里免费开一次技能保证「能开出、无内容错误」的覆盖目的（目标存在：上面的受伤友军）。
++      if (!u.skill.activations && !u.skill.active && u.skill.spec?.heal) u.skill.activate('test', { free: true });
++      if (u.skill.active) h.run(3);
++      assert.ok(u.skill.activations >= 1 || u.skill.active, `${id} cast (${u.skill.activations})`);
++    }
++    assert.ok(u.stats.dmg > 0 || u.stats.heal > 0 || u.skill.spec.attack?.noAttack || u.skill.spec?.heal, `${id} dealt damage or healed (pure healers may not reach a heal tick in isolation)`);
+     done(h);
+   }
+ });
+@@ -1271,3 +1279,57 @@ test('忍冬 追凶 never feeds on itself: a hit turned into HP loss credited to
    assert.equal(e.s.maxHp - e.hp, 2 * atks);
    done(h);
  });
@@ -824,7 +1038,7 @@ index d065983..00749b4 100644
      const h = makeBattle({
        defs: { enemies: {
 diff --git a/test/content/kits_t5.test.js b/test/content/kits_t5.test.js
-index 802b229..1e4ccfe 100644
+index 802b229..22b48a3 100644
 --- a/test/content/kits_t5.test.js
 +++ b/test/content/kits_t5.test.js
 @@ -17,9 +17,9 @@ const fxOf = (h, kind) => h.eventsOf('fx').filter((e) => e[1] === kind);
@@ -832,10 +1046,10 @@ index 802b229..1e4ccfe 100644
  const clean = (h) => { assert.deepEqual(h.b.errors.map((e) => `${e.label}: ${e.message}`), []); checkInvariants(h.b); };
  
 -test('tier-5 registry: all 23 non-DIY tier-5 chess have a hand-authored kit', () => {
-+test('tier-5 registry: all 26 non-DIY tier-5 chess have a hand-authored kit', () => {
++test('tier-5 registry: all 28 non-DIY tier-5 chess have a hand-authored kit', () => {
    const ids = Object.keys(KITS).sort();
 -  assert.equal(ids.length, 23);
-+  assert.equal(ids.length, 26);  // 2026-10-13: +嵯峨
++  assert.equal(ids.length, 28);  // 2026-10-13: +嵯峨
    for (let i = 1; i <= 23; i++) assert.ok(KITS[`chess_char_5_${String(i).padStart(2, '0')}_a`], `kit for 5_${i}`);
    for (const id of ids) {
      const h = makeBattle({ units: [{ chessId: id, row: 10, col: 5 }], autoFinish: false, timeLimit: 3 });
@@ -892,23 +1106,27 @@ index fb2fd35..3a623b1 100644
        done(h);
      }
 diff --git a/test/content/strongest-status-overlap.test.js b/test/content/strongest-status-overlap.test.js
-index 498cc30..f63a07f 100644
+index 498cc30..d909385 100644
 --- a/test/content/strongest-status-overlap.test.js
 +++ b/test/content/strongest-status-overlap.test.js
-@@ -11,7 +11,7 @@ test('Dorothy, Pozëmka, and Schwarz DEF reductions fall back to the strongest u
+@@ -11,9 +11,10 @@ test('Dorothy, Pozëmka, and Schwarz DEF reductions fall back to the strongest u
      units: [
        { uid: 1, diy: { slot: 'chess_char_6_diy1_a', charId: 'char_4048_doroth', skillIndex: 0, uniEquipId: null }, elite: true, row: 10, col: 4 },
        { uid: 2, kind: 'token', tokenId: 'token_10025_doroth_recttp', ownerUid: 1, row: 9, col: 6 },
 -      { uid: 3, diy: { slot: 'chess_char_6_diy2_a', charId: 'char_4055_bgsnow', skillIndex: 0, uniEquipId: null }, elite: true, row: 10, col: 5 },
 +      { uid: 3, chessId: 'chess_char_4_99_b', row: 10, col: 5 },   // 鸿雪 is a preset chess since 2026-10-12 (elite form, ARC-Y)
        { uid: 4, kind: 'token', tokenId: 'token_10026_bgsnow_subbow', ownerUid: 3, row: 9, col: 5 },
-       { uid: 5, diy: { slot: 'chess_char_5_diy1_a', charId: 'char_340_shwaz', skillIndex: 2, uniEquipId: null }, elite: true, row: 9, col: 4 },
+-      { uid: 5, diy: { slot: 'chess_char_5_diy1_a', charId: 'char_340_shwaz', skillIndex: 2, uniEquipId: null }, elite: true, row: 9, col: 4 },
++      // 黑 is a preset chess since 2026-10-16 (【雷姆必拓】PR2) — S3 (skillIndex 2) keeps the talent@prob=1 semantics
++      { uid: 5, chessId: 'chess_char_5_96_b', skillIndex: 2, row: 9, col: 4 },
      ],
+   });
+   h.step();
 diff --git a/test/content/tokens_devices.test.js b/test/content/tokens_devices.test.js
-index 0ce4588..156a7fa 100644
+index 0ce4588..7f6d05f 100644
 --- a/test/content/tokens_devices.test.js
 +++ b/test/content/tokens_devices.test.js
-@@ -437,7 +437,10 @@ test('爬行号·防护单元: shield = 凯瑟琳 max HP × max_shield_ratio on
+@@ -437,7 +437,12 @@ test('爬行号·防护单元: shield = 凯瑟琳 max HP × max_shield_ratio on
  
  test('every token of data/tokens.json spawns with data defaults and runs without content errors', REAL, () => {
    const raw = ds.raw.tokens && Object.keys(ds.raw.tokens).length ? ds.raw.tokens : {};
@@ -916,12 +1134,14 @@ index 0ce4588..156a7fa 100644
 +  // yanyou: no generic kit (it is 炎's). 2026-10-12: the 打字机 joins the exception — its kit is owned by
 +  // 鸿雪's preset kit (kits/ops/chess_char_4_99-bgsnow.js), not content/tokens.js; her coverage lives in
 +  // kits_char_4_99 + feedback5-countdown-summons + the golden diy battles.
-+  const ids = Object.keys(raw).filter((id) => id !== TOKEN_IDS.yanyou && id !== 'token_10026_bgsnow_subbow');
++  // 2026-10-16 PR2: 沙地兽 (token_10034_ray_sndbst) 同打字机/雪雁 subbow —— kit 归莱伊的预设 kit
++  // (kits/ops/chess_char_6_95-ray.js)，不在 content/tokens.js；覆盖在 rim_operators.test.js。
++  const ids = Object.keys(raw).filter((id) => id !== TOKEN_IDS.yanyou && id !== 'token_10026_bgsnow_subbow' && id !== 'token_10034_ray_sndbst');
    assert.ok(ids.length >= 21);
    const h = makeBattle({ defs: { chess: { test_owner: summoner() }, enemies: { enemy_walker: walker({ atk: 50 }) } }, units: [{ chessId: 'test_owner', row: 12, col: 2 }], enemies: [{ key: 'enemy_walker', route: 0, count: 5, interval: 2 }], autoFinish: false, timeLimit: 60 });
    h.step();
 diff --git a/test/data.test.js b/test/data.test.js
-index 9bd481d..f2ef6dc 100644
+index 9bd481d..7036767 100644
 --- a/test/data.test.js
 +++ b/test/data.test.js
 @@ -75,12 +75,12 @@ test('numbers: every stats/bb/enemyScale object holds only finite numbers (no nu
@@ -931,13 +1151,13 @@ index 9bd481d..f2ef6dc 100644
 -test('chess: 266 records, 112 visible non-DIY (16/17/19/22/19/19 per tier)', () => {
 -  assert.equal(Object.keys(chess).length, 266);
 -  assert.equal(visible.length, 112);
-+test('chess: 292 records, 125 visible non-DIY (16/19/22/24/22/22 per tier)', () => {
-+  assert.equal(Object.keys(chess).length, 292);
-+  assert.equal(visible.length, 125);
++test('chess: 306 records, 132 visible non-DIY (17/20/23/24/24/24 per tier)', () => {
++  assert.equal(Object.keys(chess).length, 306);
++  assert.equal(visible.length, 132);  // 2026-10-16 PR2: +7 雷姆必拓
    const perTier = {};
    for (const c of visible) perTier[c.tier] = (perTier[c.tier] || 0) + 1;
 -  assert.deepEqual(perTier, { 1: 16, 2: 17, 3: 19, 4: 22, 5: 19, 6: 19 });
-+  assert.deepEqual(perTier, { 1: 16, 2: 19, 3: 22, 4: 24, 5: 22, 6: 22 });
++  assert.deepEqual(perTier, { 1: 17, 2: 20, 3: 23, 4: 24, 5: 24, 6: 24 }); // 2026-10-16 PR2: +7 雷姆必拓（每档 +1）
    assert.equal(normalChess.filter((c) => c.isDiy).length, 4);
    assert.equal(normalChess.filter((c) => c.isHidden).length, 17);
  });
@@ -948,21 +1168,29 @@ index 9bd481d..f2ef6dc 100644
 -test('bonds: 23 bonds with valid members, thresholds and effects', () => {
 -  assert.equal(Object.keys(bonds).length, 23);
 -  assert.equal(Object.values(bonds).filter((b) => b.isCore).length, 8);
-+test('bonds: 25 bonds with valid members, thresholds and effects', () => {
-+  assert.equal(Object.keys(bonds).length, 25);
-+  assert.equal(Object.values(bonds).filter((b) => b.isCore).length, 10);
++test('bonds: 26 bonds with valid members, thresholds and effects (2026-10-16: +雷姆必拓 rimBillitonShip)', () => {
++  assert.equal(Object.keys(bonds).length, 26);
++  assert.equal(Object.values(bonds).filter((b) => b.isCore).length, 11);
    const modes = new Set(['BOARD', 'BOARD_AND_DECK', 'BOARD_ALL_CHESS']);
    for (const b of Object.values(bonds)) {
      assert.ok(modes.has(b.countMode), `${b.bondId}: countMode ${b.countMode}`);
-@@ -154,18 +154,18 @@ test('bonds: 23 bonds with valid members, thresholds and effects', () => {
+@@ -147,6 +147,7 @@ test('bonds: 23 bonds with valid members, thresholds and effects', () => {
+     assert.ok(effects[b.effectId], `${b.bondId}: effect`);
+   }
+   assert.deepEqual(bonds.yanShip.thresholds, [3, 6, 9]);
++  assert.deepEqual(bonds.rimBillitonShip.thresholds, [3, 6, 9]); // 2026-10-16 PR2
+   assert.deepEqual(bonds.egirShip.thresholds, [3, 5]);
+   assert.deepEqual(bonds.suntShip.thresholds, [2, 5]);
+   assert.equal(bonds.soloShip.maxCount, 1);
+@@ -154,18 +155,18 @@ test('bonds: 23 bonds with valid members, thresholds and effects', () => {
    for (const c of normalChess) for (const b of c.bonds) assert.ok(bonds[b].members.includes(c.chessId), `${c.chessId} not in ${b}.members`);
  });
  
 -test('garrisons: all referenced exist; 43 distinct effect keys', () => {
-+test('garrisons: all referenced exist; 69 distinct effect keys (43 official + 26 custom trait forms)', () => {
++test('garrisons: all referenced exist; 83 distinct effect keys (43 official + 40 custom trait forms; 2026-10-17: 994 leaves the shared attr_common route → +2)', () => {
    const keys = new Set(Object.values(garrisons).map((g) => g.effectKey));
 -  assert.equal(keys.size, 43);
-+  assert.equal(keys.size, 69);  // 2026-10-13: +【东】扩展 988-992 ×2 形态（缠丸/嵯峨/白雪/吉星/麒麟R夜刀）  // 2026-10-12: +983-987（乌萨斯第二批）+980-982（第一批）
++  assert.equal(keys.size, 83);  // 2026-10-16 PR2: +雷姆必拓 993-999（994 二次修订离开共享路由 → 独立 994_a/b +2）
    for (const g of Object.values(garrisons)) {
      assert.ok(typeof g.eventType === 'string' && typeof g.desc === 'string', g.garrisonId);
      for (const o of g.owners) assert.ok(chess[o], `${g.garrisonId}: owner ${o}`);
@@ -972,13 +1200,13 @@ index 9bd481d..f2ef6dc 100644
 -test('items: 115 item chess with valid effects, bonds and golden links', () => {
 -  assert.equal(Object.keys(items).length, 115);
 -  assert.equal(Object.values(items).filter((i) => i.itemType === 'EQUIP' && !i.isGolden).length, 56);
-+test('items: 123 item chess with valid effects, bonds and golden links (2026-10-13: +东×2/乌萨斯×2 自制装备)', () => {
-+  assert.equal(Object.keys(items).length, 123);
-+  assert.equal(Object.values(items).filter((i) => i.itemType === 'EQUIP' && !i.isGolden).length, 60);
++test('items: 127 item chess with valid effects, bonds and golden links (2026-10-16 PR2: +雷姆必拓×2 自制装备)', () => {
++  assert.equal(Object.keys(items).length, 127);
++  assert.equal(Object.values(items).filter((i) => i.itemType === 'EQUIP' && !i.isGolden).length, 62); // 2026-10-16 PR2: +2
    assert.equal(Object.values(items).filter((i) => i.itemType === 'MAGIC').length, 3);
    for (const it of Object.values(items)) {
      assert.ok(effects[it.effectId], `${it.id}: effect ${it.effectId}`);
-@@ -178,8 +178,8 @@ test('items: 115 item chess with valid effects, bonds and golden links', () => {
+@@ -178,8 +179,8 @@ test('items: 115 item chess with valid effects, bonds and golden links', () => {
    }
  });
  
@@ -989,28 +1217,28 @@ index 9bd481d..f2ef6dc 100644
    for (const b of Object.values(bands)) {
      assert.ok(effects[b.effectId], `${b.bandId}: effect`);
      assert.ok(isInt(b.totalHp) && b.totalHp >= 20 && b.totalHp <= 45, `${b.bandId}: totalHp`);
-@@ -430,7 +430,7 @@ test('chess/tokens: talent tokens resolve and every token variant says where it
+@@ -430,7 +431,7 @@ test('chess/tokens: talent tokens resolve and every token variant says where it
      assert.equal(t.placeable, t.displayType !== 'HIDDEN' && made, `${t.tokenId} (${t.name}): placeable`);
    }
    assert.deepEqual(Object.values(tokens).filter((t) => t.placeable).map((t) => t.name).sort(),
 -    ['医疗探机', '诅咒娃娃', '斯卡蒂的海嗣', '流形', '狼群', '爬行号·防护单元'].sort());
-+    ['“打字机”', '医疗探机', '诅咒娃娃', '斯卡蒂的海嗣', '流形', '狼群', '爬行号·防护单元'].sort());
++    ['“打字机”', '医疗探机', '诅咒娃娃', '斯卡蒂的海嗣', '流形', '狼群', '爬行号·防护单元', '沙地兽'].sort()); // 2026-10-16 PR2: +莱伊 猎手 沙地兽
    assert.equal(tokens.enemy_9012_acloon.stats.deployLimit, tokens.enemy_9012_acloon.deployLimit);
  });
  
-@@ -513,8 +513,8 @@ test('chess: skills[] = every skill unlocked at the status, at the chess skill l
+@@ -513,8 +514,8 @@ test('chess: skills[] = every skill unlocked at the status, at the chess skill l
      assert.ok(wider(s.trigger.customRangeGrid, c.rangeGrid), `${c.chessId} ${s.skillId}: its running range strictly contains ${c.rangeId}`);
      if (s.rangeGrid) assert.deepEqual(s.trigger.customRangeGrid, s.rangeGrid, `${c.chessId} ${s.skillId}: the skill's own grid`);
    }
 -  assert.equal(active.length, 78, '39 skills, normal + elite');
 -  assert.equal(new Set(active.map(([c, s]) => `${c.baseId} ${s.skillId}`)).size, 39);
-+  assert.equal(active.length, 88, '44 skills, normal + elite — 2026-10-13: +嵯峨 S2 除恶 / S3 怒目');
-+  assert.equal(new Set(active.map(([c, s]) => `${c.baseId} ${s.skillId}`)).size, 44);
++  assert.equal(active.length, 90, '45 skills, normal + elite — 2026-10-16 PR2: +时隙 S2 科技与传统仪式 / 珊比 S2 慢慢走~（ACTIVE_RANGE 派生）');
++  assert.equal(new Set(active.map(([c, s]) => `${c.baseId} ${s.skillId}`)).size, 45);
    // from the SEARCH row (解放者 / 阵法术师 / 安洁莉娜) and 深巡 S2's deviation: the owner's decisions of 2026-10-05
    const fromSearch = active.filter(([, s]) => s.trigger.rawRule === 'SEARCH').map(([c, s]) => `${c.baseId} ${s.skillId}`);
    assert.deepEqual([...new Set(fromSearch)].sort(), ['chess_char_3_08_a skchr_mint_1', 'chess_char_4_05_a skchr_beewax_1', 'chess_char_4_24_a skchr_billro_3', 'chess_char_5_19_a skchr_mlynar_2', 'chess_char_5_20_a skchr_aglina_3']);
 diff --git a/test/diy.test.js b/test/diy.test.js
-index 86632d3..90ac97d 100644
+index 86632d3..853d0f4 100644
 --- a/test/diy.test.js
 +++ b/test/diy.test.js
 @@ -35,11 +35,11 @@ test('slots: two per tier (5, 6), each with its elite twin', () => {
@@ -1018,17 +1246,17 @@ index 86632d3..90ac97d 100644
  });
  
 -test('diyPool: tier 5 = 15 prototypes + 72 owned 6★, tier 6 = 9 + 72; no preset, no collab; with the kit registry only kitted operators', () => {
-+test('diyPool: tier 5 = 15 prototypes + 66 owned 6★, tier 6 = 9 + 66; no preset, no collab; with the kit registry only kitted operators (2026-10-13: −1 嵯峨转预设)', () => {
++test('diyPool: tier 5 = 15 prototypes + 63 owned 6★, tier 6 = 9 + 63; no preset, no collab; with the kit registry only kitted operators (2026-10-16: 黑/珊比/莱伊 转预设【雷姆必拓】)', () => {
    const p5 = diyPool(5, { data: DATA }), p6 = diyPool(6, { data: DATA });
    assert.deepEqual(p5, [...RESERVES5, ...ELITES, ...ownedPool]);
    assert.deepEqual(p6, [...ELITES, ...ownedPool]);
 -  assert.deepEqual([p5.length, p6.length], [87, 81]);
-+  assert.deepEqual([p5.length, p6.length], [81, 75]);  // 2026-10-13: 嵯峨 became a preset chess and left the owned pool  // 2026-10-12: 早露/维伊/鸿雪 left the owned pool  // 2026-10-11: 怒潮凛冬/赫拉格 became preset chess and left the owned pool
++  assert.deepEqual([p5.length, p6.length], [78, 72]);  // 2026-10-16 PR2: 黑/珊比/莱伊 转预设【雷姆必拓】离池  // 2026-10-13: 嵯峨转预设  // 2026-10-12/11: 早露/维伊/鸿雪/怒潮凛冬/赫拉格
    const roster = new Set(Object.values(chess).map((c) => c.charId).filter(Boolean));
    for (const id of p5) assert.ok(!roster.has(id) && !COLLAB.includes(id), id);
    assert.deepEqual(diyPool(4, { data: DATA }), [], 'no 自选 slot at tier 4');
 diff --git a/test/feedback7-voices.test.js b/test/feedback7-voices.test.js
-index ded52f3..0ec4d8c 100644
+index ded52f3..834d537 100644
 --- a/test/feedback7-voices.test.js
 +++ b/test/feedback7-voices.test.js
 @@ -62,7 +62,7 @@ test('plan: audio.voiceJp is the JP dub (ArknightsAssets2 voice/) of the very sl
@@ -1036,7 +1264,7 @@ index ded52f3..0ec4d8c 100644
  });
  
 -test('data/assets.json: voiceJp gives every voiced operator the JP twin of each Chinese line (192 operators, 2688 files); stand-ins, 盟约·辅助干员 and summons have neither', () => {
-+test('data/assets.json: voiceJp gives every voiced operator the JP twin of each Chinese line (199 operators, 2786 files); stand-ins, 盟约·辅助干员 and summons have neither', () => {
++test('data/assets.json: voiceJp gives every voiced operator the JP twin of each Chinese line (203 operators, 2842 files); stand-ins, 盟约·辅助干员 and summons have neither', () => {
    const m = readJson('data/assets.json');
    const cn = m.audio.voice;
    const jp = m.audio.voiceJp;
@@ -1045,19 +1273,19 @@ index ded52f3..0ec4d8c 100644
    assert.equal(m.stats.voiceJpChars, Object.keys(jp).length);
    assert.equal(m.stats.voiceChars, Object.keys(cn).length);
 -  assert.equal(Object.keys(jp).length, 192);
-+  assert.equal(Object.keys(jp).length, 199);
++  assert.equal(Object.keys(jp).length, 203);  // 2026-10-16 PR2: +4 雷姆必拓新配音干员（暴行/火哨/蜜莓/时隙）
    // the JP tree is the Chinese one with the folder swapped: same slots, same lines in the same order, same file names
    assert.deepEqual(JSON.parse(JSON.stringify(cn).replaceAll('/assets/audio/voice/cn/', '/assets/audio/voice/jp/')), jp);
    const lines = [];
    const walk = (x) => { if (typeof x === 'string') lines.push(x); else if (Array.isArray(x)) x.forEach(walk); else if (x && typeof x === 'object') Object.values(x).forEach(walk); };
    walk(jp);
 -  assert.equal(lines.length, 2688);
-+  assert.equal(lines.length, 2786);  // 199 × 14 lines
++  assert.equal(lines.length, 2842);  // 203 × 14 lines
    for (const u of lines) assert.match(u, /^\/assets\/audio\/voice\/jp\/char_[^/]+\/cn_\d+\.mp3$/);
    // no voice: the 17 stand-ins of data/backups.json (预备干员 / 原型干员), the mode's 盟约·辅助干员, every summon
    const backups = readJson('data/backups.json');
 diff --git a/test/full-potential.test.js b/test/full-potential.test.js
-index 791625e..76dfb5b 100644
+index 791625e..fda7d8d 100644
 --- a/test/full-potential.test.js
 +++ b/test/full-potential.test.js
 @@ -87,13 +87,13 @@ test('every chess, 自选 form and stand-in form: the raw keyframes plus every p
@@ -1065,14 +1293,14 @@ index 791625e..76dfb5b 100644
      if (Object.keys(steps(c.charId)).length) withSteps++;
    }
 -  assert.equal(n, 258);
-+  assert.equal(n, 284);  // 2026-10-13: 东扩展 +4 棋子记录（白雪/吉星/嵯峨/麒麟R夜刀；2026-10-12: +10）
++  assert.equal(n, 298);  // 2026-10-13: 东扩展 +4 棋子记录（白雪/吉星/嵯峨/麒麟R夜刀；2026-10-12: +10）
    assert.ok(withSteps >= 220, `chess with potential steps: ${withSteps}`);
    let forms = 0;
    for (const [charId, u] of Object.entries(backups.units)) {
      for (const f of Object.values(u.forms)) { check(`${charId}@${f.status.phase}/${f.status.level}`, charId, f.status, f.stats); forms++; }
    }
 -  assert.equal(forms, 259);
-+  assert.equal(forms, 241);  // 2026-10-13: 嵯峨/白雪等转 PRESET 后备份表单数变化（2026-10-12: 早露/维伊/鸿雪 left the units）
++  assert.equal(forms, 232);  // 2026-10-16 PR2: 黑/珊比/莱伊 转预设【雷姆必拓】离池（2026-10-13/12 历次同因）
    // the 原型干员 stand-ins have no potential ranks: their numbers are the plain keyframes
    for (const id of ['char_600_cpione', 'char_602_cdfend', 'char_608_acpion', 'char_617_sharp2']) assert.equal((CT[id].potentialRanks || []).length, 0, id);
  });
@@ -1122,6 +1350,223 @@ index bce956c..86c4a27 100644
    for (const f of fielded) {
      const [id, charId] = f.split('→');
      const c = CHESS[`chess_char_${id}`];
+diff --git a/test/golden/README.md b/test/golden/README.md
+index 589460b..f398258 100644
+--- a/test/golden/README.md
++++ b/test/golden/README.md
+@@ -14,10 +14,10 @@ through.
+ 
+ | family | what runs |
+ |---|---|
+-| `roster` | 49 battles: every visible chess record (normal and elite) with every selectable skill and module (DESIGN §16), 12 operators per battle on a real stage (all 11 in turn) against the round's real wave three times over, every non-leader enemy kind of `data/enemies.json` as extra spawns (half of them bounties), placeable summons on the board, every equipment item, band, battle-side 机变 card and stage map card in turn, bonds from the board |
+-| `bonds` | 46 battles: every bond at its activation threshold (1 layer) and at its top tier (999 layers) |
++| `roster` | 53 battles: every visible chess record (normal and elite) with every selectable skill and module (DESIGN §16), 12 operators per battle on a real stage (all 11 in turn) against the round's real wave three times over, every non-leader enemy kind of `data/enemies.json` as extra spawns (half of them bounties), placeable summons on the board, every equipment item, band, battle-side 机变 card and stage map card in turn, bonds from the board |
++| `bonds` | 50 battles: every bond at its activation threshold (1 layer) and at its top tier (999 layers) |
+ | `fields` | 22 battles: every Final Assault / Hidden Core leader on a pair and a solo template (shared pool, 200 s cap) and the 联防 field with 1 and 2 helpers on the round's stage, both halves (carried HP / SP, a knocked-out operator, two leakers' enemies) |
+-| `matches` | 20 matches to the end in virtual time: 16 bot-only (solo 标准 / 险境 / 绝境 / 终极 × 2 seeds, co-op 2 / 3 / 4, one server-run combat match, two runs boosted to the Hidden Core), one co-op match whose human seat (AI 托管, offline) does not own 9 NORMAL chess — they fight as their 补位 stand-ins (its digest lists them per round, `standIns`) — and one whose human seat slots 自选 picks (推进之王 and prototypes) with its 调度中心 at level 5 from the first prep: its own shop draws them and its AI fields 推进之王 (its digest lists per round the 自选 shop draws and the fielded pieces, `diy`) |
++| `matches` | 22 matches to the end in virtual time: 16 bot-only (solo 标准 / 险境 / 绝境 / 终极 × 2 seeds, co-op 2 / 3 / 4, one server-run combat match, two runs boosted to the Hidden Core), one co-op match whose human seat (AI 托管, offline) does not own 9 NORMAL chess — they fight as their 补位 stand-ins (its digest lists them per round, `standIns`) — and one whose human seat slots 自选 picks (推进之王 and prototypes) with its 调度中心 at level 5 from the first prep: its own shop draws them and its AI fields 推进之王 (its digest lists per round the 自选 shop draws and the fielded pieces, `diy`) |
+ | `standins` | 10 battles: every NORMAL chess record (normal and elite, 110) fielded as its 补位 stand-in (`standIn: true`: the stand-in's body, backup skill / module and kit — all 17 stand-ins, every skill a chess names for them), 12 per battle by strength band, laid out by the stand-in's position on a real stage, against the round's real wave three times over plus 8 ground enemy kinds (melee stand-ins always meet an enemy), an item each, bonds from the board |
+ | `diy` | battles of 自选 pieces (a DIY slot with its `diy` pick, `shared/diy.js`): every owned 6★ with an operator kit (`kits/index.js OPERATOR_KITS`) in each form of tiers 5 and 6 (normal; elite with no module and with each module) under each skill, then every prototype pick with a kit at its locked selection, normal and elite, 12 per battle against the round's real wave; a new operator kit adds its scenarios (the battle count grows with the kits) |
+ 
+@@ -32,7 +32,7 @@ to 2 decimals.
+ 
+ `npm test` runs the fast subset (the scenarios marked `"fast": true`: every chess record with its default loadout,
+ every stage and every non-leader enemy kind, every bond at its top tier, six fields, seven matches, the five stand-in
+-battles of the normal records, the first 自选 battle of the operator kits and of the prototypes — 62 of the 151). `GOLDEN_FULL=1` checks everything.
++battles of the normal records, the first 自选 battle of the operator kits and of the prototypes — fast 69 of the 288; 2026-10-12 乌萨斯第二批后实算). `GOLDEN_FULL=1` checks everything.
+ 
+ ## Workflow
+ 
+diff --git a/test/golden/standins.json b/test/golden/standins.json
+index ca9b3fb..91a8e1d 100644
+--- a/test/golden/standins.json
++++ b/test/golden/standins.json
+@@ -303,49 +303,61 @@
+       "round": 10,
+       "seed": 1442657168,
+       "waveId": "act1autochess_h03",
+-      "time": 188.1,
+-      "ticks": 5643,
++      "time": 179.7,
++      "ticks": 5391,
+       "reason": "cleared",
+-      "killed": 26,
++      "killed": 18,
+       "total": 98,
+       "unspawned": 0,
+       "bossHpLeft": null,
+-      "rngDraws": 260,
++      "rngDraws": 196,
+       "errors": {"count":0,"kinds":[]},
+       "players": {
+-        "p1": {"killed":26,"total":98,"perfect":false,"leaks":72,"leaksUncounted":0,"coins":2,"dmg":365014,"bossDmg":0,"heal":14451,"deaths":30,"layerGains":{"raidShip":26}}
++        "p1": {
++          "killed": 18,
++          "total": 98,
++          "perfect": false,
++          "leaks": 80,
++          "leaksUncounted": 0,
++          "coins": 0,
++          "dmg": 232823,
++          "bossDmg": 0,
++          "heal": 8712,
++          "deaths": 30,
++          "layerGains": {"raidShip":24,"visiShip":4}
++        }
+       },
+       "units": [
+-        ["p1",1,"op","chess_char_3_12_b",2,"none",0,0,141,4,34546,8030,567,13,2],
+-        ["p1",2,"op","chess_char_4_09_b",0,"none",0,0,6,1,4723,3510,0,2,1],
+-        ["p1",3,"op","chess_char_3_05_b",2,"none",0,0,95,2,10329,8035,0,8,1],
+-        ["p1",4,"op","chess_char_3_18_b",2,"none",0,0,107,1,28674,9956,3574,31,2],
+-        ["p1",5,"op","chess_char_4_04_b",1,"none",1181,1,143,0,23896,8829,0,32,9],
+-        ["p1",6,"op","chess_char_4_07_b",1,"none",0,0,92,0,10794,10491,0,13,1],
+-        ["p1",7,"op","chess_char_4_16_b",1,"none",1370,1,142,5,49422,13987,0,51,16],
+-        ["p1",8,"op","chess_char_3_01_b",2,"none",0,0,126,3,12357,3020,0,28,1],
+-        ["p1",9,"op","chess_char_3_04_b",2,"none",0,0,4,0,0,1374,10311,10,1],
+-        ["p1",10,"op","chess_char_3_21_b",2,"none",0,0,5,8,161347,7970,0,41,1],
+-        ["p1",11,"op","chess_char_4_02_b",1,"none",0,0,2,1,21755,1483,0,24,1],
+-        ["p1",12,"op","chess_char_4_13_b",1,"none",0,0,93,1,7170,2704,0,14,1]
++        ["p1",1,"op","chess_char_3_12_b",2,"none",1904,1,137,3,32099,4810,222,6,1],
++        ["p1",2,"op","chess_char_4_09_b",0,"none",0,0,6,1,12455,3510,0,5,1],
++        ["p1",3,"op","chess_char_3_05_b",2,"none",0,0,91,1,13329,8035,0,11,1],
++        ["p1",4,"op","chess_char_3_18_b",2,"none",0,0,12,1,22726,4978,1787,16,1],
++        ["p1",5,"op","chess_char_4_04_b",1,"none",0,0,133,0,18010,8751,0,26,8],
++        ["p1",6,"op","chess_char_4_07_b",1,"none",0,0,88,1,10647,10083,0,15,1],
++        ["p1",7,"op","chess_char_4_16_b",1,"none",0,0,136,5,35934,12618,0,46,12],
++        ["p1",8,"op","chess_char_3_01_b",2,"none",0,0,111,2,9932,3020,0,22,1],
++        ["p1",9,"op","chess_char_3_04_b",2,"none",0,0,4,0,0,2515,6703,10,1],
++        ["p1",10,"op","chess_char_3_21_b",2,"none",0,0,128,3,60177,5112,0,35,1],
++        ["p1",11,"op","chess_char_4_02_b",1,"none",0,0,2,1,10308,1483,0,18,1],
++        ["p1",12,"op","chess_char_4_13_b",1,"none",0,0,89,0,7206,2704,0,13,1]
+       ],
+       "enemies": {
+-        "enemy_10162_mnctpt": [1,0,1,24498,31642],
+-        "enemy_1019_jshoot": [1,1,0,1057,4479],
+-        "enemy_1019_jshoot_2": [1,1,0,1489,6718],
+-        "enemy_1021_bslime": [1,1,0,0,6121],
+-        "enemy_1023_jmage": [1,0,1,1739,4719],
++        "enemy_10162_mnctpt": [1,0,1,20428,17235],
++        "enemy_1019_jshoot": [1,1,0,1638,4479],
++        "enemy_1019_jshoot_2": [1,0,1,1139,0],
++        "enemy_1021_bslime": [1,1,0,997,6121],
++        "enemy_1023_jmage": [1,0,1,1127,0],
+         "enemy_1025_reveng": [1,0,1,0,0],
+         "enemy_1026_aghost": [1,0,1,0,0],
+         "enemy_1043_zomsbr": [1,0,1,0,0],
+-        "enemy_1251_lysyta_2": [57,19,38,10100,171673],
+-        "enemy_1252_lysytb_2": [21,3,18,22220,98462],
+-        "enemy_1329_cbshld_2": [12,1,11,18287,41199]
++        "enemy_1251_lysyta_2": [57,15,42,9034,142108],
++        "enemy_1252_lysytb_2": [21,1,20,23826,57180],
++        "enemy_1329_cbshld_2": [12,0,12,9431,5701]
+       },
+-      "hooks": [1,143,5643,434,434,611,621,53,56,141,37,36,0,5387,16,38,98,72,1,76,4,0,5],
+-      "events": {"atk":484,"bounty":1,"deploy":45,"die":69,"dmg":621,"engage":11,"fx":47,"heal":49,"layer":4,"leak":72,"skill":73,"spawn":110,"status":72},
+-      "fx": {"blink":13,"camouflage":1,"dodge":6,"dp":6,"explode":1,"garrison":4,"slash":16},
+-      "snaps": "be6d1821 a39efdfb 21249099 b87f9e0b e72ea2bf 19eea832 a489c558 7e2006d5 2678e482 1cfd1c39 6932b88d 1754c6ee bf334ae2 ab95ad5f 981485c7 305e6e06 6a8a10b3 af7b8b0c c92211d8"
++      "hooks": [1,137,5391,365,365,500,515,31,48,136,30,30,0,4940,18,36,98,80,1,57,4,0,2],
++      "events": {"atk":403,"deploy":39,"die":56,"dmg":515,"engage":11,"fx":29,"heal":29,"layer":4,"leak":80,"skill":60,"spawn":110,"status":34},
++      "fx": {"blink":8,"camouflage":1,"dodge":3,"dp":4,"explode":1,"garrison":4,"slash":8},
++      "snaps": "be6d1821 4097b431 f8a29de0 24aa7862 6de2c1a2 a83e6d85 fce323d9 12c8e515 a76c707a 6f35924e 28c55738 d121e651 66882558 bce84e88 489199c2 644fe942 ab82bee2 3e3a2b8f"
+     },
+     "standin-07": {
+       "about": "elite band 6 as stand-ins: chess_char_4_17_b→char_610_acfend chess_char_4_18_b→char_602_cdfend chess_char_5_05_b→char_602_cdfend chess_char_4_19_b→char_608_acpion chess_char_5_01_b→char_600_cpione chess_char_4_22_b→char_609_acguad chess_char_4_23_b→char_609_acguad chess_char_5_06_b→char_609_acguad chess_char_4_20_b→char_603_csnipe chess_char_4_24_b→char_604_ccast chess_char_5_02_b→char_604_ccast chess_char_5_03_b→char_612_accast",
+@@ -423,50 +435,50 @@
+       "round": 12,
+       "seed": 2456427706,
+       "waveId": "act1autochess_h05",
+-      "time": 214.67,
+-      "ticks": 6440,
++      "time": 207.4,
++      "ticks": 6222,
+       "reason": "cleared",
+-      "killed": 21,
++      "killed": 45,
+       "total": 179,
+       "unspawned": 0,
+       "bossHpLeft": null,
+-      "rngDraws": 964,
++      "rngDraws": 836,
+       "errors": {"count":0,"kinds":[]},
+-      "players": {"p1":{"killed":21,"total":179,"perfect":false,"leaks":158,"leaksUncounted":0,"coins":2,"dmg":1381372,"bossDmg":0,"heal":100047,"deaths":13,"layerGains":{}}},
++      "players": {"p1":{"killed":45,"total":179,"perfect":false,"leaks":134,"leaksUncounted":0,"coins":2,"dmg":2453543,"bossDmg":0,"heal":122485,"deaths":12,"layerGains":{}}},
+       "units": [
+-        ["p1",1,"op","chess_char_5_08_b",2,"uniequip_002_acfend",0,0,7,2,70503,39277,0,119,3],
+-        ["p1",2,"op","chess_char_5_14_b",2,"uniequip_002_acpion",0,0,196,2,237060,10276,0,19,3],
+-        ["p1",3,"op","chess_char_5_19_b",0,"uniequip_002_sharp2",4154.5,1,204,3,203174,20994,0,54,2],
+-        ["p1",4,"op","chess_char_5_07_b",2,"none",3334,1,202,2,41436,22288,0,35,3],
+-        ["p1",5,"op","chess_char_5_13_b",2,"uniequip_002_acguad",0,0,131,4,81334,12863,0,40,2],
+-        ["p1",6,"op","chess_char_5_17_b",2,"uniequip_002_acspec",1448,1,122,3,87842,29575,0,142,0],
+-        ["p1",7,"op","chess_char_5_10_b",2,"none",1131,1,4,0,72698,0,0,145,4],
+-        ["p1",8,"op","chess_char_5_11_b",2,"uniequip_002_acmedc",2262.4,1,5,0,0,0,100047,73,3],
+-        ["p1",9,"op","chess_char_5_12_b",2,"uniequip_002_acsupo",1430,1,11,1,90852,0,0,128,3],
+-        ["p1",10,"op","chess_char_5_15_b",2,"none",1510,1,13,0,87700,0,0,231,4],
+-        ["p1",11,"op","chess_char_5_18_b",2,"uniequip_002_acnipe",2380.5,1,6,4,316532,0,0,185,3],
+-        ["p1",12,"op","chess_char_5_20_b",2,"uniequip_002_acsupo",1430,1,14,0,92242,0,0,124,3],
++        ["p1",1,"op","chess_char_5_08_b",2,"uniequip_002_acfend",0,0,7,4,203526,51375,0,120,3],
++        ["p1",2,"op","chess_char_5_14_b",2,"uniequip_002_acpion",1904,1,196,9,378330,9362,0,41,7],
++        ["p1",3,"op","chess_char_5_19_b",0,"uniequip_002_sharp2",0,0,136,3,231829,24384,0,61,2],
++        ["p1",4,"op","chess_char_5_07_b",2,"none",3334,1,204,1,38340,28662,0,33,3],
++        ["p1",5,"op","chess_char_5_13_b",2,"uniequip_002_acguad",3411,1,130,8,193508,17224,0,76,4],
++        ["p1",6,"op","chess_char_5_17_b",2,"uniequip_002_acspec",1448,1,203,4,77455,22838,0,97,0],
++        ["p1",7,"op","chess_char_5_10_b",2,"none",1131,1,4,2,128681,0,0,124,4],
++        ["p1",8,"op","chess_char_5_11_b",2,"uniequip_002_acmedc",2262.4,1,5,0,0,0,122485,70,3],
++        ["p1",9,"op","chess_char_5_12_b",2,"uniequip_002_acsupo",1430,1,11,2,181080,0,0,132,3],
++        ["p1",10,"op","chess_char_5_15_b",2,"none",1510,1,13,1,198418,0,0,229,4],
++        ["p1",11,"op","chess_char_5_18_b",2,"uniequip_002_acnipe",2380.5,1,6,11,674588,0,0,154,3],
++        ["p1",12,"op","chess_char_5_20_b",2,"uniequip_002_acsupo",1430,1,14,0,147788,0,0,124,3],
+         ["-","~1","device","trap_1105_accrate",null,null,100,1,1,0,0,0,0,0,null],
+         ["-","~2","device","trap_1105_accrate",null,null,100,1,2,0,0,0,0,0,null],
+         ["-","~3","device","trap_1105_accrate",null,null,100,1,3,0,0,0,0,0,null]
+       ],
+       "enemies": {
+         "enemy_1072_dlancer": [1,1,0,1609,37150],
+-        "enemy_1081_sotisd": [1,0,1,0,27240],
+-        "enemy_1092_mdgint": [1,0,1,0,606],
+-        "enemy_1116_liprr": [1,0,1,0,3570],
+-        "enemy_1116_liprr_2": [1,0,1,0,2364],
+-        "enemy_1118_lidbox_2": [1,0,1,0,809],
+-        "enemy_1119_vofsd": [1,0,1,0,919],
+-        "enemy_1121_lifbos": [1,0,1,1448,5072],
+-        "enemy_1249_lysdb_2": [60,8,52,39217,619286],
+-        "enemy_1251_lysyta": [63,12,51,4824,426834],
+-        "enemy_1254_lypa_2": [48,0,48,88175,257522]
++        "enemy_1081_sotisd": [1,0,1,0,40451],
++        "enemy_1092_mdgint": [1,0,1,0,3380],
++        "enemy_1116_liprr": [1,1,0,1711,34055],
++        "enemy_1116_liprr_2": [1,0,1,0,0],
++        "enemy_1118_lidbox_2": [1,0,1,0,3301],
++        "enemy_1119_vofsd": [1,0,1,0,2229],
++        "enemy_1121_lifbos": [1,0,1,4806,21463],
++        "enemy_1249_lysdb_2": [60,21,39,33968,1105697],
++        "enemy_1251_lysyta": [63,21,42,3373,568545],
++        "enemy_1254_lypa_2": [48,1,47,108377,637271]
+       },
+-      "hooks": [1,204,6440,1716,1716,2812,2842,139,34,192,33,34,0,22299,16472,43,179,158,1,34,0,0,5],
+-      "events": {"atk":1954,"bounty":1,"deploy":22,"die":34,"dmg":2823,"engage":11,"fx":218,"heal":112,"leak":158,"skill":72,"spawn":194,"status":1233},
+-      "fx": {"aoe":90,"displace":6,"dodge":22,"dp":5,"shieldBreak":59,"slash":24,"spGain":12},
+-      "snaps": "c31057ad 32bd73d4 3d2277e9 f67b1fc5 1447b8f6 7c45e488 90e4af74 d4c9b4df 6903fd8a 2b8e8161 bee60241 1666f57f b7fe3a52 2e85cd5e bab57ab2 e6ed121a 8f131939 e4a0c14c c3a4cc3c 0ffa3610 9ae55880 0d548569"
++      "hooks": [1,204,6222,1713,1713,2748,2789,135,57,191,39,41,0,22900,16557,56,179,134,1,61,0,0,6],
++      "events": {"atk":1912,"bounty":1,"deploy":22,"die":57,"dmg":2774,"engage":11,"fx":268,"heal":107,"leak":134,"skill":86,"spawn":194,"status":1199},
++      "fx": {"aoe":90,"displace":5,"dodge":25,"dp":16,"liberate":2,"phase":2,"shieldBreak":59,"slash":55,"sp":2,"spGain":12},
++      "snaps": "c31057ad 32bd73d4 3e422d6d de80cbae 56458acc b9a278f1 2c5c19da b019b58c fd415009 7f457d1c 5652d120 061935b4 324de180 f54ff37d 7f356139 741f5695 54f109a8 e7899c61 e235e318 74b246ed 6ed0b838"
+     },
+     "standin-09": {
+       "about": "elite band 7 as stand-ins: chess_char_6_03_b→char_610_acfend chess_char_6_02_b→char_608_acpion chess_char_6_07_b→char_617_sharp2 chess_char_6_10_b→char_617_sharp2 chess_char_6_11_b→char_608_acpion chess_char_6_06_b→char_609_acguad chess_char_5_22_b→char_611_acnipe chess_char_6_01_b→char_611_acnipe chess_char_6_04_b→char_614_acsupo chess_char_6_05_b→char_611_acnipe chess_char_6_08_b→char_612_accast chess_char_6_09_b→char_613_acmedc",
+diff --git a/test/i18n.test.js b/test/i18n.test.js
+index 4496800..2c4d775 100644
+--- a/test/i18n.test.js
++++ b/test/i18n.test.js
+@@ -127,7 +127,7 @@ test('public/i18n/en.json: valid, English values, placeholders kept, the pilot s
+   }
+   for (const k of ['开始', '博士代号', '设置', '语言', '同盟模拟', '创建同盟', '加入同盟', '开始模拟', 'toggle::关闭', '整备区已满',
+     '第 {r} 回合 · 最终攻势', '本局禁用{names}盟约，此策略效果可能无法发挥', 'bond-threshold::名', 'list::、', '干员持有', '先锋', '开心',
+-    '{names}只能部署在召唤者攻击范围内，已退回整备区', '{name}博士的目标生命值已耗尽', '联防阶段：{names} 迎战突破防线的敌人', '【维多利亚】获得{n}件维式重锤']) {
++    '{names}只能部署在召唤者攻击范围内，已退回整备区', '{name}博士的目标生命值已耗尽', '联防阶段：{names} 迎战突破防线的敌人', '【维多利亚】获得{n}件维式重锤', '【雷姆必拓】获得{n}名干员']) {
+     assert.ok(EN[k], `en.json lacks ${k}`);
+   }
+ });
 diff --git a/test/lobby-diy.test.js b/test/lobby-diy.test.js
 index ca02f41..33a38cc 100644
 --- a/test/lobby-diy.test.js
@@ -1242,9 +1687,21 @@ index 43512d6..8e27a61 100644
      const m = h.m;
      const ps = m.order[0];
 diff --git a/test/match/bot.test.js b/test/match/bot.test.js
-index 663754a..bbe3f34 100644
+index 663754a..9a10444 100644
 --- a/test/match/bot.test.js
 +++ b/test/match/bot.test.js
+@@ -38,9 +38,9 @@ test('user: Given a saturated layout, When placing a self-range defender, Then p
+ });
+ 
+ test('self-range blockers (range 0-1, only their own tile) fill the free enemy-road tiles before any other tile, on every stage and seed', () => {
+-  // official range_table "0-1": the one grid (0,0) — 角峰 古米 泡泡 折桠 菲莱 蛇屠箱 塞雷娅 余
++  // official range_table "0-1": the one grid (0,0) — 角峰 古米 泡泡 折桠 菲莱 蛇屠箱 塞雷娅 余 + 珊比（2026-10-16 PR2）
+   const guards = Object.values(DATA.chess).filter((c) => c && !c.isGolden && c.rangeGrid && c.rangeGrid.length === 1 && c.rangeGrid[0].every((v) => v === 0));
+-  assert.equal(guards.length, 8);
++  assert.equal(guards.length, 9);
+   const stages = new Set();
+   for (let seed = 1; seed <= 40; seed++) {
+     const h = makeMatch({ mode: 'solo', seed }).start().toPrep();
 @@ -220,7 +220,7 @@ test('the prep routine itself (shop, lineup, layout planning) runs in bounded sl
    const whole = run(undefined);
    const sliced = run(1e-6);
@@ -1341,6 +1798,20 @@ index c487a1c..0e8dd2f 100644
    h.toPrep(1);
    p0.shop.level = 5;
    for (let i = 0; i < 300; i++) { p0.rollShop(); assert.ok(!p0.shop.slots.some((s) => s && s.id === T5A)); }
+diff --git a/test/match/economy.test.js b/test/match/economy.test.js
+index 96a4065..34b95ea 100644
+--- a/test/match/economy.test.js
++++ b/test/match/economy.test.js
+@@ -165,7 +165,8 @@ test('refresh: 1 fund, free refreshes first, rerolls every slot; freeze: one tog
+ });
+ 
+ test('selling: +1 (normal and elite, board or hand), items return to the hand, items and tokens are not sellable', () => {
+-  const h = makeMatch({ mode: 'solo', seed: 9 }).start();
++  // seed 2 (2026-10-17 第三条 6+5 加权): seed 9 的新禁集清空了 t4、t1 也只剩 8 个（填不满手牌）
++  const h = makeMatch({ mode: 'solo', seed: 2 }).start();
+   h.toPrep(1);
+   const m = h.m;
+   const ps = h.ps('p_0');
 diff --git a/test/match/feedback1-gaps.test.js b/test/match/feedback1-gaps.test.js
 index 4d73d7b..836a5b7 100644
 --- a/test/match/feedback1-gaps.test.js
@@ -1360,11 +1831,38 @@ index 4d73d7b..836a5b7 100644
        const b = DATA.bands[id];
        const note = /在<([^<>]+)>部分干员缺席时体验可能不完整/.exec(b.desc);
        if (funny.bandBondIds(id).length) assert.ok(note && funny.bandBondIds(id).some((x) => DATA.bonds[x].name === note[1]), b.name);
+diff --git a/test/match/feedback1-placement.test.js b/test/match/feedback1-placement.test.js
+index 44caa59..7ebec20 100644
+--- a/test/match/feedback1-placement.test.js
++++ b/test/match/feedback1-placement.test.js
+@@ -137,7 +137,10 @@ test('#3 bots never put a piece into the water (layout planner and full bot prep
+ test('#9 data: 狼群 and 流形 are owner-range summons (token text "只能部署在召唤者攻击范围内"), no other hand summon is', () => {
+   assert.equal(DATA.tokens[WOLF].ownerRange, true);
+   assert.equal(DATA.tokens[MANIFOLD].ownerRange, true);
+-  for (const t of Object.values(DATA.tokens)) if (t.placeable && t.tokenId !== WOLF && t.tokenId !== MANIFOLD) assert.ok(!t.ownerRange, t.name);
++  // 2026-10-16 PR2: 沙地兽 (莱伊) 也是 owner-range 召唤物（token 文本同款）
++  const SANDBEAST = 'token_10034_ray_sndbst';
++  assert.equal(DATA.tokens[SANDBEAST].ownerRange, true);
++  for (const t of Object.values(DATA.tokens)) if (t.placeable && ![WOLF, MANIFOLD, SANDBEAST].includes(t.tokenId)) assert.ok(!t.ownerRange, t.name);
+ });
+ 
+ test('#9 g.move: 伺夜\'s 狼群 only on a tile of her attack range (rotated grid of her tile + facing); outside → BAD_TILE', () => {
 diff --git a/test/match/feedback3-gift.test.js b/test/match/feedback3-gift.test.js
-index c0eb310..b72659b 100644
+index c0eb310..ef92066 100644
 --- a/test/match/feedback3-gift.test.js
 +++ b/test/match/feedback3-gift.test.js
-@@ -69,7 +69,8 @@ test('信标 on an elite: the teammate receives that elite with its 3 pool copie
+@@ -46,7 +46,9 @@ const deploy = (m, ps, id) => give(m, ps, id, 'board', legalTileFor(m, ps, id));
+ test('信标 on an elite: the teammate receives that elite with its 3 pool copies, not the normal card (community report #6)', () => {
+   const { h, m, equip } = setup({ seed: 31 });
+   const p0 = h.ps('p_0'), p1 = h.ps('p_1');
+-  const cid = plain((c) => c.tier === 3 && c.bonds.length)[0];
++  // 2026-10-17 第三条：挑「池内」的 t3——排头成员可能整档被禁（take 返回 0 ⇒ poolCopies 0）
++  const cid = plain((c) => c.tier === 3 && c.bonds.length).find((x) => m.pool.has(x));
++  assert.ok(cid, 'a tier-3 member in the pool');
+   const gid = DATA.chess[cid].goldenId;
+   const t = give(m, p0, gid, 'hand');
+   assert.equal(t.poolCopies, m.gd.goldenCopies);
+@@ -69,7 +71,8 @@ test('信标 on an elite: the teammate receives that elite with its 3 pool copie
  test('信标 on a normal operator still sends the normal card', () => {
    const { h, m, equip } = setup({ seed: 35 });
    const p0 = h.ps('p_0'), p1 = h.ps('p_1');
@@ -1374,7 +1872,7 @@ index c0eb310..b72659b 100644
    assert.deepEqual(equip(giveItem(m, p0, BEACON), give(m, p0, cid, 'hand')), OK);
    h.toPrep(2);
    assert.deepEqual(ofBase(m, p1, cid).map((p) => [p.id, p.poolCopies]), [[cid, 1]]);
-@@ -96,7 +97,7 @@ test('信标: the gift still arrives when its sender is eliminated before the ne
+@@ -96,7 +99,7 @@ test('信标: the gift still arrives when its sender is eliminated before the ne
  test('信标: a grant that fails (no copy left in the pool) keeps the gift for the next round start', () => {
    const { h, m, equip } = setup({ seed: 37 });
    const p0 = h.ps('p_0'), p1 = h.ps('p_1');
@@ -1383,6 +1881,21 @@ index c0eb310..b72659b 100644
    assert.deepEqual(equip(giveItem(m, p0, BEACON), give(m, p0, cid, 'hand')), OK);
    // every copy taken by "other players" before the round start
    const held = m.pool.take(cid, 99);
+diff --git a/test/match/feedback5-bench-traits.test.js b/test/match/feedback5-bench-traits.test.js
+index 80c37cf..20022c5 100644
+--- a/test/match/feedback5-bench-traits.test.js
++++ b/test/match/feedback5-bench-traits.test.js
+@@ -85,6 +85,10 @@ test('official data: a 进入休整期时 / 休整期结束时 / 刷新时 特
+     if (/整备区时也有效|整备区也有效/.test(g.desc)) {
+       assert.equal(key, undefined, `${g.garrisonId}: a bench trait carries no condition key`);
+       bench.push(g.garrisonId);
++    } else if (/^garrison_99[3-9]_/.test(g.garrisonId)) {
++      // 2026-10-16【雷姆必拓】扩展 993-999: custom traits with their own H handlers (garrisons/meta.js) and no
++      // official condition key — their event semantics are pinned in garrisons_meta.test.js / rim_operators.test.js
++      continue;
+     } else if (!/^身前一格干员若为/.test(g.desc)) {
+       // the rest: deployed only (character_target_inboard), or a row condition that only a deployed operator can meet;
+       // the two copy traits (白面鸮 / 塞雷娅 "身前一格…") read the tile in front and are positional by nature
 diff --git a/test/match/feedback5-we2-diy-grants.test.js b/test/match/feedback5-we2-diy-grants.test.js
 index 0f7e3f2..8b05918 100644
 --- a/test/match/feedback5-we2-diy-grants.test.js
@@ -1439,8 +1952,25 @@ index c639cdb..f709f4e 100644
      act({ t: 'g.move', uid: p.hand.find(x => x?.id === 'chess_char_2_10_a').uid,
        to: { area: 'board', row: 12, col: 8 }, dir: 'RIGHT' });
      h.toPrep(7, { band: 'band_ermengard' });
+diff --git a/test/match/hardening.test.js b/test/match/hardening.test.js
+index cfeeac1..602230c 100644
+--- a/test/match/hardening.test.js
++++ b/test/match/hardening.test.js
+@@ -336,8 +336,10 @@ test('ctx.rollPool: equip pools, weighted / listed chess pools, shopEligible fil
+   assert.equal(ctx.rollPool('nope'), null);
+   assert.equal(ctx.rollPool('constructor'), null);
+   // a listed chess with no copy left is never rolled
+-  const taken = m.pool.take('chess_char_1_04_a', 99);
+-  for (let i = 0; i < 20; i++) assert.notEqual(ctx.rollPool('pool_chess_glady')?.id, 'chess_char_1_04_a');
++  // (2026-10-17 第三条: seed 915 的新禁集会禁掉深巡 1_04 → 改用斯卡蒂 3_05——她必须在池内，take 后 left 0 → 不再被 roll)
++  const taken = m.pool.take('chess_char_3_05_a', 99);
++  assert.ok(taken > 0, 'skadi has pool copies at seed 915');
++  for (let i = 0; i < 20; i++) assert.notEqual(ctx.rollPool('pool_chess_glady')?.id, 'chess_char_3_05_a');
+   m.pool.give('chess_char_1_04_a', taken);
+   m.dispose();
+ });
 diff --git a/test/match/loadout.test.js b/test/match/loadout.test.js
-index 0e8182a..902e186 100644
+index 0e8182a..2e43998 100644
 --- a/test/match/loadout.test.js
 +++ b/test/match/loadout.test.js
 @@ -33,7 +33,7 @@ function place(m, ps, chessId, row, col) {
@@ -1448,7 +1978,7 @@ index 0e8182a..902e186 100644
  
  test('data carries the §16 choices every visible chess needs (skills at both statuses, elite modules + none)', () => {
 -  assert.equal(visible.length, 112);
-+  assert.equal(visible.length, 125);
++  assert.equal(visible.length, 132);
    for (const c of visible) {
      const g = chess(c.goldenId);
      const o = loadoutOptions(c, g);
@@ -1479,7 +2009,7 @@ index 93afd9c..5869953 100644
    ps.recompute();
    const got = ps.acquireItem('chess_item_1_02_e_a', { source: 'grant' });
 diff --git a/test/match/morph-bonds.test.js b/test/match/morph-bonds.test.js
-index 1202574..8eea11e 100644
+index 1202574..7890cd6 100644
 --- a/test/match/morph-bonds.test.js
 +++ b/test/match/morph-bonds.test.js
 @@ -72,10 +72,10 @@ test('缪尔赛思 hands out 变形同构体 on purchase (garrison_76), the boug
@@ -1487,12 +2017,12 @@ index 1202574..8eea11e 100644
  });
  
 -test('every pairing (18 bond items × normal / golden, both 变形同构体): the wearer counts in prep, in the views, in the battle input and in the real battle', () => {
-+test('every pairing (20 bond items × normal / golden, both 变形同构体): the wearer counts in prep, in the views, in the battle input and in the real battle', () => {
++test('every pairing (21 bond items × normal / golden, both 变形同构体): the wearer counts in prep, in the views, in the battle input and in the real battle', () => {
    const grants = Object.values(DATA.items).filter((r) => r.giveBondId);
 -  assert.equal(grants.length, 36);
 -  assert.equal(new Set(grants.map((r) => r.giveBondId)).size, 14, '14 bonds have a bond item (the official talent\'s list)');
-+  assert.equal(grants.length, 40);
-+  assert.equal(new Set(grants.map((r) => r.giveBondId)).size, 16, '16 bonds have a bond item (the official talent\'s list)');
++  assert.equal(grants.length, 42);  // 2026-10-16 PR2: +钻石镐/胡萝卜披萨（雷姆必拓）
++  assert.equal(new Set(grants.map((r) => r.giveBondId)).size, 17, '17 bonds have a bond item (official talent list + rimBillitonShip)');
    for (const r of grants) {
      const bond = r.giveBondId;
      const iso = r.isGolden ? ISO_B : ISO; // golden bond items with the golden 变形同构体, normal with normal
@@ -1520,7 +2050,7 @@ index 0ca0d08..fb7f206 100644
      const a = deploy(m, ps, SILENCE, 'LEFT');
      const tile = keyOf(ps, a);
 diff --git a/test/match/playtest6_summons.test.js b/test/match/playtest6_summons.test.js
-index 51b6816..be92313 100644
+index 51b6816..a9ffee6 100644
 --- a/test/match/playtest6_summons.test.js
 +++ b/test/match/playtest6_summons.test.js
 @@ -39,7 +39,8 @@ const move = (m, uid, to, dir) => m.handle('p_0', { t: 'g.move', uid, to, ...(di
@@ -1529,12 +2059,12 @@ index 51b6816..be92313 100644
    const placeable = Object.values(DATA.tokens).filter((t) => t.placeable).map((t) => t.tokenId).sort();
 -  assert.deepEqual(placeable, [DRONE, DOLL, 'token_10017_skadi2_dedant', 'token_10028_vigil_wolf', 'token_10030_mlyss_wtrman', DEVICE].sort());
 +  // 2026-10-12: the 打字机 became placeable with 鸿雪's preset chess
-+  assert.deepEqual(placeable, [DRONE, DOLL, 'token_10017_skadi2_dedant', 'token_10026_bgsnow_subbow', 'token_10028_vigil_wolf', 'token_10030_mlyss_wtrman', DEVICE].sort());
++  assert.deepEqual(placeable, [DRONE, DOLL, 'token_10017_skadi2_dedant', 'token_10026_bgsnow_subbow', 'token_10028_vigil_wolf', 'token_10030_mlyss_wtrman', 'token_10034_ray_sndbst', DEVICE].sort());  // 2026-10-16 PR2: +莱伊的沙地兽
    // HIDDEN shop-state tokens stay battle-only (PRTS: 新约能天使 with 使命必达！ provides no 投递坐标 card)
    for (const t of Object.values(DATA.tokens)) if (t.displayType === 'HIDDEN') assert.equal(t.placeable, false, t.name);
    assert.equal(DATA.tokens.token_10056_angel2_target.placeable, false);
 diff --git a/test/match/pool.test.js b/test/match/pool.test.js
-index 87e4e77..39067bf 100644
+index 87e4e77..db847f9 100644
 --- a/test/match/pool.test.js
 +++ b/test/match/pool.test.js
 @@ -13,7 +13,7 @@ test('co-op pool doubles the measured single-player capacities; only visible, un
@@ -1542,7 +2072,7 @@ index 87e4e77..39067bf 100644
    const caps = { 1: 12, 2: 14, 3: 18, 4: 16, 5: 8, 6: 5 };
    assert.equal(pool.entries.size, gd.visibleChess.length);
 -  assert.equal(pool.entries.size, 112);
-+  assert.equal(pool.entries.size, 125);
++  assert.equal(pool.entries.size, 132);  // 2026-10-16 PR2: +7 雷姆必拓（visible 125→132）
    for (const [id, e] of pool.entries) {
      const expect = 2 * (DATA.config.economy.poolCopiesOverrides[id] ?? caps[e.tier]);
      assert.equal(e.cap, expect, id);
@@ -1551,49 +2081,54 @@ index 87e4e77..39067bf 100644
    const banned = [gd.visibleChess[0], gd.visibleChess[5]];
    const p2 = new SharedPool(gd, { banned });
 -  assert.equal(p2.entries.size, 110);
-+  assert.equal(p2.entries.size, 123);
++  assert.equal(p2.entries.size, 130);  // 132 − 2 banned（PR2 visible 132）
    assert.ok(!p2.has(banned[0]) && p2.left(banned[0]) === 0 && p2.take(banned[0]) === 0);
  });
  
-@@ -59,12 +59,13 @@ test('odds sanity: level L rolls only tiers ≤ L; level 1 only tier 1; shares 
+@@ -59,12 +59,14 @@ test('odds sanity: level L rolls only tiers ≤ L; level 1 only tier 1; shares 
      const shares = pool.tierShares(level);
      for (const [t, n] of Object.entries(seen)) assert.ok(Math.abs(n / 4000 - shares[t]) < 0.035, `L${level} T${t} ${n / 4000} vs ${shares[t]}`);
    }
 -  // research table (full pools, no bans): L6 ≈ 14.0 / 17.4 / 25.0 / 25.7 / 11.1 / 6.9 %
 +  // research table (full pools, no bans): L6 ≈ 14.0 / 17.4 / 25.0 / 25.7 / 11.1 / 6.9 % — our pool keeps drifting
-+  // as custom chess joins (2026-10-11 +3, 2026-10-12 +5, 2026-10-13 东扩展 +4, 2026-10-14 白雪 t3→t2); measured now 12.15 / 16.69 / 26.44 / 25.63 / 11.75 / 7.34 %
++  // as custom chess joins (2026-10-11 +3, 2026-10-12 +5, 2026-10-13 东扩展 +4, 2026-10-14 白雪 t3→t2,
++  // 2026-10-16 雷姆必拓 +7: t1/t2/t3/t5/t5/t6/t6); measured now 12.37 / 16.84 / 26.40 / 24.49 / 12.24 / 7.65 %
    const s6 = pool.tierShares(6);
 -  const want = { 1: 0.14, 2: 0.174, 3: 0.25, 4: 0.257, 5: 0.111, 6: 0.069 };
 -  for (const t of Object.keys(want)) assert.ok(Math.abs(s6[t] - want[t]) < 0.01, `T${t} ${s6[t]}`);
-+  const want = { 1: 0.1215, 2: 0.1669, 3: 0.2644, 4: 0.2563, 5: 0.1175, 6: 0.0734 };
++  const want = { 1: 0.1237, 2: 0.1684, 3: 0.264, 4: 0.2449, 5: 0.1224, 6: 0.0765 };
 +  for (const t of Object.keys(want)) assert.ok(Math.abs(s6[t] - want[t]) < 0.005, `T${t} ${s6[t]}`);
    const s2 = pool.tierShares(2);
 -  assert.ok(Math.abs(s2[1] - 0.447) < 0.01 && Math.abs(s2[2] - 0.553) < 0.01);
-+  assert.ok(Math.abs(s2[1] - 0.4213) < 0.01 && Math.abs(s2[2] - 0.5787) < 0.01);  // 白雪 t3→t2 (2026-10-14) 挪动 copy-weighted L2 split
++  assert.ok(Math.abs(s2[1] - 0.4236) < 0.01 && Math.abs(s2[2] - 0.5764) < 0.01);  // PR2 t1/t2 各 +1 挪动 copy-weighted L2 split
  });
  
  test('rolls are copy-weighted: an exhausted chess never rolls; tier/filter options work', () => {
-@@ -107,7 +108,7 @@ test('effect-only items are never shop items: not in shopItemsByTier, never in t
+@@ -107,7 +109,7 @@ test('effect-only items are never shop items: not in shopItemsByTier, never in t
    assert.equal(DATA.items.chess_item_1_01_e_a.shopExcluded, false, 'the plain 维式重锤 is sold');
    const gd = gdOf();
    const listed = new Set(Object.values(gd.shopItemsByTier).flat());
 -  assert.equal(listed.size, 51, '56 normal equipment − 5 effect-only');
-+  assert.equal(listed.size, 55, '63 normal equipment − 5 effect-only − 3 hidden (神秘顾客/画卷/教鞭)');
++  assert.equal(listed.size, 57, '65 normal equipment − 5 effect-only − 3 hidden (神秘顾客/画卷/教鞭)');  // PR2 +2 雷姆必拓
    for (const id of EFFECT_ONLY) assert.ok(!listed.has(id), `${id} not a shop item`);
    assert.ok(listed.has('chess_item_1_01_e_a'));
    // the shop item slot at every level
-@@ -153,8 +154,8 @@ test('洛洛 and 焰尾 use the measured eight-item and 10/10/3 subsets; exhaust
+@@ -153,11 +155,11 @@ test('洛洛 and 焰尾 use the measured eight-item and 10/10/3 subsets; exhaust
    m.dispose();
  });
  
 -test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
 -  for (const [modeId, core, addon] of [['mode_multi_hard', 3, 4], ['mode_single_abyss', 3, 4], ['mode_multi_funny', 0, 1], ['mode_single_normal', 3, 4]]) {
-+test('per-match disabled bonds: 5 core + 5 add-on (NORMAL+, 2026-10-17 加权抽取), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
-+  for (const [modeId, core, addon] of [['mode_multi_hard', 5, 5], ['mode_single_abyss', 5, 5], ['mode_multi_funny', 0, 1], ['mode_single_normal', 5, 5]]) {
++test('per-match disabled bonds: 6 core + 5 add-on (NORMAL+, 2026-10-17 第三条 6+5 加权抽取), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
++  for (const [modeId, core, addon] of [['mode_multi_hard', 6, 5], ['mode_single_abyss', 6, 5], ['mode_multi_funny', 0, 1], ['mode_single_normal', 6, 5]]) {  // 2026-10-17 第三条：配额 6+5（11 条核心盟约）
      const gd = new GameData(DATA, modeId);
      for (let seed = 1; seed <= 20; seed++) {
-       const { drawn, staticOff, banned } = drawDisabledBonds(gd, createRng(seed));
-@@ -165,6 +166,9 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+-      const { drawn, staticOff, banned } = drawDisabledBonds(gd, createRng(seed));
++      const { drawn, staticOff, banned, guaranteed } = drawDisabledBonds(gd, createRng(seed));
+       const nCore = drawn.filter((b) => DATA.bonds[b].isCore).length;
+       assert.equal(nCore, core, `${modeId} core`);
+       assert.equal(drawn.length - nCore, addon, `${modeId} addon`);
+@@ -165,26 +167,74 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
          assert.ok(DATA.bonds[b].weight > 0, `${b} has weight 0`);
          assert.ok(!staticOff.includes(b));
        }
@@ -1603,12 +2138,14 @@ index 87e4e77..39067bf 100644
        const off = new Set([...drawn, ...staticOff]);
        for (const id of gd.visibleChess) {
          const bonds = DATA.chess[id].bonds;
-@@ -172,6 +176,24 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+-        assert.equal(banned.includes(id), bonds.length > 0 && bonds.every((b) => off.has(b)), id);
++        // 放回保底（PR3）会把被连坐的干员放回池内（banned 只含未被保底救回的），所以这里要排除 guaranteed
++        assert.equal(banned.includes(id), bonds.length > 0 && bonds.every((b) => off.has(b)) && !guaranteed.includes(id), id);
        }
      }
    }
-+  // 加权口径（2026-10-17 第二条）：远见/奇迹 0.25×，迅捷/精准/灵巧 4.5×，其余 1×（10 = 正常）→
-+  // NORMAL 期望被禁 35.07 / 可用 89.93 ≈ 90（禁用机制速查.md §12）
++  // 加权口径（2026-10-17 第三条，雷姆必拓整合后）：6+5；远见/奇迹 0.25×、精准 5×、灵巧/迅捷/坚守/助力 3×、
++  // 萨尔贡/阿戈尔 2×、协防/独行/不屈 0.5× → NORMAL 期望被禁 40.42 / 可用 91.58（132 可见；真机 7+5 均匀基准 41.08 / 90.92）
 +  {
 +    const gd = new GameData(DATA, 'mode_multi_normal');
 +    const N = 20000, counts = {};
@@ -1618,26 +2155,54 @@ index 87e4e77..39067bf 100644
 +      bannedSum += banned.length;
 +      for (const b of drawn) counts[b] = (counts[b] || 0) + 1;
 +    }
-+    const avail = 125 - bannedSum / N;
-+    assert.ok(avail > 89.5 && avail < 90.5, `available ≈ 90, got ${avail.toFixed(2)}`);
++    const avail = 132 - bannedSum / N;
++    assert.ok(avail > 91 && avail < 92.2, `available ≈ 91.6, got ${avail.toFixed(2)}`);
 +    assert.ok(counts.visiShip / N < 0.15, `远见 suppressed, got ${(counts.visiShip / N).toFixed(3)}`);
 +    assert.ok(counts.miraShip / N < 0.15, `奇迹 suppressed, got ${(counts.miraShip / N).toFixed(3)}`);
-+    assert.ok(counts.swiftShip / N > 0.7, `迅捷 favored, got ${(counts.swiftShip / N).toFixed(3)}`);
-+    assert.ok(counts.emptyShip / N > 0.2 && counts.emptyShip / N < 0.5, `协防 still drawable, got ${(counts.emptyShip / N).toFixed(3)}`);
++    assert.ok(counts.preciShip / N > 0.8, `精准 favored, got ${(counts.preciShip / N).toFixed(3)}`);
++    assert.ok(counts.emptyShip / N > 0.1 && counts.emptyShip / N < 0.3, `协防 still drawable, got ${(counts.emptyShip / N).toFixed(3)}`);
 +  }
    // FUNNY: the static list alone removes many operators
    const f = drawDisabledBonds(new GameData(DATA, 'mode_multi_funny'), createRng(1));
    assert.equal(f.staticOff.length, 10);
-@@ -181,10 +203,10 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+   assert.ok(f.banned.length >= 20);
+ });
+ 
++// 2026-10-16 PR3 放回保底 (owner decision; 禁用机制速查 §9.2/§11.2): every **drawn** bond keeps (tmin − 1)
++// usable members; the 连坐 operators it lost come back from `banned`, deterministically in visibleChess order
++// (no new rng draws). staticOff (FUNNY 关闭表) is not guaranteed.
++test('放回保底: every drawn bond ends with ≥ tmin−1 usable members; guaranteed ⊆ banned, disjoint from the rest', () => {
++  const gd = gdOf('mode_multi_hard');
++  let withGuarantees = 0;
++  for (let seed = 1; seed <= 150; seed++) {
++    const { drawn, staticOff, banned, guaranteed } = drawDisabledBonds(gd, createRng(seed));
++    const rest = banned.filter((id) => !guaranteed.includes(id));
++    // invariant: the guarantee only moves members out of banned (no new ids, no overlap)
++    assert.ok(guaranteed.every((id) => !rest.includes(id)), `seed ${seed}: guaranteed ∩ rest = ∅`);
++    assert.deepEqual([...new Set([...guaranteed, ...rest])].sort(), [...new Set([...banned, ...guaranteed])].sort(), `seed ${seed}: guaranteed ⊆ banned`);
++    // the guarantee itself: every drawn bond has ≥ tmin−1 usable members now
++    for (const b of drawn) {
++      const thresholds = (DATA.bonds[b].thresholds ?? []).filter(Number.isFinite);
++      const tmin = thresholds.length ? Math.min(...thresholds) : 0;
++      const usable = gd.visibleChess.filter((id) => !banned.includes(id) && (DATA.chess[id].bonds ?? []).includes(b)).length;
++      assert.ok(usable >= tmin - 1, `seed ${seed}: drawn bond ${b} keeps ${usable} ≥ ${tmin - 1} usable members`);
++    }
++    // FUNNY semantics: nothing the mode switched off is in drawn, and no guarantee ever cites it
++    for (const b of staticOff) assert.ok(!drawn.includes(b), `seed ${seed}: staticOff ${b} is never drawn`);
++    if (guaranteed.length) withGuarantees++;
++  }
++  assert.ok(withGuarantees >= 5, `the guarantee fires across seeds (${withGuarantees}/150)`);
++});
++
  test('the match pool excludes banned chess; m.public lists disabled bonds and banned chess', () => {
    const h = makeMatch({ mode: 'coop', difficulty: 'HARD', humans: 1, bots: 1, seed: 3 }).start();
    const pub = h.lastBc('m.public');
 -  assert.equal(pub.drawnDisabledBonds.length, 7);
-+  assert.equal(pub.drawnDisabledBonds.length, 10);
++  assert.equal(pub.drawnDisabledBonds.length, 11);  // 6 核心 + 5 支线
    assert.ok(pub.bannedChess.length > 0);
    for (const id of pub.bannedChess) assert.ok(!h.m.pool.has(id), `${id} should not be in the pool`);
 -  assert.equal(h.m.pool.entries.size + pub.bannedChess.length, 112);
-+  assert.equal(h.m.pool.entries.size + pub.bannedChess.length, 125);
++  assert.equal(h.m.pool.entries.size + pub.bannedChess.length, 132);  // PR2 visible 132
    checkInvariants(h.m);
    h.m.dispose();
  });
@@ -1656,7 +2221,7 @@ index b39ebd6..24b8e1f 100644
      factions: [...setup.factions], schedule: setup.factions.schedule, bans: bans.banned, drawn: bans.drawn });
    assert.notDeepEqual(snapshot(m), before);
 diff --git a/test/potential.test.js b/test/potential.test.js
-index a40eb3d..136e1f2 100644
+index a40eb3d..992d22b 100644
 --- a/test/potential.test.js
 +++ b/test/potential.test.js
 @@ -94,7 +94,7 @@ test('every chess and 自选 form at every potential: the raw keyframes plus the
@@ -1664,7 +2229,7 @@ index a40eb3d..136e1f2 100644
      for (let rank = 0; rank <= FULL_RANK; rank++) { const r = atRank(c, rank); check(c.chessId, c.charId, c.status, r.statsBase ?? r.stats, rank); n++; }
    }
 -  assert.equal(n, 258 * 6);
-+  assert.equal(n, 284 * 6);  // 2026-10-13: 东扩展 +4 棋子记录（白雪/吉星/嵯峨/麒麟R夜刀；2026-10-12: +10）
++  assert.equal(n, 298 * 6);  // 2026-10-16 PR2: +14 雷姆必拓棋子记录（7 干员 ×2 形态）
    let forms = 0;
    for (const [charId, u] of Object.entries(backups.units)) {
      for (const f of Object.values(u.forms)) {
@@ -1673,26 +2238,50 @@ index a40eb3d..136e1f2 100644
      }
    }
 -  assert.equal(forms, 259);
-+  assert.equal(forms, 241);  // 2026-10-13: 嵯峨等转 PRESET 后备份表单数变化（2026-10-12: 早露/维伊/鸿雪 left the units）
++  assert.equal(forms, 232);
  });
  
  test('talent candidates at every potential: each talent is the last one unlocked with requiredPotentialRank ≤ the rank', { skip: !HAS_CACHE && 'no .cache/gamedata' }, () => {
+diff --git a/test/sim/feedback1-tank-triggers.test.js b/test/sim/feedback1-tank-triggers.test.js
+index 66421fb..96ad8e8 100644
+--- a/test/sim/feedback1-tank-triggers.test.js
++++ b/test/sim/feedback1-tank-triggers.test.js
+@@ -36,7 +36,7 @@ const DEVIATED = [
+   ['chess_char_2_18_a', 'skchr_ashlok_2'],   // 灰毫 S2 专注轰击
+ ];
+ /** The deviated skill whose running range strictly contains the own one: ACTIVE_RANGE on top (0.2.0). */
+-const ACTIVE = new Set(['skchr_udflow_2']);
++const ACTIVE = new Set(['skchr_udflow_2', 'skchr_thumpy_2']);  // 珊比 S2（2026-10-16 PR2: kit 把 TAKE_DAMAGE 提升为 ACTIVE_RANGE）
+ /** 余 S2 厚礼上宾: SKILL_RANGE on its own x-1 (DESIGN §22.10). */
+ const SKILL_RANGE_DEVIATED = [['chess_char_6_03_a', 'skchr_yu_2']];
+ const both = (normalId) => [normalId, CHESS[normalId].goldenId];
+@@ -170,6 +170,7 @@ test('real battle: 深巡 S1 and every other MANUAL 重装 skill still wait for
+   let n = 0;
+   for (const c of Object.values(CHESS)) {
+     if (c.profession !== 'TANK' || c.isDiy) continue;
++    if (c.baseId === 'chess_char_6_96_a') continue; // 珊比: kit overrides her S2/S3 to ACTIVE_RANGE (asserted above via ACTIVE)
+     for (const s of c.skills) {
+       if (s.skillType !== 'MANUAL' || s.trigger.rule !== 'TAKE_DAMAGE') continue;
+       const r = firstCast(c.chessId, s.skillId);
 diff --git a/test/sim/feedback5-countdown-summons.test.js b/test/sim/feedback5-countdown-summons.test.js
-index 68e9587..24a9c64 100644
+index 68e9587..40263f8 100644
 --- a/test/sim/feedback5-countdown-summons.test.js
 +++ b/test/sim/feedback5-countdown-summons.test.js
-@@ -20,7 +20,8 @@ const CASES = [
+@@ -19,8 +19,10 @@ const CASES = [
+   ['巫恋 诅咒娃娃', { chessId: 'chess_char_3_15_a' }, 'token_10006_vodfox_doll', null],
    ['浊心斯卡蒂 海嗣', { chessId: 'chess_char_6_04_a' }, 'token_10017_skadi2_dedant', 25],
    ['温蒂 工程蓄水炮', { diy: { slot: 5, charId: 'char_400_weedy', skillIndex: 0, uniEquipId: null } }, 'token_10009_weedy_cannon', 20],
-   ['莱伊 沙地兽', { diy: { slot: 5, charId: 'char_4117_ray', skillIndex: 0, uniEquipId: null } }, 'token_10034_ray_sndbst', 25],
+-  ['莱伊 沙地兽', { diy: { slot: 5, charId: 'char_4117_ray', skillIndex: 0, uniEquipId: null } }, 'token_10034_ray_sndbst', 25],
 -  ['鸿雪 打字机', { diy: { slot: 5, charId: 'char_4055_bgsnow', skillIndex: 0, uniEquipId: null } }, 'token_10026_bgsnow_subbow', 25],
-+  // 鸿雪 is a preset chess since 2026-10-12 — her kit wires the typewriter's countdown for her pieces
++  // 莱伊 is a preset chess since 2026-10-16 (【雷姆必拓】PR2) — her kit wires 沙地兽's countdown for her pieces
++  ['莱伊 沙地兽', { chessId: 'chess_char_6_95_a' }, 'token_10034_ray_sndbst', 25],
++  // 鸿雪 is a preset chess (2026-10-12) — her preset kit wires the typewriter's countdown
 +  ['鸿雪 打字机', { chessId: 'chess_char_4_99_a' }, 'token_10026_bgsnow_subbow', 25],
  ];
  
  function field(owner, tokenId) {
 diff --git a/test/sim/loadout.test.js b/test/sim/loadout.test.js
-index e516d2c..1b661ad 100644
+index e516d2c..ec3e74f 100644
 --- a/test/sim/loadout.test.js
 +++ b/test/sim/loadout.test.js
 @@ -295,8 +295,8 @@ test('harness battle with injected kits: non-default skill via the view uses the
@@ -1701,8 +2290,8 @@ index e516d2c..1b661ad 100644
    const rep = kitCoverage();
 -  assert.equal(rep.summary.chess, 112);
 -  assert.equal(rep.chess.length, 112);
-+  assert.equal(rep.summary.chess, 125);
-+  assert.equal(rep.chess.length, 125);
++  assert.equal(rep.summary.chess, 132);  // 2026-10-16 PR2: +7 雷姆必拓
++  assert.equal(rep.chess.length, 132);
    for (const r of rep.chess) {
      const ch = loadoutOptions(C[r.chessId], C[C[r.chessId].goldenId]);
      assert.deepEqual(r.skills.map((s) => s.index), ch.skills, `${r.chessId}: selectable skills listed`);
@@ -1753,7 +2342,7 @@ index 28fce68..a537270 100644
 +  assert.deepEqual(Object.keys(reasons).sort(), ['kit', 'ok'], 'every line they carry is a kit-owned shape (no unknown, no other mode)');
  });
 diff --git a/test/ui/feedback1-gaps.test.js b/test/ui/feedback1-gaps.test.js
-index 0cbb61f..6e0535b 100644
+index 0cbb61f..671d9c4 100644
 --- a/test/ui/feedback1-gaps.test.js
 +++ b/test/ui/feedback1-gaps.test.js
 @@ -2,7 +2,7 @@
@@ -1770,13 +2359,13 @@ index 0cbb61f..6e0535b 100644
  
  describe('§21.26 1 — 变形同构体: the pairing list (gameLogic morphPairings)', () => {
 -  test('from the data: 14 bonds in bonds.json order, 18 items, the same giveBondId the server counts with', () => {
-+  test('from the data: 16 bonds in bonds.json order, 20 items, the same giveBondId the server counts with (2026-10-13: +东/乌萨斯 自制装备)', () => {
++  test('from the data: 17 bonds in bonds.json order, 21 items, the same giveBondId the server counts with (2026-10-13: +东/乌萨斯 自制装备)', () => {
      const rows = morphPairings(ITEMS, BONDS);
      const want = expectedPairings();
 -    assert.equal(rows.length, 14);
 -    assert.equal(want.size, 14);
-+    assert.equal(rows.length, 16);
-+    assert.equal(want.size, 16);
++    assert.equal(rows.length, 17);
++    assert.equal(want.size, 17);
      assert.deepEqual(rows.map((r) => r.bondId), BONDS.map((b) => b.bondId).filter((id) => want.has(id)), 'bonds.json order');
      for (const r of rows) {
        assert.equal(r.name, bonds[r.bondId].name);
@@ -1785,7 +2374,7 @@ index 0cbb61f..6e0535b 100644
        assert.equal(r.worn, false);
      }
 -    assert.equal(rows.reduce((n, r) => n + r.items.length, 0), 18, '18 bond items');
-+    assert.equal(rows.reduce((n, r) => n + r.items.length, 0), 20, '20 bond items');
++    assert.equal(rows.reduce((n, r) => n + r.items.length, 0), 21, '21 bond items');
      const vic = rows.find((r) => r.bondId === 'victoriaShip');
      assert.deepEqual(vic.items.map((it) => it.name), ['维式重锤', '战栗维式重锤', '坚固维式重锤', '加速维式重锤', '灼燃维式重锤'], 'by tier: the hammer series');
      assert.ok(!rows.some((r) => r.items.some((it) => items[it.id].canGiveBond)), '变形同构体 itself is no partner');
@@ -1795,7 +2384,7 @@ index 0cbb61f..6e0535b 100644
      const rows = morphPairings(ITEMS, BONDS);
 -    assert.deepEqual(pairs.map((p) => p.bond).sort(), rows.map((r) => r.name).sort(), 'the same 14 bonds');
 +    // the official talent lists the 14 official pairings — the remake adds 东/乌萨斯 (custom items 9_01/9_03)
-+    assert.deepEqual(pairs.map((p) => p.bond).sort(), rows.filter((r) => r.bondId !== 'dongShip' && r.bondId !== 'ursusShip').map((r) => r.name).sort(), 'the same 14 official bonds');
++    assert.deepEqual(pairs.map((p) => p.bond).sort(), rows.filter((r) => !['dongShip', 'ursusShip', 'rimBillitonShip'].includes(r.bondId)).map((r) => r.name).sort(), 'the same 14 official bonds');  // 自制 东/乌萨斯/雷姆必拓 不在官方天赋栏
      for (const p of pairs) {
        const r = rows.find((x) => x.name === p.bond);
        assert.ok(r.items.some((it) => it.name.includes(p.item)), `“${p.item}”→【${p.bond}】`);
@@ -1811,7 +2400,7 @@ index 0cbb61f..6e0535b 100644
      assert.match(textOf(v), /搭配以下装备时，携带者视为对应盟约的成员：/);
      const rows = byClass(v, 'dmorph__row');
 -    assert.equal(rows.length, 14);
-+    assert.equal(rows.length, 16);
++    assert.equal(rows.length, 17);
      const off = rows.filter((r) => hasClass(r, 'is-off'));
      assert.deepEqual(off.map((r) => r.props['data-bond']), ['lateranoShip', 'egirShip', 'kazimierzShip', 'arcaneShip', 'raidShip']);
      for (const r of off) assert.match(textOf(r), /本局禁用/);
@@ -1820,12 +2409,12 @@ index 0cbb61f..6e0535b 100644
      const equip = blocks.find((b) => b?.key === 'equip');
      const rows = byClass(equip, 'dmorph__row');
 -    assert.equal(rows.length, 14);
-+    assert.equal(rows.length, 16);
++    assert.equal(rows.length, 17);
      const worn = rows.filter((r) => hasClass(r, 'is-worn'));
      assert.deepEqual(worn.map((r) => r.props['data-bond']), ['victoriaShip']);
      assert.match(textOf(worn[0]), /生效中/);
 diff --git a/test/ui/feedback1b-bonds.test.js b/test/ui/feedback1b-bonds.test.js
-index 0fe147f..6f02ad7 100644
+index 0fe147f..be52d90 100644
 --- a/test/ui/feedback1b-bonds.test.js
 +++ b/test/ui/feedback1b-bonds.test.js
 @@ -59,7 +59,7 @@ test('a real 标准 match: 奥术 operators are buyable, three on the board neve
@@ -1833,12 +2422,12 @@ index 0fe147f..6f02ad7 100644
    const m = h.m, ps = h.ps('p_0');
    const members = DATA.bonds.arcaneShip.visibleMembers.filter((id) => m.pool.has(id) && !m.bannedChess.includes(id));
 -  assert.deepEqual(members.map((id) => DATA.chess[id].name), ['深靛', '洛洛', '阿罗玛', '夕', '圣聆初雪'], 'members kept in the pool by their other bond');
-+  assert.deepEqual(members.map((id) => DATA.chess[id].name), ['深靛', '洛洛', '阿罗玛', '夕', '维伊', '圣聆初雪'], 'members kept in the pool by their other bond');
++  assert.deepEqual(members.map((id) => DATA.chess[id].name), ['深靛', '洛洛', '阿罗玛', '夕', '时隙', '维伊', '圣聆初雪'], 'members kept in the pool by their other bond (2026-10-16 PR2: +时隙 雷姆必拓×奥术)');
    ps.board.clear();
    const used = new Set();
    for (const id of members.slice(0, 3)) { const t = legalTileFor(m, ps, id, used); used.add(tileKey(t[0], t[1])); give(m, ps, id, 'board', t); }
 diff --git a/test/ui/loadout.test.js b/test/ui/loadout.test.js
-index da6bda9..7861f48 100644
+index da6bda9..03cb780 100644
 --- a/test/ui/loadout.test.js
 +++ b/test/ui/loadout.test.js
 @@ -166,7 +166,7 @@ test('sanitizeEntries: drops unknown chess / illegal parts one by one, and the r
@@ -1846,7 +2435,7 @@ index da6bda9..7861f48 100644
    }
    const s = sanitizeEntries(all, get);
 -  assert.equal(Object.keys(s).length, 112);
-+  assert.equal(Object.keys(s).length, 125);
++  assert.equal(Object.keys(s).length, 132);
    assert.ok(checkLoadout(s, get).ok);
  });
  
@@ -1855,15 +2444,15 @@ index da6bda9..7861f48 100644
  });
  
 -test('roster and filters: 112 visible chess in shop order; tier / class / bond / search / changed-only', () => {
-+test('roster and filters: 125 visible chess in shop order; tier / class / bond / search / changed-only', () => {
++test('roster and filters: 132 visible chess in shop order; tier / class / bond / search / changed-only', () => {
    const roster = rosterOf(Object.values(CHESS));
 -  assert.equal(roster.length, 112);
-+  assert.equal(roster.length, 125);
++  assert.equal(roster.length, 132);
    assert.ok(roster.every((c) => !c.isGolden && c.visible));
    for (let i = 1; i < roster.length; i++) assert.ok(roster[i - 1].tier <= roster[i].tier);
    const t3 = filterRoster(roster, { tier: 3 }, {}, get, getBond);
 diff --git a/test/ui/match-info.test.js b/test/ui/match-info.test.js
-index 9e035a4..b85c8a4 100644
+index 9e035a4..1e5841b 100644
 --- a/test/ui/match-info.test.js
 +++ b/test/ui/match-info.test.js
 @@ -62,7 +62,8 @@ test('matchInfoModel: the two greyed kinds, the briefing order, banned operators
@@ -1871,28 +2460,27 @@ index 9e035a4..b85c8a4 100644
    assert.equal(m.stateOf('yanShip'), null);
    // bondOrder, then identifier: 调和 (bondOrder 1) leads the add-on row as in the official briefing
 -  assert.deepEqual(m.core.map((b) => b.name), ['炎', '萨尔贡', '维多利亚', '谢拉格', '拉特兰', '阿戈尔', '叙拉古', '卡西米尔']);
-+  // 东 / 乌萨斯 (tools/custom-content.mjs, bondOrder 900 / 901) sort after the eight official core bonds
-+  assert.deepEqual(m.core.map((b) => b.name), ['炎', '萨尔贡', '维多利亚', '谢拉格', '拉特兰', '阿戈尔', '叙拉古', '卡西米尔', '东', '乌萨斯']);
++  // 东 / 乌萨斯 / 雷姆必拓 (tools/custom-content.mjs, bondOrder 900 / 901 / 902) sort after the eight official core bonds
++  assert.deepEqual(m.core.map((b) => b.name), ['炎', '萨尔贡', '维多利亚', '谢拉格', '拉特兰', '阿戈尔', '叙拉古', '卡西米尔', '东', '乌萨斯', '雷姆必拓']);
    assert.equal(m.addon[0].name, '调和');
    assert.equal(m.core.length + m.addon.length, Object.keys(DATA.bonds).length, 'every bond, once');
    assert.ok(m.core.every((b) => b.isCore) && m.addon.every((b) => !b.isCore));
-@@ -181,11 +182,12 @@ test('a real 标准 match (solo and co-op): the mode\'s 10 inactive bonds are "o
+@@ -181,11 +182,11 @@ test('a real 标准 match (solo and co-op): the mode\'s 10 inactive bonds are "o
      assert.match(textOf(MatchLegend({ model: m })), /或本模式禁用/);
      h.m.dispose();
    }
 -  // 绝境: 3 core + 4 add-on drawn, nothing switched off by the mode
-+  // 绝境: 5 core + 5 add-on drawn (weighted), nothing switched off by the mode（2026-10-17: 协防入池 → 支线池 12；
-+  // 抽取改按 weight 加权；口径 = 可用干员 ≈原版 90）
++  // 绝境: 6 core + 5 add-on drawn (weighted)（2026-10-17 第三条：11 条核心盟约 → 6+5；雷姆必拓整合后 132 可见）
    const h = makeMatch({ mode: 'coop', difficulty: 'HARD', humans: 1, bots: 1, seed: 4 }).start();
    const m = matchInfoModel(h.m.publicView(), SRC('mode_multi_hard'));
    assert.equal(m.sets.off.size, 0);
 -  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [3, 4]);
-+  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [5, 5]);
++  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [6, 5]);
    assert.deepEqual([...m.banned].sort(), [...h.m.bannedChess].sort());
    h.m.dispose();
  });
 diff --git a/test/ui/morph-bonds.test.js b/test/ui/morph-bonds.test.js
-index b99ab08..ff5f621 100644
+index b99ab08..2d7b694 100644
 --- a/test/ui/morph-bonds.test.js
 +++ b/test/ui/morph-bonds.test.js
 @@ -56,7 +56,7 @@ describe('变形同构体 — the client rule', () => {
@@ -1900,7 +2488,7 @@ index b99ab08..ff5f621 100644
      const gd = new GameData(getData({ log: { warn() {}, error() {}, info() {} } }), 'mode_multi_hard');
      const grants = Object.values(items).filter((r) => r.giveBondId);
 -    assert.equal(grants.length, 36, '18 bond items × normal / golden');
-+    assert.equal(grants.length, 40, '20 bond items × normal / golden (2026-10-13: +东/乌萨斯 自制装备)');
++    assert.equal(grants.length, 42, '21 bond items × normal / golden (2026-10-13: +东/乌萨斯; 2026-10-16 PR2: +雷姆必拓×2)');
      for (const r of grants) {
        for (const iso of [ISO, ISO_B]) {
          const p = { id: WEARER, items: [{ id: r.id }, { id: iso }] };

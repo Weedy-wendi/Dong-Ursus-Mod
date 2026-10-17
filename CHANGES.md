@@ -4,6 +4,45 @@
 
 ---
 
+## 2026-10-18（第十二条 · v1.0.10）· 雷姆必拓整合 + 禁用抽取改「6 核心 + 5 支线」加权 ＋ 3 人盟约数值修订
+
+> 雷姆必拓（rimBillitonShip）从独立手工整合并入本 mod：+7 名预设干员、+1 核心盟约（902，阈值 3-6-9）、
+> +2 件自制装备、+2 特质路由，本体可见干员 125 → **132**、核心盟约 10 → **11**。
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | rim 全批并入：CHESS +7 干员（×2 形态 + 精英 40 条记录）、BONDS +`rimBillitonShip`（weight **10**，进禁用池）、ITEMS +2（钻石镐 9_05_e / 胡萝卜披萨 9_06_e）、GARRISONS 993-999、`CUSTOM_*` 常量 13→20 / 26→40 / 2→3 / 4→8；`BOND_WEIGHT_OVERRIDES` 改 **6+5 加权表**（见第十一条 §权重）；`CUSTOM_BANDS = 5` 保留 |
+| `files/server/sim/content/bonds/core.js` | `installRim`（3 人：攻击力 = **20% 固定 + 0.7%×层数**（2026-10-18 用户修订 0.8%→0.7%）；6 人：隐匿 + 场上 rim 伤害 +40%/名；9 人：隐匿 40s + 开技 10s 攻 +200%）+ `payRecruits`（每 25 层 → 1 名 ≤调度等级的 rim 干员）+ `wireMilestone` |
+| `files/server/sim/content/garrisons/meta.js` | rim 特质 993-998 的 H 处理器（获得时资金/休整期加层/随机已激活盟约加层/周围发干员） |
+| `files/server/sim/content/kits/ops/` | +7 新 kit（savage/firwhl/glider/tmslot/shwaz/ray/thumpy），`op-ray/op-shwaz/op-thumpy` 删除（REMOVED +6） |
+| `files/server/sim/content/items/battle.js` | 钻石镐/胡萝卜披萨战斗效果 + 莱伊沙地兽召唤 |
+| `files/server/sim/content/kits/index.js` / `pool.js` | kit 注册表 +7；PR3 **放回保底**（被禁盟约的 tmin−1 可用成员回池） |
+| `patches/01-mod-shared.patch` | 30 目标（新增 `pool.js`、`Match.js`、`setupVote.js`、`battle/deploy.js`、`professions.js`、`skills.js`、`items/battle.js`、`public/js/render/{spine,units}.js`、`tools/assets/{plan,spine,anim-roles}.mjs`、`tools/fetch-assets.mjs`、`docs/research/{04-items,07-assets}.json` 等） |
+| `patches/02-tests-calibration.patch` | 68 目标（rim/kit 计数、6+5 断言、morph/bonds 21 件、potential 232/298、voices 203、kit-coverage 132 等） |
+| `files/tools/i18n-rim-pr{1,2,3}.mjs` | rim 四语言 overlay（en/ja/ko 采集渲染），mod.json `i18n` 步骤 +3 |
+| `files/public/assets/…` | +85 素材：7 干员 avatar×2/portrait×2/spine×6、技能图标 17（assets.json 引用的全部 rim 文件） |
+| `files/public/i18n/en.json` | +msgid `【雷姆必拓】获得{n}名干员` |
+| `mod.json` | `version` 1.0.9 → **1.0.10**；`base.files 116 · patched 98 · owned 132 · removed 18 · generated 22` |
+
+### 禁用抽取（6+5 加权，第三条口径）
+
+| 项 | 值 |
+|---|---|
+| 抽数 | NORMAL/HARD/ABYSS = **6 核心 + 5 支线**（11 条核心盟约：8 官方 + 东/乌萨斯/雷姆必拓） |
+| 远见/奇迹 | weight 2.5（0.25×，抽中率 8.8%） |
+| 精准 | 50（5×，主杆，85.9%）· 灵巧/迅捷/坚守/助力 30（3×）· 萨尔贡/阿戈尔 20（2×） |
+| 协防/独行/不屈 | 5（0.5×，**仍可抽中** 17.1%——负影响力盟约让位） |
+| 结果 | 期望被禁 **40.42 / 可用 91.58**（132 可见，100 万次 MC）——真机 7+5 均匀基准 41.08 / 90.92，两口径基本持平 |
+
+### 验证
+
+- 全量 **6349 项**：内容性 0 fail（rim 合并的 60+ 处漂移/计数逐项修复，golden 6 份 + standins/diy 全量重建两轮）；仅剩 6 项已知环境性失败（asset index / websocket lobby / tracked tree / performance / symlink / windows-bundle）
+- 纯净基线树安装 + verify：见发布记录
+
+---
+
 ## 2026-10-17（第十一条）· 禁用抽取改加权：回到 5+5，远见/奇迹降权，可用干员 ≈90
 
 ### 改了什么

@@ -100,12 +100,28 @@ for (const lang of LANGS) {
     }
   }
   for (const base of ['9_01', '9_02', '9_03', '9_04']) {
+    const num = base.split('_')[1];
     const id = 'eff_' + base + '_e';
-    if (mod[lang]?.effects?.[id]) continue;
     const it = mod[lang]?.items?.['chess_item_' + base + '_e_a'];
-    if (it?.desc) {
+    if (!mod[lang]?.effects?.[id] && it?.desc) {
       const rec = withHash(id, { name: it.name, desc: it.desc, descRaw: it.descRaw });
       if (rec) derived.push([id, rec]);
+    }
+    // 精英形态的独立效果记录（eff_9g_XX_e，2026-10-18 补：此前一直漏派生 → 效果名回落中文；
+    // 注意不能与普通形态共用 continue——mod.effects 已有普通记录时会把 elite 一起跳过）
+    const gid = 'eff_9g_' + num + '_e';
+    const ib = mod[lang]?.items?.['chess_item_' + base + '_e_b'];
+    if (!mod[lang]?.effects?.[gid] && ib?.desc) {
+      const rec = withHash(gid, { name: ib.name, desc: ib.desc, descRaw: ib.descRaw });
+      if (rec) derived.push([gid, rec]);
+    }
+  }
+  // 雷姆必拓盟约效果（若 mod-i18n.json 直接带了就用；否则由 rim pr1 写）
+  if (!mod[lang]?.effects?.['bondeffect_rim']) {
+    const rb = mod[lang]?.bonds?.rimBillitonShip;
+    if (rb?.effectDesc) {
+      const rec = withHash('bondeffect_rim', { name: rb.name ?? rb.effectName, desc: rb.effectDesc, descRaw: rb.effectDescRaw });
+      if (rec) derived.push(['bondeffect_rim', rec]);
     }
   }
   for (const bid of IDS.bands) {

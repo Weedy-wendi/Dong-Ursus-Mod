@@ -14,6 +14,8 @@ const files = [
   'test/i18n-data.test.js',       // 四语言 overlay stale=0
   'test/content/ursus_bond.test.js',   // 【乌萨斯】盟约（叠攻/周边技回/带装备倍率）
   'test/content/dong_bond.test.js',    // 【东】盟约（3人 伤害公式：基础/每层/已损失生命比例）
+  'test/content/rim_bond.test.js',     // 【雷姆必拓】盟约（攻叠层/隐匿/25层发干员）
+  'test/content/rim_operators.test.js', // 雷姆必拓 7 干员 kit（999 莱伊/996 黑 等）
   'test/content/bands.test.js',        // 策略（40 官方 + 5 自制：注入 / prep 侧 handler / 覆盖率）
   'test/content/garrisons_meta.test.js', // 特质 prep 侧（含 988-992 自定义处理器）
   'test/content/garrisons_battle.test.js', // 特质战斗侧 + 覆盖率

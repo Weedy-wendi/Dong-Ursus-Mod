@@ -13,13 +13,13 @@
 //           （buildBands 读 effectId 的效果记录拿 buffs / desc；prep 侧行为在 server/sim/content/bands/meta.js）
 //
 // 加内容时同步改下面这些常量（validateAll 与 test/data.test.js、test/backups.test.js 里是硬断言）：
-export const CUSTOM_VISIBLE_CHESS = 13;  // 新增「可见、非 DIY」棋子数  （112 + N）
-export const CUSTOM_BASE_CHESS = 13;     // 新增基础棋子数（PRESET）  （133 + N）
-export const CUSTOM_CHESS_RECORDS = 26;  // 新增 chess 记录数（普通 + 精英）（266 + N）
-export const CUSTOM_BOND_COUNT = 2;      // 新增盟约数                （23  + N）
-export const CUSTOM_CORE_BOND_COUNT = 2; // 新增「核心」盟约数        （8   + N）
-export const CUSTOM_ITEMS = 4;           // 新增装备数（普通 + 进阶）（115 + 2N 条记录 / 56 + N 件普通 EQUIP）
-export const CUSTOM_BAND_COUNT = 5;      // 新增策略数                （40  + N）
+export const CUSTOM_VISIBLE_CHESS = 20;  // 新增「可见、非 DIY」棋子数  （112 + N；2026-10-16 PR2 +7 雷姆必拓）
+export const CUSTOM_BASE_CHESS = 20;     // 新增基础棋子数（PRESET）  （133 + N；2026-10-16 PR2 +7）
+export const CUSTOM_CHESS_RECORDS = 40;  // 新增 chess 记录数（普通 + 精英）（266 + N；2026-10-16 PR2 26→40）
+export const CUSTOM_BOND_COUNT = 3;      // 新增盟约数                （23  + N；2026-10-16 +1 雷姆必拓）
+export const CUSTOM_CORE_BOND_COUNT = 3; // 新增「核心」盟约数        （8   + N；2026-10-16 +1 雷姆必拓）
+export const CUSTOM_ITEMS = 8;           // 新增装备数（普通 + 进阶）（115 + 2N 条记录 / 56 + N 件普通 EQUIP；2026-10-16 PR2 4→8）
+export const CUSTOM_BAND_COUNT = 5;      // 新增策略数                （40  + N；自制 2026-10-17）
 
 /** 自制棋子。key = 基础 chessId（不带 `_a`）。 */
 const CHESS = {
@@ -155,6 +155,82 @@ const CHESS = {
     bondIds: ['ursusShip', 'visiShip'], // 【乌萨斯】【远见】（2026-10-13 用户口径：去掉【突袭】）
     garrisonIds: ['garrison_982_a', 'garrison_982_b'], // 特质：老将刀意
   },
+
+  // ---- 雷姆必拓 7 名新干员（2026-10-16 PR2，实装计划 §2.3；采集单见仓库根 采集单-*.md）----
+  // tier 分配（采集单总表 §4 用户定案）：暴行 t1 / 火哨 t2 / 蜜莓 t3 / 黑 t5 / 时隙 t5 / 珊比 t6 / 莱伊 t6。
+  // identifier 从 9027 起（9021/9023/9025 已被东/乌萨斯占用，_b 记录 = identifier+1，间隔 2）；shopSortId 913 起。
+  // 默认技能 = 签名技 S2（defaultSkillIndex 1，0 基；照 mod 先例）。属性/技能/天赋/模组全部由 buildChess 从
+  // 官方 character_table 按 tier 推导，这里不写数值。
+  'chess_char_1_96': {
+    charId: 'char_230_savage',          // 暴行：5★ 近卫 / 强攻手(centurion) / nationId rim
+    tier: 1,                            // tier 1 → price 2
+    identifier: 9027,
+    shopSortId: 913,
+    defaultSkillIndex: 1,               // S2 微差爆破（签名技）
+    moduleId: 'uniequip_002_savage',    // CEN-X（照 mod 口径优先 -X 支线）
+    bondIds: ['rimBillitonShip', 'deputShip'], // 【雷姆必拓】【助力】
+    garrisonIds: ['garrison_993_a', 'garrison_993_b'], // 特质：矿工的血汗（售出时资金）
+  },
+  'chess_char_2_96': {
+    charId: 'char_493_firwhl',          // 火哨：5★ 重装 / 堡垒(fortress) / nationId rim
+    tier: 2,                            // tier 2 → price 3
+    identifier: 9029,
+    shopSortId: 914,
+    defaultSkillIndex: 1,               // S2 焦土（签名技）
+    moduleId: 'uniequip_002_firwhl',    // FOR-X
+    bondIds: ['rimBillitonShip', 'steadShip'], // 【雷姆必拓】【坚守】
+    garrisonIds: ['garrison_994_a', 'garrison_994_b'], // 特质：窑火不熄（休整期结束时 rim 盟约 +2/+4 层，2026-10-17）
+  },
+  'chess_char_3_95': {
+    charId: 'char_449_glider',          // 蜜莓（官方名，char_449_glider，2026-10-16 用户拍板弃用「密莓」）：5★ 医疗 / 行医(wandermedic) / nationId rim
+    tier: 3,                            // tier 3 → price 3
+    identifier: 9031,
+    shopSortId: 915,
+    defaultSkillIndex: 1,               // S2 振奋（签名技）
+    moduleId: 'uniequip_002_glider',    // WDM-X
+    bondIds: ['rimBillitonShip'],       // 【雷姆必拓】（v4 定案：单盟约、无协防——会被禁集正常连坐，配额据此重算）
+    garrisonIds: ['garrison_995_a', 'garrison_995_b'], // 特质：全员开工（获得时随机 1 个已激活盟约 +3，重复 4/8 次，2026-10-17）
+  },
+  'chess_char_5_96': {
+    charId: 'char_340_shwaz',           // 黑：6★ 狙击 / 重射手(closerange) / nationId columbia（跨势力，星熊→【东】先例）
+    tier: 5,                            // tier 5 → price 4
+    identifier: 9033,
+    shopSortId: 916,
+    defaultSkillIndex: 1,               // S2 暮眼锐瞳（ATK up 持续技；自选 kit op-shwaz.js 同款 spec）
+    moduleId: 'uniequip_002_shwaz',     // ARC-X 定制弩配件套装（-X 支线口径；003 arc-y 不选）
+    bondIds: ['rimBillitonShip', 'preciShip'], // 【雷姆必拓】【精准】（跨势力，用户 2026-10-16 拍板）
+    garrisonIds: ['garrison_996_a', 'garrison_996_b'], // 特质：卡池爆满（每叠 3 层攻速）
+  },
+  'chess_char_5_95': {
+    charId: 'char_4236_tmslot',         // 时隙：5★ 术师 / 驭械术师(funnel) / nationId rim
+    tier: 5,                            // tier 5 → price 4
+    identifier: 9035,
+    shopSortId: 917,
+    defaultSkillIndex: 1,               // S2 科技与传统仪式（浮游单元过载）
+    moduleId: 'uniequip_002_tmslot',    // FUN-X
+    bondIds: ['rimBillitonShip', 'arcaneShip'], // 【雷姆必拓】【奥术】
+    garrisonIds: ['garrison_997_a', 'garrison_997_b'], // 特质：迭代测试（获得时随机 1 个已激活盟约 +6，重复 4/8 次，2026-10-17）
+  },
+  'chess_char_6_96': {
+    charId: 'char_4235_thumpy',         // 珊比：6★ 重装 / 本源铁卫(primprotector) / nationId rim
+    tier: 6,                            // tier 6 → price 5
+    identifier: 9037,
+    shopSortId: 918,
+    defaultSkillIndex: 1,               // S2 慢慢走~（签名技）
+    moduleId: 'uniequip_002_thumpy',    // PRP-X 出发的勇气
+    bondIds: ['rimBillitonShip', 'steadShip'], // 【雷姆必拓】【坚守】
+    garrisonIds: ['garrison_998_a', 'garrison_998_b'], // 特质：勘测队（进入休整期产兵）
+  },
+  'chess_char_6_95': {
+    charId: 'char_4117_ray',            // 莱伊：6★ 狙击 / 猎手(hunter) / nationId rim
+    tier: 6,                            // tier 6 → price 5
+    identifier: 9039,
+    shopSortId: 919,
+    defaultSkillIndex: 1,               // S2（签名技）
+    moduleId: 'uniequip_002_ray',       // HUN-X（003 hun-y 不选，-X 口径）
+    bondIds: ['rimBillitonShip', 'preciShip'], // 【雷姆必拓】【精准】
+    garrisonIds: ['garrison_999_a', 'garrison_999_b'], // 特质：猎手的直觉（每叠 3 层攻击力）
+  },
 };
 
 
@@ -172,6 +248,11 @@ const BOND_OVERRIDES = {
   chess_char_4_09: ['dongShip', 'egirShip', 'soloShip'],   // 水月：东、阿戈尔、独行
   chess_char_4_17: ['yanShip', 'dongShip'],                // 星熊：炎、东
   chess_char_5_10: ['siracusaShip', 'dongShip', 'emptyShip'], // 铃兰：叙拉古、东、协防
+  // 【雷姆必拓】上线后补归属（2026-10-16，实装计划 §2.4；只加不改 —— 官方 bond 的 chessIdList 原样保留）。
+  // 寒芒克洛丝为跨势力加籍（官方 nationId rhodes，不在 rim）：星熊（lungmen）→【东】同一先例，用户 2026-10-16 拍板。
+  chess_char_3_02: ['rimBillitonShip', 'skillfulShip'],       // 断崖：雷姆必拓、灵巧
+  chess_char_4_14: ['rimBillitonShip', 'swiftShip', 'preciShip'], // 莱恩哈特：雷姆必拓、迅捷、精准（变三盟约；其「自身已激活的盟约层数+N」特质随之每个各 +N，设计上有意）
+  chess_char_4_06: ['rimBillitonShip', 'preciShip'],          // 寒芒克洛丝：雷姆必拓、精准（跨势力加籍，nationId rhodes）
 };
 
 /**
@@ -189,13 +270,15 @@ const BOND_OVERRIDES = {
  * 这部分**不参与禁用判定**（见 `server/match/player/diy.js` buildDiyStock 的豁免）。
  */
 const BOND_WEIGHT_OVERRIDES = {
-  emptyShip: 10,               // 协防干员：进禁用抽取池（2026-10-17 用户口径）；10 = 官方「正常可抽」标尺
-  // 2026-10-17（第二条）：抽取由均匀改为**按 weight 加权**（pool.js sample），10 = 正常可抽。自制核心
-  // dongShip/ursusShip 的 weight 在上面的注入模板里直接写 10（它们不在官方 bondInfoDict，走不了这份覆盖）。
-  visiShip: 2.5, miraShip: 2.5,        // 远见/奇迹：0.25×（用户口径「调低概率」）
-  swiftShip: 45, preciShip: 45, skillfulShip: 45, // 迅捷/精准/灵巧：4.5×——禁用压力补偿。
-  // 单独调远见/奇迹不影响期望可用数（含/不含它们的支线组合平均被禁数几乎相同），必须由重三件套补：
-  // 5+5 期望被禁 35.07 / 可用 89.93 ≈ 90（100 万次 MC，见 禁用机制速查.md §12）。
+  // 2026-10-17（第三条口径，6+5 加权抽取的权重表；10 = 官方「正常可抽」标尺）：
+  // 期望被禁 40.42 / 可用 91.58（132 可见，100 万次 MC）——与真机 7+5 均匀基准（41.08 / 90.92）基本持平。
+  dongShip: 10, ursusShip: 10, rimBillitonShip: 10, // 自制核心对齐官方标尺（雷姆必拓抽中率 49.9%）
+  visiShip: 2.5, miraShip: 2.5,                     // 远见/奇迹：0.25×（用户口径「调低概率」→ 抽中率 8.8%）
+  preciShip: 50,                                    // 精准：5×（主杆，影响力最大 +1.73 → 抽中率 85.9%）
+  skillfulShip: 30, swiftShip: 30, steadShip: 30, deputShip: 30, // 灵巧/迅捷/坚守/助力：3×（70.3%）
+  sargonShip: 20, egirShip: 20,                     // 萨尔贡/阿戈尔：2×（75.2%）
+  emptyShip: 5, soloShip: 5, indomShip: 5,          // 协防/独行/不屈：0.5×——负影响力盟约让位（仍可抽中，17.1%）
+  // 微调旋钮：精准每 ±1× ≈ 被禁 ±0.1；负杆每 −0.1× ≈ 被禁 +0.3。投资人/调和/绝技保持 weight 0 = 永不入池。
 };
 
 /**
@@ -211,6 +294,14 @@ const BOND_WEIGHT_OVERRIDES = {
 const GARRISON_OVERRIDES = {
   garrison_07_a: { desc: '【阿戈尔】【东】每叠加3层，本干员攻击力<@ba.vup>+1%</>', bonds: 'egirShip,dongShip' },
   garrison_07_b: { desc: '【阿戈尔】【东】每叠加3层，本干员攻击力<@ba.vup>+2%</>', bonds: 'egirShip,dongShip' },
+  // 寒芒克洛丝（2026-10-16【雷姆必拓】，实装计划 §2.5）：garrison_73 是「战斗开始时授予身前一格」的载体
+  // （blackboard give_garrison_id → garrison_96），真正读层（bond_id → bond_by_id）的是 garrison_96 ——
+  // 两组都要覆盖：73 只改文案（把【精准】扩成【雷姆必拓】【精准】），96 改文案 + bond_id 读层列表
+  // （照水月 garrison_07 先例；garrison_96 未被其它棋子引用，覆盖不影响别人）。
+  garrison_73_a: { desc: '<战斗开始时>使身前一格干员获得特质“开启技能时使已激活【雷姆必拓】【精准】层数<@ba.vup>+1</>”（每场战斗至多10层）' },
+  garrison_73_b: { desc: '<战斗开始时>使身前一格干员获得特质“开启技能时使已激活【雷姆必拓】【精准】层数<@ba.vup>+2</>”（每场战斗至多20层）' },
+  garrison_96_a: { desc: '<战斗中>开启技能时，使已激活的【雷姆必拓】【精准】层数<@ba.vup>+1</>（每场作战至多10层）', bonds: 'rimBillitonShip,preciShip' },
+  garrison_96_b: { desc: '<战斗中>开启技能时，使已激活的【雷姆必拓】【精准】层数<@ba.vup>+2</>', bonds: 'rimBillitonShip,preciShip' },
 };
 
 /**
@@ -383,6 +474,97 @@ const GARRISONS = {
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
+
+  // ---- 雷姆必拓 7 名新干员的特质（2026-10-16 PR2，实装计划 §2.6 / 评审 §4 定稿；编号接 992 → 993-999）----
+  // 文案 _a = 普通形态、_b = 精锐形态。实现分布：
+  //   993 暴行  → prep 侧复用官方 SERVER_ONCE_GOLD 行为（meta.js 993 handler 一行转发）
+  //   994 火哨  → 走官方 attr_common_global_buff 常驻数据（sp_recovery_per_sec；garrisons/battle.js 零新代码）
+  //   995 蜜莓 / 997 时隙 → prep 侧 SERVER_GAIN，meta.js 新「随机已激活盟约」handler（+2/+4、+4/+8，重复 2 次）
+  //   996 黑 → kit 内实现（读层攻速，**不设上限**——2026-10-16 用户口径；garrison 只做展示，照缠丸
+  //                         garrison_988「特质不带战斗数据、效果在 kit」先例）
+  //   998 珊比 → prep 侧 SERVER_PREP_START，meta.js 产兵 handler（周围八格每 3/2 名 → 1 名 rim 干员，
+  //              不高于调度中心等级，**每回合至多 2/3 名**（bb.cap）——2026-10-16 用户口径）
+  //   999 莱伊 → kit 内实现（读层攻击力 +1/+2%，**无重量额外增伤**——2026-10-16 用户口径）
+  'garrison_993_a': {
+    garrisonDesc: '<售出时>进入下个休整期额外获得<@ba.vup>1</>资金',
+    eventType: 'SERVER_CHESS_SOLD', eventTypeDesc: '整备能力', eventTypeIcon: 'icon_smart',
+    effectType: 'SERVER_ONCE_GOLD',
+    bb: { count: 1 },
+  },
+  'garrison_993_b': {
+    garrisonDesc: '<售出时>进入下个休整期额外获得<@ba.vup>2</>资金',
+    eventType: 'SERVER_CHESS_SOLD', eventTypeDesc: '整备能力', eventTypeIcon: 'icon_smart',
+    effectType: 'SERVER_ONCE_GOLD',
+    bb: { count: 2 },
+  },
+  'garrison_994_a': {
+    garrisonDesc: '<休整期结束时>使已激活的【雷姆必拓】盟约层数<@ba.vup>+2</>',
+    eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_RIM_LAYERS',
+    bb: { count: 2 },
+  },
+  'garrison_994_b': {
+    garrisonDesc: '<休整期结束时>使已激活的【雷姆必拓】盟约层数<@ba.vup>+4</>',
+    eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_RIM_LAYERS',
+    bb: { count: 4 },
+  },
+  'garrison_995_a': {
+    garrisonDesc: '<获得时>使随机<@ba.vup>1</>个已激活的盟约层数<@ba.vup>+3</>，重复<@ba.vup>4</>次',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND_RANDOM_ACTIVE',
+    bb: { count: 3, times: 4 },
+  },
+  'garrison_995_b': {
+    garrisonDesc: '<获得时>使随机<@ba.vup>1</>个已激活的盟约层数<@ba.vup>+3</>，重复<@ba.vup>8</>次',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND_RANDOM_ACTIVE',
+    bb: { count: 3, times: 8 },
+  },
+  'garrison_996_a': {
+    garrisonDesc: '<战斗中>【雷姆必拓】【精准】每叠加<@ba.vup>3</>层，本干员攻击速度<@ba.vup>+1</>',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_996_b': {
+    garrisonDesc: '<战斗中>【雷姆必拓】【精准】每叠加<@ba.vup>3</>层，本干员攻击速度<@ba.vup>+2</>',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_997_a': {
+    garrisonDesc: '<获得时>使随机<@ba.vup>1</>个已激活的盟约层数<@ba.vup>+6</>，重复<@ba.vup>4</>次',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND_RANDOM_ACTIVE',
+    bb: { count: 6, times: 4 },
+  },
+  'garrison_997_b': {
+    garrisonDesc: '<获得时>使随机<@ba.vup>1</>个已激活的盟约层数<@ba.vup>+6</>，重复<@ba.vup>8</>次',
+    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND_RANDOM_ACTIVE',
+    bb: { count: 6, times: 8 },
+  },
+  'garrison_998_a': {
+    garrisonDesc: '<进入休整期时>周围八格内每有<@ba.vup>3</>名干员，随机获得<@ba.vup>1</>名不高于当前调度中心等级的【雷姆必拓】干员（每回合至多<@ba.vup>2</>名）',
+    eventType: 'SERVER_PREP_START', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_RECRUIT_BY_AROUND',
+    bb: { count: 3, cap: 2 },
+  },
+  'garrison_998_b': {
+    garrisonDesc: '<进入休整期时>周围八格内每有<@ba.vup>2</>名干员，随机获得<@ba.vup>1</>名不高于当前调度中心等级的【雷姆必拓】干员（每回合至多<@ba.vup>3</>名）',
+    eventType: 'SERVER_PREP_START', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_RECRUIT_BY_AROUND',
+    bb: { count: 2, cap: 3 },
+  },
+  'garrison_999_a': {
+    garrisonDesc: '<战斗中>【雷姆必拓】【精准】每叠加<@ba.vup>3</>层，本干员攻击力<@ba.vup>+1%</>',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
+  'garrison_999_b': {
+    garrisonDesc: '<战斗中>【雷姆必拓】【精准】每叠加<@ba.vup>3</>层，本干员攻击力<@ba.vup>+2%</>',
+    eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
+    effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
+  },
 };
 
 /**
@@ -465,6 +647,61 @@ const BONDS = {
     },
     descParamBaseList: ['atk_per_start', 'atk_cap_base'],
     descParamPerStackList: ['atk_per_start_per_layer', 'atk_cap_per_layer'],
+  },
+  // 【雷姆必拓】= 第三条自制核心盟约（2026-10-16 实装计划 §2.2，效果在 bonds/core.js installRim）。
+  // thresholds [3,6,9] —— 第二家 [3,6,9]（炎是第一家）。members 起步为 3 名加籍棋子（断崖/莱恩哈特/寒芒克洛丝，
+  // BOND_OVERRIDES 补归属）；7 名新建干员（暴行/火哨/蜜莓/黑/时隙/珊比/莱伊）在 PR2 落地时补进 members。
+  // desc（整备区静态文案）与 effectDesc（局内「当前效果」占位符实算）分离，与 东/乌萨斯 同一机制。
+  //   3 人：攻击力 = 20%（固定）+ 0.7%×层数（直接乘算，2026-10-17 用户修订 0.8%→0.7%）；每叠 25 层获得 1 名不高于当前调度中心等级的【雷姆必拓】干员
+  //         （里程碑走 bond_layer_gain_chess → bonds/core.js payRecruits）。
+  //   6 人（2026-10-17 用户口径）：开启技能时获得隐匿 20 秒；场上每有 1 名【雷姆必拓】干员，rim 干员攻击造成的
+  //         伤害提升 30%（2026-10-17 二次口径 40%→30%；dmgDealtMul = 1 + 0.3×场上 rim 数，维多利亚形状）。
+  //   9 人（2026-10-17 用户口径）：开启技能时隐匿时间变为 40 秒，且开启技能 10 秒内攻击力 +200%（atkPct 加算窗口，
+  //         可刷新 refresh:'replace'）。
+  // 显示键口径：攻击力是加算（directMods atk），照乌萨斯先例显示参数用**加算比例**（atk_disp_base=0.20，
+  // effectDesc「+{0:0.0%}」→ 实算 0.20+0.007×层数），不用「提升至」的 1.20 形态（实装计划 v1 写 1.20，
+  // 与乌萨斯机制矛盾，落码时按先例修正）。
+  // milestone：照维多利亚 bond_layer_added_reward_equip 的形态，在盟约效果里追加一条独立 buff
+  //（key = bond_layer_gain_chess，bb: layer=25, count=1）；build-data.mjs buildBonds 认这个 key
+  //（2026-10-16 加入），派生 layerMilestones（mode 'every'）。
+  rimBillitonShip: {
+    name: '雷姆必拓',
+    identifier: 902,                     // 900/901（东/乌萨斯）之后；903 留给下一个
+    isCore: true,
+    powerIdList: ['rim'],                // 官方 nationId（雷姆必拓）
+    activeCount: 3,
+    thresholds: [3, 6, 9],
+    // 成员 = 持有该盟约的棋子（_a）。2026-10-16（PR1）：断崖/莱恩哈特/寒芒克洛丝（加籍）。
+    // 2026-10-16（PR2）：+7 新建（暴行/火哨/蜜莓/黑/时隙/珊比/莱伊，实装计划 §2.3）。
+    members: ['chess_char_3_02_a', 'chess_char_4_14_a', 'chess_char_4_06_a',
+      'chess_char_1_96_a', 'chess_char_2_96_a', 'chess_char_3_95_a', 'chess_char_5_96_a',
+      'chess_char_5_95_a', 'chess_char_6_96_a', 'chess_char_6_95_a'],
+    effectId: 'bondeffect_rim',
+    buffKey: 'act2autochess_bond_eff_rim',
+    desc: '【雷姆必拓】干员<@ba.vup>攻击力</>提升<@autochess.gray>（受层数影响）</>\n'
+        + '<每叠加<@autochess.dgreen>25</>层>获得<@ba.vup>1</>名不高于当前调度中心等级的【雷姆必拓】干员\n'
+        + '<在场<@autochess.dgreen>6</>名不同【雷姆必拓】干员><战斗中>【雷姆必拓】干员开启技能时获得<@ba.vup>隐匿</>，持续<@ba.vup>20</>秒，场上每有<@ba.vup>1</>名【雷姆必拓】干员，【雷姆必拓】干员攻击造成的伤害<@ba.vup>提升30%</>\n'
+        + '<在场<@autochess.dgreen>9</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时隐匿时间变为<@ba.vup>40</>秒，且开启技能<@ba.vup>10</>秒内的攻击力<@ba.vup>+200%</>',
+    effectDesc: '【雷姆必拓】干员攻击力<@ba.vup>+{0:0.0%}</><@autochess.gray>（受层数影响）</>\n'
+        + '<每叠加<@autochess.dgreen>25</>层>获得<@ba.vup>1</>名不高于当前调度中心等级的【雷姆必拓】干员\n'
+        + '<在场<@autochess.dgreen>6</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时获得<@ba.vup>隐匿</>，持续<@ba.vup>20</>秒，场上每有<@ba.vup>1</>名【雷姆必拓】干员，【雷姆必拓】干员攻击造成的伤害提升<@ba.vup>30%</>\n'
+        + '<在场<@autochess.dgreen>9</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时隐匿时间变为<@ba.vup>40</>秒，且开启技能<@ba.vup>10</>秒内的攻击力<@ba.vup>+200%</>',
+    bb: {
+      atk_base: 0.20,            // 3人：攻击力 +20%（直接乘算）
+      atk_per_layer: 0.007,      // 每层盟约层数 +0.7%（2026-10-17 第三次用户修订：0.8%→0.7%）
+      atk_disp_base: 0.20,       // 显示键：effectDesc {0} 的基础（加算口径，照乌萨斯先例）
+      atk_disp_per: 0.007,       // 显示键：每层 +0.7%（2026-10-17 用户修订 0.8%→0.7%）
+      stealth_duration_6: 20,    // 6人（2026-10-17 用户口径）：开启技能时获得隐匿 20 秒
+      stealth_duration: 40,      // 9人（2026-10-17 用户口径）：开启技能时隐匿 40 秒（6 人档的升级）
+      skill_atk_window: 10,      // 9人：开技能后的攻击力窗 10 秒
+      skill_atk: 2.0,            // 9人：窗口内攻击力 +200%（directMods atkPct 加算池，可刷新 replace）
+      dmg_per_member: 0.3,       // 6人：场上每名【雷姆必拓】干员，攻击伤害提升 30%（2026-10-17 用户口径 40%→30%；dmgDealtMul = 1+0.3n，buff 内加算/跨 buff 乘算，照维多利亚先例）
+    },
+    descParamBaseList: ['atk_disp_base'],
+    descParamPerStackList: ['atk_disp_per'],
+    // 每 25 层里程碑 → 1 名干员（payRecruits；2026-10-16 用户口径：投资人不翻倍里程碑本身，
+    // 但被发干员自己的「获得时」特质照常按投资人倍数触发 —— 引擎天然如此，测试钉住）。
+    milestone: { key: 'bond_layer_gain_chess', bb: { layer: 25, count: 1 } },
   },
 };
 
@@ -590,6 +827,38 @@ const ITEMS = {
     flavor: '风雪吹过乌萨斯荒原的声音，被乌萨斯人称作大地的咆哮。\n“雪停之前，没有谁能让我们低头。”',
     implFormula: "ATK% += atk; [【Ursus】 member] ATK% += per × (other deployed Ursus members on the field), capped at cap (cap_combo with 乌萨斯军粮 carried)",
   },
+  // ---- 雷姆必拓 2 件（2026-10-16 PR2，实装计划 §2.7；编号接 9_04 → 9_05/9_06，identifier 9105/9106）----
+  'chess_item_9_05_e': {
+    name: '雷姆必拓钻石镐', nameEn: 'Rim Billiton Diamond Pick',
+    tier: 3, price: 2, goldenPrice: 5, identifier: 9105, shopSortId: 17,
+    trapId: 'trap_9005_pick',
+    giveBondId: 'rimBillitonShip',       // 副装备：可被同构体映射转籍
+    category: 'ON_HIT', kind: 'passive_counter',
+    buffKey: 'act2autochess_equip_9_05_global_buff',
+    desc: '攻击力<@ba.vup>+25%</>；攻击时有<@ba.vup>10%</>概率造成<@ba.vup>150%</>攻击力的伤害',
+    goldenDesc: '攻击力<@ba.vup>+35%</>；攻击时有<@ba.vup>20%</>概率造成<@ba.vup>150%</>攻击力的伤害',
+    stat: { atk: 0.25 }, goldenStat: { atk: 0.35 },
+    bb: { prob: 0.1, scale: 1.5 },
+    goldenBb: { prob: 0.2, scale: 1.5 },
+    flavor: '雷姆必拓矿工的传家宝，镐头磨得发亮。\n“挖穿岩层之前，谁也别想下班。”',
+    implFormula: "ATK% += atk; each attack: with prob chance this hit's damage × scale (independent of other crit sources; pure rng per hit)",
+  },
+  'chess_item_9_06_e': {
+    name: '胡萝卜披萨', nameEn: 'Carrot Pizza',
+    tier: 6, price: 4, goldenPrice: 5, identifier: 9106, shopSortId: 18,
+    trapId: 'trap_9006_pizza',
+    giveBondId: null,                    // 签名装备：不可被同构体映射
+    category: 'BOND_SIGNATURE', kind: 'passive',
+    buffKey: 'act2autochess_equip_9_06_global_buff',
+    desc: '攻击速度<@ba.vup>+30</>；若携带者为【雷姆必拓】盟约干员：场上每有1名其他【雷姆必拓】盟约干员，攻击速度额外<@ba.vup>+6</>（最多<@ba.vup>+30</>）；与雷姆必拓钻石镐同带：上限提升至<@ba.vup>+45</>；若携带者为【叙拉古】盟约干员：攻击力<@ba.vup>+200%</>',
+    goldenDesc: '攻击速度<@ba.vup>+45</>；若携带者为【雷姆必拓】盟约干员：场上每有1名其他【雷姆必拓】盟约干员，攻击速度额外<@ba.vup>+9</>（最多<@ba.vup>+45</>）；与雷姆必拓钻石镐同带：上限提升至<@ba.vup>+60</>；若携带者为【叙拉古】盟约干员：攻击力<@ba.vup>+200%</>',
+    // ⚠️ 攻速的 stat 字段是 attack_speed（不是 aspd；statMods 只认 attack_speed，写 aspd 会被静默丢弃）
+    stat: { attack_speed: 30 }, goldenStat: { attack_speed: 45 },
+    bb: { other_equip: 'chess_item_9_05_e', per: 6, cap: 30, cap_combo: 45 },
+    goldenBb: { other_equip: 'chess_item_9_05_e', per: 9, cap: 45, cap_combo: 60 },
+    flavor: '饼底上铺满胡萝卜丝，是雷姆必拓拓荒者的口味。\n“吃饱了才有力气搬砖。”',
+    implFormula: "attack_speed += n; [【Rim】 member] aspd += per × (other deployed Rim members on the field), capped at cap (cap_combo with 雷姆必拓钻石镐 carried); [【Siracusa】 member] ATK% += 200% (flat, no pick synergy)",
+  },
 };
 
 /** `evolvePhase/charLevel/skillLevel/equipLevel` 的模板取自 `shopCharChessInfoData[tier]`，不手写等级。 */
@@ -653,14 +922,6 @@ export function injectCustomContent(ctx) {
     }
   }
 
-  // ---- 官方盟约的禁用池覆盖（协防干员入池；见 BOND_WEIGHT_OVERRIDES）----
-  // buildBonds 读 `act.bondInfoDict[id].weight`，必须在这里（任何 builder 之前）改，改完 buildBonds 自然写出新值。
-  for (const [bondId, w] of Object.entries(BOND_WEIGHT_OVERRIDES)) {
-    const b = act.bondInfoDict[bondId];
-    if (!b) throw new Error(`[custom] bond weight override ${bondId}: official bond missing`);
-    b.weight = w;
-  }
-
   // ---- 盟约 + 效果 ----
   for (const [bondId, cfg] of Object.entries(BONDS)) {
     if (act.bondInfoDict[bondId]) throw new Error(`[custom] bond ${bondId} collides with the official season`);
@@ -678,6 +939,18 @@ export function injectCustomContent(ctx) {
       effectCounterType: 'NONE', continuedRound: -1, effectDecoIconId: null, enemyPrice: 0,
     };
     act.effectBuffInfoDataDict[cfg.effectId] = [{ key: 'env_gbuff_new', countType: 'NONE', blackboard: bbList }];
+
+    // 里程碑 buff：独立条目（顶层 key = cfg.milestone.key，如 bond_layer_gain_chess），照官方
+    // 维多利亚 bond_layer_added_reward_equip 的形态（buff key 不经 bbStr.key，直接作为条目 key）。
+    // build-data.mjs buildBonds 按 x.key === 'bond_layer_gain_chess' 派生 layerMilestones（mode 'every'）；
+    // bonds/core.js payRecruits 经 S.buffParams(bondRecord, key) 读 { layer, count }。
+    if (cfg.milestone) {
+      act.effectBuffInfoDataDict[cfg.effectId].push({
+        key: cfg.milestone.key,
+        countType: 'NONE',
+        blackboard: Object.entries(cfg.milestone.bb).map(([k, v]) => ({ key: k, value: v, valueStr: null })),
+      });
+    }
 
     act.bondInfoDict[bondId] = {
       bondId, name: cfg.name, identifier: cfg.identifier,
@@ -698,6 +971,15 @@ export function injectCustomContent(ctx) {
       bondId, isPower: cfg.isCore, bondType: 'SEASON', bondOrder: cfg.identifier,
       name: cfg.name, powerIdList: [...cfg.powerIdList], icon: `icon_${bondId}`,
     };
+  }
+
+  // ---- 自制 + 官方盟约的禁用池权重覆盖（见 BOND_WEIGHT_OVERRIDES；放在盟约注入之后，
+  // 因为 dongShip/ursusShip/rimBillitonShip 三条自制核心也在覆盖表里）----
+  // buildBonds 读 `act.bondInfoDict[id].weight`，必须在这里（任何 builder 之前）改，改完 buildBonds 自然写出新值。
+  for (const [bondId, w] of Object.entries(BOND_WEIGHT_OVERRIDES)) {
+    const b = act.bondInfoDict[bondId];
+    if (!b) throw new Error(`[custom] bond weight override ${bondId}: bond missing`);
+    b.weight = w;
   }
 
   // ---- 策略（bands）----
@@ -737,6 +1019,9 @@ export function injectCustomContent(ctx) {
     for (const [id, g] of Object.entries(GARRISONS)) {
       if (act.garrisonDataDict[id]) throw new Error(`[custom] garrison ${id} collides with the official season`);
       const key = `act2autochess_gar_eff_${id.replace('garrison_', '')}`;
+      // g.bbStr.key 存在时覆盖默认 effectKey（flattenBB first-wins）——火哨 994 用它路由到官方
+      // attr_common_global_buff 通路（garrison_08 阿戈尔同款）；其余条目仍用自定义 key。
+      const handlerKey = g.bbStr?.key ?? key;
       act.garrisonDataDict[id] = {
         garrisonDesc: g.garrisonDesc,
         eventType: g.eventType, eventTypeDesc: g.eventTypeDesc, eventTypeIcon: g.eventTypeIcon,
@@ -744,9 +1029,9 @@ export function injectCustomContent(ctx) {
         battleRuneKey: g.battleRuneKey,
         // effectKey = bbStr.key（buildGarrisons）；bb/bbStr 供 SERVER_* 处理器读（官方 flattenBB 同形）
         blackboard: [
-          { key: 'key', value: 0, valueStr: key },
+          { key: 'key', value: 0, valueStr: handlerKey },
           ...Object.entries(g.bb || {}).map(([k, v]) => ({ key: k, value: v, valueStr: null })),
-          ...Object.entries(g.bbStr || {}).map(([k, v]) => ({ key: k, value: 0, valueStr: v })),
+          ...Object.entries(g.bbStr || {}).filter(([k]) => k !== 'key').map(([k, v]) => ({ key: k, value: 0, valueStr: v })),
         ],
       };
     }

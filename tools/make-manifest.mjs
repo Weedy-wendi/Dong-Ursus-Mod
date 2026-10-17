@@ -35,6 +35,13 @@ const REMOVED = [
   'test/content/op_bgsnow.test.js',
   'test/content/op_saga.test.js',
   'test/content/op_veen.test.js',
+  // 2026-10-17 v1.0.10：雷姆必拓整合——黑/珊比/莱伊也转预设棋子（kit 改名 chess_char_*）
+  'server/sim/content/kits/ops/op-shwaz.js',
+  'server/sim/content/kits/ops/op-thumpy.js',
+  'server/sim/content/kits/ops/op-ray.js',
+  'test/content/op_shwaz.test.js',
+  'test/content/op_thumpy.test.js',
+  'test/content/op_ray.test.js',
 ];
 
 const args = process.argv.slice(2);
@@ -119,8 +126,12 @@ const generated = genOut.out.split('\n').map((s) => s.trim()).filter(Boolean).so
 if (!generated.length) warn('基线提交里 data/ 下没有文件？生成物清单为空');
 
 const i18n = [];
-for (const [script, optional] of [['i18n/apply-i18n.mjs', false], ['i18n/prune-stale.mjs', true], ['i18n/rehash-families.mjs', false]]) {
-  if (exists(join(modRoot, ...script.split('/')))) i18n.push(optional ? { script, optional: true } : { script });
+// 顺序敏感：rim pr1 要在 prune-stale 之前跑——它改写官方特质（garrison_73/96）的译文，而那些 overlay
+// 的旧叶子会因 zh 文本变更被 prune 判 stale 剪掉，晚于 prune 就没有替换基础了。
+const I18N_STEPS = [['i18n/apply-i18n.mjs', false], ['files/tools/i18n-rim-pr1.mjs', true, 'tools/i18n-rim-pr1.mjs'], ['files/tools/i18n-rim-pr2.mjs', true, 'tools/i18n-rim-pr2.mjs'], ['files/tools/i18n-rim-pr3.mjs', true, 'tools/i18n-rim-pr3.mjs'], ['i18n/prune-stale.mjs', true], ['i18n/rehash-families.mjs', false]];
+for (const [script, optional, asRecorded] of I18N_STEPS) {
+  // rim 脚本打包在 files/ 下（owned），安装后在目标树的 tools/ 下运行 → 记录目标树相对路径
+  if (exists(join(modRoot, ...script.split('/')))) i18n.push(optional ? { script: asRecorded ?? script, optional: true } : { script: asRecorded ?? script });
 }
 const verify = ['scripts/verify.mjs'].filter((s) => exists(join(modRoot, ...s.split('/'))));
 

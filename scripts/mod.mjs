@@ -13,14 +13,13 @@
 //   · git 的退出码不可信（子目录里会静默跳过、已应用会跳过），补丁套完一律按 mod.json 的字节指纹复核。
 //   · 卸载优先用 git 还原（精确），备份目录兜底（本体不是 git 检出时也能精确还原）。
 //   · 升级按「分支 = base-<本体版本>」选取，包里 mod.json 的 base 再做一次自我声明校验。
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   brief, cmpVersion, copyFile, die, digestFile, ensureDir, exists, head, posix, pruneEmptyDirs,
-  readJson, rmrf, run, say, sha256, tempDir, walkFiles, warn,
-} from './lib/util.mjs';
+  readJson, rmrf, run, say, sha256, tempDir, walkFiles, warn } from './lib/util.mjs';
 import { loadManifest, reportBad, tryLoadManifest, verifySet, verdict } from './lib/manifest.mjs';
 import {
   backUp, backupPath, clearState, driftCheck, loadState, saveState, stateDir, statePath, summarize,
@@ -501,7 +500,11 @@ function cmdInstall(repo, flags) {
     if (r.code !== 0) warn('build-i18n 失败（可选步骤，继续）');
   }
   for (const step of mod.i18n) {
-    const r = run(process.execPath, [join(modRoot, ...step.script.split('/')), repo], { cwd: modRoot, allowFail: true });
+    // owned 脚本（files/ 下、已随 3/5 装进目标树，如 tools/i18n-rim-pr*.mjs）在目标树内跑——
+    // 它们用相对路径读写 data/i18n 与 .cache，cwd 必须是目标树；包根脚本（i18n/*.mjs）沿用旧约定（repo 作参数）。
+    const inRepo = existsSync(join(repo, ...step.script.split('/')));
+    const scriptPath = inRepo ? join(repo, ...step.script.split('/')) : join(modRoot, ...step.script.split('/'));
+    const r = run(process.execPath, [scriptPath, ...(inRepo ? [] : [repo])], { cwd: inRepo ? repo : modRoot, allowFail: true });
     if (r.code !== 0 && !step.optional) die(`i18n 步骤失败：${step.script}（exit ${r.code}）`, 5);
     if (r.code !== 0) warn(`i18n 步骤失败（可选，继续）：${step.script}`);
   }
