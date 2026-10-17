@@ -4,10 +4,10 @@
 
 **给《卫戍协议：盟约》复刻版（Stronghold-Protocol）的本体，加两个真正能进对局结算的核心盟约阵营。**
 
-<sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
+<sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 5 条自制策略 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.7-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.8-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)

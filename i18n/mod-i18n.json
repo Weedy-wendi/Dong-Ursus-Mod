@@ -297,6 +297,37 @@
         "descRaw": "ATK <@ba.vup>+45%</>; if the carrier is a 【Ursus】 operator: ATK <@ba.vup>+4%</> for each other 【Ursus】 operator on the field (up to <@ba.vup>+20%</>); when carried with the Ursus Ration: the cap rises to <@ba.vup>+30%</>",
         "_h": "84dnwb"
       }
+    },
+    "bands": {
+      "band_palico": {
+        "descRaw": "[Heaven Save Me] After you lose Life Points, when the next round begins, obtain 1 Operator: its Tier is your current Dispatch Center Level +1 (at most VI); its Alliance is the active Alliance with the most stacks (ties go to the earlier one in the Alliance list)",
+        "name": "Terra Research Commission",
+        "effectName": "Heaven Save Me",
+        "desc": "[Heaven Save Me] After you lose Life Points, when the next round begins, obtain 1 Operator: its Tier is your current Dispatch Center Level +1 (at most VI); its Alliance is the active Alliance with the most stacks (ties go to the earlier one in the Alliance list)"
+      },
+      "band_headbr": {
+        "descRaw": "[Snowfield Conscription] The first refresh of every round becomes a special refresh: it always offers 1 <Ursus> Operator, and that <Ursus> Operator is free",
+        "name": "Zima",
+        "effectName": "Snowfield Conscription",
+        "desc": "[Snowfield Conscription] The first refresh of every round becomes a special refresh: it always offers 1 <Ursus> Operator, and that <Ursus> Operator is free"
+      },
+      "band_haruka": {
+        "descRaw": "[Perfect Idol] If you lost no Life Points in this round's battle, gain an extra 2 Funds when the next round begins",
+        "name": "Haruka",
+        "effectName": "Perfect Idol",
+        "desc": "[Perfect Idol] If you lost no Life Points in this round's battle, gain an extra 2 Funds when the next round begins"
+      },
+      "band_utage": {
+        "descRaw": "[Barter Deal] For every 2 Operators sold each round, obtain 1 <Dong> Operator from a Tier not exceeding the current Dispatch Center Level",
+        "name": "Utage",
+        "effectName": "Barter Deal",
+        "desc": "[Barter Deal] For every 2 Operators sold each round, obtain 1 <Dong> Operator from a Tier not exceeding the current Dispatch Center Level"
+      },
+      "band_ulika": {
+        "descRaw": "[Humanoid Catastrophe] Gain 1 extra Funds each round, but your refreshes can no longer offer Operators that belong to an active Alliance",
+        "effectName": "Humanoid Catastrophe",
+        "desc": "[Humanoid Catastrophe] Gain 1 extra Funds each round, but your refreshes can no longer offer Operators that belong to an active Alliance"
+      }
     }
   },
   "ja": {
@@ -596,6 +627,37 @@
         "desc": "攻撃力+45%；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力+4%（最大+20%）；ウルサス軍糧と同時装備：上限が+30%に上昇",
         "descRaw": "攻撃力<@ba.vup>+45%</>；【ウルサス】オペレーターが装備した場合：場にいる他の【ウルサス】オペレーター1体ごとに攻撃力<@ba.vup>+4%</>（最大<@ba.vup>+20%</>）；ウルサス軍糧と同時装備：上限が<@ba.vup>+30%</>に上昇",
         "_h": "84dnwb"
+      }
+    },
+    "bands": {
+      "band_palico": {
+        "descRaw": "【天尊様、救いたまえ】：耐久値を損失した後、次ラウンド開始時にオペレーターを1名獲得する。等級は現在の管理センターのレベル+1（最大VI）、盟約は有効化中の盟約のうち加算数が最も多いもの（同数の場合は盟約一覧で先のもの）",
+        "name": "テラ大陸調査団",
+        "effectName": "天尊様、救いたまえ",
+        "desc": "【天尊様、救いたまえ】：耐久値を損失した後、次ラウンド開始時にオペレーターを1名獲得する。等級は現在の管理センターのレベル+1（最大VI）、盟約は有効化中の盟約のうち加算数が最も多いもの（同数の場合は盟約一覧で先のもの）"
+      },
+      "band_headbr": {
+        "descRaw": "【雪原の徴用】：各ラウンドの最初の更新が特殊更新となり、その更新で<ウルサス>オペレーターが必ず1名出現し、その<ウルサス>オペレーターは無料で獲得できる",
+        "name": "ズィマー",
+        "effectName": "雪原の徴用",
+        "desc": "【雪原の徴用】：各ラウンドの最初の更新が特殊更新となり、その更新で<ウルサス>オペレーターが必ず1名出現し、その<ウルサス>オペレーターは無料で獲得できる"
+      },
+      "band_haruka": {
+        "descRaw": "【完璧なアイドル】：このラウンドの戦闘で耐久値を損失しなかった場合、次ラウンド開始時に資金を追加で2獲得",
+        "name": "ハルカ",
+        "effectName": "完璧なアイドル",
+        "desc": "【完璧なアイドル】：このラウンドの戦闘で耐久値を損失しなかった場合、次ラウンド開始時に資金を追加で2獲得"
+      },
+      "band_utage": {
+        "descRaw": "【物々交換】：各ラウンドでオペレーターを2名売却するごとに、管理センターのレベル以下の<東>オペレーターを1名獲得",
+        "name": "ウタゲ",
+        "effectName": "物々交換",
+        "desc": "【物々交換】：各ラウンドでオペレーターを2名売却するごとに、管理センターのレベル以下の<東>オペレーターを1名獲得"
+      },
+      "band_ulika": {
+        "descRaw": "【人型災害】：各ラウンドで資金を追加で1獲得するが、有効化中の盟約に属するオペレーターは更新で出現しなくなる",
+        "effectName": "人型災害",
+        "desc": "【人型災害】：各ラウンドで資金を追加で1獲得するが、有効化中の盟約に属するオペレーターは更新で出現しなくなる"
       }
     }
   },
@@ -897,6 +959,37 @@
         "descRaw": "공격력 <@ba.vup>+45%</>；【우르서스】 오퍼레이터가 장착한 경우: 필드의 다른 【우르서스】 오퍼레이터 1명당 공격력 <@ba.vup>+4%</>（최대 <@ba.vup>+20%</>）；우르서스군량과 함께 장착 시: 상한이 <@ba.vup>+30%</>로 상승",
         "_h": "84dnwb"
       }
+    },
+    "bands": {
+      "band_palico": {
+        "descRaw": "[천존이시여, 구하소서] 목표 HP를 잃은 후, 다음 라운드 시작 시 오퍼레이터 1명 획득: 티어는 현재 보급센터 레벨 +1(최대 VI), 맹약은 활성화된 맹약 중 중첩 수가 가장 높은 맹약(동률일 경우 맹약 목록에서 앞선 맹약)",
+        "name": "테라 대륙 조사단",
+        "effectName": "천존이시여, 구하소서",
+        "desc": "[천존이시여, 구하소서] 목표 HP를 잃은 후, 다음 라운드 시작 시 오퍼레이터 1명 획득: 티어는 현재 보급센터 레벨 +1(최대 VI), 맹약은 활성화된 맹약 중 중첩 수가 가장 높은 맹약(동률일 경우 맹약 목록에서 앞선 맹약)"
+      },
+      "band_headbr": {
+        "descRaw": "[설원 징집] 라운드마다 첫 갱신이 특별 갱신이 되며, 해당 갱신에서 <우르사스> 오퍼레이터 1명이 반드시 등장하고 그 <우르사스> 오퍼레이터는 무료로 획득합니다",
+        "name": "지마",
+        "effectName": "설원 징집",
+        "desc": "[설원 징집] 라운드마다 첫 갱신이 특별 갱신이 되며, 해당 갱신에서 <우르사스> 오퍼레이터 1명이 반드시 등장하고 그 <우르사스> 오퍼레이터는 무료로 획득합니다"
+      },
+      "band_haruka": {
+        "descRaw": "[완벽한 아이돌] 이번 라운드 전투에서 목표 HP를 잃지 않았다면, 다음 라운드 시작 시 자금 2를 추가 획득합니다",
+        "name": "하루카",
+        "effectName": "완벽한 아이돌",
+        "desc": "[완벽한 아이돌] 이번 라운드 전투에서 목표 HP를 잃지 않았다면, 다음 라운드 시작 시 자금 2를 추가 획득합니다"
+      },
+      "band_utage": {
+        "descRaw": "[물물교환] 라운드마다 오퍼레이터 2명을 판매할 때마다 보급센터 레벨 이하의 <동> 오퍼레이터 1명을 획득합니다",
+        "name": "우타게",
+        "effectName": "물물교환",
+        "desc": "[물물교환] 라운드마다 오퍼레이터 2명을 판매할 때마다 보급센터 레벨 이하의 <동> 오퍼레이터 1명을 획득합니다"
+      },
+      "band_ulika": {
+        "descRaw": "[인간형 재해] 라운드마다 자금 1을 추가 획득하지만, 활성화된 맹약에 속한 오퍼레이터는 갱신으로 등장하지 않습니다",
+        "effectName": "인간형 재해",
+        "desc": "[인간형 재해] 라운드마다 자금 1을 추가 획득하지만, 활성화된 맹약에 속한 오퍼레이터는 갱신으로 등장하지 않습니다"
+      }
     }
   },
   "zh-TW": {
@@ -1196,6 +1289,37 @@
         "desc": "攻擊力+45%；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外+4%（最多+20%）；與烏薩斯軍糧同帶：上限提升至+30%",
         "descRaw": "攻擊力<@ba.vup>+45%</>；若攜帶者為【烏薩斯】盟約幹員：場上每有1名其他【烏薩斯】盟約幹員，攻擊力額外<@ba.vup>+4%</>（最多<@ba.vup>+20%</>）；與烏薩斯軍糧同帶：上限提升至<@ba.vup>+30%</>",
         "_h": "84dnwb"
+      }
+    },
+    "bands": {
+      "band_palico": {
+        "descRaw": "【天尊救我】你的目標生命值損失後，下回合開始時獲得1名幹員：等階為目前調度等級+1（最高VI級）；盟約為你已啟動盟約中層數最高的那一個（並列時取盟約表序靠前者）",
+        "name": "泰拉大陸調查團",
+        "effectName": "天尊救我",
+        "desc": "【天尊救我】你的目標生命值損失後，下回合開始時獲得1名幹員：等階為目前調度等級+1（最高VI級）；盟約為你已啟動盟約中層數最高的那一個（並列時取盟約表序靠前者）"
+      },
+      "band_headbr": {
+        "descRaw": "【雪原徵召】每回合首次更新為特殊更新：該次更新必定更新出1名<烏薩斯>幹員，且該名<烏薩斯>幹員免費",
+        "name": "凜冬",
+        "effectName": "雪原徵召",
+        "desc": "【雪原徵召】每回合首次更新為特殊更新：該次更新必定更新出1名<烏薩斯>幹員，且該名<烏薩斯>幹員免費"
+      },
+      "band_haruka": {
+        "descRaw": "【完美偶像】若你在本回合的戰鬥中沒有損失目標生命值，下回合開始時額外獲得2資金",
+        "name": "遙",
+        "effectName": "完美偶像",
+        "desc": "【完美偶像】若你在本回合的戰鬥中沒有損失目標生命值，下回合開始時額外獲得2資金"
+      },
+      "band_utage": {
+        "descRaw": "【以物易人】每回合每售出2名幹員，獲得1名等階不高於目前調度中心等級的<東>幹員",
+        "name": "宴",
+        "effectName": "以物易人",
+        "desc": "【以物易人】每回合每售出2名幹員，獲得1名等階不高於目前調度中心等級的<東>幹員"
+      },
+      "band_ulika": {
+        "descRaw": "【人形天災】每回合額外獲得1資金，但無法更新出含目前已啟動盟約的幹員",
+        "effectName": "人形天災",
+        "desc": "【人形天災】每回合額外獲得1資金，但無法更新出含目前已啟動盟約的幹員"
       }
     }
   }

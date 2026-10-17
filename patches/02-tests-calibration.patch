@@ -119,6 +119,189 @@ index 0890b9b..4d5119d 100644
  });
  
  test('composeUnitRecord: identity from the chess, everything else from the unit (no field of the replaced operator leaks)', () => {
+diff --git a/test/content/bands.test.js b/test/content/bands.test.js
+index 0b4d6b5..c82fe38 100644
+--- a/test/content/bands.test.js
++++ b/test/content/bands.test.js
+@@ -66,14 +66,14 @@ const slotOf = (id) => ({ kind: 'chess', id, basePrice: DATA.chess[id].tier ===
+ // ---------------------------------------------------------------------------------------------------------------
+ // data / wiring
+ 
+-test('bands.js wires both parts: 28 bands with a prep handler, 10 with a battle part, 鸭爵 global, 歌利亚 = LP only', () => {
++test('bands.js wires both parts: 33 bands with a prep handler, 10 with a battle part, 鸭爵 global, 歌利亚 = LP only', () => {
+   assert.equal(typeof bands.install, 'function');
+   assert.equal(typeof bands.registerMeta, 'function');
+   const ids = Object.keys(DATA.bands);
+-  assert.equal(ids.length, 40);
++  assert.equal(ids.length, 45);
+   const meta = ids.filter((id) => REG.has(`band:${id}`));
+   const battle = ids.filter(hasBattlePart);
+-  assert.equal(meta.length, 28);
++  assert.equal(meta.length, 33);
+   assert.deepEqual(battle.sort(), ['band_amedic', 'band_amiya', 'band_chen', 'band_clementia', 'band_dusk', 'band_emperor', 'band_ermengard', 'band_humus', 'band_ioleta', 'band_mberry', 'band_qalaisa'].sort());
+   assert.ok(REG.has('global:bands_ducklord'));
+   const none = ids.filter((id) => !meta.includes(id) && !battle.includes(id));
+@@ -796,6 +796,160 @@ test('外勤医疗: 联防右侧 Touch retains its prepared targeting order', ()
+   checkInvariants(h.b);
+ });
+ 
++// ---------------------------------------------------------------------------------------------------------------
++// 自制策略（5 条，2026-10-17）：天尊救我 / 雪原征召 / 完美偶像 / 以物易人 / 人形天灾
++
++/** First seed ≥ `from` whose match pool offers chess of every bond up to `maxTier`. */
++function seedWithBonds(bonds, maxTier, from = 40) {
++  for (let s = from; s < from + 200; s++) {
++    const h = makeMatch({ mode: 'solo', seed: s, registry: REG, fake: true });
++    if (bonds.every((b) => bondPool(h.m, b, maxTier).length > 0)) return s;
++  }
++  throw new Error(`no seed with ${bonds.join(' + ')} ≤ tier ${maxTier}`);
++}
++const clearHands = (ps) => { ps.hand.fill(null); ps.temp.fill(null); };
++const battleOver = (m, ps, lpLoss) => m.dispatch(ps, 'onBattleResult', { lpLoss, perfect: lpLoss === 0, result: {}, unite: null });
++
++test('天尊救我 泰拉大陆调查团: losing LP ⇒ next round start 1 operator — tier = shop level + 1, bond = the active bond with the most layers (ties: earlier in the table)', () => {
++  // a seed whose pool holds a tier-3 东 operator (the tie case asserts the exact tier: shop level 2 + 1)
++  let seed = seedWithBonds(['dongShip', 'ursusShip'], 3);
++  for (let s = seed; s < seed + 200; s++) {
++    const h = makeMatch({ mode: 'solo', seed: s, registry: REG, fake: true });
++    if (bondPool(h.m, 'dongShip', 3).some((id) => DATA.chess[id].tier === 3)) { seed = s; break; }
++  }
++  const { m, ps, roundStart } = setup({ band: 'band_palico', seed });
++  ps.shop.level = 2;
++  // no LP lost: nothing
++  clearHands(ps);
++  battleOver(m, ps, 0);
++  roundStart(3);
++  assert.equal(handIds(ps, 'chess').length, 0, 'no loss, no operator');
++  // 乌萨斯 with more layers than 东 ⇒ an 乌萨斯 operator (its own tier is whatever the pool has)
++  ps.bonds = { dongShip: { active: true, count: 3 }, ursusShip: { active: true, count: 3 } };
++  ps.layers = { dongShip: 6, ursusShip: 9 };
++  clearHands(ps);
++  battleOver(m, ps, 1);
++  roundStart(4);
++  let got = handIds(ps, 'chess');
++  assert.equal(got.length, 1, 'exactly 1 operator, however many LP were lost');
++  assert.ok(DATA.chess[got[0]].bonds.includes('ursusShip'));
++  // equal layers ⇒ the earlier bond of the table (东, identifier 900 < 901); shop level 2 ⇒ tier 3
++  // (a grant recomputes the bonds from the empty board ⇒ stub them again for every case)
++  ps.bonds = { dongShip: { active: true, count: 3 }, ursusShip: { active: true, count: 3 } };
++  ps.layers = { dongShip: 6, ursusShip: 6 };
++  clearHands(ps);
++  battleOver(m, ps, 4);
++  roundStart(5);
++  got = handIds(ps, 'chess');
++  assert.equal(got.length, 1);
++  assert.ok(DATA.chess[got[0]].bonds.includes('dongShip'));
++  assert.equal(DATA.chess[got[0]].tier, 3, 'shop level 2 + 1');
++  // nothing active ⇒ a random operator of that tier
++  ps.bonds = {};
++  ps.layers = {};
++  clearHands(ps);
++  battleOver(m, ps, 1);
++  roundStart(6);
++  got = handIds(ps, 'chess');
++  assert.equal(got.length, 1);
++  assert.equal(DATA.chess[got[0]].tier, 3);
++  cover('band_palico');
++});
++
++test('雪原征召 凛冬: the first manual refresh of a round always offers 1 free <乌萨斯>; later refreshes pay as usual', () => {
++  const seed = seedWithBonds(['ursusShip'], 6);
++  const { m, ps } = setup({ band: 'band_headbr', seed });
++  ps.shop.level = 6;
++  const isUrsus = (s) => s && s.kind === 'chess' && DATA.chess[s.id].bonds.includes('ursusShip');
++  ps.round.refreshes = 0;
++  assert.deepEqual(m.handle('p_0', { t: 'g.refresh' }), OK);
++  const i = ps.shop.slots.findIndex(isUrsus);
++  assert.ok(i >= 0, 'the first refresh shows an 乌萨斯 operator');
++  assert.equal(ps.priceOf(ps.shop.slots[i]), 0, 'and it is free');
++  const f0 = ps.funds;
++  assert.deepEqual(m.handle('p_0', { t: 'g.buy', slot: i }), OK);
++  assert.equal(ps.funds, f0, 'bought for nothing');
++  // the second refresh of the round is a normal one: no slot is made free
++  assert.deepEqual(m.handle('p_0', { t: 'g.refresh' }), OK);
++  for (const s of ps.shop.slots.filter(isUrsus)) assert.ok(ps.priceOf(s) > 0, 'not free');
++  // a new round: special again
++  ps.round.refreshes = 0;
++  assert.deepEqual(m.handle('p_0', { t: 'g.refresh' }), OK);
++  const j = ps.shop.slots.findIndex((s) => isUrsus(s) && ps.priceOf(s) === 0);
++  assert.ok(j >= 0, 'every round has its free 乌萨斯');
++  cover('band_headbr');
++});
++
++test('完美偶像 遥: a round without LP loss ⇒ +2 funds at the next round start; a lost LP or no battle ⇒ nothing', () => {
++  const { m, ps, roundStart } = setup({ band: 'band_haruka' });
++  const f0 = ps.funds;
++  battleOver(m, ps, 0);
++  roundStart(2);
++  assert.equal(ps.funds, f0 + 2);
++  const f1 = ps.funds;
++  battleOver(m, ps, 1);
++  roundStart(3);
++  assert.equal(ps.funds, f1, 'LP lost: no bonus');
++  const f2 = ps.funds;
++  roundStart(4);
++  assert.equal(ps.funds, f2, 'no battle in R3: no bonus');
++  cover('band_haruka');
++});
++
++test('以物易人 宴: every 2 normal operators sold in a round ⇒ 1 <东> operator of tier ≤ shop level; the count resets each round', () => {
++  const seed = seedWithBonds(['dongShip'], 3);
++  const { m, ps, at } = setup({ band: 'band_utage', seed });
++  ps.shop.level = 3;
++  const ids = plain((c) => c.tier <= 2).slice(0, 8);
++  const sell = (id) => { const p = give(m, ps, id, 'hand'); return m.handle('p_0', { t: 'g.sell', uid: p.uid }); };
++  assert.deepEqual(sell(ids[0]), OK);
++  assert.equal(handIds(ps, 'chess').length, 0, 'one sale: nothing');
++  assert.deepEqual(sell(ids[1]), OK);
++  let got = handIds(ps, 'chess');
++  assert.equal(got.length, 1);
++  assert.ok(DATA.chess[got[0]].bonds.includes('dongShip'));
++  assert.ok(DATA.chess[got[0]].tier <= 3, 'not above the shop level');
++  assert.deepEqual(sell(ids[2]), OK);
++  assert.equal(handIds(ps, 'chess').length, 1, 'the third sale starts a new pair');
++  assert.deepEqual(sell(ids[3]), OK);
++  assert.equal(handIds(ps, 'chess').length, 2);
++  // a new round: the counter is at 0 again
++  at(m.round + 1);
++  assert.deepEqual(sell(ids[4]), OK);
++  assert.equal(handIds(ps, 'chess').length, 2, 'one sale in the new round');
++  // an elite is an operator but not a 「普通干员」: it never counts
++  at(m.round + 1);
++  const elite = give(m, ps, DATA.chess[ids[5]].goldenId, 'hand');
++  assert.deepEqual(m.handle('p_0', { t: 'g.sell', uid: elite.uid }), OK);
++  assert.deepEqual(sell(ids[6]), OK);
++  assert.equal(handIds(ps, 'chess').length, 2, 'elite + 1 normal is not a pair');
++  cover('band_utage');
++});
++
++test('人形天灾 U-Official: +1 fund every round, and the shop never offers an operator of an active bond', () => {
++  const { m, ps, roundStart } = setup({ band: 'band_ulika', seed: 9 });
++  ps.shop.level = 6;
++  const dong = Object.values(DATA.chess).find((c) => c.visible && !c.isGolden && c.bonds.includes('dongShip')).chessId;
++  const free = plain((c) => !c.bonds.includes('dongShip'))[0];
++  ps.bonds = { dongShip: { active: true, count: 3 } };
++  ps.shop.slots = [slotOf(dong), slotOf(free), slotOf(dong)];
++  roundStart(m.round);
++  const shown = ps.shop.slots.filter((s) => s && s.kind === 'chess').map((s) => s.id);
++  assert.ok(!shown.includes(dong), 'the 东 operator is replaced at the round start');
++  assert.ok(shown.includes(free), 'the others stay');
++  // manual refresh: the same filter
++  ps.shop.slots = [slotOf(dong), slotOf(dong)];
++  assert.deepEqual(m.handle('p_0', { t: 'g.refresh' }), OK);
++  for (const s of ps.shop.slots.filter((s) => s && s.kind === 'chess')) {
++    assert.ok(!DATA.chess[s.id].bonds.includes('dongShip'), s.id);
++  }
++  // income: one extra fund every round
++  ps.funds = 0;
++  ps.startRound(3);
++  assert.equal(ps.funds, m.gd.income(3) + 1);
++  cover('band_ulika');
++});
++
+ test('coverage: every band is exercised by a test above', () => {
+   cover('band_dusk'); // 夕: 画卷 grant (fixed-round test) + 墨色真颜 (battle test)
+   const missing = Object.keys(DATA.bands).filter((id) => !COVER.has(id)).sort();
 diff --git a/test/content/choices.test.js b/test/content/choices.test.js
 index 599231b..873fade 100644
 --- a/test/content/choices.test.js
@@ -710,7 +893,7 @@ index 0ce4588..156a7fa 100644
    const h = makeBattle({ defs: { chess: { test_owner: summoner() }, enemies: { enemy_walker: walker({ atk: 50 }) } }, units: [{ chessId: 'test_owner', row: 12, col: 2 }], enemies: [{ key: 'enemy_walker', route: 0, count: 5, interval: 2 }], autoFinish: false, timeLimit: 60 });
    h.step();
 diff --git a/test/data.test.js b/test/data.test.js
-index 9bd481d..02b64cb 100644
+index 9bd481d..f2ef6dc 100644
 --- a/test/data.test.js
 +++ b/test/data.test.js
 @@ -75,12 +75,12 @@ test('numbers: every stats/bb/enemyScale object holds only finite numbers (no nu
@@ -767,6 +950,17 @@ index 9bd481d..02b64cb 100644
    assert.equal(Object.values(items).filter((i) => i.itemType === 'MAGIC').length, 3);
    for (const it of Object.values(items)) {
      assert.ok(effects[it.effectId], `${it.id}: effect ${it.effectId}`);
+@@ -178,8 +178,8 @@ test('items: 115 item chess with valid effects, bonds and golden links', () => {
+   }
+ });
+ 
+-test('bands: 40 strategies with effects and starting LP', () => {
+-  assert.equal(Object.keys(bands).length, 40);
++test('bands: 45 strategies (40 official + 5 custom) with effects and starting LP', () => {
++  assert.equal(Object.keys(bands).length, 45);
+   for (const b of Object.values(bands)) {
+     assert.ok(effects[b.effectId], `${b.bandId}: effect`);
+     assert.ok(isInt(b.totalHp) && b.totalHp >= 20 && b.totalHp <= 45, `${b.bandId}: totalHp`);
 @@ -430,7 +430,7 @@ test('chess/tokens: talent tokens resolve and every token variant says where it
      assert.equal(t.placeable, t.displayType !== 'HIDDEN' && made, `${t.tokenId} (${t.name}): placeable`);
    }
@@ -1110,6 +1304,25 @@ index c487a1c..0e8dd2f 100644
    h.toPrep(1);
    p0.shop.level = 5;
    for (let i = 0; i < 300; i++) { p0.rollShop(); assert.ok(!p0.shop.slots.some((s) => s && s.id === T5A)); }
+diff --git a/test/match/feedback1-gaps.test.js b/test/match/feedback1-gaps.test.js
+index 4d73d7b..836a5b7 100644
+--- a/test/match/feedback1-gaps.test.js
++++ b/test/match/feedback1-gaps.test.js
+@@ -104,9 +104,14 @@ describe('§21.26 3 — strategies tied to a bond the mode switches off', () =>
+     assert.deepEqual(tied, {
+       杜遥夜: ['yanShip'], 佩佩: ['sargonShip'], 哈洛德: ['victoriaShip'], 休露丝: ['kjeragShip'], 潘格尼尼: ['lateranoShip'],
+       克莱门莎: ['egirShip'], 玛恩纳: ['kazimierzShip'], 贾维: ['siracusaShip'], 娜仁图亚: ['sargonShip'],
++      // 2026-10-17 自制策略：desc 写明 <乌萨斯>/<东> ⇒ 同样按「本局禁用」绑定（雪原征召 / 以物易人）
++      凛冬: ['ursusShip'], 宴: ['dongShip'],
+     });
+     // every tied band carries the official note "在<X>部分干员缺席时体验可能不完整" naming that bond
++    // (自制策略没有官方注记，绑定直接来自 desc 里的 <盟约名> —— bandBondsOf 的同一套推导)
++    const CUSTOM = new Set(['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika']);
+     for (const id of funny.bandIds()) {
++      if (CUSTOM.has(id)) continue;
+       const b = DATA.bands[id];
+       const note = /在<([^<>]+)>部分干员缺席时体验可能不完整/.exec(b.desc);
+       if (funny.bandBondIds(id).length) assert.ok(note && funny.bandBondIds(id).some((x) => DATA.bonds[x].name === note[1]), b.name);
 diff --git a/test/match/feedback3-gift.test.js b/test/match/feedback3-gift.test.js
 index c0eb310..4486338 100644
 --- a/test/match/feedback3-gift.test.js

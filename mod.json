@@ -2,7 +2,7 @@
   "format": 1,
   "mod": "dong-ursus",
   "name": "【东】＋【乌萨斯】盟约 mod",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
   "source": {
@@ -24,6 +24,10 @@
       "docs/PLAYING.md": {
         "size": 81894,
         "sha256": "fe582a326fb2649adec06df096635176000eee26ed32fe85b4afb23885a0e28a"
+      },
+      "docs/design/engine.md": {
+        "size": 53207,
+        "sha256": "a4f3ed7d50d3745d22a2d350581d3188fdd6a57b5846e14df1118f47aef0e534"
       },
       "docs/research/00-INDEX.md": {
         "size": 19998,
@@ -56,6 +60,10 @@
       "server/sim/battle/deploy.js": {
         "size": 14869,
         "sha256": "d23dd6cdaa09f1738e85d6eae6858b5b92f3088e5a15f1e2a99ce93fb13d0f14"
+      },
+      "server/sim/content/bands/meta.js": {
+        "size": 24909,
+        "sha256": "ef3d7dd768b74db181c30bcf6545583cd352b97dbb74af271e8634076c3ce369"
       },
       "server/sim/content/bonds/core.js": {
         "size": 41944,
@@ -128,6 +136,10 @@
       "test/backups.test.js": {
         "size": 28862,
         "sha256": "76c871671c1584788fc3628f0f559bc51f516e6a302f1726cfa274d9d5abc38d"
+      },
+      "test/content/bands.test.js": {
+        "size": 43148,
+        "sha256": "bb4787812e7448e42f3ab16216e403e88eadd082e5cdabace1fbd67fb8bb2119"
       },
       "test/content/choices.test.js": {
         "size": 56593,
@@ -277,6 +289,10 @@
         "size": 25511,
         "sha256": "0c701756458dd235b878c518385c397dcc7bd5201c9776bf38ded0601ba800bc"
       },
+      "test/match/feedback1-gaps.test.js": {
+        "size": 20891,
+        "sha256": "507f7425ba3a7d10a71f8919465218ba07cec4defdeef79c822e9503a9a4e349"
+      },
       "test/match/feedback3-gift.test.js": {
         "size": 7462,
         "sha256": "51b3eb65480d14b6b8304eaa3907ee59504980efb093ea0b1873f5259921005e"
@@ -401,8 +417,28 @@
   ],
   "owned": {
     "data/assets.json": {
-      "size": 1337592,
-      "sha256": "43f7bf7f5ec043ba8a5add4bc53d9b3bd0568f2910a1afc46d53baf28578a3c7"
+      "size": 1337852,
+      "sha256": "ceeea5871b42c2dec7d62fff1fe1dc275e890c8dbee2bbed8804148654550e67"
+    },
+    "public/assets/band/band_haruka.png": {
+      "size": 70363,
+      "sha256": "c16894fffea7bc487d890458d15e09cfaff558d9fc851ab43577197a6d4e5286"
+    },
+    "public/assets/band/band_headbr.png": {
+      "size": 44809,
+      "sha256": "74c73301e2f6f572ac9f3fee0e241350158a7a02f9a3e7ae0a852cb029a86873"
+    },
+    "public/assets/band/band_palico.png": {
+      "size": 45352,
+      "sha256": "5ea89bfc9a683bc0faf59baa5cd0e010b9f4f2553de3f99ace960164b3fb28af"
+    },
+    "public/assets/band/band_ulika.png": {
+      "size": 63018,
+      "sha256": "2391d26ba9b20b6688116dff17a74d2a66752187f44fe8adb31b50c17c8676b0"
+    },
+    "public/assets/band/band_utage.png": {
+      "size": 52767,
+      "sha256": "7f33b48b36fd6e546522ea4980de56fdbdc57440245dee717e7ef3cfae0ca4d5"
     },
     "public/assets/bond/dongShip.png": {
       "size": 32409,
@@ -517,8 +553,8 @@
       "sha256": "1f3f93d23c4e283b5e6894e9cd86db67a2994ac204233ad7c5c1018e0da51bf7"
     },
     "tools/custom-content.mjs": {
-      "size": 52508,
-      "sha256": "47eae6780fa8d9cd9fb45ef3d0c49ccdc4f8625e432256e760b53090e6fcd240"
+      "size": 57868,
+      "sha256": "5e294c315944c4c1ae81ee82fbf8aa981cd799163406023550cc47f514c02226"
     }
   },
   "patched": {
@@ -527,8 +563,12 @@
       "sha256": "1976ac2e036a569d7738555254150b64866c3cb27da4cda08630083b647a712a"
     },
     "docs/PLAYING.md": {
-      "size": 81994,
-      "sha256": "829729f7e810b077ae35a869c140714f800119389b13267471f848c2a1941517"
+      "size": 82218,
+      "sha256": "1a0775d3352d88488d33eaadcd06cc1194a2e6b62f24ff748ba5e965c113a513"
+    },
+    "docs/design/engine.md": {
+      "size": 53231,
+      "sha256": "2c8ae14af6871932e44fc94d734e9f71e1c066978dcf183138581200e9143807"
     },
     "docs/research/00-INDEX.md": {
       "size": 22316,
@@ -561,6 +601,10 @@
     "server/sim/battle/deploy.js": {
       "size": 15243,
       "sha256": "b2bf6fd9e0b3df5f83668cf94dfc398b7383d582845dd520098eae49e67f2387"
+    },
+    "server/sim/content/bands/meta.js": {
+      "size": 31504,
+      "sha256": "57ff4d2753f2ff7f0cc19541a615652f6ad69ade1ead830564fa754c9c494f89"
     },
     "server/sim/content/bonds/core.js": {
       "size": 52400,
@@ -609,6 +653,10 @@
     "test/backups.test.js": {
       "size": 29682,
       "sha256": "5e0bfed26013b78716fa7b4800a1790a835cafe4af7bea057d743fe81511c137"
+    },
+    "test/content/bands.test.js": {
+      "size": 50761,
+      "sha256": "01efd50a770a4a69063c95c958c46b41e69ad1091a79e0f5af9c1d76933f46d2"
     },
     "test/content/choices.test.js": {
       "size": 56686,
@@ -687,8 +735,8 @@
       "sha256": "63e7a616ae281bf9eb80c1073be98c46970947875adb41a86f8aed33bfaa25f9"
     },
     "test/data.test.js": {
-      "size": 61412,
-      "sha256": "1fab44a98e8ea463cdbf0a36bceeb86ca6293f7e0fd36cfb6f229205a0d15236"
+      "size": 61437,
+      "sha256": "d7ab096465dbb927f2c145e8c331f856c0f47baaf612d2bcddb0cfc5b2ce7334"
     },
     "test/diy.test.js": {
       "size": 15887,
@@ -733,6 +781,10 @@
     "test/match/diy-shop.test.js": {
       "size": 25814,
       "sha256": "c3dc329e5001ad95c33b7c2f65a42d99526634e59cf91efe44b6589d4f283a8e"
+    },
+    "test/match/feedback1-gaps.test.js": {
+      "size": 21337,
+      "sha256": "1c75233eed7aba11e486b6289f6fe1ae898bfc6ddfdfb69fb13e37e8ea1d3462"
     },
     "test/match/feedback3-gift.test.js": {
       "size": 7487,
@@ -819,8 +871,8 @@
       "sha256": "c87a081ae772a82acec32aade574e98b4a0f64ad032551f619250156316f6821"
     },
     "tools/build-data.mjs": {
-      "size": 262648,
-      "sha256": "2e45a6cc4d382890d7c55c6feb69359d397980e1416a45e5d0b4d3dfa8698583"
+      "size": 262728,
+      "sha256": "374cb5eda90e26cd6ba389113b2453c896695c3192f3bde2a352348c08d97203"
     },
     "tools/fetch-assets.mjs": {
       "size": 32427,

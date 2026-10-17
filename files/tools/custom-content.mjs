@@ -9,6 +9,8 @@
 //   棋子    act.charChessDataDict / chessNormalIdLookupDict / charShopChessDatas
 //   盟约    act.bondInfoDict + ac.bondInfoDict（autoChessData）
 //   效果    act.effectInfoDataDict + act.effectBuffInfoDataDict（盟约黑board，buildBonds 会读它推阈值）
+//   策略    act.bandDataListDict + ac.bandDataDict + act.effectInfoDataDict / effectBuffInfoDataDict
+//           （buildBands 读 effectId 的效果记录拿 buffs / desc；prep 侧行为在 server/sim/content/bands/meta.js）
 //
 // 加内容时同步改下面这些常量（validateAll 与 test/data.test.js、test/backups.test.js 里是硬断言）：
 export const CUSTOM_VISIBLE_CHESS = 13;  // 新增「可见、非 DIY」棋子数  （112 + N）
@@ -17,6 +19,7 @@ export const CUSTOM_CHESS_RECORDS = 26;  // 新增 chess 记录数（普通 + �
 export const CUSTOM_BOND_COUNT = 2;      // 新增盟约数                （23  + N）
 export const CUSTOM_CORE_BOND_COUNT = 2; // 新增「核心」盟约数        （8   + N）
 export const CUSTOM_ITEMS = 4;           // 新增装备数（普通 + 进阶）（115 + 2N 条记录 / 56 + N 件普通 EQUIP）
+export const CUSTOM_BAND_COUNT = 5;      // 新增策略数                （40  + N）
 
 /** 自制棋子。key = 基础 chessId（不带 `_a`）。 */
 const CHESS = {
@@ -461,6 +464,57 @@ const BONDS = {
 };
 
 /**
+ * 自制策略（bands，2026-10-17 用户需求：5 条）。
+ *
+ * 结构照抄官方 bandDataListDict / autoChessData.bandDataDict / effectInfoDataDict 条目：
+ *   bandDesc  = 「【效果名】正文」——buildBands 直接取它当 desc / descRaw（textPair），客户端策略卡显示的就是它；
+ *   name      = 立绘上的干员名（官方同形：band name 是干员名，effectName 才是策略名）；
+ *   iconId    = 本项目的 assets.json `bands` 键 → 用 bandId 本身（data/assets.json 的 bands 分支按 bandId 索引）；
+ *   totalHp   = 初始目标生命值（官方 20–45，中位 26）；
+ *   buffs[].key 是 bands/meta.js 的 K 表键，bb 数值 / bbStr 字符串照官方 flattenBB 同形。
+ *
+ * 文案里的 `<乌萨斯>` / `<东>` 是**盟约引用**（不是【】）：shared/bandBonds.js 从这里反推 bondIds，
+ * 决定「本局禁用」标记与 AI 是否回避——漏写会让策略在本局禁用盟约时照样被选。
+ */
+const BANDS = {
+  band_palico: {
+    name: '泰拉大陆调查团', sortId: 41, totalHp: 22,
+    effectId: 'aceffect_band_9_01', effectName: '天尊救我',
+    desc: '【天尊救我】你的目标生命值损失后，下回合开始时获得1名干员：等阶为当前调度等级+1（最高VI级）；盟约为你已激活盟约中层数最高的那一个（并列时取盟约表序靠前者）',
+    buffs: [{ key: 'band_lp_loss_next_round_gain_highest_bond_char', bb: { tier_add: 1, max_tier: 6 } }],
+    iconChar: 'char_4077_palico',        // 策略立绘用的干员（assets 仅作记录，图标走 public/assets/band/）
+  },
+  band_headbr: {
+    name: '凛冬', sortId: 42, totalHp: 22,
+    effectId: 'aceffect_band_9_02', effectName: '雪原征召',
+    desc: '【雪原征召】每回合首次刷新为特殊刷新：该次刷新必定刷新1名<乌萨斯>干员，且该名<乌萨斯>干员免费',
+    buffs: [{ key: 'band_first_refresh_present_free_bond_char', bb: { count: 1 }, bbStr: { bond: 'ursusShip' } }],
+    iconChar: 'char_115_headbr',
+  },
+  band_haruka: {
+    name: '遥', sortId: 43, totalHp: 26,
+    effectId: 'aceffect_band_9_03', effectName: '完美偶像',
+    desc: '【完美偶像】若你在本回合的战斗中没有损失目标生命值，下回合开始时额外获得2资金',
+    buffs: [{ key: 'band_no_loss_next_round_gain_coin', bb: { coin: 2 } }],
+    iconChar: 'char_4202_haruka',
+  },
+  band_utage: {
+    name: '宴', sortId: 44, totalHp: 24,
+    effectId: 'aceffect_band_9_04', effectName: '以物易人',
+    desc: '【以物易人】每回合每售出2名干员，获得1名等阶不高于当前调度等级的<东>干员',
+    buffs: [{ key: 'band_sell_count_gain_bond_char', bb: { count: 2 }, bbStr: { bond: 'dongShip' } }],
+    iconChar: 'char_337_utage',
+  },
+  band_ulika: {
+    name: 'U-Official', sortId: 45, totalHp: 31,
+    effectId: 'aceffect_band_9_05', effectName: '人形天灾',
+    desc: '【人形天灾】每回合额外获得1资金，但无法刷新出含当前已激活盟约的干员',
+    buffs: [{ key: 'band_round_coin_no_active_bond_shop', bb: { coin: 1 } }],
+    iconChar: 'char_4091_ulika',
+  },
+};
+
+/**
  * 自制装备（2026-10-13 用户需求：东×2 + 乌萨斯×2）。
  * key = 基础 item id（不带 `_a/_b`；官方形态 `chess_item_<tier>_<nn>_e`，自定义段用 9 系列）。
  * 结构照抄官方 trapChessDataDict / trapShopChessDatas / effectInfoDataDict / effectBuffInfoDataDict 条目：
@@ -639,6 +693,36 @@ export function injectCustomContent(ctx) {
       bondId, isPower: cfg.isCore, bondType: 'SEASON', bondOrder: cfg.identifier,
       name: cfg.name, powerIdList: [...cfg.powerIdList], icon: `icon_${bondId}`,
     };
+  }
+
+  // ---- 策略（bands）----
+  // bandDataListDict 是 buildBands 的入口（effectId → effects 记录拿 buffs / desc / effectName），
+  // autoChessData.bandDataDict 提供 bandName / bandIconId（buildBands 的 name / iconId）。
+  // 效果记录照官方 BAND_INITIAL 同形：黑board 里数值 → value、字符串（bond 等）→ valueStr。
+  if (act.bandDataListDict && ac.bandDataDict) {
+    for (const [bandId, cfg] of Object.entries(BANDS)) {
+      if (act.bandDataListDict[bandId]) throw new Error(`[custom] band ${bandId} collides with the official season`);
+      if (act.effectInfoDataDict[cfg.effectId]) throw new Error(`[custom] band effect ${cfg.effectId} collides with the official season`);
+      act.bandDataListDict[bandId] = {
+        bandId, sortId: cfg.sortId, modeTypeList: [...(cfg.modeTypeList || ['LOCAL', 'SINGLE', 'MULTI'])],
+        bandDesc: cfg.desc, totalHp: cfg.totalHp, effectId: cfg.effectId,
+        victorCount: cfg.victorCount ?? 3, bandRewardModulus: 1.0,
+      };
+      ac.bandDataDict[bandId] = { bandId, bandName: cfg.name, bandIconId: cfg.iconId || bandId, unlockDesc: null };
+      act.effectInfoDataDict[cfg.effectId] = {
+        effectId: cfg.effectId, effectType: 'BAND_INITIAL', effectCounterType: 'NONE', continuedRound: -1,
+        effectName: cfg.effectName, effectDesc: cfg.desc, effectDecoIconId: null, enemyPrice: 0,
+      };
+      act.effectBuffInfoDataDict[cfg.effectId] = (cfg.buffs || []).map((b) => ({
+        key: b.key, countType: 'NONE',
+        blackboard: [
+          ...Object.entries(b.bb || {}).map(([k, v]) => ({ key: k, value: v, valueStr: null })),
+          ...Object.entries(b.bbStr || {}).map(([k, v]) => ({ key: k, value: 0, valueStr: v })),
+        ],
+      }));
+    }
+  } else {
+    throw new Error('[custom] build context lacks bandDataListDict / bandDataDict');
   }
 
   // ---- 特质（garrisons，干员自身效果的展示条目；战斗数据留空，真实效果在各 kit 里）----

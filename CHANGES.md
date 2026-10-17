@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-10-17（第十条）· 新增 5 条自制策略（天尊救我 / 雪原征召 / 完美偶像 / 以物易人 / 人形天灾）
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | 新增 **`CUSTOM_BANDS = 5`** 与 `injectCustomContent()` 的策略注入段：向 `act.bandDataListDict` / `ac.bandDataDict` 写 5 条 `band_palico / band_headbr / band_haruka / band_utage / band_ulika`（`totalHp` 31/22/26/24/22，落在官方 20–45 区间；`effectName` 即策略名），向 `act.effectInfoDataDict` / `effectBuffInfoDataDict` 写 `aceffect_band_9_02 / aceffect_band_9_05`（`buffs:[{key,bb,bbStr}]`，与官方策略同型） |
+| `patches/01-mod-shared.patch` | ① 新增目标 `server/sim/content/bands/meta.js`：`K` 表新增 5 个处理器——**天尊救我**（`onBattleResult.lpLoss>0` 打标记 → `onRoundStart` 时按「已激活盟约层数最高、并列取盟约表序靠前、无激活则随机」定盟约，`ctx.rollChess({bond, tier: shopLevel+1（封顶 6）})` 给 1 名；固定 1 名，与损血量无关）② **雪原征召**（每回合首次 `g.refresh` 改写为「必出 1 名 ≤ 当前调度等级的乌萨斯干员且该格免费」，用 `counters` 记回合号）③ **完美偶像**（`onBattleResult.perfect` 打标记 → `onRoundStart` +2 资金）④ **以物易人**（`onSold` 计数普通干员，每满 2 名给 1 名 `tier ≤ shopLevel` 的【东】干员，计数每回合清零）⑤ **人形天灾**（`onRoundStart` +1 资金；`onPrice`/`onRoundStart`/手动刷新处把「含当前已激活盟约的干员」从商店格替换掉）② 新增目标 `docs/design/engine.md`：bands 描述改 45 ③ `tools/build-data.mjs`：40 条断言放宽为 `40 + CUSTOM_BANDS` |
+| `patches/02-tests-calibration.patch` | 新增目标 `test/content/bands.test.js`（计数 40→45 + 5 条新策略逐条用例：天尊救我三分支〔无激活随机 / 单最高 / 并列取表序〕、雪原征召〔回合首刷免费乌萨斯 + 二次刷新恢复〕、完美偶像〔有损不发 / 无损 +2〕、以物易人〔1 卖不发 / 2 卖发 1 / 精锐不计数 / 跨回合清零〕、人形天灾〔回合开始 +1 资金 / 已激活盟约干员被替换、手动刷新同滤〕）与 `test/match/feedback1-gaps.test.js`（§21.26 绑定映射补 `凛冬:['ursusShip']`、`宴:['dongShip']`，自制策略跳过官方注记断言）；既有校准：`test/data.test.js` 策略数 40→45 |
+| `files/public/assets/band/` | **新增 5 个策略立绘**：`band_palico.png`（泰拉大陆调查团）、`band_headbr.png`（凛冬）、`band_haruka.png`（遥）、`band_utage.png`（宴）、`band_ulika.png`（U-Official）——180×180 头像；palico/ulika 头像官方资源库缺失，从 Aceship 镜像补齐 |
+| `files/data/assets.json` | `bands` 分支登记 5 个图标 URL，**`bonds` 分支补上此前缺失的 `dongShip`**（`/assets/bond/dongShip.png`——清单由 fetch-assets 从官方研究表 07-assets 生成，自制盟约不在研究表里，须手工维护，缺失会让 `URL helpers` / `assetUrls` 两个测试挂），`stats`（files/bytes/bonds/bands）同步 |
+| `i18n/mod-i18n.json` | 新增 **`bands` 家族**：5 条 × 4 语言（en/ja/ko/zh-TW）的 `descRaw/desc/effectName`（ulika 无汉字名不写 `name` 叶，与「只译有汉字的叶子」约定一致）；`_h` 由 apply-i18n 按 `data/bands.json` 的 zh 源文本现算 |
+| `i18n/apply-i18n.mjs` | 支持 `bands` 家族合并：`IDS.bands` 5 条、缺失即报错；覆盖率除补 `translated` 外**同步补 `texts`**（自制策略文案不在官方语料里，只补 translated 会把 pct 拉破地板——纯净树实测踩过 `bands: 93.3%`） |
+| `mod.json` | `version` 1.0.7 → **1.0.8**；`base.files 93 · patched 81 · owned 35 · removed 12 · generated 22`（+4 补丁目标：`bands/meta.js`、`engine.md`、`bands.test.js`、`feedback1-gaps.test.js`；+5 owned 图标） |
+
+### 为什么
+
+用户提出 5 条局内策略（其中 2 条未命名/未定立绘，由我定名并选立绘：雪原征召→凛冬、以物易人→宴），与官方 40 条同池轮选。绑定口径沿用 `shared/bandBonds.js`：desc 里写 `<乌萨斯>` / `<东>` 即自动获得「本局禁用」联动（雪原征召绑乌萨斯、以物易人绑东），bot 不会在对应盟约被禁时误选。
+
+### 怎么验的
+
+- 工作区 `node --test` 全量：仅剩 6 项环境性失败（asset index / websocket lobby ×2 / tracked-tree 等，与本轮无关）；golden 三件套 `node tools/golden.mjs --update` 重建后全绿（roster 54 / bonds 50 / fields 22 / matches 24 / standins 10 / diy 129）。
+- 纯净基线树（git worktree @ `16a0f9b` + node_modules/.cache/vendor）：install 93/93 patch + 35/35 owned，`verify.mjs` 子集 **0 fail**（含新增 bands 用例与 i18n 覆盖率 100%）。
+
+---
+
 ## 2026-10-17（第九条）· 禁用规则改「7 核心 + 4 支线」＋ 协防入池 ＋ 吉星 → 松桐
 
 ### 改了什么

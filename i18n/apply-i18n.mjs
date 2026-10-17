@@ -22,7 +22,10 @@ const IDS = {
   ],
   items: ['chess_item_9_01_e_a', 'chess_item_9_01_e_b', 'chess_item_9_02_e_a', 'chess_item_9_02_e_b',
     'chess_item_9_03_e_a', 'chess_item_9_03_e_b', 'chess_item_9_04_e_a', 'chess_item_9_04_e_b'],
-  // effects 记录（含 _h）：mod-i18n.json 里存在则直接用；不存在才从 bonds/items 派生
+  // 2026-10-17：自制策略（5 条）。records 的 _h 由本脚本按 data/bands.json 的 zh 源文本算（见下），
+  // mod-i18n.json 里只写文案；每个策略的效果记录（aceffect_band_9_0x）从它派生。
+  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika'],
+  // effects 记录（含 _h）：mod-i18n.json 里存在则直接用；不存在才从 bonds/items/bands 派生
   effects: ['bondeffect_dong', 'bondeffect_ursus', 'eff_9_01_e', 'eff_9_02_e', 'eff_9_03_e', 'eff_9_04_e'],
 };
 
@@ -54,15 +57,15 @@ for (const lang of LANGS) {
       merged++;
     }
   }
-  // effects 记录：优先 mod-i18n.json 自带（含 _h）；缺失时从 bonds/items 派生，并用 data/effects.json
+  // effects 记录：优先 mod-i18n.json 自带（含 _h）；缺失时从 bonds/items/bands 派生，并用 data/effects.json
   // 的 zh 源文本补算 _h（没有 _h 的记录会整条 stale）。只处理 data/effects.json 里真实存在的条目。
   ov.files.effects = ov.files.effects || {};
   const derived = [];
   const i18nData = await import('file://' + join(repo, 'shared', 'i18nData.js').replaceAll('\\', '/'));
   const zhEffects = JSON.parse(readFileSync(join(repo, 'data', 'effects.json'), 'utf8'));
-  const withHash = (id, rec) => {
-    const zhRec = zhEffects[id];
-    if (!zhRec) return null; // data 里没有该效果条目——不派生（避免 "not a string" 断言失败）
+  const withHash = (id, rec, zhSrc = zhEffects) => {
+    const zhRec = zhSrc[id];
+    if (!zhRec) return null; // data 里没有该条目——不派生（避免 "not a string" 断言失败）
     let h = '';
     i18nData.walkOverlay(rec, (p) => {
       const zh = i18nData.getPath(zhRec, p);
@@ -70,6 +73,19 @@ for (const lang of LANGS) {
     });
     return { ...rec, _h: h };
   };
+  // 策略（bands）：mod-i18n.json 只写文案，_h 按 data/bands.json 的 zh 源文本现算（策略文案是自制内容，
+  // 官方客户端里没有对应文本，只能手写四语言；族级同样需要 _h，否则整条 stale）。
+  ov.files.bands = ov.files.bands || {};
+  const zhBands = JSON.parse(readFileSync(join(repo, 'data', 'bands.json'), 'utf8'));
+  for (const id of IDS.bands) {
+    const rec = mod[lang]?.bands?.[id];
+    if (!rec) throw new Error(`mod-i18n.json 缺少 ${lang}/bands/${id}`);
+    if (!zhBands[id]) throw new Error(`data/bands.json 缺少 ${id}（先跑 node tools/build-data.mjs）`);
+    const hashed = withHash(id, rec, zhBands);
+    if (!hashed) throw new Error(`data/bands.json ${id} 与 overlay 叶子对不上`);
+    ov.files.bands[id] = hashed;
+    merged++;
+  }
   for (const id of IDS.effects) {
     const rec = mod[lang]?.effects?.[id];
     if (rec) derived.push([id, rec]);
@@ -92,6 +108,15 @@ for (const lang of LANGS) {
       if (rec) derived.push([id, rec]);
     }
   }
+  for (const bid of IDS.bands) {
+    const id = zhBands[bid]?.effectId;
+    if (!id || mod[lang]?.effects?.[id]) continue;
+    const b = mod[lang]?.bands?.[bid];
+    if (b?.desc) {
+      const rec = withHash(id, { name: b.effectName, desc: b.desc, descRaw: b.descRaw });
+      if (rec) derived.push([id, rec]);
+    }
+  }
   for (const [id, rec] of derived) {
     if (!ov.files.effects[id]) merged++;
     ov.files.effects[id] = rec;
@@ -102,8 +127,12 @@ for (const lang of LANGS) {
     const per = { bonds: leafCount(ov.files.bonds, IDS.bonds),
       garrisons: leafCount(ov.files.garrisons, IDS.garrisons),
       items: leafCount(ov.files.items, IDS.items),
+      bands: leafCount(ov.files.bands, IDS.bands),
       effects: leafCount(ov.files.effects, derived.map((d) => d[0])) };
     const prev = ov.meta.modI18nAdded ?? {};
+    // 只补 translated、不动 texts：texts 是 build-i18n 按 data/*.json 逐叶数出来的，
+    // 自制策略的文案在装包时（build-data 之后）就已经被数进 texts 了——这里再加一次会把分母撑大
+    // （实测：+20 叶 → en 的 bands 覆盖率从 100 % 掉到 93.3 %，i18n-data.test.js 的 98 % 地板不过）。
     for (const [fam, n] of Object.entries(per)) {
       const c = ov.meta.coverage[fam];
       if (!c) continue;
