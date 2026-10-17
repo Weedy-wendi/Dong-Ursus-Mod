@@ -490,7 +490,7 @@ index b6782a3..aeda3bb 100644
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/items.test.js b/test/content/items.test.js
-index 2696fca..079ee88 100644
+index 2696fca..2225495 100644
 --- a/test/content/items.test.js
 +++ b/test/content/items.test.js
 @@ -1,4 +1,4 @@
@@ -615,7 +615,35 @@ index 2696fca..079ee88 100644
  test('lendItemEffects (萨尔贡 × 娜仁图亚): tier ≤ V battle effects lent for 60 s, then removed', () => {
    const ops = { t_op: op('t_op'), t_a: op('t_a') };
    const h = fight({ ops, units: [{ chessId: 't_op', row: 10, col: 4, items: [A('1_01'), A('6_01')] }, { chessId: 't_a', row: 11, col: 4 }] });
-@@ -1278,5 +1366,5 @@ test('coverage: every equipment (normal + golden) and every Art is exercised by
+@@ -961,7 +1049,8 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
+   const elite = DATA.chess[cid].goldenId;
+   const chessIn = (ps) => [...ps.board.values(), ...ps.hand, ...ps.temp].filter((p) => p && p.kind === 'chess').map((p) => p.id).sort();
+   for (const item of [A('5_05'), B('5_05')]) {
+-    const { m, ps, equip } = setup({ seed: 9 });
++    // seed 1：2026-10-17 加权禁用抽取后，seed 9 的禁集会禁掉溯光星源（chess_char_6_16_a）→ 池里没有它
++    const { m, ps, equip } = setup({ seed: 1 });
+     give(m, ps, elite, 'hand');
+     const t = give(m, ps, cid, 'hand');
+     give(m, ps, cid, 'hand');
+@@ -978,7 +1067,7 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
+   }
+   // 2 normal copies, no elite, the pool drained by other players: the third copy is still granted.
+   {
+-    const { m, ps, equip } = setup({ seed: 9 });
++    const { m, ps, equip } = setup({ seed: 1 });
+     const t = give(m, ps, cid, 'hand');
+     give(m, ps, cid, 'hand');
+     m.pool.take(cid, m.pool.left(cid));
+@@ -991,7 +1080,7 @@ test('拟态物质 grants the third copy even when stock is empty; the gain stil
+   }
+   // 2 normal copies with copies left: the 3rd merges into the elite
+   {
+-    const { m, ps, equip } = setup({ seed: 9 });
++    const { m, ps, equip } = setup({ seed: 1 });
+     const t = give(m, ps, cid, 'hand');
+     give(m, ps, cid, 'hand');
+     assert.equal(m.pool.left(cid), 3);
+@@ -1278,5 +1367,5 @@ test('coverage: every equipment (normal + golden) and every Art is exercised by
    // items whose numbers are asserted in the stat table, the proc tests or the meta tests
    const missing = Object.keys(DATA.items).filter((id) => !COVER.has(id)).sort();
    assert.deepEqual(missing, []);
@@ -1095,7 +1123,7 @@ index bce956c..86c4a27 100644
      const [id, charId] = f.split('→');
      const c = CHESS[`chess_char_${id}`];
 diff --git a/test/lobby-diy.test.js b/test/lobby-diy.test.js
-index ca02f41..ed488e3 100644
+index ca02f41..33a38cc 100644
 --- a/test/lobby-diy.test.js
 +++ b/test/lobby-diy.test.js
 @@ -133,7 +133,11 @@ describe('room.diy (lobby + real match)', () => {
@@ -1103,7 +1131,7 @@ index ca02f41..ed488e3 100644
    const cap = quietLog();
    before(async () => {
 -    srv = await startServer({ port: 0, host: '127.0.0.1', log: cap.log, seedFn: () => 4242 });
-+    // (seed 4240: the disabled-bond draw changed again on 2026-10-17 — the rule became 7 core + 4 add-on with
++    // (seed 4240: the disabled-bond draw changed again on 2026-10-17 — 5 core + 5 add-on, weighted
 +    //  协防干员 emptyShip now bannable; 4244 bans 维多利亚 (siege's bond) and clears the DIY slot, so the nearest
 +    //  seed whose *derived* setup draw keeps 维多利亚 (and 协防) out of the ban set is used. 2026-10-11 had moved
 +    //  4242 → 4244 for 乌萨斯. The draw depends on the rng('setup') stream, which setupMatchWaves consumes first.)
@@ -1112,7 +1140,7 @@ index ca02f41..ed488e3 100644
    });
    afterEach(async () => { await pool.closeAll(); });
 diff --git a/test/match/board.test.js b/test/match/board.test.js
-index ac7b494..7f51141 100644
+index ac7b494..331d911 100644
 --- a/test/match/board.test.js
 +++ b/test/match/board.test.js
 @@ -94,10 +94,11 @@ test('g.move: legality per chess position, BAD_TILE outside, deploy cap 8, swaps
@@ -1135,7 +1163,7 @@ index ac7b494..7f51141 100644
    const { m, ps } = prepMatch();
 -  const ids = chessOfTier(1).filter((x) => m.pool.has(x));
 +  // the hand is 9 chess + 1 item: take any 10 pool pieces — tier 1 first, then tier 2, because the deeper ban set
-+  // (7 core + 4 add-on, 2026-10-17) can leave fewer than 10 tier-1 chess in the pool for a given seed
++  // (5 core + 5 add-on weighted, 2026-10-17) can leave fewer than 10 tier-1 chess in the pool for a given seed
 +  const ids = [...chessOfTier(1), ...chessOfTier(2)].filter((x) => m.pool.has(x)).slice(0, 10);
 +  assert.equal(ids.length, 10, '10 pool pieces needed to fill the hand');
    const onBoard = give(m, ps, ids[0], 'board', [9, 3]);
@@ -1214,9 +1242,18 @@ index 43512d6..8e27a61 100644
      const m = h.m;
      const ps = m.order[0];
 diff --git a/test/match/bot.test.js b/test/match/bot.test.js
-index 663754a..a16cf2a 100644
+index 663754a..bbe3f34 100644
 --- a/test/match/bot.test.js
 +++ b/test/match/bot.test.js
+@@ -220,7 +220,7 @@ test('the prep routine itself (shop, lineup, layout planning) runs in bounded sl
+   const whole = run(undefined);
+   const sliced = run(1e-6);
+   assert.ok(Math.max(...whole.perPrep) <= 1, `unbounded (virtual time): a whole prep in one callback (${whole.perPrep})`);
+-  assert.ok(Math.min(...sliced.perPrep) >= 3 && Math.max(...sliced.perPrep) >= 8, `sliced: every prep spread over many callbacks (${sliced.perPrep})`);
++  assert.ok(Math.min(...sliced.perPrep) >= 3 && Math.max(...sliced.perPrep) >= 7, `sliced: every prep spread over many callbacks (${sliced.perPrep})`);
+   assert.equal(sliced.state, whole.state, 'same decisions, same boards');
+ });
+ 
 @@ -323,7 +323,8 @@ test('economy: the bot fills the board first (8 units by round 4), levels on its
  });
  
@@ -1324,10 +1361,20 @@ index 4d73d7b..836a5b7 100644
        const note = /在<([^<>]+)>部分干员缺席时体验可能不完整/.exec(b.desc);
        if (funny.bandBondIds(id).length) assert.ok(note && funny.bandBondIds(id).some((x) => DATA.bonds[x].name === note[1]), b.name);
 diff --git a/test/match/feedback3-gift.test.js b/test/match/feedback3-gift.test.js
-index c0eb310..4486338 100644
+index c0eb310..b72659b 100644
 --- a/test/match/feedback3-gift.test.js
 +++ b/test/match/feedback3-gift.test.js
-@@ -96,7 +96,7 @@ test('信标: the gift still arrives when its sender is eliminated before the ne
+@@ -69,7 +69,8 @@ test('信标 on an elite: the teammate receives that elite with its 3 pool copie
+ test('信标 on a normal operator still sends the normal card', () => {
+   const { h, m, equip } = setup({ seed: 35 });
+   const p0 = h.ps('p_0'), p1 = h.ps('p_1');
+-  const cid = plain((c) => c.tier === 2 && c.bonds.length)[0];
++  // 2026-10-17 加权禁用抽取后，seed 35 会禁掉原来的首选 → 只在池内的干员里挑（banned 棋子的赠卡 poolCopies = 0）
++  const cid = plain((c) => c.tier === 2 && c.bonds.length && m.pool.has(c.chessId))[0];
+   assert.deepEqual(equip(giveItem(m, p0, BEACON), give(m, p0, cid, 'hand')), OK);
+   h.toPrep(2);
+   assert.deepEqual(ofBase(m, p1, cid).map((p) => [p.id, p.poolCopies]), [[cid, 1]]);
+@@ -96,7 +97,7 @@ test('信标: the gift still arrives when its sender is eliminated before the ne
  test('信标: a grant that fails (no copy left in the pool) keeps the gift for the next round start', () => {
    const { h, m, equip } = setup({ seed: 37 });
    const p0 = h.ps('p_0'), p1 = h.ps('p_1');
@@ -1337,21 +1384,20 @@ index c0eb310..4486338 100644
    // every copy taken by "other players" before the round start
    const held = m.pool.take(cid, 99);
 diff --git a/test/match/feedback5-we2-diy-grants.test.js b/test/match/feedback5-we2-diy-grants.test.js
-index 0f7e3f2..b156a91 100644
+index 0f7e3f2..8b05918 100644
 --- a/test/match/feedback5-we2-diy-grants.test.js
 +++ b/test/match/feedback5-we2-diy-grants.test.js
-@@ -15,7 +15,9 @@ const SIEGE = 'char_112_siege'; // 推进之王 (维多利亚)
+@@ -15,7 +15,8 @@ const SIEGE = 'char_112_siege'; // 推进之王 (维多利亚)
  const PICK = { charId: SIEGE, skillIndex: 2, uniEquipId: 'uniequip_002_siege' };
  
  /** A co-op match: p_0 slots 推进之王 at T5A, p_1 slots nothing; first prep. */
 -function prep(seed = 911) {
-+// (default seed 902: the disabled-bond draw grew by 乌萨斯 on 2026-10-11, and again by 协防干员 + the 7 core rule on
-+// 2026-10-17 — 902 still keeps 维多利亚 out of the ban set; the reward-pool test uses 912 after 910 started banning it)
++// (default seed 902: the disabled-bond draw changed on 2026-10-11 and again on 2026-10-17 — 协防入池 + the weighted 5+5 rule; seeds re-picked where needed)
 +function prep(seed = 902) {
    const seats = [
      { seat: 0, playerId: 'p_0', name: 'P0', isBot: false, connected: true, diy: { [T5A]: PICK } },
      { seat: 1, playerId: 'p_1', name: 'P1', isBot: false, connected: true },
-@@ -54,7 +56,7 @@ test('#9 effect rolls (ctx.rollChess, any tier / bond filter) draw the player\'s
+@@ -54,7 +55,7 @@ test('#9 effect rolls (ctx.rollChess, any tier / bond filter) draw the player\'s
  });
  
  test('#9 reward pools (ctx.rollPool: a shared-pool chess pool) and the 维多利亚驰援 card draw it too', () => {
@@ -1451,7 +1497,7 @@ index 1202574..8eea11e 100644
      const bond = r.giveBondId;
      const iso = r.isGolden ? ISO_B : ISO; // golden bond items with the golden 变形同构体, normal with normal
 diff --git a/test/match/playtest6-elite-to-board.test.js b/test/match/playtest6-elite-to-board.test.js
-index 0ca0d08..50b5f72 100644
+index 0ca0d08..fb7f206 100644
 --- a/test/match/playtest6-elite-to-board.test.js
 +++ b/test/match/playtest6-elite-to-board.test.js
 @@ -214,7 +214,7 @@ test('equipment with the hand and temp full: the elite keeps up to its 2 equip s
@@ -1463,12 +1509,13 @@ index 0ca0d08..50b5f72 100644
    assert.ok(m.pool.has(VIGIL), '伺夜 is in this match\'s pool');
    const a = give(m, ps, VIGIL);
    const at = legalTileFor(m, ps, VIGIL);
-@@ -243,7 +243,7 @@ test('summons: the copies\' placed summons and stacks are removed; the elite on
+@@ -243,7 +243,8 @@ test('summons: the copies\' placed summons and stacks are removed; the elite on
  
  test('loadout: the deployed elite\'s summon card and battle unit follow the player\'s loadout (赫默 S2 default → drone card, S1 → none)', () => {
    for (const [label, loadout, drone] of [['default S2', null, true], ['S1', checkLoadout({ [SILENCE]: { skill: 0 } }, chess).loadout, false]]) {
 -    const { m, ps } = prep({ seed: 47, loadout });
-+    const { m, ps } = prep({ seed: 1, loadout });
++    // seed 2：2026-10-17 加权禁用抽取后 seed 1 会禁掉赫默（其余 seed 下三个召唤干员也可能缺）
++    const { m, ps } = prep({ seed: 2, loadout });
      assert.ok(m.pool.has(SILENCE), '赫默 is in this match\'s pool');
      const a = deploy(m, ps, SILENCE, 'LEFT');
      const tile = keyOf(ps, a);
@@ -1487,7 +1534,7 @@ index 51b6816..be92313 100644
    for (const t of Object.values(DATA.tokens)) if (t.displayType === 'HIDDEN') assert.equal(t.placeable, false, t.name);
    assert.equal(DATA.tokens.token_10056_angel2_target.placeable, false);
 diff --git a/test/match/pool.test.js b/test/match/pool.test.js
-index 87e4e77..de17d86 100644
+index 87e4e77..39067bf 100644
 --- a/test/match/pool.test.js
 +++ b/test/match/pool.test.js
 @@ -13,7 +13,7 @@ test('co-op pool doubles the measured single-player capacities; only visible, un
@@ -1541,8 +1588,8 @@ index 87e4e77..de17d86 100644
  
 -test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
 -  for (const [modeId, core, addon] of [['mode_multi_hard', 3, 4], ['mode_single_abyss', 3, 4], ['mode_multi_funny', 0, 1], ['mode_single_normal', 3, 4]]) {
-+test('per-match disabled bonds: 7 core + 4 add-on (NORMAL+, 2026-10-17), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
-+  for (const [modeId, core, addon] of [['mode_multi_hard', 7, 4], ['mode_single_abyss', 7, 4], ['mode_multi_funny', 0, 1], ['mode_single_normal', 7, 4]]) {
++test('per-match disabled bonds: 5 core + 5 add-on (NORMAL+, 2026-10-17 加权抽取), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
++  for (const [modeId, core, addon] of [['mode_multi_hard', 5, 5], ['mode_single_abyss', 5, 5], ['mode_multi_funny', 0, 1], ['mode_single_normal', 5, 5]]) {
      const gd = new GameData(DATA, modeId);
      for (let seed = 1; seed <= 20; seed++) {
        const { drawn, staticOff, banned } = drawDisabledBonds(gd, createRng(seed));
@@ -1556,12 +1603,37 @@ index 87e4e77..de17d86 100644
        const off = new Set([...drawn, ...staticOff]);
        for (const id of gd.visibleChess) {
          const bonds = DATA.chess[id].bonds;
-@@ -181,10 +185,10 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+@@ -172,6 +176,24 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+       }
+     }
+   }
++  // 加权口径（2026-10-17 第二条）：远见/奇迹 0.25×，迅捷/精准/灵巧 4.5×，其余 1×（10 = 正常）→
++  // NORMAL 期望被禁 35.07 / 可用 89.93 ≈ 90（禁用机制速查.md §12）
++  {
++    const gd = new GameData(DATA, 'mode_multi_normal');
++    const N = 20000, counts = {};
++    let bannedSum = 0;
++    for (let seed = 1; seed <= N; seed++) {
++      const { drawn, banned } = drawDisabledBonds(gd, createRng(seed));
++      bannedSum += banned.length;
++      for (const b of drawn) counts[b] = (counts[b] || 0) + 1;
++    }
++    const avail = 125 - bannedSum / N;
++    assert.ok(avail > 89.5 && avail < 90.5, `available ≈ 90, got ${avail.toFixed(2)}`);
++    assert.ok(counts.visiShip / N < 0.15, `远见 suppressed, got ${(counts.visiShip / N).toFixed(3)}`);
++    assert.ok(counts.miraShip / N < 0.15, `奇迹 suppressed, got ${(counts.miraShip / N).toFixed(3)}`);
++    assert.ok(counts.swiftShip / N > 0.7, `迅捷 favored, got ${(counts.swiftShip / N).toFixed(3)}`);
++    assert.ok(counts.emptyShip / N > 0.2 && counts.emptyShip / N < 0.5, `协防 still drawable, got ${(counts.emptyShip / N).toFixed(3)}`);
++  }
+   // FUNNY: the static list alone removes many operators
+   const f = drawDisabledBonds(new GameData(DATA, 'mode_multi_funny'), createRng(1));
+   assert.equal(f.staticOff.length, 10);
+@@ -181,10 +203,10 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
  test('the match pool excludes banned chess; m.public lists disabled bonds and banned chess', () => {
    const h = makeMatch({ mode: 'coop', difficulty: 'HARD', humans: 1, bots: 1, seed: 3 }).start();
    const pub = h.lastBc('m.public');
 -  assert.equal(pub.drawnDisabledBonds.length, 7);
-+  assert.equal(pub.drawnDisabledBonds.length, 11);
++  assert.equal(pub.drawnDisabledBonds.length, 10);
    assert.ok(pub.bannedChess.length > 0);
    for (const id of pub.bannedChess) assert.ok(!h.m.pool.has(id), `${id} should not be in the pool`);
 -  assert.equal(h.m.pool.entries.size + pub.bannedChess.length, 112);
@@ -1569,6 +1641,20 @@ index 87e4e77..de17d86 100644
    checkInvariants(h.m);
    h.m.dispose();
  });
+diff --git a/test/match/setup-reroll.test.js b/test/match/setup-reroll.test.js
+index b39ebd6..24b8e1f 100644
+--- a/test/match/setup-reroll.test.js
++++ b/test/match/setup-reroll.test.js
+@@ -73,7 +73,8 @@ test('four humans must agree; rerolls the entire official setup and stock, prese
+   assert.equal(m.setupVote, null);
+   const rng = createRng(deriveSeed(m.seed, 'reroll-setup:1'));
+   const setup = setupMatchWaves(m.gd, rng);
+-  const bans = drawDisabledBonds(m.gd, rng);
++  // 2026-10-17：禁集抽取用独立派生流（与 waves 流分开，见 Match.js / setupVote.js）
++  const bans = drawDisabledBonds(m.gd, createRng(deriveSeed(m.seed, 'reroll-bans:1')));
+   assert.deepEqual(snapshot(m), { stageId: setup.stageId, bossId: setup.bossId, hiddenBossId: setup.hiddenBossId,
+     factions: [...setup.factions], schedule: setup.factions.schedule, bans: bans.banned, drawn: bans.drawn });
+   assert.notDeepEqual(snapshot(m), before);
 diff --git a/test/potential.test.js b/test/potential.test.js
 index a40eb3d..136e1f2 100644
 --- a/test/potential.test.js
@@ -1777,7 +1863,7 @@ index da6bda9..7861f48 100644
    for (let i = 1; i < roster.length; i++) assert.ok(roster[i - 1].tier <= roster[i].tier);
    const t3 = filterRoster(roster, { tier: 3 }, {}, get, getBond);
 diff --git a/test/ui/match-info.test.js b/test/ui/match-info.test.js
-index 9e035a4..eb151ff 100644
+index 9e035a4..b85c8a4 100644
 --- a/test/ui/match-info.test.js
 +++ b/test/ui/match-info.test.js
 @@ -62,7 +62,8 @@ test('matchInfoModel: the two greyed kinds, the briefing order, banned operators
@@ -1790,17 +1876,18 @@ index 9e035a4..eb151ff 100644
    assert.equal(m.addon[0].name, '调和');
    assert.equal(m.core.length + m.addon.length, Object.keys(DATA.bonds).length, 'every bond, once');
    assert.ok(m.core.every((b) => b.isCore) && m.addon.every((b) => !b.isCore));
-@@ -181,11 +182,11 @@ test('a real 标准 match (solo and co-op): the mode\'s 10 inactive bonds are "o
+@@ -181,11 +182,12 @@ test('a real 标准 match (solo and co-op): the mode\'s 10 inactive bonds are "o
      assert.match(textOf(MatchLegend({ model: m })), /或本模式禁用/);
      h.m.dispose();
    }
 -  // 绝境: 3 core + 4 add-on drawn, nothing switched off by the mode
-+  // 绝境: 7 core + 4 add-on drawn, nothing switched off by the mode（2026-10-17: 协防入池 → 支线池 12；口径 = 可用干员 ≈原版 90）
++  // 绝境: 5 core + 5 add-on drawn (weighted), nothing switched off by the mode（2026-10-17: 协防入池 → 支线池 12；
++  // 抽取改按 weight 加权；口径 = 可用干员 ≈原版 90）
    const h = makeMatch({ mode: 'coop', difficulty: 'HARD', humans: 1, bots: 1, seed: 4 }).start();
    const m = matchInfoModel(h.m.publicView(), SRC('mode_multi_hard'));
    assert.equal(m.sets.off.size, 0);
 -  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [3, 4]);
-+  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [7, 4]);
++  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [5, 5]);
    assert.deepEqual([...m.banned].sort(), [...h.m.bannedChess].sort());
    h.m.dispose();
  });

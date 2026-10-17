@@ -175,22 +175,27 @@ const BOND_OVERRIDES = {
 };
 
 /**
- * 官方盟约的 **weight 覆盖** —— 即「谁会进开局禁用抽取池」（2026-10-17 用户口径）。
+ * 官方盟约的 **weight 覆盖** —— 「谁会进开局禁用抽取池」+「被抽中的相对概率」（2026-10-17 用户口径）。
  *
- * `pool.js drawDisabledBonds` 的候选资格是 `Number(bond.weight) > 0`（它的**唯一**运行时消费者；
- * research 02 里 [ASSUMED] 的「随机抽盟约的权重」并未实现）。所以 weight 0 → 10 = 把这条盟约从
- * 「永不入池」改成「可被抽中禁用」。
+ * `pool.js drawDisabledBonds` 消费 weight：`> 0` = 候选资格；抽取为**按 weight 的加权无放回抽样**
+ * （2026-10-17 第二条起，10 = 官方「正常可抽」标尺；权重相等时等价于原均匀洗牌）。weight 0 → 10 =
+ * 把这条盟约从「永不入池」改成「可被抽中禁用」；< 10 = 降低中签率，> 10 = 提高。
  *
  * 本次：**协防干员 (emptyShip) 0 → 10**（它一旦被抽中，只挂协防的干员就会被连坐禁掉；
  * 挂别的盟约的成员照旧靠那条腿存活）。**投资人 (investShip) 明确保持 0 = 永不被禁**；
  * 调和 (maniShip) / 绝技 (suntShip) 也保持 0（用户未要求改动）。
  *
- * ⚠️ 值取 10 只为与官方附加盟约（weight 10）同形；抽样是**均匀洗牌**，10 与 1 的中签率相同。
  * ⚠️ `economy.fallbackBondId` 也是 emptyShip：自选编队里「无对应阵营」的干员会回落成协防，
  * 这部分**不参与禁用判定**（见 `server/match/player/diy.js` buildDiyStock 的豁免）。
  */
 const BOND_WEIGHT_OVERRIDES = {
-  emptyShip: 10,   // 协防干员：进禁用抽取池（2026-10-17 用户口径）
+  emptyShip: 10,               // 协防干员：进禁用抽取池（2026-10-17 用户口径）；10 = 官方「正常可抽」标尺
+  // 2026-10-17（第二条）：抽取由均匀改为**按 weight 加权**（pool.js sample），10 = 正常可抽。自制核心
+  // dongShip/ursusShip 的 weight 在上面的注入模板里直接写 10（它们不在官方 bondInfoDict，走不了这份覆盖）。
+  visiShip: 2.5, miraShip: 2.5,        // 远见/奇迹：0.25×（用户口径「调低概率」）
+  swiftShip: 45, preciShip: 45, skillfulShip: 45, // 迅捷/精准/灵巧：4.5×——禁用压力补偿。
+  // 单独调远见/奇迹不影响期望可用数（含/不含它们的支线组合平均被禁数几乎相同），必须由重三件套补：
+  // 5+5 期望被禁 35.07 / 可用 89.93 ≈ 90（100 万次 MC，见 禁用机制速查.md §12）。
 };
 
 /**
@@ -679,7 +684,7 @@ export function injectCustomContent(ctx) {
       desc: cfg.desc, iconId: `icon_${bondId}`,
       activeCount: cfg.activeCount, activeCondition: 'BOARD', activeConditionTemplate: 'count_threshold_upward',
       activeParamList: cfg.thresholds.map(String),
-      effectId: cfg.effectId, activeType: 'BATTLE', weight: 1,
+      effectId: cfg.effectId, activeType: 'BATTLE', weight: 10, // 10 = 官方「正常可抽」标尺（2026-10-17 抽取改加权后必须对齐，原 1）
       isActiveInDeck: false, maxInactiveBondCount: -1, noStack: false,
       descParamBaseList: [...(cfg.descParamBaseList || [])], descParamPerStackList: [...(cfg.descParamPerStackList || [])],
       chessIdList: [...cfg.members],

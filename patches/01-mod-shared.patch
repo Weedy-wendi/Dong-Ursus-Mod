@@ -45,7 +45,7 @@ index 43a2a64..3e52cc3 100644
  - choices: 机变 families (悬赏决策 bounties, 道具补给, 机密商店, 战术决策 team/personal buffs). 悬赏决策 = the official structure of its round (choices.json `bountyDrafts`, 86 drafted cards: R3 a fixed set of six 两场 cards, R9 6 of a boss group's list, R11 6 of a seen 7-card list; §21.2); 机密商店 (R11 the official composition) and 战术决策 can offer the same card twice (`shopDraft` / `tacticDraft`); bounty cards carry `descRaw`; no draft offers a multi-round card, and 教鞭's lasts two battles (`choices.js MULTI_ROUND_BOUNTY_BATTLES`, §20.6). Pointing Stick (教鞭) offers up to three private Tactical Training cards during PREP; the owner confirms one through `g.choice` with its `choiceId`, with Ready blocked until confirmation or the existing prep deadline's auto-pick. “神秘顾客” remains random (META §2.5).
  
 diff --git a/docs/research/00-INDEX.md b/docs/research/00-INDEX.md
-index 0f4d19c..93fdb45 100644
+index 0f4d19c..58952ac 100644
 --- a/docs/research/00-INDEX.md
 +++ b/docs/research/00-INDEX.md
 @@ -118,6 +118,10 @@ The server draws a disabled bond set **D**: **3 core + 4 add-on** in NORMAL/HARD
@@ -54,7 +54,7 @@ index 0f4d19c..93fdb45 100644
  
 +**Remake adjustment (owner decision 2026-10-13, not official):** with the two custom core bonds (东/乌萨斯) the core pool grew 8 → 10, so the draw is **5 core + 5 add-on** in NORMAL/HARD/ABYSS (config `data/config.json → bans`, built by tools/build-data.mjs) — scaled to keep the average available operators at the 0.2.1 baseline of ≈90 (MC: 0.2.1 3+4 → 22.0 banned / 90.0 available; 10-core 5+5 → 33.5 / 91.5). The draw still only filters the shop pool: a drawn bond stays activatable (computeBonds never reads the ban set) — its members that survive (multi-bond ones via their other bonds, plus 调和's +1) still reach the thresholds; only 阿戈尔 shows a real (2.7 %) risk of not even reaching its lowest tier with 调和. Weight remains a draw-eligibility gate, not a sampler weight.
 +
-+**Remake adjustment 2 (owner decision 2026-10-17, not official):** 协防干员 (`emptyShip`) joins the draw — its `weight` goes 0 → 10 in `tools/custom-content.mjs` (`BOND_WEIGHT_OVERRIDES`, applied in `injectCustomContent` before any builder), so the add-on pool is **12**. 投资人 (`investShip`) explicitly stays weight 0 = never banned (调和 / 绝技 too). Self-selected (`自选编队`) pieces are exempt from the 协防 ban: `server/match/player/diy.js → buildDiyStock` drops `economy.fallbackBondId` from a DIY record's bonds before the all-bonds-off test, so a factionless pick and every prototype (all `['emptyShip']`) keep their stock — the player-facing promise "协防不会被禁用" holds. The draw becomes **7 core + 4 add-on** in NORMAL/HARD/ABYSS (same ≈90 criterion; exact closed form + 200k MC + the production `drawDisabledBonds`: 10-core 7+4 → 36.7 banned / 88.3 available vs 0.2.1's 22.0 / 90.0). Fun side effects, all measured: 阿戈尔 drops to 4.8 mean available members (0.27 % risk below its lowest tier with 调和), FUNNY's add-on candidate pool is 7 so 协防 is drawn there ~14.9 % of the time, and the per-match banned count now ranges 23–50. ⚠️ The closed form used in the earlier 禁用机制速查 §11.3 grid treated a piece's several same-pool bonds as independent draws; the correct (without-replacement) form is `C(C−c, nC−c)/C(C, nC) × C(A−a, nA−a)/C(A, nA)` — the §11.2 grid is ~1 low. Full evaluation: 禁用机制速查.md §12.
++**Remake adjustment 2 (owner decision 2026-10-17, not official):** 协防干员 (`emptyShip`) joins the draw — its `weight` goes 0 → 10 in `tools/custom-content.mjs` (`BOND_WEIGHT_OVERRIDES`, applied in `injectCustomContent` before any builder), so the add-on pool is **12**. 投资人 (`investShip`) explicitly stays weight 0 = never banned (调和 / 绝技 too). Self-selected (`自选编队`) pieces are exempt from the 协防 ban: `server/match/player/diy.js → buildDiyStock` drops `economy.fallbackBondId` from a DIY record's bonds before the all-bonds-off test, so a factionless pick and every prototype (all `['emptyShip']`) keep their stock — the player-facing promise "协防不会被禁用" holds. The draw is **5 core + 5 add-on** with a **weighted** sample (2026-10-17 second ruling, supersedes the interim 7+4): `pool.js → sample()` draws each bond with probability ∝ `bond.weight` (sequential PPS without replacement; equal weights ⇒ the old uniform shuffle), scale 10 = "normally drawable". Weights (`custom-content.mjs BOND_WEIGHT_OVERRIDES` + the custom-bond template): 远见/奇迹 (visi/mira) **2.5 = 0.25×** (user asked to suppress them — draw rate 41.7 % → 9.1 %), 迅捷/精准/灵巧 (swift/preci/skillful) **45 = 4.5×** (83.7 %, the compensating pressure — suppressing 远见/奇迹 alone does NOT move the total: the mean expected-banned over the 792 add-on subsets containing them equals the mean over those without, 32.246 vs 32.250), everything else 10; 自制 东/乌萨斯 bumped 1 → 10 to match the scale. production `drawDisabledBonds` × 200 k seeds: 35.07 banned / **89.93 available** (0.2.1 anchor: 22.0 / 90.0); 投资人 0.00 %. Full evaluation: 禁用机制速查.md §12 (interim 7+4, archived) and §13 (current).
 +
  ## 7. Contradictions found and resolved
  
@@ -287,8 +287,23 @@ index a375e04..474ac12 100644
      if (this.anim === ANIM.DIE && this.alive) this.die();
      if (this.actor && this.alive) this.actor.setBase(this._baseFromAnim());
    }
+diff --git a/server/match/Match.js b/server/match/Match.js
+index 3e12fc2..0155933 100644
+--- a/server/match/Match.js
++++ b/server/match/Match.js
+@@ -327,7 +327,9 @@ export class Match {
+     this.factions = setup.factions;
+     this.bossId = setup.bossId;
+     this.hiddenBossId = setup.hiddenBossId;
+-    const bans = drawDisabledBonds(this.gd, this.rngSetup);
++    // 禁集抽取用独立派生流（2026-10-17 抽取改加权后，sample 的 rng 消耗与 shuffle 不同——
++    // 若与 rngSetup 共流会把整条对局随机流全部挪动；单开一流让禁集之外的一切保持原样）
++    const bans = drawDisabledBonds(this.gd, rng('bans'));
+     this.disabledBonds = bans.drawn;
+     this.staticInactiveBonds = bans.staticOff;
+     this.bannedChess = bans.banned;
 diff --git a/server/match/gamedata.js b/server/match/gamedata.js
-index c5380d9..1a4fa75 100644
+index c5380d9..7ca1638 100644
 --- a/server/match/gamedata.js
 +++ b/server/match/gamedata.js
 @@ -47,7 +47,7 @@ export const DEFAULTS = Object.freeze({
@@ -296,10 +311,24 @@ index c5380d9..1a4fa75 100644
    unite: { maxHelpers: 2, templates: { 1: 'act1autochess_escaped_single', 2: 'act1autochess_escaped_multi' } },
    timers: { infoCheck: 25, bandDraft: 50, bandTurn: 30, battleCheck: 3, spFirst: 30, spTurn: 16 },
 -  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 3, addon: 4 }, HARD: { core: 3, addon: 4 }, ABYSS: { core: 3, addon: 4 } },
-+  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 7, addon: 4 }, HARD: { core: 7, addon: 4 }, ABYSS: { core: 7, addon: 4 } },
++  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 } },
    bandDraft: { skipsPerPlayer: 1, timeoutBandId: 'band_bldsk' },
    leftoverFundsKeptByBands: ['band_cannot'],
  });
+diff --git a/server/match/match/setupVote.js b/server/match/match/setupVote.js
+index d15e972..8137f7e 100644
+--- a/server/match/match/setupVote.js
++++ b/server/match/match/setupVote.js
+@@ -82,7 +82,8 @@ export class MatchSetupVote {
+       const rng = createRng(deriveSeed(this.seed, `reroll-setup:${this.setupRevision + 1}`));
+       const setup = setupMatchWaves(this.gd, rng);
+       const stage = setup.stageId ? this.gd.stage(setup.stageId) : null;
+-      const bans = drawDisabledBonds(this.gd, rng);
++      // 禁集独立流（同 Match.js：不让加权抽取的 rng 消耗污染 setup 流）
++      const bans = drawDisabledBonds(this.gd, createRng(deriveSeed(this.seed, `reroll-bans:${this.setupRevision + 1}`)));
+       const pool = new SharedPool(this.gd, { banned: bans.banned });
+       if (!pool.entries.size) throw new Error('rerolled chess pool is empty');
+       const off = new Set([...bans.drawn, ...bans.staticOff]);
 diff --git a/server/match/player/diy.js b/server/match/player/diy.js
 index c5acc99..4dc4253 100644
 --- a/server/match/player/diy.js
@@ -325,6 +354,61 @@ index c5acc99..4dc4253 100644
        if (bonds.length > 0 && bonds.every((b) => off.has(b))) { banned.push(slotId); continue; }
        const cap = gd.poolCopies(slotId);
        if (!(cap > 0)) continue;
+diff --git a/server/match/pool.js b/server/match/pool.js
+index 29849d6..4b3728f 100644
+--- a/server/match/pool.js
++++ b/server/match/pool.js
+@@ -20,9 +20,10 @@
+ // copies like any chess, drawn by that player only.
+ 
+ /**
+- * Per-match disabled bond set D and banned chess (research 01 A2): D = uniform sample of `core` core bonds and `addon`
+- * add-on bonds among weight > 0 bonds that are active in the mode. A visible chess is banned iff every one of its
+- * bonds is in D ∪ mode.inactiveBondIds.
++ * Per-match disabled bond set D and banned chess (research 01 A2): D = weighted sample (by `bond.weight`,
++ * sequential PPS without replacement; 10 = the official "normally drawable" scale — equal weights ⇒ uniform)
++ * of `core` core bonds and `addon` add-on bonds among weight > 0 bonds that are active in the mode. A visible
++ * chess is banned iff every one of its bonds is in D ∪ mode.inactiveBondIds.
+  * @param {import('./gamedata.js').GameData} gd
+  * @param {Function} rng seeded rng (createRng)
+  * @returns {{ drawn: string[], staticOff: string[], banned: string[] }}
+@@ -36,7 +37,8 @@ export function drawDisabledBonds(gd, rng) {
+   });
+   const core = eligible.filter((b) => gd.bond(b).isCore);
+   const addon = eligible.filter((b) => !gd.bond(b).isCore);
+-  const drawn = [...sample(core, nCore, rng), ...sample(addon, nAddon, rng)].sort();
++  const weightOf = (b) => Math.max(0, Number(gd.bond(b).weight) || 0);
++  const drawn = [...sample(core, nCore, weightOf, rng), ...sample(addon, nAddon, weightOf, rng)].sort();
+   const off = new Set([...drawn, ...staticOff]);
+   const banned = [];
+   for (const id of gd.visibleChess) {
+@@ -47,10 +49,22 @@ export function drawDisabledBonds(gd, rng) {
+   return { drawn, staticOff, banned };
+ }
+ 
+-function sample(arr, n, rng) {
+-  const a = arr.slice();
+-  rng.shuffle(a);
+-  return a.slice(0, Math.max(0, Math.min(n, a.length)));
++/** Weighted sample without replacement (sequential PPS): each step picks an item with probability ∝ weight.
++ * Equal weights ⇒ exactly the uniform shuffle-draw this used to be. */
++function sample(arr, n, weightOf, rng) {
++  const items = arr.slice();
++  const out = [];
++  while (out.length < n && items.length) {
++    let total = 0;
++    for (const b of items) total += weightOf(b);
++    if (!(total > 0)) break;
++    let r = rng() * total;
++    let pick = items[items.length - 1];
++    for (const b of items) { r -= weightOf(b); if (r < 0) { pick = b; break; } }
++    out.push(pick);
++    items.splice(items.indexOf(pick), 1);
++  }
++  return out;
+ }
+ 
+ export class SharedPool {
 diff --git a/server/sim/battle/deploy.js b/server/sim/battle/deploy.js
 index 12962e7..013c2b0 100644
 --- a/server/sim/battle/deploy.js
@@ -1288,7 +1372,7 @@ index 20d83dd..495035d 100644
        skel: assetUrl(m.skel.rel),
        atlas: assetUrl(m.atlas.rel),
 diff --git a/tools/build-data.mjs b/tools/build-data.mjs
-index 48fa3fa..f2ebe61 100644
+index 48fa3fa..74085a1 100644
 --- a/tools/build-data.mjs
 +++ b/tools/build-data.mjs
 @@ -40,6 +40,7 @@ import { bandBondIds } from '../shared/bandBonds.js';
@@ -1299,22 +1383,23 @@ index 48fa3fa..f2ebe61 100644
  
  // ===== CLI & IO ==================================================================================
  
-@@ -3718,8 +3719,12 @@ function buildConfig(ctx, waves, stages, bands, chess, items) {
+@@ -3718,8 +3719,13 @@ function buildConfig(ctx, waves, stages, bands, chess, items) {
        chatCd: ac.constData?.chatCD ?? 1, chatBubble: ac.constData?.chatTime ?? 3, broadcastDelay: ac.constData?.broadcastBeginDelay ?? 1,
        enterSteps: (Array.isArray(ac.enterStepList) ? ac.enterStepList : Object.values(ac.enterStepList || {})).map((s) => ({ step: s.stepType, time: s.time, hint: s.hintTime, title: s.title })),
      },
 -    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 3, addon: 4 }, HARD: { core: 3, addon: 4 }, ABYSS: { core: 3, addon: 4 }, TRAINING: { core: 0, addon: 0 },
 -      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0; uniform draw' },
 +    // 2026-10-17（用户口径）：协防干员 emptyShip 由 weight 0 → 10（进抽取池，见 custom-content.mjs 的
-+    // BOND_WEIGHT_OVERRIDES）→ 支线池 11 → 12；抽取规则改为「n 核心 + 4 支线」，n = 7：
-+    // 期望被禁 36.68 / 可用 88.32，对齐官方 0.2.1 基线（112 干员、3+4 → 被禁 22.0 / 可用 90.0）的可用数口径。
-+    // 投资人 investShip 保持 weight 0 = 永不被禁。完整评估见 禁用机制速查.md §12。
-+    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 7, addon: 4 }, HARD: { core: 7, addon: 4 }, ABYSS: { core: 7, addon: 4 }, TRAINING: { core: 0, addon: 0 },
-+      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0 (协防干员 emptyShip became bannable 2026-10-17; 投资人 investShip stays weight 0 = never banned); uniform draw; NORMAL/HARD/ABYSS = 7 core + 4 addon' },
++    // BOND_WEIGHT_OVERRIDES）→ 支线池 11 → 12。抽取规则回到「5 核心 + 5 支线」，但抽取改为**按 weight 加权**
++    // （pool.js sample）：远见/奇迹 0.25×（2.5）、迅捷/精准/灵巧 4.5×（45，禁用压力补偿）、其余 1×（10 = 正常）。
++    // 期望被禁 35.07 / 可用 89.93 ≈ 90（对齐官方 0.2.1 基线 22.0 被禁 / 90.0 可用）。投资人 investShip 保持
++    // weight 0 = 永不被禁。完整评估见 禁用机制速查.md §12。
++    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 }, TRAINING: { core: 0, addon: 0 },
++      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0 (协防干员 emptyShip became bannable 2026-10-17; 投资人 investShip stays weight 0 = never banned); weighted draw (bond.weight, 10 = normal); NORMAL/HARD/ABYSS = 5 core + 5 addon' },
      bandDraft: { skipsPerPlayer: 1, order: 'random', duplicatesAllowed: true, timeoutBandId: 'band_bldsk' },
      titles: Object.values(act.playerTitleDataDict || {}).map((t) => ({ id: t.id, picId: t.picId, name: t.txt, ...(titleRules[t.id] || {}) })),
      titleRule: 'each player gets at most one title; each title is used at most once per match; assign by the category where the player ranks best relative to teammates [ASSUMED]',
-@@ -3881,9 +3886,10 @@ function validateAll(f) {
+@@ -3881,9 +3887,10 @@ function validateAll(f) {
      bad.slice(0, 5).forEach((p) => err(`non-finite number at ${p}`));
    }
    const visible = Object.values(chess).filter((c) => !c.isGolden && c.visible);
@@ -1328,7 +1413,7 @@ index 48fa3fa..f2ebe61 100644
    for (const c of Object.values(chess)) {
      if (!chess[c.baseId]) err(`chess ${c.chessId}: baseId missing`);
      if (c.goldenId && !chess[c.goldenId]) err(`chess ${c.chessId}: goldenId missing`);
-@@ -4067,6 +4073,7 @@ function validateAll(f) {
+@@ -4067,6 +4074,7 @@ function validateAll(f) {
  async function main() {
    const t0 = Date.now();
    const ctx = await loadContext();

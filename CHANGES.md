@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-10-17（第十一条）· 禁用抽取改加权：回到 5+5，远见/奇迹降权，可用干员 ≈90
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `patches/01-mod-shared.patch` | ① 新增目标 `server/match/pool.js`：`drawDisabledBonds` 的 `sample()` 由均匀洗牌改为**按 `bond.weight` 的加权无放回抽样**（顺序 PPS；权重相等时与原均匀洗牌同分布）② 新增目标 `server/match/Match.js` + `server/match/match/setupVote.js`：禁集抽取改用**独立派生 rng**（`deriveSeed(seed,'bans')` / `'reroll-bans:N'`）——加权抽样的 rng 消耗与 shuffle 不同，若与 `rngSetup` 共流会把整条对局随机流挪动 ③ `tools/build-data.mjs`：`bans` 回到 **`{core:5,addon:5}`**（NORMAL/HARD/ABYSS），rule 文案改 weighted draw ④ `server/match/gamedata.js`：`DEFAULTS.bans` 同步 5+5 ⑤ `docs/research/00-INDEX.md`：禁用规则段重写为现行加权规则 |
+| `files/tools/custom-content.mjs` | `BOND_WEIGHT_OVERRIDES` 扩充：`visiShip/miraShip` **2.5（0.25×）**、`swiftShip/preciShip/skillfulShip` **45（4.5×）**；自制盟约注入模板的 `weight` **1 → 10**（对齐官方「正常可抽」标尺——均匀抽时无差别，加权后必须对齐）；`emptyShip` 保持 10（协防仍可被抽中）；`investShip/maniShip/suntShip` 保持 0（永不被禁） |
+| `patches/02-tests-calibration.patch` | `match/pool.test.js`（断言 5+5 + 新增加权分布断言：可用数 ≈90、远见 <15%、迅捷 >70%、协防 20–50%；`drawnDisabledBonds` 10 条）、`ui/match-info.test.js`（绝境 7+4 → 5+5）、`match/setup-reroll.test.js`（期望重算改成生产的新双流：waves 流 + 独立 `reroll-bans` 流）、`content/items.test.js`（拟态物质三处 seed 9 → 1：新禁集下 seed 9 会禁掉溯光星源）、`match/bot.test.js`（切片数下界 8 → 7）、`match/feedback3-gift.test.js`（信标测试只在池内挑干员）、`playtest6-elite-to-board.test.js`（seed 1 → 2：新禁集禁了赫默）；`lobby-diy/board/feedback5-we2-diy-grants` 注释同步；`test/golden/*` 6 份快照重建 |
+| `mod.json` | `version` 1.0.8 → **1.0.9**；`base.files 97 · patched 85 · owned 35 · removed 12 · generated 22`（+4 补丁目标：`pool.js`、`Match.js`、`setupVote.js`、`setup-reroll.test.js`） |
+
+### 为什么
+
+用户口径：**回到 5+5**、协防仍可被抽中、**调低「远见」「奇迹」的抽中概率**、可用干员数尽量贴近 90。
+评估发现：**单独调远见/奇迹的概率不改变期望可用数**——枚举全部 792 个支线组合，含/不含它们的平均被禁数
+几乎相同（32.246 vs 32.250），概率质量的重新分配在对局层面完全对消。因此把「降权远见/奇迹」与
+「加权迅捷/精准/灵巧（成员最孤立的支线）」捆绑，落在 **期望被禁 35.07 / 可用 89.93 ≈ 90**（production × 20 万 seed）。
+
+### 怎么验的
+
+- `pool.test.js` 新增 2 万 seed 的分布断言（可用数 89.5–90.5 区间、远见/奇迹 <15%、迅捷 >70%、协防 20–50%）。
+- 工作区全量 `node --test`：仅剩已知环境性失败；`test/golden/*` 全量重建后全绿。
+- 纯净基线树安装 + `verify.mjs` 子集 0 fail（见发布记录）。
+
+---
+
 ## 2026-10-17（第十条）· 新增 5 条自制策略（天尊救我 / 雪原征召 / 完美偶像 / 以物易人 / 人形天灾）
 
 ### 改了什么
