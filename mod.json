@@ -2,7 +2,7 @@
   "format": 1,
   "mod": "dong-ursus",
   "name": "【东】＋【乌萨斯】盟约 mod",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
   "source": {
@@ -20,6 +20,10 @@
       ".gitignore": {
         "size": 2026,
         "sha256": "612bb04102cb89d763bc39aa9dc283303f13ca2cd1c7c5be55d447ddda976586"
+      },
+      "docs/PLAYING.md": {
+        "size": 81894,
+        "sha256": "fe582a326fb2649adec06df096635176000eee26ed32fe85b4afb23885a0e28a"
       },
       "docs/research/00-INDEX.md": {
         "size": 19998,
@@ -44,6 +48,10 @@
       "server/match/gamedata.js": {
         "size": 30387,
         "sha256": "3cbcd6ae38348566ef995fcac285cf60d22d0da39ae24ebc1e99c9df40996ab7"
+      },
+      "server/match/player/diy.js": {
+        "size": 14592,
+        "sha256": "6beaa7114f492882d72665344752d188a8cd24180c8bce5cdfefa99edd6a2166"
       },
       "server/sim/battle/deploy.js": {
         "size": 14869,
@@ -257,6 +265,10 @@
         "size": 28295,
         "sha256": "5e24ce011044a44f3b6351695b53d4ccf938caccacce6c4019b3df3fae1c9a56"
       },
+      "test/match/bot.test.js": {
+        "size": 21894,
+        "sha256": "115d0bc164d8dd4a270cbacc52831acb599228e7af2218776b9889dcaabc2cbf"
+      },
       "test/match/diy-bonds.test.js": {
         "size": 7071,
         "sha256": "ab073e2cae50e390e54c75243f54669a55cd1624f5b55d01414a30a77250e8fa"
@@ -264,6 +276,10 @@
       "test/match/diy-shop.test.js": {
         "size": 25511,
         "sha256": "0c701756458dd235b878c518385c397dcc7bd5201c9776bf38ded0601ba800bc"
+      },
+      "test/match/feedback3-gift.test.js": {
+        "size": 7462,
+        "sha256": "51b3eb65480d14b6b8304eaa3907ee59504980efb093ea0b1873f5259921005e"
       },
       "test/match/feedback5-we2-diy-grants.test.js": {
         "size": 4464,
@@ -385,8 +401,8 @@
   ],
   "owned": {
     "data/assets.json": {
-      "size": 1338134,
-      "sha256": "ae129cee2e02ee873fb8d62e10436e523adfb5b0f11d3a86d586c70f1e995cdf"
+      "size": 1337592,
+      "sha256": "43f7bf7f5ec043ba8a5add4bc53d9b3bd0568f2910a1afc46d53baf28578a3c7"
     },
     "public/assets/bond/dongShip.png": {
       "size": 32409,
@@ -396,13 +412,13 @@
       "size": 10871,
       "sha256": "b7e201bce66c803fa663c4c61ffecce7d190f0ebdebbeb4afa395e84391a928d"
     },
-    "server/sim/content/kits/ops/chess_char_3_96-kichi.js": {
-      "size": 7274,
-      "sha256": "777a416a264fdaf580781d90fa61e01f0b57e8ce8f0845dccf5aeb822ee1d292"
+    "server/sim/content/kits/ops/chess_char_3_96-makiri.js": {
+      "size": 5751,
+      "sha256": "c118f81226040b7f44631ee0c2038a83129d9ae2c6b16d7488c50a6b3bfd3cd9"
     },
     "server/sim/content/kits/ops/chess_char_3_97-yuki.js": {
       "size": 6165,
-      "sha256": "ba1a7a65f7bc11e2ba42102b7903e652dd6b9f76f1ccf5f285c426ce7b22a2fa"
+      "sha256": "29f957b1f518389b8539c01d5a554468594af4cfc53034a7d7f5d18b0952bb11"
     },
     "server/sim/content/kits/ops/chess_char_3_98-leto.js": {
       "size": 5498,
@@ -501,8 +517,8 @@
       "sha256": "1f3f93d23c4e283b5e6894e9cd86db67a2994ac204233ad7c5c1018e0da51bf7"
     },
     "tools/custom-content.mjs": {
-      "size": 49764,
-      "sha256": "d857a769bb88643fc1fd34d6bf3160950a7a9e26cec5c1e89bb3c6a730aec0c2"
+      "size": 52508,
+      "sha256": "47eae6780fa8d9cd9fb45ef3d0c49ccdc4f8625e432256e760b53090e6fcd240"
     }
   },
   "patched": {
@@ -510,9 +526,13 @@
       "size": 2133,
       "sha256": "1976ac2e036a569d7738555254150b64866c3cb27da4cda08630083b647a712a"
     },
+    "docs/PLAYING.md": {
+      "size": 81994,
+      "sha256": "829729f7e810b077ae35a869c140714f800119389b13267471f848c2a1941517"
+    },
     "docs/research/00-INDEX.md": {
-      "size": 20808,
-      "sha256": "d360b766832f434879819e1de5084ae75f9a461e69071bae6085848ab640f5db"
+      "size": 22316,
+      "sha256": "a6be57140c02ea89c4019ddcfbc783384b1b9f7eac0225a5d3d6383356286ce4"
     },
     "docs/research/04-items.json": {
       "size": 226866,
@@ -532,7 +552,11 @@
     },
     "server/match/gamedata.js": {
       "size": 30387,
-      "sha256": "bda6b0d5b1c86fa379da76a1138393972976a5308338008435d0c3af7d575162"
+      "sha256": "6f3621eea3a8e83afa43675bac95f29c998f879da530f97864df1f316c861a59"
+    },
+    "server/match/player/diy.js": {
+      "size": 15660,
+      "sha256": "6992af0a76d0967aa915c54bbef59eed6c837aafdf375223b63b830e31cb858e"
     },
     "server/sim/battle/deploy.js": {
       "size": 15243,
@@ -543,16 +567,16 @@
       "sha256": "21b7f3f240adf0d61ebb75107fddef7f5ba3873e45ffaebf18f4c340b39b9149"
     },
     "server/sim/content/garrisons/meta.js": {
-      "size": 25926,
-      "sha256": "260d87e9a4749f347e988999a5d04dde6cdd3cc4663bb8ed71bd1854266bec3f"
+      "size": 26401,
+      "sha256": "6bf071757d1f562b1a30a01a7c38b5c0f27717e96310f256874bb78a34215205"
     },
     "server/sim/content/items/battle.js": {
       "size": 56662,
       "sha256": "3d5fb9f104566e867a463cd1f901d4ab07ef03d8e069b1ea4257188aa28a7222"
     },
     "server/sim/content/kits/index.js": {
-      "size": 11133,
-      "sha256": "22824df30c36dd54ea7d70b7499c77514193aa898797a67d2d2cc8b3e31035a2"
+      "size": 11134,
+      "sha256": "179c2dc6ce436051d9bab149aa774698bb024d66518d06dc4046d56d52fefeef"
     },
     "server/sim/content/kits/ops/chess_char_2_08-bubble.js": {
       "size": 2323,
@@ -599,8 +623,8 @@
       "sha256": "afdc63b04e10c0e70d4755cbe82cd75a1f7b4866466aef862663dbcc5f030b8e"
     },
     "test/content/garrisons_meta.test.js": {
-      "size": 46210,
-      "sha256": "5095423580ac6402deb7b09a05e81318e65c94261e11c23a4652bbdd9a0f7dc2"
+      "size": 47024,
+      "sha256": "758bd7cfbeb5105f28ff7462f83908b73731681bbdd58265b89104bcdb51513e"
     },
     "test/content/items.test.js": {
       "size": 73743,
@@ -627,8 +651,8 @@
       "sha256": "4acfb696de8c41bbe83dcdcc77ca40490ff5c74d16b579a8ff7ec68006803371"
     },
     "test/content/kits_t3.test.js": {
-      "size": 69180,
-      "sha256": "401ac194a6f70a9f897d1a28b547d6286eb36ddf5ebdf0867983ddc69224ed7f"
+      "size": 72396,
+      "sha256": "b378af6f3cfe2a8f9f08e858b118d961097a0a576da767d31298f137bd679944"
     },
     "test/content/kits_t4.test.js": {
       "size": 77257,
@@ -683,32 +707,40 @@
       "sha256": "9f4bc9d5513c34b0e69c3aaffc98c49e60e12a4857981524e430930be5ab2c3e"
     },
     "test/golden-standins.test.js": {
-      "size": 4049,
-      "sha256": "f34f3a43e56db5df9563408df21c3abed1dfe527737245cad1c9d58005870add"
+      "size": 4517,
+      "sha256": "cf583a5048fdbae5d5745c605e662819afdffe09ad80701fb21567741f808481"
     },
     "test/lobby-diy.test.js": {
-      "size": 8231,
-      "sha256": "421b159bf6d4c2ace133f6f17bcb48634bc4081b8d8bb253ba0429e7b951c1ed"
+      "size": 8585,
+      "sha256": "c6fdadcad3c6ef85a4ef7266c7fe6ea47a94eba89603e3d62c95ddccd1f91ea7"
     },
     "test/match/board.test.js": {
-      "size": 19408,
-      "sha256": "e256995c9194ea056f4d61a5f6a61f9bf57b6b7b6800f281f894f2526b793be6"
+      "size": 19739,
+      "sha256": "ee52c5c377fd65d4972cc553157ac6c30387a913351907382cf9dafe39dc755c"
     },
     "test/match/bot-smarter.test.js": {
-      "size": 28392,
-      "sha256": "339ef1a11db678b78e1a208bbf74c884631ce4186b93ca12d7a4765b9739b8f8"
+      "size": 29024,
+      "sha256": "fecf93877699f8db76b669d6d7cecdc849d4e17e81f939479ff362c8094235c7"
+    },
+    "test/match/bot.test.js": {
+      "size": 22045,
+      "sha256": "f817f0d5fec5409bfcdbab4693aac4c7d89503abc8d3b54ffdaea08e2d96d351"
     },
     "test/match/diy-bonds.test.js": {
       "size": 7253,
       "sha256": "c2a81949c683c6707f363a884a29e7d85807f5701665b5aa170e90c9875b8d66"
     },
     "test/match/diy-shop.test.js": {
-      "size": 25510,
-      "sha256": "049072e466c989c96bc304b6ac090e226fcf8303f489bd7387e2bc9dd8ff35f8"
+      "size": 25814,
+      "sha256": "c3dc329e5001ad95c33b7c2f65a42d99526634e59cf91efe44b6589d4f283a8e"
+    },
+    "test/match/feedback3-gift.test.js": {
+      "size": 7487,
+      "sha256": "fc679a8c3162f3aa2e3673b5c47805c94aed528cadfc8c1285103e7ecfb6ac58"
     },
     "test/match/feedback5-we2-diy-grants.test.js": {
-      "size": 4588,
-      "sha256": "5712543473886c46466fc31d402a88d954aea13433da637702b75215437e0992"
+      "size": 4716,
+      "sha256": "5b0b56ee9c664fe6f338fb47b89f1fe8ef84780c6b493d8a9d161bf083f2b50d"
     },
     "test/match/funnel-redeploy.test.js": {
       "size": 4075,
@@ -719,24 +751,24 @@
       "sha256": "275da4d4fae753daa987d09f675f6196f1cd7527b82f46fd19698f1f60b4c51b"
     },
     "test/match/merge.test.js": {
-      "size": 31616,
-      "sha256": "5032ddf10e455bdd2f7649dfb39210a43cc5d6d2f78cb3c2ff4cc27175755164"
+      "size": 31668,
+      "sha256": "9babd40dc1f5f6f8cab7a11451d8ae7f2fbfbce92cdbe024284a9b949537560d"
     },
     "test/match/morph-bonds.test.js": {
       "size": 10542,
       "sha256": "a2fae392957513335de9d49dc2f76ca5679d1faeb28dd917ecade3ac2dbe9eef"
     },
     "test/match/playtest6-elite-to-board.test.js": {
-      "size": 27722,
-      "sha256": "858653de2d6271ae81006dc88073d67d4b8be3676bb2ad6cd95daa3f09163c5f"
+      "size": 27794,
+      "sha256": "cd831b4dc5a405220d25a38506325d1cecf20be0b627c738f478e9e7e95775aa"
     },
     "test/match/playtest6_summons.test.js": {
       "size": 16870,
       "sha256": "d04f1c76509c962e49f346eabe36d253a551607c3f92a9c58d1b87d4f25318d8"
     },
     "test/match/pool.test.js": {
-      "size": 11321,
-      "sha256": "c9973255c031c5793801f0aa97299092d7f7eefbf6ed1a2c93cd50b47b27570c"
+      "size": 11710,
+      "sha256": "2e7c1fe3d0ad730a41a8e527f6e46c8cd0fe7d783b8eec198a7577dd18098741"
     },
     "test/potential.test.js": {
       "size": 12438,
@@ -771,8 +803,8 @@
       "sha256": "a50b323de6e5ebd611c1ca2bd21cca8b230f41665d8c8fda897c87695aad9d6e"
     },
     "test/ui/match-info.test.js": {
-      "size": 16895,
-      "sha256": "57e118f54bb228713a7406b4e64c2e90ac37bd771350378b6905dae3f9bf3f05"
+      "size": 16911,
+      "sha256": "7ff5e22c11198d71598ff00c59bcab61cfa2f8f75566d2476a52e885e73028ff"
     },
     "test/ui/morph-bonds.test.js": {
       "size": 13586,
@@ -787,16 +819,16 @@
       "sha256": "c87a081ae772a82acec32aade574e98b4a0f64ad032551f619250156316f6821"
     },
     "tools/build-data.mjs": {
-      "size": 262020,
-      "sha256": "83b91e09dd60346a39f1c8db7885a76261f896fcd0fe0980445b61a3e218e111"
+      "size": 262648,
+      "sha256": "2e45a6cc4d382890d7c55c6feb69359d397980e1416a45e5d0b4d3dfa8698583"
     },
     "tools/fetch-assets.mjs": {
       "size": 32427,
       "sha256": "b09fa15064f39e4a0b97d2249c45cf5aec8496f14dc76283869e75feb08573ef"
     },
     "tools/golden.mjs": {
-      "size": 81265,
-      "sha256": "133660e603e2c66b0392104da2896020497b6623365519667dfb210016eacb96"
+      "size": 81767,
+      "sha256": "bd5f15d3fec01b9f57cdcb5bd732b33fa8b335d41ed9e940435930e6be69ece1"
     }
   },
   "removed": [

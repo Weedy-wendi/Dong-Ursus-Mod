@@ -217,10 +217,10 @@ index fbb8ec4..02ed878 100644
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/garrisons_meta.test.js b/test/content/garrisons_meta.test.js
-index b6782a3..7f90318 100644
+index b6782a3..aeda3bb 100644
 --- a/test/content/garrisons_meta.test.js
 +++ b/test/content/garrisons_meta.test.js
-@@ -884,6 +884,69 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
+@@ -884,6 +884,85 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
    for (const k of keys) assert.ok(REG.has(`garrison:${k}`), k);
  });
  
@@ -261,7 +261,7 @@ index b6782a3..7f90318 100644
 +  cover('garrison_987_b');
 +});
 +
-+test('自定义 990 (白雪): 获得干员时, 自身所属盟约全部 +4/_b +8 (无需激活, 与吉星 991 同口径)', () => {
++test('自定义 990 (白雪): 获得干员时, 自身所属盟约全部 +4/_b +8 (无需激活, 与鸿雪 986 同口径)', () => {
 +  // 2026-10-17 用户修订：原「已激活的层数最高的盟约 +3/6」→「自身所属盟约 +4/8」，且不再要求已激活
 +  const s = setup();
 +  s.acquire('chess_char_3_97_a');
@@ -276,14 +276,30 @@ index b6782a3..7f90318 100644
 +  cover('garrison_990_b');
 +});
 +
-+test('自定义 991 (吉星): 获得干员时, 自身所属盟约全部 +6/_b +12 (未激活也加, 鸿雪 986 同口径)', () => {
++test('自定义 991 (松桐): <休整期结束时>已激活的【东】【远见】+5/_b +10 (未激活的不加)', () => {
++  // 2026-10-17 用户口径：吉星下线，991 改绑松桐 —— 从「<获得干员时>自身所属盟约 +6/12」改为
++  // 「<休整期结束时>使已激活的【东】【远见】盟约层数 +5/10」（与官方 garrison_69 同型）
 +  const s = setup();
 +  s.acquire('chess_char_3_96_a');
-+  assert.deepEqual(s.gainsNow(), { dongShip: 6, preciShip: 6 }, JSON.stringify(s.gainsNow()));
++  give(s.m, s.ps, 'chess_char_3_96_a', 'board', [10, 4]);
++  s.activate('dongShip', 'visiShip');
++  s.prepEnd();
++  assert.deepEqual(s.gainsNow(), { dongShip: 5, visiShip: 5 }, JSON.stringify(s.gainsNow()));
 +  cover('garrison_991_a');
++  // 「使已激活的…」：未激活的盟约不加层（两个都没激活 → 什么都不加）
 +  const t = setup();
-+  t.acquire('chess_char_3_96_b');
-+  assert.deepEqual(t.gainsNow(), { dongShip: 12, preciShip: 12 }, JSON.stringify(t.gainsNow()));
++  t.acquire('chess_char_3_96_a');
++  give(t.m, t.ps, 'chess_char_3_96_a', 'board', [10, 4]);
++  t.activate('dongShip');
++  t.prepEnd();
++  assert.deepEqual(t.gainsNow(), { dongShip: 5 }, JSON.stringify(t.gainsNow()));
++  // 精锐 +10
++  const u = setup();
++  u.acquire('chess_char_3_96_b');
++  give(u.m, u.ps, 'chess_char_3_96_b', 'board', [10, 4]);
++  u.activate('dongShip', 'visiShip');
++  u.prepEnd();
++  assert.deepEqual(u.gainsNow(), { dongShip: 10, visiShip: 10 }, JSON.stringify(u.gainsNow()));
 +  cover('garrison_991_b');
 +});
 +
@@ -497,7 +513,7 @@ index e24c588..f4cebee 100644
    for (const r of rep.chess) {
      for (const s of r.skills.filter((x) => !x.isDefault)) {
 diff --git a/test/content/kits_t3.test.js b/test/content/kits_t3.test.js
-index faa3a41..0516157 100644
+index faa3a41..2cd65d5 100644
 --- a/test/content/kits_t3.test.js
 +++ b/test/content/kits_t3.test.js
 @@ -23,9 +23,9 @@ const done = (h) => { assert.deepEqual(h.b.errors.map((e) => `${e.label} ${e.mes
@@ -521,6 +537,64 @@ index faa3a41..0516157 100644
    for (const id of ids) {
      const melee = D(id).position === 'MELEE';
      const h = makeBattle({
+@@ -1271,3 +1271,57 @@ test('忍冬 追凶 never feeds on itself: a hit turned into HP loss credited to
+   assert.equal(e.s.maxHp - e.hp, 2 * atks);
+   done(h);
+ });
++
++test('3_96 松桐: T1 慢手有筹 gives 重装/辅助 ATK +atk once after 30 s on field; S2 万手成局 pays DP; S1 入场安排 pays cost DP', () => {
++  const id = 'chess_char_3_96_a', t0 = TB(id, 0), bb = BB(id);
++  const b1 = ds.rawChess(id).skills.find((s) => s.skillId === 'skchr_makiri_1').bb;
++  // ---- T1：在战场停留 interval(30) 秒后，仅一次，场上所有重装(TANK)与辅助(SUPPORT) 攻击力 +atk ----
++  const h = makeBattle({
++    defs: { enemies: {}, chess: noGarrison(id) }, timeLimit: 45, autoFinish: false, flags: { dpInit: 300 },
++    units: [
++      { uid: 1, chessId: id, row: 9, col: 5 },                    // 松桐（先锋，不吃自己的 T1）
++      { uid: 2, chessId: 'chess_char_3_16_a', row: 9, col: 6 },   // 蛇屠箱（铁卫 → TANK）
++      { uid: 3, chessId: 'chess_char_3_09_a', row: 10, col: 6 },  // 海霓（削弱者 → SUPPORT）
++      { uid: 4, chessId: 'chess_char_3_99_a', row: 10, col: 4 },  // 缠丸（无畏者，不吃）
++    ],
++  });
++  const me = h.unit(1), tank = h.unit(2), supp = h.unit(3), other = h.unit(4);
++  h.run(t0.interval - 0.5);
++  for (const u of [tank, supp]) assert.ok(!u.findBuff('talent:makiri:atk'), `${u.defId} buffed too early`);
++  const tankAtk0 = tank.s.atk, suppAtk0 = supp.s.atk;
++  h.run(1.5);
++  approx(tank.s.atk, tankAtk0 * (1 + t0.atk), 1e-6, '铁卫 ATK +atk');
++  approx(supp.s.atk, suppAtk0 * (1 + t0.atk), 1e-6, '辅助 ATK +atk');
++  assert.ok(!me.findBuff('talent:makiri:atk') && !other.findBuff('talent:makiri:atk'), '只有重装 / 辅助吃');
++  done(h);
++  // ---- S2 万手成局（默认技能）：每秒回费、攻击力 +atk、每秒回血（场上放一个打不死的靶子让 AI 开技）----
++  const s = makeBattle({
++    defs: { enemies: { enemy_d: dummy('enemy_d') }, chess: noGarrison(id) },
++    timeLimit: 40, autoFinish: false, units: [{ chessId: id, row: 10, col: 5 }],
++  });
++  const u = s.unit(id);
++  s.run(1);
++  s.spawn('enemy_d', { pos: [10, 6] });
++  const p = s.b.getPlayer('p1');
++  fill(u);
++  assert.ok(s.runUntil(() => u.skill.active, 5));
++  const atkKey = 'makiri_s_2[passive].atk';
++  const regenKey = 'makiri_s_2[passive].hp_recovery_per_sec_by_max_hp_ratio';
++  approx(u.s.atk, u.base.atk * (1 + bb[atkKey]), 1e-6, 'S2 ATK +atk');
++  approx(u.s.hpRegen, u.s.maxHp * bb[regenKey], 1e-6, 'S2 每秒回血');
++  const dpStart = p.dp, timeStart = s.b.time;
++  assert.ok(s.runUntil(() => !u.skill.active, 25));
++  // 技能自己回 bb.value 点；另加同期的自然回费（dpPerSec，避免把两者混为一谈）
++  approx(p.dp, dpStart + bb.value + (s.b.time - timeStart) * s.b.flags.dpPerSec, 1e-6, `S2 共回 ${bb.value} 点部署费用`);
++  done(s);
++  // ---- S1 入场安排（非默认，AUTO）：立即获得 cost 点部署费用 ----
++  const t = makeBattle({ defs: { enemies: {}, chess: noGarrison(id) }, timeLimit: 30, autoFinish: false, units: [{ chessId: id, skillIndex: 0, row: 10, col: 5 }] });
++  const v = t.unit(id);
++  t.run(1);
++  const q = t.b.getPlayer('p1');
++  const dp1 = q.dp, time1 = t.b.time;
++  fill(v);
++  assert.ok(t.runUntil(() => v.skill.activations >= 1, 5));
++  approx(q.dp, dp1 + b1.cost + (t.b.time - time1) * t.b.flags.dpPerSec, 1e-6, 'S1 +cost DP');
++  done(t);
++});
 diff --git a/test/content/kits_t4.test.js b/test/content/kits_t4.test.js
 index d065983..00749b4 100644
 --- a/test/content/kits_t4.test.js
@@ -798,10 +872,24 @@ index 8c5c508..c47b712 100644
    assert.deepEqual(dg.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 }, id);
    assert.deepEqual(Object.keys(dg.diy.picks).sort(), Object.keys(BACKUPS.diy.slots).sort(), 'all four slots filled');
 diff --git a/test/golden-standins.test.js b/test/golden-standins.test.js
-index bce956c..400d5e6 100644
+index bce956c..86c4a27 100644
 --- a/test/golden-standins.test.js
 +++ b/test/golden-standins.test.js
-@@ -58,7 +58,9 @@ test('matches: the 补位 match\'s human seat fields stand-ins (listed per round
+@@ -52,13 +52,20 @@ test('standins: every active skill a chess names for its stand-in is cast; passi
+ });
+ 
+ test('matches: the 补位 match\'s human seat fields stand-ins (listed per round) and the match ends without errors', () => {
+-  const dg = MATCHES.scenarios['coop2-NORMAL-1-coverage-standins'];
+-  assert.ok(dg, 'scenario present');
+-  assert.deepEqual(dg.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 });
++  // 2026-10-17: 吉星→松桐（chess_char_3_96 改绑 char_4199_makiri）分流了 seed 1 的草稿流 —— 它现在一个补位都不派。
++  // seed 1 原样留作回归（只查无错），派补位的断言移到 companion seed 12（seeds 1–12 probed：4/5/7/9/11/12 派，12 最多）。
++  for (const id of ['coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-12-coverage-standins']) {
++    const d = MATCHES.scenarios[id];
++    assert.ok(d, `${id} scenario present`);
++    assert.deepEqual(d.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 }, `${id}: no errors`);
++  }
++  const dg = MATCHES.scenarios['coop2-NORMAL-12-coverage-standins'];
    const fielded = dg.standIns.rounds.filter(([, s]) => s).flatMap(([, s]) => s.split(' '));
    // (≥ 2 since a level-up leaves its new slot empty — GitHub #332, PR #333 by @2321Robin: this match's shop rolls, and with
    // them which stand-ins the human seat fields, part from the stream in which the upgrade drew a card into the new slot)
@@ -813,21 +901,24 @@ index bce956c..400d5e6 100644
      const [id, charId] = f.split('→');
      const c = CHESS[`chess_char_${id}`];
 diff --git a/test/lobby-diy.test.js b/test/lobby-diy.test.js
-index ca02f41..0fcc096 100644
+index ca02f41..ed488e3 100644
 --- a/test/lobby-diy.test.js
 +++ b/test/lobby-diy.test.js
-@@ -133,7 +133,8 @@ describe('room.diy (lobby + real match)', () => {
+@@ -133,7 +133,11 @@ describe('room.diy (lobby + real match)', () => {
    let pool;
    const cap = quietLog();
    before(async () => {
 -    srv = await startServer({ port: 0, host: '127.0.0.1', log: cap.log, seedFn: () => 4242 });
-+    // (seed 4244: the disabled-bond draw grew by 乌萨斯 on 2026-10-11 — seed 4242 banned 维多利亚, siege's stock)
-+    srv = await startServer({ port: 0, host: '127.0.0.1', log: cap.log, seedFn: () => 4244 });
++    // (seed 4240: the disabled-bond draw changed again on 2026-10-17 — the rule became 7 core + 4 add-on with
++    //  协防干员 emptyShip now bannable; 4244 bans 维多利亚 (siege's bond) and clears the DIY slot, so the nearest
++    //  seed whose *derived* setup draw keeps 维多利亚 (and 协防) out of the ban set is used. 2026-10-11 had moved
++    //  4242 → 4244 for 乌萨斯. The draw depends on the rng('setup') stream, which setupMatchWaves consumes first.)
++    srv = await startServer({ port: 0, host: '127.0.0.1', log: cap.log, seedFn: () => 4240 });
      pool = clientPool(() => `ws://127.0.0.1:${srv.port}/ws`);
    });
    afterEach(async () => { await pool.closeAll(); });
 diff --git a/test/match/board.test.js b/test/match/board.test.js
-index ac7b494..54e5077 100644
+index ac7b494..7f51141 100644
 --- a/test/match/board.test.js
 +++ b/test/match/board.test.js
 @@ -94,10 +94,11 @@ test('g.move: legality per chess position, BAD_TILE outside, deploy cap 8, swaps
@@ -844,7 +935,19 @@ index ac7b494..54e5077 100644
    for (let i = 0; i < 6; i++) assert.deepEqual(m.handle('p_0', { t: 'g.move', uid: extra[i].uid, to: { area: 'board', row: tiles[i][0], col: tiles[i][1] } }), { ok: true });
    assert.equal(ps.deployCount, 8);
    assert.deepEqual(m.handle('p_0', { t: 'g.move', uid: extra[6].uid, to: { area: 'board', row: tiles[6][0], col: tiles[6][1] } }), { error: ERR.BOARD_FULL });
-@@ -136,8 +137,9 @@ test('g.move to the hand: withdraw, full-hand swap with a chess, hand↔hand swa
+@@ -115,7 +116,10 @@ test('g.move: legality per chess position, BAD_TILE outside, deploy cap 8, swaps
+ 
+ test('g.move to the hand: withdraw, full-hand swap with a chess, hand↔hand swaps, items stay in the hand', () => {
+   const { m, ps } = prepMatch();
+-  const ids = chessOfTier(1).filter((x) => m.pool.has(x));
++  // the hand is 9 chess + 1 item: take any 10 pool pieces — tier 1 first, then tier 2, because the deeper ban set
++  // (7 core + 4 add-on, 2026-10-17) can leave fewer than 10 tier-1 chess in the pool for a given seed
++  const ids = [...chessOfTier(1), ...chessOfTier(2)].filter((x) => m.pool.has(x)).slice(0, 10);
++  assert.equal(ids.length, 10, '10 pool pieces needed to fill the hand');
+   const onBoard = give(m, ps, ids[0], 'board', [9, 3]);
+   // fill the hand with 9 chess + 1 item
+   const handChess = [];
+@@ -136,8 +140,9 @@ test('g.move to the hand: withdraw, full-hand swap with a chess, hand↔hand swa
    assert.deepEqual(m.handle('p_0', { t: 'g.move', uid: boardPiece.uid, to: { area: 'hand', idx: itemIdx } }), { error: ERR.HAND_FULL });
    // items cannot be placed on the board but can move inside the hand
    assert.deepEqual(m.handle('p_0', { t: 'g.move', uid: item.uid, to: { area: 'board', row: 9, col: 4 } }).error, ERR.BAD_TARGET);
@@ -856,7 +959,7 @@ index ac7b494..54e5077 100644
    assert.deepEqual(m.handle('p_0', { t: 'g.move', uid: item.uid, to: { area: 'hand', idx: oi } }), { ok: true });
    assert.equal(ps.hand[oi].uid, item.uid);
    assert.equal(ps.hand[itemIdx].uid, other.uid);
-@@ -217,7 +219,11 @@ test('terrain 机变 card (模拟战场演变·模式二 on 战场 m02): an oper
+@@ -217,7 +222,11 @@ test('terrain 机变 card (模拟战场演变·模式二 on 战场 m02): an oper
    const r = give(m, ps, ranged);
    assert.deepEqual(m.handle('p_0', { t: 'g.move', uid: r.uid, to: { area: 'board', row: 12, col: 5 } }), { ok: true });
    // a full hand: the withdrawn operator overflows into temp (the player re-places it during the prep)
@@ -870,7 +973,7 @@ index ac7b494..54e5077 100644
    assert.ok(card, 'data: the m02 terrain card');
    applyCard(m, ps, { kind: 'tactic', id: 'map_m02_1', name: card.name, desc: card.desc, team: false, tacticKind: 'terrain' });
 diff --git a/test/match/bot-smarter.test.js b/test/match/bot-smarter.test.js
-index 43512d6..56767b2 100644
+index 43512d6..8e27a61 100644
 --- a/test/match/bot-smarter.test.js
 +++ b/test/match/bot-smarter.test.js
 @@ -79,7 +79,7 @@ test('#514: strategy selection stays possible, and less likely, while a teammate
@@ -878,11 +981,36 @@ index 43512d6..56767b2 100644
  
  test('user: Given a faction strategy teammate, When scoring shared high-tier chess, Then humans and bots receive the same preference even with full stock', () => {
 -  const { m } = makeMatch({ humans: 3, seed: 11 }).start().toPrep();
-+  const { m } = makeMatch({ humans: 3, seed: 67 }).start().toPrep();
++  const { m } = makeMatch({ humans: 3, seed: 68 }).start().toPrep();  // 67 → 68: the 7+4 ban set (2026-10-17) banned 铃兰 there
    const [ps, mate, other] = m.order;
    try {
      mate.bandId = other.bandId = null;
-@@ -397,7 +397,7 @@ test('economy: a held pair is completed — bought when affordable, else the sho
+@@ -249,8 +249,13 @@ test('items: 信标 on a bench single; both 博士投影 on a normal operator ev
+   ps.returnCopies(top);
+   ps.board.delete(topKey);
+   const elite = give(m, ps, m.gd.goldenIdOf(top.id), 'board', parseKey(topKey));
+-  const single = give(m, ps, fresh(4), 'hand');
+-  const pairId = fresh(1);
++  const tier4 = Object.values(DATA.chess).filter((c) => c.visible && !c.isGolden && c.tier === 4 && m.pool.left(c.chessId) >= 3 && !owned.has(c.chessId)).map((c) => c.chessId);
++  assert.ok(tier4.length >= 2, 'two tier-4 pieces with 3 copies left');
++  const single = give(m, ps, tier4[0], 'hand');
++  // 拟态物质 prefers the HIGHEST-tier pair (itemTarget use_equip_reward_char_chess), so the pair must outrank the
++  // bot's own pairs — take a second tier-4 piece (2026-10-17: the 7+4 ban set reshuffles the bot's board and its own
++  // tier-1 pairs win the uid tie-break; a tier-4 pair cannot be beaten by them)
++  const pairId = tier4[1];
+   const pairA = give(m, ps, pairId, 'hand');
+   const pairB = give(m, ps, pairId, 'hand');
+   const tierOf = (p) => m.gd.chess(p.id).tier;
+@@ -322,7 +327,7 @@ test('bounty Arts (教鞭): kept after a battle with leaks, used after a perfect
+     m.lastResults.set(ps.playerId, leaky);
+     // a full hand at the prep end with the 教鞭 in it
+     const owned = new Set(ps.allChess().map((p) => m.gd.baseIdOf(p.id)));
+-    const fillers = Object.values(DATA.chess).filter((c) => c.visible && !c.isGolden && c.tier === 1 && m.pool.left(c.chessId) >= 1 && !owned.has(c.chessId));
++    const fillers = Object.values(DATA.chess).filter((c) => c.visible && !c.isGolden && c.tier <= 3 && m.pool.left(c.chessId) >= 1 && !owned.has(c.chessId));
+     giveItem(m, ps, WHIP);
+     for (let i = 0; ps.hand.some((x) => x == null); i++) give(m, ps, fillers[i].chessId, 'hand');
+     const chessBefore = ps.allChess().length;
+@@ -397,7 +402,7 @@ test('economy: a held pair is completed — bought when affordable, else the sho
  
  test('坎诺特 (利滚利: leftover funds are kept, +1 at ≥ 5): with a full board the bot banks its interest capital instead of refreshing it away', () => {
    let checked = 0;
@@ -891,6 +1019,20 @@ index 43512d6..56767b2 100644
      const h = soloBot({ seed }).start();
      const m = h.m;
      const ps = m.order[0];
+diff --git a/test/match/bot.test.js b/test/match/bot.test.js
+index 663754a..a16cf2a 100644
+--- a/test/match/bot.test.js
++++ b/test/match/bot.test.js
+@@ -323,7 +323,8 @@ test('economy: the bot fills the board first (8 units by round 4), levels on its
+ });
+ 
+ test('bench management: stale low-tier singles are sold at a high shop level; pairs that can still merge are kept', () => {
+-  const h = soloBot({ seed: 6 }).start();
++  // seed 12（2026-10-17：吉星→松桐换人后，seed 6 的 bot 轨迹把 bench 停在 7 件；12 仍留下 6 件并卖掉 5 件冗余单卡）
++  const h = soloBot({ seed: 12 }).start();
+   const m = h.m;
+   const ps = m.order[0];
+   ps.lp = 999;
 diff --git a/test/match/diy-bonds.test.js b/test/match/diy-bonds.test.js
 index b0aa998..2353e2e 100644
 --- a/test/match/diy-bonds.test.js
@@ -928,7 +1070,7 @@ index b0aa998..2353e2e 100644
    assert.ok(!normal.hasBuff('bond:siracusa'), 'not for a non-member');
    const scale = (u) => u.buffs.filter((b) => /empty/i.test(b.key)).map((b) => b.mods?.dmgDealtMul).find((x) => x != null);
 diff --git a/test/match/diy-shop.test.js b/test/match/diy-shop.test.js
-index c487a1c..a557405 100644
+index c487a1c..0e8dd2f 100644
 --- a/test/match/diy-shop.test.js
 +++ b/test/match/diy-shop.test.js
 @@ -72,7 +72,7 @@ function diyMatch(extra = {}) {
@@ -940,20 +1082,71 @@ index c487a1c..a557405 100644
  }
  /** Gain a chess the way the shop does (acquireChess: the player's copy accounting, merges). */
  const gain = (ps, id) => ps.acquireChess(id, { source: 'buy' });
+@@ -214,20 +214,21 @@ test('buy → 3 copies merge into the elite (the stock pays the copies); sell /
+   m.dispose();
+ });
+ 
+-test('bans: a 自选 piece whose every bond is off this match has no stock (out of the shop); 协防 is never banned', REAL, () => {
+-  // a seed whose drawn bans include 维多利亚 (推进之王's only bond)
++test('bans: a 自选 piece whose every bond is off this match has no stock (out of the shop); the 协防 fallback is exempt', REAL, () => {
++  // a seed whose drawn bans include 维多利亚 (推进之王's only bond) AND 协防干员 (the DIY fallback bond, bannable
++  // since 2026-10-17 — tools/custom-content.mjs BOND_WEIGHT_OVERRIDES)
+   let h = null;
+   for (let seed = 1; seed < 400 && !h; seed++) {
+     const t = diyMatch({ seed });
+-    if (t.m.disabledBonds.includes('victoriaShip')) h = t; else t.m.dispose();
++    if (t.m.disabledBonds.includes('victoriaShip') && t.m.disabledBonds.includes('emptyShip')) h = t; else t.m.dispose();
+   }
+-  assert.ok(h, 'a seed banning 维多利亚');
++  assert.ok(h, 'a seed banning 维多利亚 and 协防');
+   h.start();
+   const p0 = h.ps('p_0');
+   assert.deepEqual([...p0.diyBanned], [T5A]);
+   assert.ok(!p0.diyStock.has(T5A));
+-  assert.deepEqual(Object.keys(p0.diyStock.snapshot()).sort(), [T5B, T6A], 'the prototypes (协防) stay');
+-  assert.ok(!h.m.disabledBonds.includes('emptyShip'));
++  assert.deepEqual(Object.keys(p0.diyStock.snapshot()).sort(), [T5B, T6A], 'the prototypes (协防) stay: the fallback bond never bans a 自选 slot');
++  assert.ok(h.m.disabledBonds.includes('emptyShip'), '协防干员 is in the ban draw now, yet the 自选 slots above survived');
+   h.toPrep(1);
+   p0.shop.level = 5;
+   for (let i = 0; i < 300; i++) { p0.rollShop(); assert.ok(!p0.shop.slots.some((s) => s && s.id === T5A)); }
+diff --git a/test/match/feedback3-gift.test.js b/test/match/feedback3-gift.test.js
+index c0eb310..4486338 100644
+--- a/test/match/feedback3-gift.test.js
++++ b/test/match/feedback3-gift.test.js
+@@ -96,7 +96,7 @@ test('信标: the gift still arrives when its sender is eliminated before the ne
+ test('信标: a grant that fails (no copy left in the pool) keeps the gift for the next round start', () => {
+   const { h, m, equip } = setup({ seed: 37 });
+   const p0 = h.ps('p_0'), p1 = h.ps('p_1');
+-  const cid = plain((c) => c.tier === 2 && c.bonds.length)[1];
++  const cid = plain((c) => c.tier === 2 && c.bonds.length && m.pool.has(c.chessId))[0];
+   assert.deepEqual(equip(giveItem(m, p0, BEACON), give(m, p0, cid, 'hand')), OK);
+   // every copy taken by "other players" before the round start
+   const held = m.pool.take(cid, 99);
 diff --git a/test/match/feedback5-we2-diy-grants.test.js b/test/match/feedback5-we2-diy-grants.test.js
-index 0f7e3f2..0a2b2e0 100644
+index 0f7e3f2..b156a91 100644
 --- a/test/match/feedback5-we2-diy-grants.test.js
 +++ b/test/match/feedback5-we2-diy-grants.test.js
-@@ -15,7 +15,8 @@ const SIEGE = 'char_112_siege'; // 推进之王 (维多利亚)
+@@ -15,7 +15,9 @@ const SIEGE = 'char_112_siege'; // 推进之王 (维多利亚)
  const PICK = { charId: SIEGE, skillIndex: 2, uniEquipId: 'uniequip_002_siege' };
  
  /** A co-op match: p_0 slots 推进之王 at T5A, p_1 slots nothing; first prep. */
 -function prep(seed = 911) {
-+// (default seed 902: the disabled-bond draw grew by 乌萨斯 on 2026-10-11 — seed 911 bans 维多利亚, siege's stock)
++// (default seed 902: the disabled-bond draw grew by 乌萨斯 on 2026-10-11, and again by 协防干员 + the 7 core rule on
++// 2026-10-17 — 902 still keeps 维多利亚 out of the ban set; the reward-pool test uses 912 after 910 started banning it)
 +function prep(seed = 902) {
    const seats = [
      { seat: 0, playerId: 'p_0', name: 'P0', isBot: false, connected: true, diy: { [T5A]: PICK } },
      { seat: 1, playerId: 'p_1', name: 'P1', isBot: false, connected: true },
+@@ -54,7 +56,7 @@ test('#9 effect rolls (ctx.rollChess, any tier / bond filter) draw the player\'s
+ });
+ 
+ test('#9 reward pools (ctx.rollPool: a shared-pool chess pool) and the 维多利亚驰援 card draw it too', () => {
+-  const { m, p0, p1 } = prep(910);
++  const { m, p0, p1 } = prep(912);
+   drain(m, (id, e) => e.tier === 5);
+   const c0 = makeCtx(m, p0, { key: 'test' }, 'onTest');
+   const c1 = makeCtx(m, p1, { key: 'test' }, 'onTest');
 diff --git a/test/match/funnel-redeploy.test.js b/test/match/funnel-redeploy.test.js
 index c639cdb..f709f4e 100644
 --- a/test/match/funnel-redeploy.test.js
@@ -1001,7 +1194,7 @@ index 0e8182a..902e186 100644
      const g = chess(c.goldenId);
      const o = loadoutOptions(c, g);
 diff --git a/test/match/merge.test.js b/test/match/merge.test.js
-index 93afd9c..af720fd 100644
+index 93afd9c..5869953 100644
 --- a/test/match/merge.test.js
 +++ b/test/match/merge.test.js
 @@ -88,7 +88,8 @@ test('elites never merge; 风丸 merges with 2 copies; a full hand refuses the m
@@ -1014,6 +1207,18 @@ index 93afd9c..af720fd 100644
    const target = x[0];
    give(m, ps, target);
    give(m, ps, target);
+@@ -318,9 +319,9 @@ test('item merge with a full hand AND a full temp: the golden item takes the equ
+   ps._detach(ps.find(twin.uid));
+   ps._detach(ps.find(keep.uid));
+   carrier.items.push(keep, twin);
+-  const fill = chessOfTier(1).filter((c) => m.pool.has(c));
++  const fill = [1, 2, 3].flatMap((t) => chessOfTier(t)).filter((c) => m.pool.has(c));
+   for (let i = 0; ps.hand.some((p) => p == null); i++) give(m, ps, fill[i]);
+-  const fill2 = chessOfTier(2).filter((c) => m.pool.has(c));
++  const fill2 = [1, 2, 3].flatMap((t) => chessOfTier(t)).filter((c) => m.pool.has(c));
+   for (let i = 0; ps.temp.some((p) => p == null); i++) give(m, ps, fill2[i], 'temp');
+   ps.recompute();
+   const got = ps.acquireItem('chess_item_1_02_e_a', { source: 'grant' });
 diff --git a/test/match/morph-bonds.test.js b/test/match/morph-bonds.test.js
 index 1202574..8eea11e 100644
 --- a/test/match/morph-bonds.test.js
@@ -1033,9 +1238,18 @@ index 1202574..8eea11e 100644
      const bond = r.giveBondId;
      const iso = r.isGolden ? ISO_B : ISO; // golden bond items with the golden 变形同构体, normal with normal
 diff --git a/test/match/playtest6-elite-to-board.test.js b/test/match/playtest6-elite-to-board.test.js
-index 0ca0d08..99a06ac 100644
+index 0ca0d08..50b5f72 100644
 --- a/test/match/playtest6-elite-to-board.test.js
 +++ b/test/match/playtest6-elite-to-board.test.js
+@@ -214,7 +214,7 @@ test('equipment with the hand and temp full: the elite keeps up to its 2 equip s
+ });
+ 
+ test('summons: the copies\' placed summons and stacks are removed; the elite on the board gets its own full stack (伺夜 狼群)', () => {
+-  const { m, ps } = prep({ seed: 46 });
++  const { m, ps } = prep({ seed: 47 });   // seed 46 → 47 on 2026-10-17 (the 7+4 ban set banned 伺夜 there)
+   assert.ok(m.pool.has(VIGIL), '伺夜 is in this match\'s pool');
+   const a = give(m, ps, VIGIL);
+   const at = legalTileFor(m, ps, VIGIL);
 @@ -243,7 +243,7 @@ test('summons: the copies\' placed summons and stacks are removed; the elite on
  
  test('loadout: the deployed elite\'s summon card and battle unit follow the player\'s loadout (赫默 S2 default → drone card, S1 → none)', () => {
@@ -1060,7 +1274,7 @@ index 51b6816..be92313 100644
    for (const t of Object.values(DATA.tokens)) if (t.displayType === 'HIDDEN') assert.equal(t.placeable, false, t.name);
    assert.equal(DATA.tokens.token_10056_angel2_target.placeable, false);
 diff --git a/test/match/pool.test.js b/test/match/pool.test.js
-index 87e4e77..38f1a72 100644
+index 87e4e77..de17d86 100644
 --- a/test/match/pool.test.js
 +++ b/test/match/pool.test.js
 @@ -13,7 +13,7 @@ test('co-op pool doubles the measured single-player capacities; only visible, un
@@ -1114,17 +1328,27 @@ index 87e4e77..38f1a72 100644
  
 -test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
 -  for (const [modeId, core, addon] of [['mode_multi_hard', 3, 4], ['mode_single_abyss', 3, 4], ['mode_multi_funny', 0, 1], ['mode_single_normal', 3, 4]]) {
-+test('per-match disabled bonds: 5 core + 5 add-on (NORMAL+), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
-+  for (const [modeId, core, addon] of [['mode_multi_hard', 5, 5], ['mode_single_abyss', 5, 5], ['mode_multi_funny', 0, 1], ['mode_single_normal', 5, 5]]) {
++test('per-match disabled bonds: 7 core + 4 add-on (NORMAL+, 2026-10-17), FUNNY static + 0 + 1; weight-0 never drawn; subset ban rule', () => {
++  for (const [modeId, core, addon] of [['mode_multi_hard', 7, 4], ['mode_single_abyss', 7, 4], ['mode_multi_funny', 0, 1], ['mode_single_normal', 7, 4]]) {
      const gd = new GameData(DATA, modeId);
      for (let seed = 1; seed <= 20; seed++) {
        const { drawn, staticOff, banned } = drawDisabledBonds(gd, createRng(seed));
-@@ -181,10 +182,10 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+@@ -165,6 +166,9 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
+         assert.ok(DATA.bonds[b].weight > 0, `${b} has weight 0`);
+         assert.ok(!staticOff.includes(b));
+       }
++      // 投资人 / 调和 / 绝技 仍是 weight 0 → 永不入抽取池（2026-10-17 用户口径：投资人永远不禁用；
++      // 协防干员 emptyShip 例外，它已 0 → 10 进池，见 tools/custom-content.mjs 的 BOND_WEIGHT_OVERRIDES）
++      for (const b of ['investShip', 'maniShip', 'suntShip']) assert.ok(!drawn.includes(b), `${b} must never be drawn`);
+       const off = new Set([...drawn, ...staticOff]);
+       for (const id of gd.visibleChess) {
+         const bonds = DATA.chess[id].bonds;
+@@ -181,10 +185,10 @@ test('per-match disabled bonds: 3 core + 4 add-on (NORMAL+), FUNNY static + 0 +
  test('the match pool excludes banned chess; m.public lists disabled bonds and banned chess', () => {
    const h = makeMatch({ mode: 'coop', difficulty: 'HARD', humans: 1, bots: 1, seed: 3 }).start();
    const pub = h.lastBc('m.public');
 -  assert.equal(pub.drawnDisabledBonds.length, 7);
-+  assert.equal(pub.drawnDisabledBonds.length, 10);
++  assert.equal(pub.drawnDisabledBonds.length, 11);
    assert.ok(pub.bannedChess.length > 0);
    for (const id of pub.bannedChess) assert.ok(!h.m.pool.has(id), `${id} should not be in the pool`);
 -  assert.equal(h.m.pool.entries.size + pub.bannedChess.length, 112);
@@ -1340,7 +1564,7 @@ index da6bda9..7861f48 100644
    for (let i = 1; i < roster.length; i++) assert.ok(roster[i - 1].tier <= roster[i].tier);
    const t3 = filterRoster(roster, { tier: 3 }, {}, get, getBond);
 diff --git a/test/ui/match-info.test.js b/test/ui/match-info.test.js
-index 9e035a4..d4b9e6b 100644
+index 9e035a4..eb151ff 100644
 --- a/test/ui/match-info.test.js
 +++ b/test/ui/match-info.test.js
 @@ -62,7 +62,8 @@ test('matchInfoModel: the two greyed kinds, the briefing order, banned operators
@@ -1358,12 +1582,12 @@ index 9e035a4..d4b9e6b 100644
      h.m.dispose();
    }
 -  // 绝境: 3 core + 4 add-on drawn, nothing switched off by the mode
-+  // 绝境: 5 core + 5 add-on drawn, nothing switched off by the mode（2026-10-13: 自制核心盟约 +2 → 抽取数随总量放大）
++  // 绝境: 7 core + 4 add-on drawn, nothing switched off by the mode（2026-10-17: 协防入池 → 支线池 12；口径 = 可用干员 ≈原版 90）
    const h = makeMatch({ mode: 'coop', difficulty: 'HARD', humans: 1, bots: 1, seed: 4 }).start();
    const m = matchInfoModel(h.m.publicView(), SRC('mode_multi_hard'));
    assert.equal(m.sets.off.size, 0);
 -  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [3, 4]);
-+  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [5, 5]);
++  assert.deepEqual([m.core.filter((b) => m.stateOf(b.bondId)).length, m.addon.filter((b) => m.stateOf(b.bondId)).length], [7, 4]);
    assert.deepEqual([...m.banned].sort(), [...h.m.bannedChess].sort());
    h.m.dispose();
  });

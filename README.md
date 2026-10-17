@@ -7,11 +7,11 @@
 <sub>2 条核心盟约 · 13 名预设干员 · 26 条特质 · 4 件装备 · 五语言文案 · 一条命令安装 / 升级 / 卸载</sub>
 
 ![baseline](https://img.shields.io/badge/baseline-Stronghold--Protocol%20v0.2.6%20source%20checkout-2f6feb?style=flat-square)
-![mod](https://img.shields.io/badge/mod-v1.0.6-8957e5?style=flat-square)
+![mod](https://img.shields.io/badge/mod-v1.0.7-8957e5?style=flat-square)
 ![node](https://img.shields.io/badge/node-%3E%3D22-339933?style=flat-square)
 ![cli](https://img.shields.io/badge/cli-install%20%C2%B7%20update%20%C2%B7%20uninstall%20%C2%B7%20status-16a34a?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-zh%20%C2%B7%20zh--TW%20%C2%B7%20en%20%C2%B7%20ja%20%C2%B7%20ko-0ea5e9?style=flat-square)
-![verify](https://img.shields.io/badge/verify-274%20tests-8b5cf6?style=flat-square)
+![verify](https://img.shields.io/badge/verify-277%20tests-8b5cf6?style=flat-square)
 ![license](https://img.shields.io/badge/license-GPL--3.0--or--later-blue?style=flat-square)
 
 </div>
@@ -33,7 +33,7 @@ node <mod包地址>/scripts/mod.mjs status    .   # ① 检查状态（只读）
 node <mod包地址>/scripts/mod.mjs install   .   # ② 一键安装
 node <mod包地址>/scripts/mod.mjs update    .   # ③ 从github拉取最新资源更新到最新包（没有新版就什么都不做）
 node <mod包地址>/scripts/mod.mjs uninstall .   # ④ 卸载（默认彻底删掉本 mod 的东西）
-node <mod包地址>/scripts/verify.mjs        .   # ⑤ 验收mod：274 个用例应全绿
+node <mod包地址>/scripts/verify.mjs        .   # ⑤ 验收mod：277 个用例应全绿
 ```
 
 装完直接开局：牌池会多出 13 名预设棋子，【东】/【乌萨斯】按 3 / 6 人档激活，图标、文案、特质、装备全部就位。
@@ -193,13 +193,14 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 - 盟约图标放在**本体**的 `public/assets/bond/<bondId>.png`，URL 由 `data/assets.json` 的 `bonds` 映射给出。
 - 官方 23 条盟约里没有这两个，清单生成端 `tools/assets/plan.mjs:550` 的 `fallbackCampLogo` 分支就用**阵营 LOGO** 兜底：【乌萨斯】的 `ursusShip.png` 来自本体已有的 `ui/campLogo/logo_ursus.png`；【东】的 `dongShip.png`（内容 = `logo_higashi.png`）随本包分发，装完即补上。
 - 另有官方干员通过 `BOND_OVERRIDES` 补入盟约：折桠（2_17）、古米（1_10）→【乌萨斯】；风丸、水月、星熊、铃兰、遥 →【东】；斩业星熊在【炎】之外再得【东】；斥罪在【叙拉古】之外再得【乌萨斯】。
+- 禁用抽取（NORMAL 及以上）：每局随机抽 **7 条核心 + 4 条支线**，某干员的**全部**盟约都被抽中时它不进本局商店（盟约本身仍可激活）。协防（`emptyShip`）已进抽取池，但**自选编队不受影响**（兜底盟约不参与自选槽位的判定）；投资人 / 调和 / 绝技的 `weight` 仍为 0，永远抽不到。
 
 ## 干员 ×13
 
 | 干员 | Tire | 盟约 | 特质 |
 |---|---|---|---|
 | 伯塔尼 | 2 | 乌萨斯 | 乌萨斯齐鸣 981（开技时范围内每名【乌萨斯】使已激活的**仅【乌萨斯】**+3/6 层，每场上限 12/24 层） |
-| 吉星 | 3 | 东 | 鸿运当头 991（自身盟约 +6/12，无需激活） |
+| 松桐 | 3 | 东 / 远见 | 991（<休整期结束时>使已激活的【东】【远见】+5/10 层） |
 | 白雪 | 2 | 东 / 灵巧 | 武库清点 990（<获得干员时>自身所属盟约 +4/8，无需激活盟约） |
 | 烈夏 | 3 | 乌萨斯 | 道具获取 987（随机道具排除 6 阶与信标/博士投影/拟态物质/画卷/商业包装方案/教鞭/天马之盔/突变细胞/普通维式重锤以外的维式重锤） |
 | 缠丸 | 3 | 东 / 不屈 | 恶鬼血战 988（每场首次 <70% 生命 → 各已激活盟约 +12/24） |
@@ -223,9 +224,9 @@ node <mod 包>/scripts/mod.mjs install . --dry-run
 
 ## 特质 ×26
 
-`980` 潮涌共鸣 · `981`/`984` 病床巡视 · `982` 血怒 · `983` 雪崩攻势 · `985` 奥术共鸣 · `986` 盟约层数 · `987` 道具获取 · `988` 恶鬼血战 · `989` 同门切磋 · `990` 武库清点 · `991` 鸿运当头 · `992` 麒麟之魂（均为 `_a` / `_b` 两档）。
+`980` 潮涌共鸣 · `981`/`984` 病床巡视 · `982` 血怒 · `983` 雪崩攻势 · `985` 奥术共鸣 · `986` 盟约层数 · `987` 道具获取 · `988` 恶鬼血战 · `989` 同门切磋 · `990` 武库清点 · `991` 远见加层 · `992` 麒麟之魂（均为 `_a` / `_b` 两档）。
 
-处理器分工：`986`/`987`/`990`/`991` 是 `garrisons/meta.js` 里的自定义 `SERVER_*` 处理器；其余真效果在各干员 kit；护盾 / 流失 / 流血在 `bonds/core.js` 的 `installDong`。
+处理器分工：`986`/`987`/`990` 是 `garrisons/meta.js` 里的自定义 `SERVER_*` 处理器（990 用 `ownLayers`）；`991` 复用官方 `SERVER_ADD_BOND`，按 `bbStr.bond` 列举盟约、只给**已激活**的加层；其余真效果在各干员 kit；护盾 / 流失 / 流血在 `bonds/core.js` 的 `installDong`。
 
 另有一处官方特质覆盖（`GARRISON_OVERRIDES`）：水月的 `garrison_07`「每叠加 3 层，本干员攻击力 +1/2%」补入【东】后，文案与读层盟约都由【阿戈尔】改为【阿戈尔】【东】（按两者**已激活**层数合计）。
 

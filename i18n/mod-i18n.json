@@ -154,16 +154,16 @@
         "_h": "0h0hjf"
       },
       "garrison_991_a": {
-        "desc": "When gained: +6 layers to every bond she carries (activation not required)",
-        "descRaw": "When gained: +6 layers to every bond she carries (activation not required)",
-        "eventTypeDesc": "One-shot stacking",
-        "_h": "oioijf"
+        "desc": "<When Rest Phase ends> +5 stacks to active [Dong] and [Foresight] Alliances",
+        "descRaw": "<When Rest Phase ends> +5 stacks to active [Dong] and [Foresight] Alliances",
+        "eventTypeDesc": "Can stack",
+        "_h": "mzmzmz"
       },
       "garrison_991_b": {
-        "desc": "When gained: +12 layers to every bond she carries (activation not required)",
-        "descRaw": "When gained: +12 layers to every bond she carries (activation not required)",
-        "eventTypeDesc": "One-shot stacking",
-        "_h": "2x2xjf"
+        "desc": "<When Rest Phase ends> +10 stacks to active [Dong] and [Foresight] Alliances",
+        "descRaw": "<When Rest Phase ends> +10 stacks to active [Dong] and [Foresight] Alliances",
+        "eventTypeDesc": "Can stack",
+        "_h": "g5g5mz"
       },
       "garrison_992_a": {
         "desc": "While in battle: redeployment time -75%; for every 3 total [Dong], [Raid] and [Indomitable] stacks, her ATK +1%; on deployment, lose 50% of her current HP, gain ATK +50% and 90% physical and arts damage reduction, but she loses 100 HP per second",
@@ -454,16 +454,16 @@
         "_h": "0h0hjf"
       },
       "garrison_991_a": {
-        "desc": "<獲得時>自身の所属盟約+6層（発動は不要）",
-        "descRaw": "<獲得時>自身の所属盟約+6層（発動は不要）",
-        "eventTypeDesc": "単発スタック",
-        "_h": "oioijf"
+        "desc": "<整備フェーズ終了時>有効化中の【東】【先見】の加算数+5",
+        "descRaw": "<整備フェーズ終了時>有効化中の【東】【先見】の加算数+5",
+        "eventTypeDesc": "持続加算",
+        "_h": "mzmzmz"
       },
       "garrison_991_b": {
-        "desc": "<獲得時>自身の所属盟約+12層（発動は不要）",
-        "descRaw": "<獲得時>自身の所属盟約+12層（発動は不要）",
-        "eventTypeDesc": "単発スタック",
-        "_h": "2x2xjf"
+        "desc": "<整備フェーズ終了時>有効化中の【東】【先見】の加算数+10",
+        "descRaw": "<整備フェーズ終了時>有効化中の【東】【先見】の加算数+10",
+        "eventTypeDesc": "持続加算",
+        "_h": "g5g5mz"
       },
       "garrison_992_a": {
         "desc": "<戦闘中>再配置時間-75%；【東】【強襲】【不屈】の合計スタック3ごとに攻撃力+1%；配置時に現在HPの50%を失い、攻撃力+50%と物理・術ダメージ90%軽減を獲得、ただし毎秒100のHPを失う",
@@ -754,16 +754,16 @@
         "_h": "0h0hjf"
       },
       "garrison_991_a": {
-        "desc": "<획득 시> 자신의 소속 동맹 +6레이어 (발동 불필요)",
-        "descRaw": "<획득 시> 자신의 소속 동맹 +6레이어 (발동 불필요)",
-        "eventTypeDesc": "단발 스택",
-        "_h": "oioijf"
+        "desc": "<휴식 기간 종료 시> 활성화된 [동][예견] 맹약의 중첩 수 +5",
+        "descRaw": "<휴식 기간 종료 시> 활성화된 [동][예견] 맹약의 중첩 수 +5",
+        "eventTypeDesc": "지속 중첩",
+        "_h": "mzmzmz"
       },
       "garrison_991_b": {
-        "desc": "<획득 시> 자신의 소속 동맹 +12레이어 (발동 불필요)",
-        "descRaw": "<획득 시> 자신의 소속 동맹 +12레이어 (발동 불필요)",
-        "eventTypeDesc": "단발 스택",
-        "_h": "2x2xjf"
+        "desc": "<휴식 기간 종료 시> 활성화된 [동][예견] 맹약의 중첩 수 +10",
+        "descRaw": "<휴식 기간 종료 시> 활성화된 [동][예견] 맹약의 중첩 수 +10",
+        "eventTypeDesc": "지속 중첩",
+        "_h": "g5g5mz"
       },
       "garrison_992_a": {
         "desc": "<전투 중> 재배치 시간 -75%; [동][기습][불굴]의 합계 스택 3마다 공격력 +1%; 배치 시 현재 HP의 50%를 잃고 공격력 +50%와 물리·술식 피해 90% 감소를 획득, 대신 매초 HP 100을 잃음",
@@ -1054,16 +1054,16 @@
         "_h": "0h0hjf"
       },
       "garrison_991_a": {
-        "desc": "<獲得干員時>自身所屬盟約+6層（不需要已激活）",
-        "descRaw": "<獲得干員時>自身所屬盟約+6層（不需要已激活）",
-        "eventTypeDesc": "單次疊加",
-        "_h": "oioijf"
+        "desc": "<休整期結束時>使已啟動的【東】【遠見】層數+5",
+        "descRaw": "<休整期結束時>使已啟動的【東】【遠見】層數+5",
+        "eventTypeDesc": "持續疊加",
+        "_h": "mzmzmz"
       },
       "garrison_991_b": {
-        "desc": "<獲得干員時>自身所屬盟約+12層（不需要已激活）",
-        "descRaw": "<獲得干員時>自身所屬盟約+12層（不需要已激活）",
-        "eventTypeDesc": "單次疊加",
-        "_h": "2x2xjf"
+        "desc": "<休整期結束時>使已啟動的【東】【遠見】層數+10",
+        "descRaw": "<休整期結束時>使已啟動的【東】【遠見】層數+10",
+        "eventTypeDesc": "持續疊加",
+        "_h": "g5g5mz"
       },
       "garrison_992_a": {
         "desc": "<戰鬥中>再部署時間-75%；【東】【突襲】【不屈】每疊3層，自身攻擊力+1%；部署時獲得【狂龍症】：立刻失去當前生命值的50%，攻擊力+50%並獲得90%物理與法術減傷，但每秒失去100點生命",

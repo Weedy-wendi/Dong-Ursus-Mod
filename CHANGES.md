@@ -4,7 +4,56 @@
 
 ---
 
-## 2026-10-17（第八条）· 七项数值 / 机制修订（用户口径）
+## 2026-10-17（第九条）· 禁用规则改「7 核心 + 4 支线」＋ 协防入池 ＋ 吉星 → 松桐
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | ① 新增 **`BOND_WEIGHT_OVERRIDES = { emptyShip: 10 }`**，在 `injectCustomContent()` 里改写官方 `bondDataDict.emptyShip.weight`（0→10）—— 协防从此进入禁用抽取池（支线池 11→12）；投资人 `investShip` / 调和 `maniShip` / 绝技 `suntShip` 保持 0（永不被抽中）② 棋子 `chess_char_3_96` 改绑 **`char_4199_makiri`（松桐）**：5★ 先锋 / 策士（counsellor）/ nationId higashi，tier 3、`identifier 9021`、`shopSortId 910` 全部沿用，**`moduleId: null`**（官方无模组；build-data 会给精锐形态写 inactive 占位，同蒂比 2_13），`defaultSkillIndex: 1`（S2 万手成局 —— S1 入场安排是 AUTO 技能，不能做默认），`bondIds ['dongShip','visiShip']`（【东】【远见】）③ 特质 **991_a/_b 重写**：`<休整期结束时>使已激活的【东】【远见】盟约层数+5 / +10`，`eventType SERVER_PREP_FIN` + `effectType SERVER_ADD_BOND` + `bb.count 5/10` + `bbStr { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' }`（与官方 `garrison_69` 完全同型） |
+| `files/server/sim/content/kits/ops/chess_char_3_96-makiri.js` | **新增** 松桐 kit：T1 慢手有筹 = 场上站满 30 秒一次性给范围内重装/辅助 `atkPct+atk`；S1 入场安排（AUTO）= 立即 `addDp(cost)`；S2 万手成局（默认）= `atkPct` + `hpRegenRatio` + 每秒 `addDp`（结束补最后一跳） |
+| `files/server/sim/content/kits/ops/chess_char_3_96-kichi.js` | **删除**（吉星下线） |
+| `files/server/sim/content/kits/ops/chess_char_3_97-yuki.js` | 注释同步（990 已改用 `ownLayers`，不再提吉星 991） |
+| `files/data/assets.json` | `tools/fetch-assets.mjs` 重建：补入松桐头像 / 立绘 / Spine / 2 个技能图标 / 语音，吉星条目按设计裁掉 |
+| `patches/01-mod-shared.patch` | ① **新增目标 `server/match/player/diy.js`**：`buildDiyStock()` 在判定前把 `economy.fallbackBondId`（= `emptyShip`）从**自选**槽位的 bonds 里摘掉 → 只挂兜底的 自选干员退化成 `bonds=[]`（永不因此被禁），带真实阵营盟约的自选干员照常连坐 ② **新增目标 `docs/PLAYING.md`**：删掉「协防不会被禁用」的绝对表述 ③ `tools/build-data.mjs`：`bans` 的 NORMAL/HARD/ABYSS 由 `{core:5,addon:5}` → **`{core:7,addon:4}`**（rule 文案同步）④ `server/match/gamedata.js`：`DEFAULTS.bans` 同步 7+4 ⑤ `server/sim/content/garrisons/meta.js`：991 处理器由 `ownLayers`（获得时）换成 **`bondListLayers`**（按 `bbStr.bond` 列举、`requireActive: true`，即「只给已激活的」），注册到 `act2autochess_gar_eff_991_a/_b`；990 白雪仍用 `ownLayers` ⑥ `server/sim/content/kits/index.js`：`chess_char_3_96-kichi.js` → `chess_char_3_96-makiri.js` ⑦ `tools/golden.mjs`：补位场景 `coop2-NORMAL-1-coverage-standins` → **`coop2-NORMAL-12-coverage-standins`**（吉星换人后 seed 1 的商店流不再派补位）⑧ `docs/research/00-INDEX.md`：禁用规则段落改成 7+4 + 协防入池 |
+| `patches/02-tests-calibration.patch` | **新增目标** `test/match/bot.test.js`（bench 用例 seed 6→12）、`test/match/feedback3-gift.test.js`（候选干员加「在本局池内」约束）。既有校准：`match/pool.test.js` 断言 5+5→**7+4** 并新增「协防可被抽中 / 投资人永不入池」；`ui/match-info.test.js` 5+5→7+4；`lobby-diy.test.js` seed 4244→**4240**（走 `deriveSeed(seed,'setup')` 真实 rng 流筛，要求维多利亚不被禁）；`match/diy-shop.test.js` 改成断言「协防即使被抽中，自选原型仍保住在店」；`match/{board,merge,bot-smarter}` 手牌铺满的候选候选集扩到多阶；`match/playtest6-elite-to-board` 46→47、`match/feedback5-we2-diy-grants` 910→912；`content/garrisons_meta.test.js` 991 用例改 `SERVER_PREP_FIN` 口径（激活才加层）；`content/kits_t3.test.js` 新增松桐 3 条用例（T1 / S1 / S2） |
+| `i18n/mod-i18n.json` | 991_a/_b × 4 语言的 `desc` / `descRaw` 换成休整期口径，按记录自身键顺序重算 `_h`（`mzmzmz` / `g5g5mz`），`eventTypeDesc` 同步「持续叠加」 |
+| `mod.json` | `version` 1.0.6 → **1.0.7**；`base.files 89 · patched 77 · owned 30 · removed 12 · generated 22`（新增 2 个补丁目标 → base/patched 各 +4 条：`diy.js`、`PLAYING.md`、`bot.test.js`、`feedback3-gift.test.js`） |
+
+### 为什么
+
+用户两条口径：① **协防干员也进禁用池（自选除外）、投资人永不禁用、采用 n+4 规则**，并要求对比原版禁用后的可用人数做评估；② **删除吉星、加入 tier3 松桐（东 / 远见）**，特质为 `<休整期结束时>使已激活的【东】【远见】+5/10`。
+
+评估（脚本 `禁用机制评估.mjs`，结论表在工作区的 `禁用机制速查.md` §12）：
+
+- 闭式解（不放回抽取）先过保真校验：重建原版池（112 可见 / 8 核心 / 11 支线、3+4）得 **22.01 禁 / 89.99 可用**，与 `docs/research` 的 22 / 90 锚点逐位吻合；闭式 = 20 万次 MC = production 3000 seed 三方一致。
+- 协防入池后（125 可见 / 10 核心 / 12 支线）：6+4 → 92.94 可用、**7+4 → 88.32**、8+4 → 83.61。6+4 与 7+4 跨在 90 两侧，7+4 绝对偏差更小，故采用（回退只需改 `bans` 一个数字）。
+- 实测 `drawDisabledBonds` × 3000 seed：NORMAL+ 平均禁 **36.65** / 可用 **88.35**；FUNNY 28.14；TRAINING 0；**投资人中签 0.00%**。
+- 代价：核心侧压力上升（每核心平均可用 6.0–7.3，原版 8.0–8.7），阿戈尔 6.7→**4.8**（门槛 3），"连调和都凑不齐" **0.27%**；其余核心 ≤0.05%。支线侧反而更宽松（压力全在核心侧，是「n 核心 + 4 支线」的必然结果）。
+- 协防入池后新增可被禁：魔王 33.3%、铃兰 15.6%、调香师/松果 9.1%、迷迭香 1.8%（此前 100% 免疫）。
+- 自选豁免无副作用：`backups.diy.operators` 81 条里 46 条是 `['emptyShip']`、**0 条**「协防 + 阵营」，所以 `diy.js` 那行 filter 只命中兜底情形。
+
+`emptyShip` 的 `weight=0` 原本就是「禁用免疫」标签（`pool.js` 只把 `weight>0` 的盟约放进抽取池），改它只影响「谁可被禁」，战斗侧零改动（`bond.weight` 的运行时消费者只有 `pool.js:35`）。
+
+松桐沿用原槽位（`chess_char_3_96`）是为了不触动 `backups` / 商店序 / 编号体系；她官方无模组，精锐形态因此走「inactive 占位 module」分支。
+
+### 怎么验的
+
+| 步骤 | 结果 |
+|---|---|
+| `node tools/build-data.mjs` | 通过，计数不变：chess 292 / 可见 125 / bonds 25 / garrisons 275 / items 123 / effects 371 |
+| data 抽查 | `emptyShip.weight = 10`、`config.bans.NORMAL = {core:7,addon:4}`、`chess_char_3_96_a.name = 松桐` 且 `bonds = ['dongShip','visiShip']`、991 两条为 `SERVER_PREP_FIN` + `bond: 'dongShip,visiShip'` |
+| `node --check` | 改动文件（`custom-content.mjs` / `build-data.mjs` / `gamedata.js` / `diy.js` / `meta.js` / `kits/index.js` / `chess_char_3_96-makiri.js`）全部通过 |
+| 内容测试 | `test/content/` 146/146；`garrisons_meta`（991 新用例）、`kits_t3`（松桐 3 条）全绿 |
+| i18n | `build-i18n --lang {en,ja,ko,zh-TW} --refresh` 四语言全量重建 + `apply-i18n` 合并（38 条/语言）；`test/i18n-data.test.js` **11/11**（stale=0） |
+| 素材 | `tools/fetch-assets.mjs --allow-shrink` 补入松桐、裁掉吉星；`test/assets.test.js` **54/54** |
+| 全量 `node --test` | 6356 项 **6327 pass / 8 fail**；8 条与改动无关（tracked-tree、符号链接权限、windows-bundle、asset index、并发下的 websocket lobby / 性能阈值——单跑 `lobby.test.js` + `perf.test.js` 68/68 全绿） |
+| `scripts/verify.mjs`（mod 测试子集） | **277 pass / 0 fail** |
+| 补丁回环 | `make-manifest` 在**纯净基线副本**上套用两个补丁 **0 `.rej`**；`patches/01` 25 目标 / 91625 B、`patches/02` 52 目标 / 109293 B |
+| 指纹对账 | `patched 77/77`、`owned 30/30`、`base.files 89/89` 逐字节等于工作区（`base.files` 直接取自基线 git 对象） |
+
+---
+
 
 ### 改了什么
 

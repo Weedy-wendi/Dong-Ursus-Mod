@@ -9,15 +9,30 @@ index f09e5f3..ec5dc18 100644
 +
 +# 【东】+【乌萨斯】mod：安装记录与装前备份（scripts/mod.mjs 维护）
 +.mod-dong-ursus/
+diff --git a/docs/PLAYING.md b/docs/PLAYING.md
+index 29e2e6a..5dc6a4b 100644
+--- a/docs/PLAYING.md
++++ b/docs/PLAYING.md
+@@ -67,7 +67,7 @@
+ - **晋级奖励**：每次晋升后获得一次特殊招募：从 3 名 **高一阶**（最高 VI）、**互不相同**的随机干员中**免费**挑 1 名（该阶剩余干员不足 3 名时由低一阶补足）。它不能刷新、不能冻结、本回合结束失效。
+ - **干员调配（技能、模组、潜能与练度）**：大厅、房间和「确认本局信息」里的「干员调配」按钮打开的界面有三个标签页：「干员调配」「干员持有」「自选编队」。「干员调配」把干员列成一张表，每名干员一行，各列是**技能**、精锐的**模组**和**潜能 · 练度**：直接点行里的技能图标、模组图标（「不装备」在最前，模组只在精锐时生效）或改两个下拉框就设好了；点头像或名字在右边打开详情，依次是潜能与练度、特质、技能（普通 Lv.4 / 精锐 Lv.7 两档数值可切换）、局内数值和模组（窄屏——宽度 1000 像素以下，例如横屏的手机——详情盖住列表，点「干员列表」返回）。**潜能**（1–6）和**练度**（未精英化 / 精英阶段1 / 精英阶段2 / 精英阶段2-60级）按干员设置，同一名干员的普通、精锐和自选共用，默认潜能 6、精英阶段2-60级（维护者 2026-10-08 的决定：默认满潜、满加成）。官方规则：潜能取你自己持有的这名干员的潜能；练度是调度手册「加成情况」里的**自持有加成**——未精英化 +0%，精英1 攻击、防御 +5%，精英2 攻击 +10%、防御和生命 +5%，精英2 60 级三项 +10%，单独乘算，不和其他「攻击力 +x%」相加；未持有的特许干员在官方按潜能 1、没有加成，想照官方打就把它设成潜能 1、未精英化。补位的替补干员和自选的原型干员没有潜能和练度，设置对它们不生效。商店卡片、详情卡和「局内数值」都按你的设置显示；同盟模拟中队友的干员按队友的设置。和技能、模组一样是**局外设置**：「确认本局信息」结束前修改对本局生效，之后只保存到下一局。「恢复默认」「全部恢复默认」同时重置潜能与练度，「导出 / 导入」会带上它们，「干员调配」按钮上的数字也算上改过潜能或练度的干员。
+ - **干员持有（补位）**：同一个界面的第二个标签页「**干员持有**」可以把你没有的干员**下掉**（点一下卡片切换「持有 / 未持有」）。和官方一样只有 55 张「普通」棋子能下掉（界面按阶级列出本赛季商店里的 53 名，每张写着由谁替补、用几技能）；74 张「预设」棋子（多是 1–2 阶的常见干员）无论是否持有都由本人上场，不在其中。默认全部持有。下掉的干员和官方一样**显示为替补干员**：商店和晋升奖励的卡片、整备区和临时整备区里的单位、作战区、结算界面的阵容，都是替补干员的头像、名字和模型（例如银灰显示为 Sharp），带一个小小的「替补」标记；详情卡显示替补干员的立绘、名字、技能、天赋和模组，名字下面写着「银灰的替补」。**盟约、特质、阶级、价格、合成仍按原干员**（卡片和详情卡上的盟约、特质就是原干员的），作战时的属性、技能、天赋、模组、攻击范围、近战位 / 远程位都是替补干员的（例如银灰 → Sharp 的 2 技能「亮剑」）。同一名替补干员可能替补好几名干员（Sharp 替补忍冬、银灰、隐德来希等），它们按各自的原干员分别合成：看阶级和盟约区分，点开详情卡能看到替补的是谁。同盟模拟中队友查看你的整备区和作战区、你的盟约成员时，看到的也是替补干员。替补的技能和模组由棋子固定，「干员调配」对它不生效；替补干员没有召唤物（下掉缪尔赛思就没有流形）。这是**局外设置**：下一局开始时生效，对局中修改只保存到下一局；同盟模拟中只影响你自己的棋子，队友的棋子按队友的设置。没有官方的好友借用：想用本人上场，改回「持有」即可。「全部持有」一键恢复，「导出 / 导入」可以把设置带到别的浏览器；大厅的「干员调配」按钮上会显示「替补 N」提醒你有几名干员被下掉。
+-- **自选编队**：同一个界面的第三个标签页「**自选编队**」有 4 个名额：5 阶两个、6 阶两个。点名额打开选择列表，每个名额可以放一名**你持有的 6★ 干员**（棋子池里没有的那些，标「已持有」：3 个技能任选其一，精锐的模组任选其一或不装备；只在集成战略或生息演算里生效的模组不能选：ISW-A、SO-A / SO-B、RA-A）或一名**原型干员**（标「原型」：Sharp、Mechanist 等 9 名 6★，5 阶另有 6 名 4★ 预备干员；技能和模组与补位时相同，不能更改）。同一名原型干员可以同时放进一个 5 阶和一个 6 阶名额；你持有的干员只能放一个名额；同一阶的两个名额不能放同一人。列表只列出已经做好战斗逻辑的干员（原型干员全部可选，持有的 6★ 随战斗逻辑完成陆续加入）。对局中，自选干员**只出现在你自己的商店里**：调度中心升到 5 级后才会刷出 5 阶名额的干员，6 级后才会刷出 6 阶的；刷新概率和同阶干员一样，每个名额有自己的库存（5 阶 8 张、6 阶 5 张，不与队友共用），价格与同阶干员相同。晋升奖励按奖励自己的阶级抽取，所以该阶自选可以比普通商店早一级出现：调度中心 4 级的五阶奖励可以出现五阶自选，5 级的六阶奖励可以出现六阶自选，不保证刷出；效果、奖励或机变卡「获得一名随机干员」时，也可能抽到你自己的自选干员（按那个效果自己的阶级规则，不看调度中心等级）。三张合成精锐，精锐时所选模组生效（5 阶 1 级、6 阶 3 级）。你持有的干员的潜能与练度在名额卡片上设置（默认潜能 6、精英阶段2-60级，规则同「干员调配」）；原型干员没有潜能和练度。自选干员**没有特质**，盟约按干员的实际阵营分配（推进之王是维多利亚，煌同时是炎和维多利亚，没有对应阵营的是协防干员），和普通棋子一样计入盟约人数；本局禁用了它全部的盟约时，它不会出现在商店里（协防不会被禁用），开局的「确认本局信息」、选策略时的「本局信息」和对局中的「本局信息」都会在「本局禁用干员」下写明是哪一名。商店卡片、整备区、作战区和详情卡上都标着「自选」，详情卡显示所选的技能和模组。这同样是**局外设置**：下一局开始时生效，对局中修改只保存到下一局；AI 队友不使用自选；你开启 AI 托管时，AI 会优先买你的自选干员，并在快能刷出自选名额时提早一回合升级调度中心；信标不会把自选干员送给队友。「导出 / 导入」「全部清空」可用，大厅的「干员调配」按钮上会显示「自选 N」。
++- **自选编队**：同一个界面的第三个标签页「**自选编队**」有 4 个名额：5 阶两个、6 阶两个。点名额打开选择列表，每个名额可以放一名**你持有的 6★ 干员**（棋子池里没有的那些，标「已持有」：3 个技能任选其一，精锐的模组任选其一或不装备；只在集成战略或生息演算里生效的模组不能选：ISW-A、SO-A / SO-B、RA-A）或一名**原型干员**（标「原型」：Sharp、Mechanist 等 9 名 6★，5 阶另有 6 名 4★ 预备干员；技能和模组与补位时相同，不能更改）。同一名原型干员可以同时放进一个 5 阶和一个 6 阶名额；你持有的干员只能放一个名额；同一阶的两个名额不能放同一人。列表只列出已经做好战斗逻辑的干员（原型干员全部可选，持有的 6★ 随战斗逻辑完成陆续加入）。对局中，自选干员**只出现在你自己的商店里**：调度中心升到 5 级后才会刷出 5 阶名额的干员，6 级后才会刷出 6 阶的；刷新概率和同阶干员一样，每个名额有自己的库存（5 阶 8 张、6 阶 5 张，不与队友共用），价格与同阶干员相同。晋升奖励按奖励自己的阶级抽取，所以该阶自选可以比普通商店早一级出现：调度中心 4 级的五阶奖励可以出现五阶自选，5 级的六阶奖励可以出现六阶自选，不保证刷出；效果、奖励或机变卡「获得一名随机干员」时，也可能抽到你自己的自选干员（按那个效果自己的阶级规则，不看调度中心等级）。三张合成精锐，精锐时所选模组生效（5 阶 1 级、6 阶 3 级）。你持有的干员的潜能与练度在名额卡片上设置（默认潜能 6、精英阶段2-60级，规则同「干员调配」）；原型干员没有潜能和练度。自选干员**没有特质**，盟约按干员的实际阵营分配（推进之王是维多利亚，煌同时是炎和维多利亚，没有对应阵营的是协防干员），和普通棋子一样计入盟约人数；本局禁用了它全部的盟约时，它不会出现在商店里（协防干员本身已可被禁用，但**自选**槽位不吃协防的连坐：兜底盟约不参与自选的禁用判定），开局的「确认本局信息」、选策略时的「本局信息」和对局中的「本局信息」都会在「本局禁用干员」下写明是哪一名。商店卡片、整备区、作战区和详情卡上都标着「自选」，详情卡显示所选的技能和模组。这同样是**局外设置**：下一局开始时生效，对局中修改只保存到下一局；AI 队友不使用自选；你开启 AI 托管时，AI 会优先买你的自选干员，并在快能刷出自选名额时提早一回合升级调度中心；信标不会把自选干员送给队友。「导出 / 导入」「全部清空」可用，大厅的「干员调配」按钮上会显示「自选 N」。
+ - 每回合商店会自动刷新未冻结的格子。
+ - **「本回合首次主动刷新」按每名干员各自计算**（拉普兰德）：她在本回合遇到的第一次主动刷新生效，在整备区里也算——先刷新、再买下拉普兰德，下一次刷新她仍会叠层；本回合新合成的精锐算作一名新的拉普兰德——即使合成用的几名本回合已经生效，精锐在本回合的下一次主动刷新仍会 +8。
+ 
 diff --git a/docs/research/00-INDEX.md b/docs/research/00-INDEX.md
-index 0f4d19c..206e093 100644
+index 0f4d19c..93fdb45 100644
 --- a/docs/research/00-INDEX.md
 +++ b/docs/research/00-INDEX.md
-@@ -118,6 +118,8 @@ The server draws a disabled bond set **D**: **3 core + 4 add-on** in NORMAL/HARD
+@@ -118,6 +118,10 @@ The server draws a disabled bond set **D**: **3 core + 4 add-on** in NORMAL/HARD
  
  **An operator is banned iff all its bonds ∈ D.** At 3 + 4 that averages ≈22 banned operators. The briefing shows lit and greyed bonds plus the banned list; the in-match dropdown shows banned counts per bond. The rule reproduces a real screenshot's counts (7/6/5/5/5/4/3) exactly (01 A2).
  
 +**Remake adjustment (owner decision 2026-10-13, not official):** with the two custom core bonds (东/乌萨斯) the core pool grew 8 → 10, so the draw is **5 core + 5 add-on** in NORMAL/HARD/ABYSS (config `data/config.json → bans`, built by tools/build-data.mjs) — scaled to keep the average available operators at the 0.2.1 baseline of ≈90 (MC: 0.2.1 3+4 → 22.0 banned / 90.0 available; 10-core 5+5 → 33.5 / 91.5). The draw still only filters the shop pool: a drawn bond stays activatable (computeBonds never reads the ban set) — its members that survive (multi-bond ones via their other bonds, plus 调和's +1) still reach the thresholds; only 阿戈尔 shows a real (2.7 %) risk of not even reaching its lowest tier with 调和. Weight remains a draw-eligibility gate, not a sampler weight.
++
++**Remake adjustment 2 (owner decision 2026-10-17, not official):** 协防干员 (`emptyShip`) joins the draw — its `weight` goes 0 → 10 in `tools/custom-content.mjs` (`BOND_WEIGHT_OVERRIDES`, applied in `injectCustomContent` before any builder), so the add-on pool is **12**. 投资人 (`investShip`) explicitly stays weight 0 = never banned (调和 / 绝技 too). Self-selected (`自选编队`) pieces are exempt from the 协防 ban: `server/match/player/diy.js → buildDiyStock` drops `economy.fallbackBondId` from a DIY record's bonds before the all-bonds-off test, so a factionless pick and every prototype (all `['emptyShip']`) keep their stock — the player-facing promise "协防不会被禁用" holds. The draw becomes **7 core + 4 add-on** in NORMAL/HARD/ABYSS (same ≈90 criterion; exact closed form + 200k MC + the production `drawDisabledBonds`: 10-core 7+4 → 36.7 banned / 88.3 available vs 0.2.1's 22.0 / 90.0). Fun side effects, all measured: 阿戈尔 drops to 4.8 mean available members (0.27 % risk below its lowest tier with 调和), FUNNY's add-on candidate pool is 7 so 协防 is drawn there ~14.9 % of the time, and the per-match banned count now ranges 23–50. ⚠️ The closed form used in the earlier 禁用机制速查 §11.3 grid treated a piece's several same-pool bonds as independent draws; the correct (without-replacement) form is `C(C−c, nC−c)/C(C, nC) × C(A−a, nA−a)/C(A, nA)` — the §11.2 grid is ~1 low. Full evaluation: 禁用机制速查.md §12.
 +
  ## 7. Contradictions found and resolved
  
@@ -251,7 +266,7 @@ index a375e04..474ac12 100644
      if (this.actor && this.alive) this.actor.setBase(this._baseFromAnim());
    }
 diff --git a/server/match/gamedata.js b/server/match/gamedata.js
-index c5380d9..7ca1638 100644
+index c5380d9..1a4fa75 100644
 --- a/server/match/gamedata.js
 +++ b/server/match/gamedata.js
 @@ -47,7 +47,7 @@ export const DEFAULTS = Object.freeze({
@@ -259,10 +274,35 @@ index c5380d9..7ca1638 100644
    unite: { maxHelpers: 2, templates: { 1: 'act1autochess_escaped_single', 2: 'act1autochess_escaped_multi' } },
    timers: { infoCheck: 25, bandDraft: 50, bandTurn: 30, battleCheck: 3, spFirst: 30, spTurn: 16 },
 -  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 3, addon: 4 }, HARD: { core: 3, addon: 4 }, ABYSS: { core: 3, addon: 4 } },
-+  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 } },
++  bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 7, addon: 4 }, HARD: { core: 7, addon: 4 }, ABYSS: { core: 7, addon: 4 } },
    bandDraft: { skipsPerPlayer: 1, timeoutBandId: 'band_bldsk' },
    leftoverFundsKeptByBands: ['band_cannot'],
  });
+diff --git a/server/match/player/diy.js b/server/match/player/diy.js
+index c5acc99..4dc4253 100644
+--- a/server/match/player/diy.js
++++ b/server/match/player/diy.js
+@@ -192,11 +192,19 @@ export class PlayerDiy {
+     const stock = new DiyStock();
+     const banned = [];
+     const gd = this.m.gd;
++    // 自选编队的**兜底盟约豁免**（2026-10-17 用户口径）：无对应阵营的自选干员会被 `fallbackBondId`
++    // （协防干员 emptyShip）兜住。协防入禁用抽取池后，若照常按「全部盟约被禁」判定，这类槽位会被协防
++    // 连坐清空 —— PLAYING.md 承诺的「协防不会被禁用」就破了。所以先把兜底盟约从**自选的**判定里摘掉：
++    // 只挂兜底盟约的自选干员退化成 bonds=[]（与「没有盟约的干员永不因此被禁」同口径），
++    // 带真实阵营盟约的自选干员不受影响（它照样会因阵营盟约全灭而禁用）。
++    // 实测：backups.diy.operators 81 条里 46 条是 ['emptyShip']、0 条是「协防+其他阵营」（自选记录的盟约
++    // 只有「纯阵营」或「纯兜底」两种形态），所以这行 filter 不会顺带改变任何有阵营的自选干员。
++    const fallback = gd.economy && typeof gd.economy.fallbackBondId === 'string' ? gd.economy.fallbackBondId : null;
+     for (const slotId of Object.keys(this.diy || {})) {
+       const rec = this._diyRecords.get(slotId);
+       const slot = diySlot(slotId, gd.raw);
+       if (!rec || !slot) continue;
+-      const bonds = Array.isArray(rec.bonds) ? rec.bonds : [];
++      const bonds = (Array.isArray(rec.bonds) ? rec.bonds : []).filter((b) => b !== fallback);
+       if (bonds.length > 0 && bonds.every((b) => off.has(b))) { banned.push(slotId); continue; }
+       const cap = gd.poolCopies(slotId);
+       if (!(cap > 0)) continue;
 diff --git a/server/sim/battle/deploy.js b/server/sim/battle/deploy.js
 index 12962e7..013c2b0 100644
 --- a/server/sim/battle/deploy.js
@@ -470,10 +510,10 @@ index 8b12c71..48e82ee 100644
  
  export function install(battle) {
 diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
-index 593cf20..3779fea 100644
+index 593cf20..836af72 100644
 --- a/server/sim/content/garrisons/meta.js
 +++ b/server/sim/content/garrisons/meta.js
-@@ -430,6 +430,95 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
+@@ -430,6 +430,103 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
  };
  
  
@@ -494,8 +534,10 @@ index 593cf20..3779fea 100644
 +H['act2autochess_gar_eff_987_b'] = {
 +  run(ctx) { gainRandomItems(ctx, num(ctx.source.bb.count, 2)); },
 +};
-+// 2026-10-13 【东】扩展批次（990/991，均 SERVER_GAIN「获得时」）。990 白雪 2026-10-17 用户修订：
-+// 「已激活的层数最高的盟约」→「自身所属盟约」（不挑层数最高、不要求已激活），+3/6→+4/8 → 与 991 吉星同口径（ownLayers）。
++// 2026-10-13 【东】扩展批次（990/991）。990 白雪 2026-10-17 用户修订：
++// 「已激活的层数最高的盟约」→「自身所属盟约」（不挑层数最高、不要求已激活），+3/6→+4/8 → ownLayers。
++// 991 2026-10-17 用户修订：吉星下线、编号改绑松桐 —— 「<休整期结束时>使已激活的【东】【远见】层数+5/10」
++// （原「<获得干员时>自身所属盟约+6/12」）。与官方 garrison_69 同义，故按 bbStr.bond 列举 + requireActive。
 +H['act2autochess_gar_eff_990_a'] = {
 +  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 4)); },
 +};
@@ -503,13 +545,19 @@ index 593cf20..3779fea 100644
 +  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 8)); },
 +};
 +H['act2autochess_gar_eff_991_a'] = {
-+  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 6)); },
++  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 5)); },
 +};
 +H['act2autochess_gar_eff_991_b'] = {
-+  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 12)); },
++  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 10)); },
 +};
 +
-+/** 自定义 991（吉星）；990（白雪，2026-10-17 起同口径）：自身所属盟约全部 +N（未激活也加，鸿雪 986 同口径）。 */
++/** 自定义 991（松桐）：bbStr.bond 列出的盟约 +N，**只加已激活的**（2026-10-17 用户口径）。 */
++function bondListLayers(ctx, count) {
++  if (!(count > 0)) return;
++  for (const b of ids(ctx.source.bbStr.bond)) ctx.addLayers(b, count, { requireActive: true });
++}
++
++/** 自定义 990（白雪）：自身所属盟约全部 +N（未激活也加，鸿雪 986 同口径）。 */
 +function ownLayers(ctx, count) {
 +  if (!(count > 0)) return;
 +  for (const b of metaBonds(ctx, ctx.source.piece)) ctx.addLayers(b, count, { requireActive: false });
@@ -681,7 +729,7 @@ index 6c5dd94..4dbc577 100644
  // grants
  
 diff --git a/server/sim/content/kits/index.js b/server/sim/content/kits/index.js
-index a8994d7..156914b 100644
+index a8994d7..aef11cd 100644
 --- a/server/sim/content/kits/index.js
 +++ b/server/sim/content/kits/index.js
 @@ -35,14 +35,16 @@ export const KIT_FILES = Object.freeze([
@@ -698,7 +746,7 @@ index a8994d7..156914b 100644
      'chess_char_3_13-malist.js', 'chess_char_3_14-slbell.js', 'chess_char_3_15-vodfox.js', 'chess_char_3_16-snakek.js',
      'chess_char_3_17-shotst.js', 'chess_char_3_18-vulpis.js', 'chess_char_3_19-vigil.js', 'chess_char_3_20-kjera.js',
 -    'chess_char_3_21-archet.js'],
-+    'chess_char_3_21-archet.js', 'chess_char_3_96-kichi.js', 'chess_char_3_97-yuki.js', 'chess_char_3_98-leto.js',
++    'chess_char_3_21-archet.js', 'chess_char_3_96-makiri.js', 'chess_char_3_97-yuki.js', 'chess_char_3_98-leto.js',
 +    'chess_char_3_99-gyuki.js'],
    // tier 4
    ['chess_char_4_01-rmixer.js', 'chess_char_4_02-mostma.js', 'chess_char_4_03-kjera.js', 'chess_char_4_04-ines.js',
@@ -1062,7 +1110,7 @@ index 20d83dd..495035d 100644
        skel: assetUrl(m.skel.rel),
        atlas: assetUrl(m.atlas.rel),
 diff --git a/tools/build-data.mjs b/tools/build-data.mjs
-index 48fa3fa..bf24ea7 100644
+index 48fa3fa..be19c54 100644
 --- a/tools/build-data.mjs
 +++ b/tools/build-data.mjs
 @@ -40,6 +40,7 @@ import { bandBondIds } from '../shared/bandBonds.js';
@@ -1073,16 +1121,22 @@ index 48fa3fa..bf24ea7 100644
  
  // ===== CLI & IO ==================================================================================
  
-@@ -3718,7 +3719,7 @@ function buildConfig(ctx, waves, stages, bands, chess, items) {
+@@ -3718,8 +3719,12 @@ function buildConfig(ctx, waves, stages, bands, chess, items) {
        chatCd: ac.constData?.chatCD ?? 1, chatBubble: ac.constData?.chatTime ?? 3, broadcastDelay: ac.constData?.broadcastBeginDelay ?? 1,
        enterSteps: (Array.isArray(ac.enterStepList) ? ac.enterStepList : Object.values(ac.enterStepList || {})).map((s) => ({ step: s.stepType, time: s.time, hint: s.hintTime, title: s.title })),
      },
 -    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 3, addon: 4 }, HARD: { core: 3, addon: 4 }, ABYSS: { core: 3, addon: 4 }, TRAINING: { core: 0, addon: 0 },
-+    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 }, TRAINING: { core: 0, addon: 0 },
-       rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0; uniform draw' },
+-      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0; uniform draw' },
++    // 2026-10-17（用户口径）：协防干员 emptyShip 由 weight 0 → 10（进抽取池，见 custom-content.mjs 的
++    // BOND_WEIGHT_OVERRIDES）→ 支线池 11 → 12；抽取规则改为「n 核心 + 4 支线」，n = 7：
++    // 期望被禁 36.68 / 可用 88.32，对齐官方 0.2.1 基线（112 干员、3+4 → 被禁 22.0 / 可用 90.0）的可用数口径。
++    // 投资人 investShip 保持 weight 0 = 永不被禁。完整评估见 禁用机制速查.md §12。
++    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 7, addon: 4 }, HARD: { core: 7, addon: 4 }, ABYSS: { core: 7, addon: 4 }, TRAINING: { core: 0, addon: 0 },
++      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0 (协防干员 emptyShip became bannable 2026-10-17; 投资人 investShip stays weight 0 = never banned); uniform draw; NORMAL/HARD/ABYSS = 7 core + 4 addon' },
      bandDraft: { skipsPerPlayer: 1, order: 'random', duplicatesAllowed: true, timeoutBandId: 'band_bldsk' },
      titles: Object.values(act.playerTitleDataDict || {}).map((t) => ({ id: t.id, picId: t.picId, name: t.txt, ...(titleRules[t.id] || {}) })),
-@@ -3881,9 +3882,10 @@ function validateAll(f) {
+     titleRule: 'each player gets at most one title; each title is used at most once per match; assign by the category where the player ranks best relative to teammates [ASSUMED]',
+@@ -3881,9 +3886,10 @@ function validateAll(f) {
      bad.slice(0, 5).forEach((p) => err(`non-finite number at ${p}`));
    }
    const visible = Object.values(chess).filter((c) => !c.isGolden && c.visible);
@@ -1095,7 +1149,7 @@ index 48fa3fa..bf24ea7 100644
    for (const c of Object.values(chess)) {
      if (!chess[c.baseId]) err(`chess ${c.chessId}: baseId missing`);
      if (c.goldenId && !chess[c.goldenId]) err(`chess ${c.chessId}: goldenId missing`);
-@@ -4067,6 +4069,7 @@ function validateAll(f) {
+@@ -4067,6 +4073,7 @@ function validateAll(f) {
  async function main() {
    const t0 = Date.now();
    const ctx = await loadContext();
@@ -1125,12 +1179,17 @@ index f12d457..49ae8de 100644
  }
  
 diff --git a/tools/golden.mjs b/tools/golden.mjs
-index a6fb194..0e55d9a 100644
+index a6fb194..2d1e486 100644
 --- a/tools/golden.mjs
 +++ b/tools/golden.mjs
-@@ -726,6 +726,15 @@ export function matchScenarios() {
+@@ -725,7 +725,20 @@ export function matchScenarios() {
+   // The measured shared-stock changes leave the original seeds without a fielded DIY/stand-in operator. Keep those
    // original outcomes, and add companion seeds that still exercise the complete shop → deployment → battle path.
    out.push({ id: 'coop2-NORMAL-1-coverage-standins', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 1, human: { notOwned: MATCH_NOT_OWNED } });
++  // 吉星→松桐 (2026-10-17, chess_char_3_96 改绑 char_4199_makiri) 再次分流了这个 seed 的草稿流: seeds 1–12 probed,
++  // 4 / 5 / 7 / 9 / 11 / 12 field stand-ins — 12 carries the most (8 rounds, 2 different 补位). Seed 1 stays as the
++  // outcome regression it now is (no stand-in fielded).
++  out.push({ id: 'coop2-NORMAL-12-coverage-standins', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 12, human: { notOwned: MATCH_NOT_OWNED } });
    out.push({ id: 'coop2-NORMAL-5-coverage-diy', mode: 'coop', difficulty: 'NORMAL', bots: 1, seed: 5, human: { diy: MATCH_DIY, shopLevel: 5 } });
 +  // 缠丸 (tools/custom-content.mjs) adds a tier-2 chess to the shared pool, which parts seed 5's shop stream from the one
 +  // that fielded 推进之王: a second companion carries the full shop → deployment → battle path again (seeds 1–30 probed;
@@ -1144,12 +1203,12 @@ index a6fb194..0e55d9a 100644
    const humanAbout = (h) => (h.notOwned ? ` + 1 human seat (AI 托管) without ${h.notOwned.length} operators (补位 stand-ins)`
      : ` + 1 human seat (AI 托管) with ${Object.keys(h.diy || {}).length} 自选 picks${h.shopLevel ? ` and its 调度中心 at level ${h.shopLevel} from the first prep` : ''}`);
    return out.map((m) => ({ ...m, family: 'matches', kind: 'match', about: `${m.mode} ${m.difficulty}, ${m.bots} bot seat(s)${m.human ? humanAbout(m.human) : ''}, seed ${m.seed}${m.clientCombat === false ? ', server-run combat' : ''}${m.boost ? `, LP ${m.boost.lp} and ${m.boost.layers} layers per bond from the first prep` : ''}` }));
-@@ -1033,7 +1042,7 @@ const ABOUT = {
+@@ -1033,7 +1046,7 @@ const ABOUT = {
   * fields (one of them a Hidden Core), six matches (solo 标准 / 绝境, co-op 2 / 4, the boosted Hidden Core run, the 补位
   * match) and the normal-record stand-in battles.
   */
 -const FAST_MATCHES = new Set(['solo-FUNNY-1', 'solo-HARD-1', 'coop2-NORMAL-3', 'coop4-ABYSS-7', 'solo-HARD-9-boosted', 'coop2-NORMAL-14-standins', `coop2-NORMAL-${MATCH_DIY_SEED}-diy`, 'coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-5-coverage-diy']);
-+const FAST_MATCHES = new Set(['solo-FUNNY-1', 'solo-HARD-1', 'coop2-NORMAL-3', 'coop4-ABYSS-7', 'solo-HARD-9-boosted', 'coop2-NORMAL-14-standins', `coop2-NORMAL-${MATCH_DIY_SEED}-diy`, 'coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-5-coverage-diy', 'coop2-NORMAL-3-coverage-diy']);
++const FAST_MATCHES = new Set(['solo-FUNNY-1', 'solo-HARD-1', 'coop2-NORMAL-3', 'coop4-ABYSS-7', 'solo-HARD-9-boosted', 'coop2-NORMAL-14-standins', `coop2-NORMAL-${MATCH_DIY_SEED}-diy`, 'coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-12-coverage-standins', 'coop2-NORMAL-5-coverage-diy', 'coop2-NORMAL-3-coverage-diy']);
  const FAST_FIELDS = new Set(['boss-boss_1-pair', 'boss-boss_4-solo', 'boss-boss_7-pair', 'hidden-boss_9-pair', 'unite-1', 'unite-2']);
  export function isFast(sc) {
    if (sc.family === 'matches') return FAST_MATCHES.has(sc.id);

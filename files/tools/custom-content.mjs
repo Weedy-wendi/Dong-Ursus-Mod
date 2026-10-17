@@ -41,14 +41,16 @@ const CHESS = {
     garrisonIds: ['garrison_990_a', 'garrison_990_b'], // 特质：武库清点
   },
   'chess_char_3_96': {
-    charId: 'char_4203_kichi',          // 吉星：5★ 狙击 / 散射手(reaperrange) / nationId higashi
+    // 2026-10-17 用户修订：吉星（char_4203_kichi）**下线**，本槽位改绑松桐；盟约由【东】【精准】换成【东】【远见】，
+    // 特质 991 换成「<休整期结束时>使已激活的【东】【远见】层数+5/10」（与官方 garrison_69 同型）。
+    charId: 'char_4199_makiri',         // 松桐：5★ 先锋 / 策士(counsellor) / nationId higashi
     tier: 3,
     identifier: 9021,
     shopSortId: 910,
-    defaultSkillIndex: 1,               // S2 吉星高照！（签名技）
-    moduleId: 'uniequip_002_kichi',     // rpr-x 可疑的宣传页
-    bondIds: ['dongShip', 'preciShip'], // 【东】【精准】
-    garrisonIds: ['garrison_991_a', 'garrison_991_b'], // 特质：鸿运当头
+    defaultSkillIndex: 1,               // S2 万手成局（S1 入场安排是 AUTO 技能，不能做默认技能）
+    moduleId: null,                     // 松桐没有模组（build-data 会给精锐形态写一个 inactive 占位 module，同蒂比 2_13）
+    bondIds: ['dongShip', 'visiShip'],  // 【东】【远见】
+    garrisonIds: ['garrison_991_a', 'garrison_991_b'], // 特质：<休整期结束时>已激活的【东】【远见】+5/10
   },
   'chess_char_5_97': {
     charId: 'char_362_saga',            // 嵯峨：6★ 先锋 / 尖兵(pioneer) / nationId higashi
@@ -167,6 +169,25 @@ const BOND_OVERRIDES = {
   chess_char_4_09: ['dongShip', 'egirShip', 'soloShip'],   // 水月：东、阿戈尔、独行
   chess_char_4_17: ['yanShip', 'dongShip'],                // 星熊：炎、东
   chess_char_5_10: ['siracusaShip', 'dongShip', 'emptyShip'], // 铃兰：叙拉古、东、协防
+};
+
+/**
+ * 官方盟约的 **weight 覆盖** —— 即「谁会进开局禁用抽取池」（2026-10-17 用户口径）。
+ *
+ * `pool.js drawDisabledBonds` 的候选资格是 `Number(bond.weight) > 0`（它的**唯一**运行时消费者；
+ * research 02 里 [ASSUMED] 的「随机抽盟约的权重」并未实现）。所以 weight 0 → 10 = 把这条盟约从
+ * 「永不入池」改成「可被抽中禁用」。
+ *
+ * 本次：**协防干员 (emptyShip) 0 → 10**（它一旦被抽中，只挂协防的干员就会被连坐禁掉；
+ * 挂别的盟约的成员照旧靠那条腿存活）。**投资人 (investShip) 明确保持 0 = 永不被禁**；
+ * 调和 (maniShip) / 绝技 (suntShip) 也保持 0（用户未要求改动）。
+ *
+ * ⚠️ 值取 10 只为与官方附加盟约（weight 10）同形；抽样是**均匀洗牌**，10 与 1 的中签率相同。
+ * ⚠️ `economy.fallbackBondId` 也是 emptyShip：自选编队里「无对应阵营」的干员会回落成协防，
+ * 这部分**不参与禁用判定**（见 `server/match/player/diy.js` buildDiyStock 的豁免）。
+ */
+const BOND_WEIGHT_OVERRIDES = {
+  emptyShip: 10,   // 协防干员：进禁用抽取池（2026-10-17 用户口径）
 };
 
 /**
@@ -311,7 +332,7 @@ const GARRISONS = {
   },
   'garrison_990_a': {
     // 白雪：获得时（SERVER_GAIN）。2026-10-17 用户修订：「已激活的层数最高的盟约」→「自身所属盟约」
-    // （不再要求已激活、不再挑层数最高者 → 见 meta.js ownLayers，与吉星 991 同口径），+3/6→+4/8
+    // （不再要求已激活、不再挑层数最高者 → 见 meta.js ownLayers，与鸿雪 986 同口径），+3/6→+4/8
     garrisonDesc: '<获得干员时>自身所属盟约+4层（无需激活盟约）',
     eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
     effectType: 'ADD_BOND', battleRuneKey: null,
@@ -324,17 +345,20 @@ const GARRISONS = {
     bb: { count: 8 },
   },
   'garrison_991_a': {
-    // 吉星：获得时，自身所属盟约全部 +N（**不需要已激活**，未激活也加，鸿雪 986 同口径）
-    garrisonDesc: '<获得干员时>自身所属盟约+6层（不需要已激活）',
-    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
-    effectType: 'ADD_BOND', battleRuneKey: null,
-    bb: { count: 6 },
+    // 松桐（2026-10-17 用户修订；吉星下线后本编号改绑）：<休整期结束时>使已激活的【东】【远见】层数+5/10。
+    // 与官方 garrison_69（「<休整期结束时>使已激活的【坚守】层数+4」）完全同型：eventType SERVER_PREP_FIN、
+    // bbStr.bond 列举盟约、conditionkey character_target_inboard（不在场上则不触发）。处理器在 meta.js
+    // （自定义 effectKey 段 act2autochess_gar_eff_991_a/b → bondListLayers，按「已激活」加层）。
+    garrisonDesc: '<休整期结束时>使已激活的【东】【远见】盟约层数+5',
+    eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND', battleRuneKey: null,
+    bb: { count: 5 }, bbStr: { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' },
   },
   'garrison_991_b': {
-    garrisonDesc: '<获得干员时>自身所属盟约+12层（不需要已激活）',
-    eventType: 'SERVER_GAIN', eventTypeDesc: '单次叠加', eventTypeIcon: 'icon_bond',
-    effectType: 'ADD_BOND', battleRuneKey: null,
-    bb: { count: 12 },
+    garrisonDesc: '<休整期结束时>使已激活的【东】【远见】盟约层数+10',
+    eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND', battleRuneKey: null,
+    bb: { count: 10 }, bbStr: { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' },
   },
   'garrison_992_a': {
     // 麒麟R夜刀：再部署-75% + 【狂龙症】(攻击力+50% + 90% 物理/法术减伤 + 每秒流失 100 生命) +
@@ -368,7 +392,7 @@ const BONDS = {
     powerIdList: ['higashi'],            // 官方 nationId（东国）
     activeCount: 3,
     thresholds: [3, 6],
-    // 成员 = 持有该盟约的棋子（_a）：宴/风丸/吉星/白雪/缠丸/水月/星熊/铃兰/嵯峨/麒麟R夜刀（2026-10-13 用户口径）
+    // 成员 = 持有该盟约的棋子（_a）：宴/风丸/松桐/白雪/缠丸/水月/星熊/铃兰/嵯峨/麒麟R夜刀（2026-10-17 松桐换下吉星）
     members: ['chess_char_1_18_a', 'chess_char_2_11_a', 'chess_char_3_96_a', 'chess_char_3_97_a', 'chess_char_3_99_a',
       'chess_char_4_09_a', 'chess_char_4_17_a', 'chess_char_5_10_a', 'chess_char_5_97_a', 'chess_char_6_97_a'],
     effectId: 'bondeffect_dong',
@@ -568,6 +592,14 @@ export function injectCustomContent(ctx) {
       if (!rec) throw new Error(`[custom] bond override ${base}: official chess missing`);
       rec.bondIds = [...bondIds];
     }
+  }
+
+  // ---- 官方盟约的禁用池覆盖（协防干员入池；见 BOND_WEIGHT_OVERRIDES）----
+  // buildBonds 读 `act.bondInfoDict[id].weight`，必须在这里（任何 builder 之前）改，改完 buildBonds 自然写出新值。
+  for (const [bondId, w] of Object.entries(BOND_WEIGHT_OVERRIDES)) {
+    const b = act.bondInfoDict[bondId];
+    if (!b) throw new Error(`[custom] bond weight override ${bondId}: official bond missing`);
+    b.weight = w;
   }
 
   // ---- 盟约 + 效果 ----
