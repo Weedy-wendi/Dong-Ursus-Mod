@@ -1959,6 +1959,10 @@
     "public/assets/audio/sfx/player/p_imp/p_imp_whlcannon_h.mp3": {
       "size": 36798,
       "sha256": "5e16bf27b17717195e4c0e3c2e5eda5e1b879b31dc2ede3ede3c94748cd617e3"
+    },
+    "test/golden-diy.test.js": {
+      "size": 2402,
+      "sha256": "03e7f2f56a672f2c58cd68008c1a0090da19d49bb14ebfcd4c221418a65aeb81"
     }
   },
   "patched": {
