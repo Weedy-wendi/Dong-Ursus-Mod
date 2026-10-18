@@ -2039,8 +2039,8 @@
       "sha256": "30b284d8a2896d541c6ebf2c6e077504d8ea081446801153b1ea009317118bee"
     },
     "server/sim/content/garrisons/meta.js": {
-      "size": 25572,
-      "sha256": "ceb530eae93dac7eb396f452b5897e3f88d549cfd65c8c087bd32cb1d4d28f9a"
+      "size": 25654,
+      "sha256": "dbd5a257d17edcdc30edb572892d1a629b86045a3466ed4253f309c8f59a5523"
     },
     "server/sim/content/items/battle.js": {
       "size": 60033,
@@ -2099,8 +2099,8 @@
       "sha256": "c81c69ad6426498e2d014abd2c4eced566f226b02e13136ee16822c3ec1cabb3"
     },
     "test/content/garrisons_meta.test.js": {
-      "size": 48223,
-      "sha256": "906c8345bfb1f237663ca180b811c8ce87c076f2bebd631ad79fb78b361535b9"
+      "size": 48251,
+      "sha256": "25fc1d9b35fe0bf86e64f2307c20320ee0503b1393b45732eb47184ea79e15a0"
     },
     "test/content/items.test.js": {
       "size": 74023,

@@ -15353,7 +15353,7 @@ index 8b12c71..90bcbee 100644
 +  wireMilestone(registry, 'victoriaShip', payHammers);
  }
 diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
-index 593cf20..9e974ec 100644
+index 593cf20..c44611b 100644
 --- a/server/sim/content/garrisons/meta.js
 +++ b/server/sim/content/garrisons/meta.js
 @@ -430,6 +430,86 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
@@ -15379,7 +15379,7 @@ index 593cf20..9e974ec 100644
 +};
 +// 2026-10-13 【东】扩展批次（990/991）。990 白雪 2026-10-17 用户修订：
 +// 「已激活的层数最高的盟约」→「自身所属盟约」（不挑层数最高、不要求已激活），+3/6→+4/8 → ownLayers。
-+// 991 2026-10-17 用户修订：吉星下线、编号改绑松桐 —— 「<休整期结束时>使已激活的【东】【远见】层数+5/10」
++// 991 2026-10-17 用户修订：吉星下线、编号改绑松桐 —— 「<休整期结束时>使已激活的【东】【远见】层数+4/8」（2026-10-19 三修：原 +5/10）
 +// （原「<获得干员时>自身所属盟约+6/12」）。与官方 garrison_69 同义，故按 bbStr.bond 列举 + requireActive。
 +H['act2autochess_gar_eff_990_a'] = {
 +  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 4)); },
@@ -15388,18 +15388,18 @@ index 593cf20..9e974ec 100644
 +  run(ctx) { ownLayers(ctx, num(ctx.source.bb.count, 8)); },
 +};
 +H['act2autochess_gar_eff_991_a'] = {
-+  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 5)); },
++  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 4)); },
 +};
 +H['act2autochess_gar_eff_991_b'] = {
-+  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 10)); },
++  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 8)); },
 +};
 +// 2026-10-18 用户修订：赫拉格 982「老将刀意」→ <休整期开始时>使已激活的【乌萨斯】【远见】盟约层数+8/16
 +// （战斗侧击杀叠层下线，kit 里的 kill 监听已移除；无位置条件——文案未限定在场，整备区也触发）。
 +H['act2autochess_gar_eff_982_a'] = {
-+  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 8)); },
++  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 6)); },  // 2026-10-19: fallback 对齐用户口径 6/12
 +};
 +H['act2autochess_gar_eff_982_b'] = {
-+  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 16)); },
++  run(ctx) { bondListLayers(ctx, num(ctx.source.bb.count, 12)); },
 +};
 +
 +/** 自定义 991（松桐）：bbStr.bond 列出的盟约 +N，**只加已激活的**（2026-10-17 用户口径）。 */

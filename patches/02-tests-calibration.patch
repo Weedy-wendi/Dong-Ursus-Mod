@@ -405,7 +405,7 @@ index fbb8ec4..957878a 100644
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/garrisons_meta.test.js b/test/content/garrisons_meta.test.js
-index b6782a3..7a16880 100644
+index b6782a3..3883825 100644
 --- a/test/content/garrisons_meta.test.js
 +++ b/test/content/garrisons_meta.test.js
 @@ -884,6 +884,113 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
@@ -464,15 +464,15 @@ index b6782a3..7a16880 100644
 +  cover('garrison_990_b');
 +});
 +
-+test('自定义 991 (松桐): <休整期结束时>已激活的【东】【远见】+5/_b +10 (未激活的不加)', () => {
++test('自定义 991 (松桐): <休整期结束时>已激活的【东】【远见】+4/_b +8 (未激活的不加)', () => {
 +  // 2026-10-17 用户口径：吉星下线，991 改绑松桐 —— 从「<获得干员时>自身所属盟约 +6/12」改为
-+  // 「<休整期结束时>使已激活的【东】【远见】盟约层数 +5/10」（与官方 garrison_69 同型）
++  // 「<休整期结束时>使已激活的【东】【远见】盟约层数 +4/8」（与官方 garrison_69 同型；2026-10-19 三修：原 +5/10）
 +  const s = setup();
 +  s.acquire('chess_char_3_96_a');
 +  give(s.m, s.ps, 'chess_char_3_96_a', 'board', [10, 4]);
 +  s.activate('dongShip', 'visiShip');
 +  s.prepEnd();
-+  assert.deepEqual(s.gainsNow(), { dongShip: 5, visiShip: 5 }, JSON.stringify(s.gainsNow()));
++  assert.deepEqual(s.gainsNow(), { dongShip: 4, visiShip: 4 }, JSON.stringify(s.gainsNow()));
 +  cover('garrison_991_a');
 +  // 「使已激活的…」：未激活的盟约不加层（两个都没激活 → 什么都不加）
 +  const t = setup();
@@ -480,14 +480,14 @@ index b6782a3..7a16880 100644
 +  give(t.m, t.ps, 'chess_char_3_96_a', 'board', [10, 4]);
 +  t.activate('dongShip');
 +  t.prepEnd();
-+  assert.deepEqual(t.gainsNow(), { dongShip: 5 }, JSON.stringify(t.gainsNow()));
++  assert.deepEqual(t.gainsNow(), { dongShip: 4 }, JSON.stringify(t.gainsNow()));
 +  // 精锐 +10
 +  const u = setup();
 +  u.acquire('chess_char_3_96_b');
 +  give(u.m, u.ps, 'chess_char_3_96_b', 'board', [10, 4]);
 +  u.activate('dongShip', 'visiShip');
 +  u.prepEnd();
-+  assert.deepEqual(u.gainsNow(), { dongShip: 10, visiShip: 10 }, JSON.stringify(u.gainsNow()));
++  assert.deepEqual(u.gainsNow(), { dongShip: 8, visiShip: 8 }, JSON.stringify(u.gainsNow()));
 +  cover('garrison_991_b');
 +});
 +
