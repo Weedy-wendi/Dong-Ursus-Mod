@@ -53,7 +53,7 @@ const CHESS = {
     defaultSkillIndex: 1,               // S2 万手成局（S1 入场安排是 AUTO 技能，不能做默认技能）
     moduleId: null,                     // 松桐没有模组（build-data 会给精锐形态写一个 inactive 占位 module，同蒂比 2_13）
     bondIds: ['dongShip', 'visiShip'],  // 【东】【远见】
-    garrisonIds: ['garrison_991_a', 'garrison_991_b'], // 特质：<休整期结束时>已激活的【东】【远见】+5/10
+    garrisonIds: ['garrison_991_a', 'garrison_991_b'], // 特质：<休整期结束时>已激活的【东】【远见】+4/8（2026-10-19 三修：原 +5/10）
   },
   'chess_char_5_97': {
     charId: 'char_362_saga',            // 嵯峨：6★ 先锋 / 尖兵(pioneer) / nationId higashi
@@ -364,20 +364,20 @@ const GARRISONS = {
     bb: { count: 8 },
   },
   'garrison_991_a': {
-    // 松桐（2026-10-17 用户修订；吉星下线后本编号改绑）：<休整期结束时>使已激活的【东】【远见】层数+5/10。
+    // 松桐（2026-10-17 用户修订；吉星下线后本编号改绑；2026-10-19 三修：+5/10→+4/8）：<休整期结束时>使已激活的【东】【远见】层数+4/8。
     // 与官方 garrison_69（「<休整期结束时>使已激活的【坚守】层数+4」）完全同型：eventType SERVER_PREP_FIN、
     // bbStr.bond 列举盟约、conditionkey character_target_inboard（不在场上则不触发）。处理器在 meta.js
     // （自定义 effectKey 段 act2autochess_gar_eff_991_a/b → bondListLayers，按「已激活」加层）。
-    garrisonDesc: '<休整期结束时>使已激活的【东】【远见】盟约层数+5',
+    garrisonDesc: '<休整期结束时>使已激活的【东】【远见】盟约层数+4',
     eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'SERVER_ADD_BOND', battleRuneKey: null,
-    bb: { count: 5 }, bbStr: { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' },
+    bb: { count: 4 }, bbStr: { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' },
   },
   'garrison_991_b': {
-    garrisonDesc: '<休整期结束时>使已激活的【东】【远见】盟约层数+10',
+    garrisonDesc: '<休整期结束时>使已激活的【东】【远见】盟约层数+8',
     eventType: 'SERVER_PREP_FIN', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
     effectType: 'SERVER_ADD_BOND', battleRuneKey: null,
-    bb: { count: 10 }, bbStr: { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' },
+    bb: { count: 8 }, bbStr: { bond: 'dongShip,visiShip', conditionkey: 'character_target_inboard' },
   },
   'garrison_992_a': {
     // 麒麟R夜刀：再部署-75% + 【狂龙症】(攻击力+50% + 90% 物理/法术减伤 + 每秒流失 100 生命) +
