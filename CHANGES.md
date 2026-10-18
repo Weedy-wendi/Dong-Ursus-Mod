@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-10-18（第十四条 · v1.0.12）· 兔兔支援立绘改珊比 ＋ 7 条自制策略撤蒙版恢复原始底图
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | 【兔兔支援】`iconChar` `char_002_amiya` → **`char_4235_thumpy`（珊比）**（用户口径；iconChar 为记录字段，不进注入产物，`data/*.json` 零变化） |
+| `files/public/assets/band/*.png` ×7 | **撤掉第十三条的蒙版，恢复无蒙版原始底图**（用户口径）：band_palico/headbr/haruka/utage/ulika 从本包 git `feec72a`（第十条）原版恢复；band_tutu（珊比）/band_titi（缇缇）为新增，按蒙版版同裁切几何 `ZOOM=(18,0,162,144)` 从头像重生成，均 180×180 RGBA（与官方一致；蒙版版是 RGB） |
+
+### 验证
+
+- `node tools/custom-content.mjs` 退出 0，产物 data/*.json 与改前一致（iconChar 不进注入）。
+- `test/data.test.js` + `test/content/bands.test.js` 76/76 通过。
+- 工作区 / 真机树 / 本包 files 三处 band 目录已同步为同一组底图。
+
+---
+
 ## 2026-10-18（第十三条 · v1.0.11）· 随机叠层黑名单 ＋ 赫拉格特质重做 ＋ 兔兔支援/独家签约 ＋ 策略立绘蒙版
 
 ### 改了什么

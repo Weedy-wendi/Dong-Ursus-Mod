@@ -766,7 +766,7 @@ const BANDS = {
     desc: '【兔兔支援】第2、4、7、11回合开始时，获得2名不高于当前调度等级的<雷姆必拓>干员',
     // rounds/lvlist 是字符串 → 必须走 bbStr（bb 的字符串会被 buildBands 数值化为 0）
     buffs: [{ key: 'band_rounds_gain_bond_char', bb: { count: 2 }, bbStr: { bond: 'rimBillitonShip', rounds: '2,4,7,11' } }],
-    iconChar: 'char_002_amiya',          // 「兔兔」= 阿米娅（用户未定立绘，我选）
+    iconChar: 'char_4235_thumpy',        // 「兔兔」= 珊比（2026-10-18 用户指定，原为阿米娅）
   },
   band_titi: {
     name: '缇缇', sortId: 47, totalHp: 26,

@@ -2,7 +2,7 @@
   "format": 1,
   "mod": "dong-ursus",
   "name": "【东】＋【乌萨斯】盟约 mod",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
   "source": {
@@ -521,32 +521,32 @@
       "sha256": "98ddfbed7290c95f8b57de7a253fb72353e3cd26ffcebad55a12fbd3e26c7e8b"
     },
     "public/assets/band/band_haruka.png": {
-      "size": 64579,
-      "sha256": "e1680f7677d65765142f657ee628b967fabec9e52fbb6f83342cc3a60352ff96"
+      "size": 70363,
+      "sha256": "c16894fffea7bc487d890458d15e09cfaff558d9fc851ab43577197a6d4e5286"
     },
     "public/assets/band/band_headbr.png": {
-      "size": 41074,
-      "sha256": "fc7103f3278ed04f3b259ec2b367be5be2db6dc0244113176a6839257997e61d"
+      "size": 44809,
+      "sha256": "74c73301e2f6f572ac9f3fee0e241350158a7a02f9a3e7ae0a852cb029a86873"
     },
     "public/assets/band/band_palico.png": {
-      "size": 40820,
-      "sha256": "9b77b2fa44a86789bef80f4f5fdd21404b77070067aed496bb5bccd5d071f122"
+      "size": 45352,
+      "sha256": "5ea89bfc9a683bc0faf59baa5cd0e010b9f4f2553de3f99ace960164b3fb28af"
     },
     "public/assets/band/band_titi.png": {
-      "size": 46779,
-      "sha256": "b81d120f9c6d7c2d36bc2fc8f3400c1d0b911aa7fa8b8016788b8b5549f824c2"
+      "size": 48012,
+      "sha256": "f1152f35920c09db2b66fdef9c85befe65ea6e474e50e6cac2efeb4ab523a236"
     },
     "public/assets/band/band_tutu.png": {
-      "size": 54342,
-      "sha256": "7cd36bd238e386b20db0b57eb97711279491fac9528f75754bf8fb54999c8cd8"
+      "size": 60309,
+      "sha256": "e86fcc5f31ee0d78fd7e5779541fd18aca2b7081517c35e8b108f7498f8a8319"
     },
     "public/assets/band/band_ulika.png": {
-      "size": 65035,
-      "sha256": "34ffb24226e9f725c4d9da0c5205e3b67cb33873733862107123a796183e242b"
+      "size": 63018,
+      "sha256": "2391d26ba9b20b6688116dff17a74d2a66752187f44fe8adb31b50c17c8676b0"
     },
     "public/assets/band/band_utage.png": {
-      "size": 58040,
-      "sha256": "f574058222d3c2af338a5159ea53d321e43be4c66f72728a6bd29e19ab9978a8"
+      "size": 52767,
+      "sha256": "7f33b48b36fd6e546522ea4980de56fdbdc57440245dee717e7ef3cfae0ca4d5"
     },
     "public/assets/bond/dongShip.png": {
       "size": 32409,
@@ -1037,8 +1037,8 @@
       "sha256": "1f3f93d23c4e283b5e6894e9cd86db67a2994ac204233ad7c5c1018e0da51bf7"
     },
     "tools/custom-content.mjs": {
-      "size": 83294,
-      "sha256": "6384e66362ccd672dba32323044a617effc79449e2f2a7f985528ba54e347adb"
+      "size": 83305,
+      "sha256": "ad59474d7ad0a70dde9f0fabe14841d61e7267372fd969ff82daa900e76f0054"
     },
     "tools/i18n-rim-pr1.mjs": {
       "size": 15265,
