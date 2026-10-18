@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-10-18（第十七条 · v1.0.15）· 雷姆必拓盟约数值/判定修订 ＋ 黑特质重做
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `patches/01`（bonds/core.js installRim） | ①3 人 ATK 公式：每层 0.7% → **0.5%**（bb.atk_per_layer 默认值同步）；②6 人伤害加成的场上计数改为**判不同干员**（a/b 形态归一去重，`String(u.id).replace(/_b$/,'_a')`），每名不同的【雷姆必拓】干员 +30%（bb.dmg_per_member 0.3 不变——判定口径从「人次」改「不同干员」） |
+| `files/tools/custom-content.mjs` | rim 盟约 bb（atk_per_layer/atk_disp_per 0.005、dmg_per_member 注释）+ desc/effectDesc 6 人段加「不同的」；**996 黑特质文案重写**：「<战斗中>每击杀1名敌人，自身已激活的盟约层数+3/+6（每场战斗最多触发5次）」 |
+| `files/server/sim/content/kits/ops/chess_char_5_96-shwaz.js`（owned） | **黑特质 kit 重做**：删「层数合计每满 3 层 → 攻速 +1/+2 不设上限」（layerGain 重算读数）→ 每 `kill`（ctx.killer===unit && victim.side==='enemy'）给自身玩家**全部已激活盟约**逐条 `battle.addLayers(..., 'op')` +3/+6，`unit.mem` 计数上限 5 次/场（伯塔尼/嵯峨 addLayers 先例；layerGain 照常驱动雷姆必拓 ATK 重算与里程碑） |
+| `files/tools/i18n-rim-pr1.mjs` | rim 盟约四语 desc/effectDesc 的 6 人段加「不同的 / 異なる / distinct / 서로 다른」（zh-TW 由 s2t 自动） |
+| `files/tools/i18n-rim-pr2.mjs` | garrison_996_a/b 四语重写（击杀叠层口径） |
+| `patches/02`（rim_operators / rim_bond / garrisons_battle 测试 + golden/standins.json） | 黑 996 测试改写为击杀叠层断言（killN 精确控制、含上限与未激活盟约排除）；rim 公式期望 0.007→0.005；golden 重算 |
+| `mod.json` | `version` 1.0.14 → **1.0.15**；owned/patched 指纹刷新（6 文件） |
+
+### 验证
+
+- 工作区：rim_operators 5/5（新击杀特质含上限、精锐翻倍、未激活排除）、rim_bond 4/4（0.005 公式）、i18n stale=0、garrisons_meta/battle 全过；全量 6349 项内容性 0 fail。
+- 纯净 `16a0f9b` worktree：patch01+02 apply 后 core.js / garrisons_battle / standins.json 与工作区逐字节一致。
+- feat 多人整合包同步（server/sim 3 文件 + tools 3 脚本 + 测试 + data 重建 + verify）；真机树 install v1.0.15。
+
+---
+
 ## 2026-10-18（第十六条 · v1.0.14）· 补齐 mod 自带素材缺口（421 个：加籍干员立绘/spine + 两枚自制盟约图标）
 
 ### 改了什么

@@ -14,13 +14,11 @@
 //     0.5s 光环刷新（同名取最高）。ARC-X stage2+ 的「携带」分档本棋子（tier5 精锐 = stage1）不可达，
 //     分支按描述判定保留（数据驱动，记录若改为携带文案仍正确）。
 //   - ARC-Y 老剃刀不适用：本棋子 moduleId = uniequip_002_shwaz 即 ARC-X，op-kit 的正前方 install 块删除。
-//   - 特质 garrison_996 卡池爆满（garrison 条目只是展示，引擎不处理 —— kit 实现）：<战斗中>【雷姆必拓】
-//     【精准】两条**已激活**盟约层数合计每满 3 层 → 本干员攻击速度 +1（普通）/ +2（精锐），**不设上限**
-//     （2026-10-16 用户口径，推翻评审的「至多+N」）。
-//     实现照 garrisons/battle.js READERS 的 attrByBond 思路：install 初算 + layerGain 后 battle.after(0)
-//     防抖重算（installReaders 写法），persist buff 的 aspd mods（同名 replace）。「已激活/层数」内联读
-//     battle.getPlayer(pid).bonds[id]（kit 禁 import support/index.js —— kits_layout.test.js）。
-// 层只经 layerGain 增长，不做周期轮询。
+//   - 特质 garrison_996 卡池爆满（garrison 条目只是展示，引擎不处理 —— kit 实现）：<战斗中>每击杀
+//     <1>名敌人，自身已激活的盟约层数 +3（普通）/ +6（精锐），每场战斗最多触发 5 次（2026-10-18 用户口径，
+//     推翻 2026-10-16 的「层数合计每满 3 层 → 攻速 +1/+2 不设上限」）。走 battle.addLayers（伯塔尼/牛彦/
+//     嵩鸫先例：走 layerGain hook + 逐盟约上限 clamp，kit 禁 import support/index.js —— kits_layout.test.js）。
+// 层只经 addLayers 增长（自身已激活的全部盟约逐条 +N），不做周期轮询。
 
 import { num, talentBb, up, skillRec} from '../shared/tier1.js';
 import { genericSkillSpec } from '../../generic.js';
@@ -31,11 +29,9 @@ const S2 = 'skchr_shwaz_2';
 const CROSSFIRE = 'talent:shwaz:crossfire';
 /** 交叉火力's refresh interval (s), as installAura. */
 const AURA_EVERY = 0.5;
-/** garrison_996 卡池爆满：读的两条盟约、层数步长与每 3 层攻速/上限（普通 garrison_996_a / 精锐 _b）。 */
-const BOND_BONDS = ['rimBillitonShip', 'preciShip'];
-const BOND_KEY = 'garrison:shwaz:byLayer';
-const BOND_DIV = 3;
-const BOND_ASPD = (golden) => (golden ? { per: 2 } : { per: 1 });   // 不设上限（2026-10-16 用户口径）
+/** garrison_996 卡池爆满：每击杀 +N 层（普通 _a / 精锐 _b）与每场战斗触发上限。 */
+const KILL_ADD = (golden) => (golden ? 6 : 3);
+const KILL_CAP = 5;
 
 /** A 【狙击】 operator (summons are never operators). */
 const isSniperOp = (a) => !!a && a.kind === 'op' && a.def?.profession === 'SNIPER';
@@ -46,34 +42,11 @@ function crossfireOf(chess) {
   return { atk: num(t?.bb?.atk), squad: /携带/.test(String(t?.desc ?? '')) };
 }
 
-/** garrison_996: floor(Σ 已激活的【雷姆必拓】【精准】层数 / 3)（未激活的不计入）。 */
-function bondSteps(battle, unit) {
-  const ps = battle.getPlayer?.(unit.ownerId);
-  if (!ps || !ps.bonds || typeof ps.bonds !== 'object') return 0;
-  let total = 0;
-  for (const id of BOND_BONDS) {
-    const b = ps.bonds[id];
-    if (b && b.active) total += Math.max(0, num(b.layers, 0));
-  }
-  return Math.floor(total / BOND_DIV);
-}
-
 export default {
   chess_char_5_96_a: (bb, chess) => {
     const t0 = talentBb(chess, 0);
     const cross = crossfireOf(chess);
     const golden = !!chess?.isGolden;
-
-    /** garrison_996: 把当前步数的攻速落到 persist buff 上（0 = 摘除；同名 replace）。 */
-    const recomputeBond = (battle, unit) => {
-      const { per } = BOND_ASPD(golden);
-      const v = bondSteps(battle, unit) * per;
-      const cur = unit.findBuff(BOND_KEY);
-      if (!(v > 0)) { if (cur) battle.removeBuff(unit, cur); return; }
-      if (!cur || cur.mods?.aspd !== v) {
-        battle.addBuff(unit, { key: BOND_KEY, persist: true, allowDead: true, refresh: 'replace', mods: { aspd: v }, tags: ['talent'] });
-      }
-    };
 
     return {
     // 非默认技能（alt loadout）：genericSkillSpec 按该技能自己的记录生成 —— kit 覆盖要求每个可选技能有条目，
@@ -131,14 +104,18 @@ export default {
       ],
       install(battle, unit) {
         // ---- 特质 garrison_996 卡池爆满（kit 实现）----
-        // 【雷姆必拓】【精准】已激活层数合计每满 3 层 → 攻速 +1/+2（不设上限）。install 初算 +
-        // layerGain 后 battle.after(0) 防抖重算（garrisons/battle.js installReaders 的写法）。
-        recomputeBond(battle, unit);
-        let pending = false;
-        battle.on('layerGain', () => {
-          if (pending) return;
-          pending = true;
-          battle.after(0, () => { pending = false; recomputeBond(battle, unit); }, { owner: unit });
+        // <战斗中>每击杀 1 名敌人 → 自身（所在玩家）**已激活**的全部盟约各 +3/+6 层；每场战斗最多触发
+        // 5 次（unit.mem 计数，跨多次部署持续——「每场战斗」口径）。走 battle.addLayers（'op' reason，
+        // layerGain hook 与逐盟约上限 clamp 照常生效；layerGain 又会驱动雷姆必拓 3 人档的 ATK 重算）。
+        let kills = 0;
+        battle.on('kill', (ctx) => {
+          if (ctx.killer !== unit || ctx.victim?.side !== 'enemy') return;
+          if (kills >= KILL_CAP) return;
+          kills++;
+          const ps = battle.getPlayer?.(unit.ownerId);
+          for (const [bondId, b] of Object.entries(ps?.bonds ?? {})) {
+            if (b?.active) battle.addLayers(unit.ownerId, bondId, KILL_ADD(golden), 'op', { source: unit });
+          }
         }, { owner: unit });
       },
     };

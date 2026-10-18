@@ -377,7 +377,7 @@ index 3631c2f..366f121 100644
    });
    h.step();
 diff --git a/test/content/garrisons_battle.test.js b/test/content/garrisons_battle.test.js
-index fbb8ec4..8fcbf2b 100644
+index fbb8ec4..c620234 100644
 --- a/test/content/garrisons_battle.test.js
 +++ b/test/content/garrisons_battle.test.js
 @@ -595,6 +595,20 @@ test('attrByBond (26 ids): floor(Σ layers of the listed ACTIVE bonds / divide_n
@@ -430,8 +430,8 @@ index fbb8ec4..8fcbf2b 100644
 +  }
 +});
 +
-+test('自定义特质 996 (黑) / 999 (莱伊)【雷姆必拓】: display-only riders fired from the rim kits (layers/3 步进)', () => {
-+  // 996 黑：每 3 层【雷姆必拓】【精准】攻速 +1；999 莱伊：每 3 层攻击力 +1%（精锐 +2%）。
++test('自定义特质 996 (黑) / 999 (莱伊)【雷姆必拓】: display-only riders fired from the rim kits (kill-layers / layers-3)', () => {
++  // 996 黑（2026-10-18 用户口径）：每击杀 1 敌 → 已激活盟约 +3/+6（每场至多 5 次）；999 莱伊：每 3 层攻击力 +1%（精锐 +2%）。
 +  // 数值断言在 rim_operators.test.js；这里跑干净战斗并把 id 计入覆盖（与 980-992 批次同口径）。
 +  const chessById = { garrison_996_a: 'chess_char_5_96_a', garrison_996_b: 'chess_char_5_96_b',
 +    garrison_999_a: 'chess_char_6_95_a', garrison_999_b: 'chess_char_6_95_b' };
@@ -1376,7 +1376,7 @@ index 8c5c508..c47b712 100644
    assert.deepEqual(dg.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 }, id);
    assert.deepEqual(Object.keys(dg.diy.picks).sort(), Object.keys(BACKUPS.diy.slots).sort(), 'all four slots filled');
 diff --git a/test/golden-standins.test.js b/test/golden-standins.test.js
-index bce956c..defa694 100644
+index bce956c..46be579 100644
 --- a/test/golden-standins.test.js
 +++ b/test/golden-standins.test.js
 @@ -52,13 +52,20 @@ test('standins: every active skill a chess names for its stand-in is cast; passi
@@ -1388,12 +1388,12 @@ index bce956c..defa694 100644
 -  assert.deepEqual(dg.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 });
 +  // 2026-10-17: 吉星→松桐分流了 seed 1 的草稿流；2026-10-18（47 策略 + 6+5 加权禁集）又分流了 seed 12。
 +  // seed 1 原样留作回归（只查无错），派补位的断言移到 companion seed 3（seeds 1–24 probed：1/3/4/5/6/7/11/… 派）。
-+  for (const id of ['coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-3-coverage-standins']) {
++  for (const id of ['coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-5-coverage-standins']) {
 +    const d = MATCHES.scenarios[id];
 +    assert.ok(d, `${id} scenario present`);
 +    assert.deepEqual(d.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 }, `${id}: no errors`);
 +  }
-+  const dg = MATCHES.scenarios['coop2-NORMAL-3-coverage-standins'];
++  const dg = MATCHES.scenarios['coop2-NORMAL-5-coverage-standins'];
    const fielded = dg.standIns.rounds.filter(([, s]) => s).flatMap(([, s]) => s.split(' '));
    // (≥ 2 since a level-up leaves its new slot empty — GitHub #332, PR #333 by @2321Robin: this match's shop rolls, and with
    // them which stand-ins the human seat fields, part from the stream in which the upgrade drew a card into the new slot)

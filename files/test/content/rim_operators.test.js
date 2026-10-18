@@ -39,44 +39,35 @@ test('both forms of all 7 雷姆必拓 operators: identity, hand-authored kit, d
   }
 });
 
-test('garrison_996 (黑): 【雷姆必拓】【精准】 layers / 3 → ASPD +1 per step (elite +2), uncapped (owner decision 2026-10-16); inactive bonds do not count', () => {
-  const field = (golden, layers) => makeBattle({
+test('garrison_996 (黑): each kill grants +3/+6 layers to EVERY ACTIVE bond of her player; cap 5 triggers per battle (owner decision 2026-10-18); inactive bonds do not count', () => {
+  const act = (layers) => ({ count: 3, active: true, tier: 1, layers });
+  const field = (golden, bs) => makeBattle({
     defs: { enemies: ENEMIES },
-    bonds: { rimBillitonShip: rimBonds(true, layers), preciShip: rimBonds(true, 0) },
+    bonds: bs,
     units: [{ chessId: golden ? 'chess_char_5_96_b' : 'chess_char_5_96_a', row: 10, col: 5 }],
     autoFinish: false, timeLimit: 30, seed: 7,
   });
-  const aspdOf = (h) => h.unit(1).s.aspd;
-  // 9 layers → 3 steps: +3 (normal) / +6 (elite)
-  let h = field(false, 9);
-  h.step(1);
-  assert.equal(aspdOf(h), 103, '9 layers → 3 steps → +3 ASPD');
-  h = field(true, 9);
-  h.step(1);
-  assert.equal(aspdOf(h), 106, 'elite: 3 steps → +6 ASPD');
-  // uncapped (owner decision 2026-10-16): far past the old +40/+80 — L=675 → 225 steps → +225 / +450
-  // (engine panel caps total ASPD at 600, so keep the probe under it)
-  h = field(false, 675);
-  h.step(1);
-  assert.equal(aspdOf(h), 325, 'uncapped: 225 steps → +225');
-  h = field(true, 675);
-  h.step(1);
-  assert.equal(aspdOf(h), 550, 'elite uncapped: +450');
-  // the read counts rim + preci together
-  h = makeBattle({
-    defs: { enemies: ENEMIES },
-    bonds: { rimBillitonShip: rimBonds(true, 3), preciShip: rimBonds(true, 3) },
-    units: [{ chessId: 'chess_char_5_96_a', row: 10, col: 5 }],
-    autoFinish: false, timeLimit: 30, seed: 7,
-  });
-  h.step(1);
-  assert.equal(aspdOf(h), 102, '3 rim + 3 preci = 6 layers → 2 steps → +2');
+  const layersOf = (h, id) => h.b.getPlayer(h.unit(1).ownerId).bonds[id].layers;
+  const killN = (h, n) => {
+    h.step(1);
+    for (let i = 0; i < n; i++) h.b.kill(h.spawn('e_dummy', { pos: [12, 6] }), h.unit(1));
+  };
+  // 7 kills: the first 5 trigger (+3/+6 each), kills 6-7 no longer do
+  let h = field(false, { rimBillitonShip: act(0), preciShip: act(0), dongShip: act(0), arcaneShip: rimBonds(false, 0) });
+  killN(h, 7);
+  assert.equal(layersOf(h, 'rimBillitonShip'), 15, 'normal: 5 triggers × 3');
+  assert.equal(layersOf(h, 'preciShip'), 15, 'every active bond gains');
+  assert.equal(layersOf(h, 'dongShip'), 15, '…including bonds beyond rim/preci');
+  assert.equal(layersOf(h, 'arcaneShip'), 0, 'inactive bonds do not count');
+  h = field(true, { rimBillitonShip: act(0), preciShip: act(0) });
+  killN(h, 6);
+  assert.equal(layersOf(h, 'rimBillitonShip'), 30, 'elite: 5 triggers × 6 (the 6th kill is past the cap)');
   done(h);
 });
 
 test('garrison_999 (莱伊): layers / 3 → ATK +1 %/step (elite +2 %); no weight-scaled bonus (owner decision 2026-10-16)', () => {
-  // 盟约本体的攻击力（+20%+0.7%/层）与特质同属 directMods 的加算乘区（preciShip 未激活不计），
-  // 所以面板 = base × (1 + 0.2 + 0.007×layers + 特质步数×每步) ；0 层基准 = base × 1.3。
+  // 盟约本体的攻击力（+20%+0.5%/层）与特质同属 directMods 的加算乘区（preciShip 未激活不计），
+  // 所以面板 = base × (1 + 0.2 + 0.005×layers + 特质步数×每步) ；0 层基准 = base × 1.3。
   const field = (golden, layers) => makeBattle({
     defs: { enemies: ENEMIES },
     bonds: { rimBillitonShip: rimBonds(true, layers), preciShip: rimBonds(true, 0) },
@@ -87,10 +78,10 @@ test('garrison_999 (莱伊): layers / 3 → ATK +1 %/step (elite +2 %); no weigh
   const baseOf = (golden) => { const h = field(golden, 0); h.step(1); return atkOf(h); };   // base × (1.2 + 0.1)
   let h = field(false, 9);
   h.step(1);
-  close2(atkOf(h), baseOf(false) * ((1.263 + 0.03 + 0.1) / 1.3), '9 layers → 3 steps → +3 %');
+  close2(atkOf(h), baseOf(false) * ((1.245 + 0.03 + 0.1) / 1.3), '9 layers → 3 steps → +3 %');
   h = field(true, 9);
   h.step(1);
-  close2(atkOf(h), baseOf(true) * ((1.263 + 0.06 + 0.1) / 1.3), 'elite: +6 %');
+  close2(atkOf(h), baseOf(true) * ((1.245 + 0.06 + 0.1) / 1.3), 'elite: +6 %');
   done(h);
 
   function close2(got, want, msg) {

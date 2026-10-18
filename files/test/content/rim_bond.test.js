@@ -38,22 +38,22 @@ const MEMBERS = ['chess_char_3_02_a', 'chess_char_4_14_a', 'chess_char_4_06_a'];
 // ---------------------------------------------------------------------------------------------------------------------
 // 3人: ATK
 
-test('雷姆必拓 3人: members ATK +(20%+0.7%×L), live layers; non-members unchanged', () => {
+test('雷姆必拓 3人: members ATK +(20%+0.5%×L), live layers; non-members unchanged', () => {
   const bb = bondBb('rimBillitonShip');
   close(bb.atk_base, 0.2);
-  close(bb.atk_per_layer, 0.007);
+  close(bb.atk_per_layer, 0.005);
   const defs = defsOf([['r1_a', ['rimBillitonShip']], ['r2_a', ['rimBillitonShip']], ['r3_a', ['rimBillitonShip']], ['none_a', ['preciShip']]]);
   const h = makeBattle({
     defs, units: lineup(['r1_a', 'r2_a', 'r3_a', 'none_a']),
     bonds: { rimBillitonShip: bondOn(3, 10) },
   });
   h.step(1);
-  close(h.unit('r1_a').s.atk, 1000 * (1 + 0.2 + 0.007 * 10));
-  close(h.unit('r3_a').s.atk, 1000 * (1 + 0.2 + 0.007 * 10));
+  close(h.unit('r1_a').s.atk, 1000 * (1 + 0.2 + 0.005 * 10));
+  close(h.unit('r3_a').s.atk, 1000 * (1 + 0.2 + 0.005 * 10));
   close(h.unit('none_a').s.atk, 1000);
   h.b.addLayers('p1', 'rimBillitonShip', 20, 'test');
   h.step(2);
-  close(h.unit('r2_a').s.atk, 1000 * (1 + 0.2 + 0.007 * 30), 1e-9, 'live layers');
+  close(h.unit('r2_a').s.atk, 1000 * (1 + 0.2 + 0.005 * 30), 1e-9, 'live layers');
   checkInvariants(h.b);
 });
 

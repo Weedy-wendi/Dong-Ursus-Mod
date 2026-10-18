@@ -527,12 +527,12 @@ const GARRISONS = {
     bb: { count: 3, times: 8 },
   },
   'garrison_996_a': {
-    garrisonDesc: '<战斗中>【雷姆必拓】【精准】每叠加<@ba.vup>3</>层，本干员攻击速度<@ba.vup>+1</>',
+    garrisonDesc: '<战斗中>每击杀<@ba.vup>1</>名敌人，自身已激活的盟约层数<@ba.vup>+3</>（每场战斗最多触发<@ba.vup>5</>次）',
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
   'garrison_996_b': {
-    garrisonDesc: '<战斗中>【雷姆必拓】【精准】每叠加<@ba.vup>3</>层，本干员攻击速度<@ba.vup>+2</>',
+    garrisonDesc: '<战斗中>每击杀<@ba.vup>1</>名敌人，自身已激活的盟约层数<@ba.vup>+6</>（每场战斗最多触发<@ba.vup>5</>次）',
     eventType: 'IN_BATTLE', eventTypeDesc: '作战能力', eventTypeIcon: 'icon_battle',
     effectType: 'GAIN_BUFF', battleRuneKey: 'env_gbuff_new_with_verify',
   },
@@ -657,14 +657,14 @@ const BONDS = {
   // thresholds [3,6,9] —— 第二家 [3,6,9]（炎是第一家）。members 起步为 3 名加籍棋子（断崖/莱恩哈特/寒芒克洛丝，
   // BOND_OVERRIDES 补归属）；7 名新建干员（暴行/火哨/蜜莓/黑/时隙/珊比/莱伊）在 PR2 落地时补进 members。
   // desc（整备区静态文案）与 effectDesc（局内「当前效果」占位符实算）分离，与 东/乌萨斯 同一机制。
-  //   3 人：攻击力 = 20%（固定）+ 0.7%×层数（直接乘算，2026-10-17 用户修订 0.8%→0.7%）；每叠 25 层获得 1 名不高于当前调度中心等级的【雷姆必拓】干员
+  //   3 人：攻击力 = 20%（固定）+ 0.5%×层数（直接乘算，2026-10-18 用户修订 0.7%→0.5%）；每叠 25 层获得 1 名不高于当前调度中心等级的【雷姆必拓】干员
   //         （里程碑走 bond_layer_gain_chess → bonds/core.js payRecruits）。
   //   6 人（2026-10-17 用户口径）：开启技能时获得隐匿 20 秒；场上每有 1 名【雷姆必拓】干员，rim 干员攻击造成的
   //         伤害提升 30%（2026-10-17 二次口径 40%→30%；dmgDealtMul = 1 + 0.3×场上 rim 数，维多利亚形状）。
   //   9 人（2026-10-17 用户口径）：开启技能时隐匿时间变为 40 秒，且开启技能 10 秒内攻击力 +200%（atkPct 加算窗口，
   //         可刷新 refresh:'replace'）。
   // 显示键口径：攻击力是加算（directMods atk），照乌萨斯先例显示参数用**加算比例**（atk_disp_base=0.20，
-  // effectDesc「+{0:0.0%}」→ 实算 0.20+0.007×层数），不用「提升至」的 1.20 形态（实装计划 v1 写 1.20，
+  // effectDesc「+{0:0.0%}」→ 实算 0.20+0.005×层数），不用「提升至」的 1.20 形态（实装计划 v1 写 1.20，
   // 与乌萨斯机制矛盾，落码时按先例修正）。
   // milestone：照维多利亚 bond_layer_added_reward_equip 的形态，在盟约效果里追加一条独立 buff
   //（key = bond_layer_gain_chess，bb: layer=25, count=1）；build-data.mjs buildBonds 认这个 key
@@ -685,22 +685,22 @@ const BONDS = {
     buffKey: 'act2autochess_bond_eff_rim',
     desc: '【雷姆必拓】干员<@ba.vup>攻击力</>提升<@autochess.gray>（受层数影响）</>\n'
         + '<每叠加<@autochess.dgreen>25</>层>获得<@ba.vup>1</>名不高于当前调度中心等级的【雷姆必拓】干员\n'
-        + '<在场<@autochess.dgreen>6</>名不同【雷姆必拓】干员><战斗中>【雷姆必拓】干员开启技能时获得<@ba.vup>隐匿</>，持续<@ba.vup>20</>秒，场上每有<@ba.vup>1</>名【雷姆必拓】干员，【雷姆必拓】干员攻击造成的伤害<@ba.vup>提升30%</>\n'
+        + '<在场<@autochess.dgreen>6</>名不同【雷姆必拓】干员><战斗中>【雷姆必拓】干员开启技能时获得<@ba.vup>隐匿</>，持续<@ba.vup>20</>秒，场上每有<@ba.vup>1</>名不同的【雷姆必拓】干员，【雷姆必拓】干员攻击造成的伤害<@ba.vup>提升30%</>\n'
         + '<在场<@autochess.dgreen>9</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时隐匿时间变为<@ba.vup>40</>秒，且开启技能<@ba.vup>10</>秒内的攻击力<@ba.vup>+200%</>',
     effectDesc: '【雷姆必拓】干员攻击力<@ba.vup>+{0:0.0%}</><@autochess.gray>（受层数影响）</>\n'
         + '<每叠加<@autochess.dgreen>25</>层>获得<@ba.vup>1</>名不高于当前调度中心等级的【雷姆必拓】干员\n'
-        + '<在场<@autochess.dgreen>6</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时获得<@ba.vup>隐匿</>，持续<@ba.vup>20</>秒，场上每有<@ba.vup>1</>名【雷姆必拓】干员，【雷姆必拓】干员攻击造成的伤害提升<@ba.vup>30%</>\n'
+        + '<在场<@autochess.dgreen>6</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时获得<@ba.vup>隐匿</>，持续<@ba.vup>20</>秒，场上每有<@ba.vup>1</>名不同的【雷姆必拓】干员，【雷姆必拓】干员攻击造成的伤害提升<@ba.vup>30%</>\n'
         + '<在场<@autochess.dgreen>9</>名不同【雷姆必拓】干员>【雷姆必拓】干员开启技能时隐匿时间变为<@ba.vup>40</>秒，且开启技能<@ba.vup>10</>秒内的攻击力<@ba.vup>+200%</>',
     bb: {
       atk_base: 0.20,            // 3人：攻击力 +20%（直接乘算）
-      atk_per_layer: 0.007,      // 每层盟约层数 +0.7%（2026-10-17 第三次用户修订：0.8%→0.7%）
+      atk_per_layer: 0.005,      // 每层盟约层数 +0.5%（2026-10-18 第四次用户修订：0.7%→0.5%）
       atk_disp_base: 0.20,       // 显示键：effectDesc {0} 的基础（加算口径，照乌萨斯先例）
-      atk_disp_per: 0.007,       // 显示键：每层 +0.7%（2026-10-17 用户修订 0.8%→0.7%）
+      atk_disp_per: 0.005,       // 显示键：每层 +0.5%（2026-10-18 用户修订 0.7%→0.5%）
       stealth_duration_6: 20,    // 6人（2026-10-17 用户口径）：开启技能时获得隐匿 20 秒
       stealth_duration: 40,      // 9人（2026-10-17 用户口径）：开启技能时隐匿 40 秒（6 人档的升级）
       skill_atk_window: 10,      // 9人：开技能后的攻击力窗 10 秒
       skill_atk: 2.0,            // 9人：窗口内攻击力 +200%（directMods atkPct 加算池，可刷新 replace）
-      dmg_per_member: 0.3,       // 6人：场上每名【雷姆必拓】干员，攻击伤害提升 30%（2026-10-17 用户口径 40%→30%；dmgDealtMul = 1+0.3n，buff 内加算/跨 buff 乘算，照维多利亚先例）
+      dmg_per_member: 0.3,       // 6人：场上每名**不同**的【雷姆必拓】干员（a/b 形态归一去重，2026-10-18 用户口径），攻击伤害提升 30%（dmgDealtMul = 1+0.3n，buff 内加算/跨 buff 乘算，照维多利亚先例）
     },
     descParamBaseList: ['atk_disp_base'],
     descParamPerStackList: ['atk_disp_per'],

@@ -2,7 +2,7 @@
   "format": 1,
   "mod": "dong-ursus",
   "name": "【东】＋【乌萨斯】盟约 mod",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/Weedy-wendi/Dong-Ursus-Mod",
   "source": {
@@ -933,8 +933,8 @@
       "sha256": "fa843dfd0fa5692c9486c0bf7dba8f570b494da372fe35a0f8bdedf4bd78a907"
     },
     "server/sim/content/kits/ops/chess_char_5_96-shwaz.js": {
-      "size": 8771,
-      "sha256": "c5a7da148ae3de84a5a0e35e4157d608b25a928ba7559404cb56949c12712c2f"
+      "size": 7806,
+      "sha256": "cc14cd5fc5480329fd98a640fbfadbbdb7a60a92d9619780cd3b4ac93690f35d"
     },
     "server/sim/content/kits/ops/chess_char_5_97-saga.js": {
       "size": 14592,
@@ -1010,11 +1010,11 @@
     },
     "test/content/rim_bond.test.js": {
       "size": 10281,
-      "sha256": "58694bcbb0a4ca076ebac0f602a880cbf1d223c20a5b415f3c58d433abfb3e77"
+      "sha256": "7c7329a50d2703ef128963a1e88d5a64a55b7d8b0cef617d5da72d8023f5b8f8"
     },
     "test/content/rim_operators.test.js": {
-      "size": 6857,
-      "sha256": "552f1aa7d8fa2a789cf1f1f31ac94291fe9997158d403549289ddd4fe71a4846"
+      "size": 6737,
+      "sha256": "3a92fc2e89b592c2ef937e34a2eaf54fb5a6bc97de11b07437419ea3703d55a3"
     },
     "test/content/ursus_bond.test.js": {
       "size": 8809,
@@ -1033,16 +1033,16 @@
       "sha256": "1f3f93d23c4e283b5e6894e9cd86db67a2994ac204233ad7c5c1018e0da51bf7"
     },
     "tools/custom-content.mjs": {
-      "size": 83099,
-      "sha256": "c9ac0f58a7241c7c1f7535b84a83ff3a0e1d86ea9154aff0310ca135c942f947"
+      "size": 83210,
+      "sha256": "14fa55a482ad79127f9518617a346c8d6168ac2183b1b863cabae2d6bad6c54c"
     },
     "tools/i18n-rim-pr1.mjs": {
-      "size": 15265,
-      "sha256": "6b1ee4ea76a1f62d8d2ee815075a82c908ae45e4dd0e014f3476efdc5d41008f"
+      "size": 15347,
+      "sha256": "fa9c283449f3659dbcba5b8484e861f93934fdf72d3db2a82d003c345aeca5e3"
     },
     "tools/i18n-rim-pr2.mjs": {
-      "size": 25744,
-      "sha256": "a233d0fdf025fd5e66a0e5761c04f74c49803e88822c71805aa95a4dd218c76e"
+      "size": 26052,
+      "sha256": "922dbe2738fbf3c1c9fc1dd67734aaea9ed6ea7e25c995badbc35cce2d975166"
     },
     "tools/i18n-rim-pr3.mjs": {
       "size": 21992,
@@ -2803,8 +2803,8 @@
       "sha256": "e6d58cbf51398c638e1c509e5171beb7931db77ecb59ce0d3924d4102002b5b8"
     },
     "server/sim/content/bonds/core.js": {
-      "size": 59159,
-      "sha256": "50ce3955e7d4b369edfeba234b75c96470826a53fb13de8575320ca4740b1503"
+      "size": 59464,
+      "sha256": "880f0ec26d95d954eea8bb042d33a44eddaedc6bb4c4a5d07df60cc6c988006b"
     },
     "server/sim/content/garrisons/meta.js": {
       "size": 31391,
@@ -2863,8 +2863,8 @@
       "sha256": "7630228555d8dd299276295ebe6343377e41613e00385bcde991607378b9d34f"
     },
     "test/content/garrisons_battle.test.js": {
-      "size": 48680,
-      "sha256": "e137b20a2b800f5c6d8ec7d8b6863ea9e9c391549589e9047d6dfc88b7bd0d12"
+      "size": 48733,
+      "sha256": "e2cb952330d1b9d36a151b0f85bfce74794985412ad3dbb489fcc331ad99cd38"
     },
     "test/content/garrisons_meta.test.js": {
       "size": 53064,
@@ -2956,7 +2956,7 @@
     },
     "test/golden-standins.test.js": {
       "size": 4491,
-      "sha256": "e9bcec12b89b1647fca3e0a07306fe484b83b752e2b8a57de50332c2cde114cc"
+      "sha256": "905b1ce83d3dc24e8f8c69d58df20a9bd23aa147e73a5cfeb9dc6745f23a0a66"
     },
     "test/golden/README.md": {
       "size": 6580,
@@ -3119,8 +3119,8 @@
       "sha256": "b09fa15064f39e4a0b97d2249c45cf5aec8496f14dc76283869e75feb08573ef"
     },
     "tools/golden.mjs": {
-      "size": 81433,
-      "sha256": "ffa9f24e783a0b20f1d50ced4f2e381bd796a9a54093fa19906757e9e74271e9"
+      "size": 81344,
+      "sha256": "01e1d00e34ed710aacc26a41f9685459c10533fff45f3160f899903232603228"
     }
   },
   "removed": [
