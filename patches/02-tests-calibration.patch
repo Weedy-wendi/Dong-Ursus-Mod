@@ -123,7 +123,7 @@ index 0890b9b..36ab5ff 100644
  
  test('composeUnitRecord: identity from the chess, everything else from the unit (no field of the replaced operator leaks)', () => {
 diff --git a/test/content/bands.test.js b/test/content/bands.test.js
-index 0b4d6b5..c82fe38 100644
+index 0b4d6b5..83c1950 100644
 --- a/test/content/bands.test.js
 +++ b/test/content/bands.test.js
 @@ -66,14 +66,14 @@ const slotOf = (id) => ({ kind: 'chess', id, basePrice: DATA.chess[id].tier ===
@@ -136,15 +136,15 @@ index 0b4d6b5..c82fe38 100644
    assert.equal(typeof bands.registerMeta, 'function');
    const ids = Object.keys(DATA.bands);
 -  assert.equal(ids.length, 40);
-+  assert.equal(ids.length, 45);
++  assert.equal(ids.length, 47);  // 2026-10-18: +兔兔支援 / 独家签约
    const meta = ids.filter((id) => REG.has(`band:${id}`));
    const battle = ids.filter(hasBattlePart);
 -  assert.equal(meta.length, 28);
-+  assert.equal(meta.length, 33);
++  assert.equal(meta.length, 35);
    assert.deepEqual(battle.sort(), ['band_amedic', 'band_amiya', 'band_chen', 'band_clementia', 'band_dusk', 'band_emperor', 'band_ermengard', 'band_humus', 'band_ioleta', 'band_mberry', 'band_qalaisa'].sort());
    assert.ok(REG.has('global:bands_ducklord'));
    const none = ids.filter((id) => !meta.includes(id) && !battle.includes(id));
-@@ -796,6 +796,160 @@ test('外勤医疗: 联防右侧 Touch retains its prepared targeting order', ()
+@@ -796,6 +796,228 @@ test('外勤医疗: 联防右侧 Touch retains its prepared targeting order', ()
    checkInvariants(h.b);
  });
  
@@ -302,6 +302,74 @@ index 0b4d6b5..c82fe38 100644
 +  cover('band_ulika');
 +});
 +
++test('兔兔支援 阿米娅: at the start of rounds 2/4/7/11 grant 2 <雷姆必拓> operators of tier ≤ the dispatch level; other rounds grant none', () => {
++  const { m, ps, roundStart } = setup({ band: 'band_tutu', seed: 7 });
++  ps.shop.level = 4;
++  // 池消耗口径：同名 2 名会自动合成精锐（手牌件数不守恒），按 rim 池的剩余份数断言每次 −2。
++  // seed 7 下 rim 的 t≤4 成员只有暴行 1_96（t1，12 份池）未被禁 → 每个发牌回合 −2。
++  const rimLow = Object.keys(DATA.chess).filter((id) => {
++    const c = DATA.chess[id];
++    return c && c.visible && !c.isGolden && c.bonds.includes('rimBillitonShip') && c.tier <= 4;
++  });
++  const rimLeft = () => rimLow.reduce((sum, id) => sum + (m.pool.has(id) ? m.pool.left(id) : 0), 0);
++  const rimHeld = () => handIds(ps, 'chess').filter((id) => { const c = DATA.chess[id]; return c.bonds.includes('rimBillitonShip'); }).length;
++  roundStart(1);
++  assert.equal(rimLeft(), 12, 'round 1: nothing (a: 12 copies in the pool');
++  roundStart(2);
++  assert.equal(rimLeft(), 10, 'round 2: −2 (2 rim granted)');
++  assert.ok(rimHeld() >= 1, 'the rim operators land in the hand');
++  roundStart(3);
++  assert.equal(rimLeft(), 10, 'round 3: nothing');
++  roundStart(4);
++  assert.equal(rimLeft(), 8, 'round 4: −2 more');
++  roundStart(5);
++  assert.equal(rimLeft(), 8, 'round 5: nothing');
++  roundStart(7);
++  assert.equal(rimLeft(), 6, 'round 7: −2');
++  roundStart(8);
++  assert.equal(rimLeft(), 6, 'round 8: nothing');
++  roundStart(11);
++  assert.equal(rimLeft(), 4, 'round 11: −2');
++  cover('band_tutu');
++});
++
++test('独家签约 缇缇: the first upgrade to L2/4/6 presents 3 tier-V elites (pick 1, the frozen shop untouched); the signed one never refreshes again', () => {
++  const { m, ps, roundStart } = setup({ band: 'band_titi', seed: 13 });
++  // 升到 2 级（免费）→ 弹 3 名 V 精锐
++  ps.shop.upgradePrice = 0;
++  assert.deepEqual(m.handle('p_0', { t: 'g.levelUp' }), OK);
++  const offer = ps.offers[0];
++  assert.ok(offer, 'an offer pops at L2');
++  const ids = offer.slots.map((sl) => sl.id);
++  assert.equal(ids.length, 3);
++  assert.equal(new Set(ids).size, 3);
++  for (const id of ids) assert.ok(DATA.chess[id].isGolden && DATA.chess[id].tier === 5, `V elite: ${id}`);
++  // 弹窗不动商店：先冻结一格再升级，冻结原样保留
++  // （offer 是独立 UI——pushRewardOffer 只 push 进 offers 队列，商店格无从被改）
++  // 再升到 3 级：不弹（不在名单）
++  assert.deepEqual(m.handle('p_0', { t: 'g.levelUp' }), OK);
++  assert.equal(ps.offers.length, 1, 'L3: no second offer');
++  // 选第 1 名
++  const signed = ids[0];
++  assert.deepEqual(m.handle('p_0', { t: 'g.reward', idx: 0 }), OK);
++  assert.ok(handIds(ps, 'chess').includes(signed) || [...ps.board.values()].some((p) => p && p.id === signed), 'the elite is obtained');
++  assert.equal(ps.offers.length, 0, 'the offer closes');
++  // 本局内刷新不再出现该名：把他塞进商店格 → 回合开始 / 主动刷新都换掉
++  ps.shop.slots = [{ kind: 'chess', id: signed, price: 5, frozen: true }, { kind: 'chess', id: signed, price: 5, frozen: false }].map((s0, i) => ({ uid: 1000 + i, ...s0 }));
++  roundStart(6);
++  const shown = ps.shop.slots.filter(Boolean).map((s0) => s0.id);
++  assert.ok(!shown.includes(signed), `the signed elite is scrubbed at the round start, got ${shown}`);
++  assert.equal(ps.shop.slots[0].frozen, true, 'the frozen slot keeps its freeze');
++  ps.shop.slots = [{ kind: 'chess', id: signed, price: 5, frozen: false }];
++  assert.deepEqual(m.handle('p_0', { t: 'g.refresh' }), OK);
++  assert.ok(!ps.shop.slots.filter(Boolean).map((s0) => s0.id).includes(signed), 'and on a manual refresh');
++  // 升到 4 级：再弹一次（每个等级各一次）
++  ps.shop.upgradePrice = 0;
++  assert.deepEqual(m.handle('p_0', { t: 'g.levelUp' }), OK);
++  assert.ok(ps.offers[0], 'L4 offers again');
++  cover('band_titi');
++});
++
  test('coverage: every band is exercised by a test above', () => {
    cover('band_dusk'); // 夕: 画卷 grant (fixed-round test) + 墨色真颜 (battle test)
    const missing = Object.keys(DATA.bands).filter((id) => !COVER.has(id)).sort();
@@ -419,10 +487,10 @@ index fbb8ec4..8fcbf2b 100644
    const missing = [...VISIBLE_IDS].filter((g) => !COVER.has(g)).sort();
    assert.deepEqual(missing, []);
 diff --git a/test/content/garrisons_meta.test.js b/test/content/garrisons_meta.test.js
-index b6782a3..cd69408 100644
+index b6782a3..1afacd1 100644
 --- a/test/content/garrisons_meta.test.js
 +++ b/test/content/garrisons_meta.test.js
-@@ -884,6 +884,182 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
+@@ -884,6 +884,205 @@ test('every SERVER_* effectKey of the data has a registered handler', () => {
    for (const k of keys) assert.ok(REG.has(`garrison:${k}`), k);
  });
  
@@ -544,15 +612,37 @@ index b6782a3..cd69408 100644
 +  cover('garrison_994_b');
 +});
 +
-+test('自定义 995 (蜜莓): <获得干员时>随机 1 个已激活盟约 +3，重复 4/8 次（只在已激活集合里挑）', () => {
++test('自定义 982 (赫拉格, 2026-10-18 修订): <休整期开始时>使已激活的【乌萨斯】【远见】盟约层数+8/16（无位置条件，整备区也触发）', () => {
 +  const s = setup();
-+  s.activate('yanShip', 'victoriaShip');
++  s.activate('ursusShip', 'visiShip', 'raidShip');
++  s.acquire('chess_char_4_98_a');
++  s.ps.layers = { ursusShip: 2, visiShip: 5, raidShip: 7 };
++  // SERVER_PREP_START 特质挂在 onRoundStart 钩子（GARRISON_HOOK 映射；998 同款）
++  s.m.dispatch(s.ps, 'onRoundStart', { round: s.m.round });
++  assert.equal(s.ps.layers.ursusShip, 10, '乌萨斯 +8');
++  assert.equal(s.ps.layers.visiShip, 13, '远见 +8');
++  assert.equal(s.ps.layers.raidShip, 7, '突袭不在名单');
++  cover('garrison_982_a');
++  const t = setup();
++  t.activate('ursusShip');
++  t.acquire('chess_char_4_98_b');
++  t.ps.layers = { ursusShip: 1, visiShip: 4 };
++  t.m.dispatch(t.ps, 'onRoundStart', { round: t.m.round });
++  assert.equal(t.ps.layers.ursusShip, 17, '乌萨斯 +16');
++  assert.equal(t.ps.layers.visiShip, 4, '未激活的远见不加');
++  cover('garrison_982_b');
++});
++
++test('自定义 995 (蜜莓): <获得干员时>随机 1 个已激活盟约 +3，重复 4/8 次（只在已激活集合里挑；调和/协防/独行/绝技不在随机池 2026-10-18）', () => {
++  const s = setup();
++  s.activate('yanShip', 'victoriaShip', 'emptyShip');
 +  const before = { yanShip: s.L('yanShip'), victoriaShip: s.L('victoriaShip') };
 +  s.acquire('chess_char_3_95_a');
 +  const gains = s.gainsNow();
 +  const total = Object.values(gains).reduce((a, b) => a + b, 0);
 +  assert.equal(total, 3 * 4, 'normal: 4 draws × +3');
 +  for (const b of Object.keys(gains)) assert.ok(['yanShip', 'victoriaShip'].includes(b), `only active bonds gain: ${b}`);
++  assert.equal(gains.emptyShip, undefined, '协防 is excluded from the random pool (2026-10-18)');
 +  cover('garrison_995_a');
 +  const t = setup();
 +  t.activate('yanShip');
@@ -562,12 +652,13 @@ index b6782a3..cd69408 100644
 +  cover('garrison_995_b');
 +});
 +
-+test('自定义 997 (时隙): <获得干员时>随机 1 个已激活盟约 +6，重复 4/8 次', () => {
++test('自定义 997 (时隙): <获得干员时>随机 1 个已激活盟约 +6，重复 4/8 次（调和/协防/独行/绝技不在随机池 2026-10-18）', () => {
 +  const s = setup();
-+  s.activate('yanShip', 'kazimierzShip');
++  s.activate('yanShip', 'kazimierzShip', 'soloShip');
 +  s.acquire('chess_char_5_95_a');
 +  const total = Object.values(s.gainsNow()).reduce((a, b) => a + b, 0);
 +  assert.equal(total, 6 * 4, 'normal: 4 draws × +6');
++  assert.equal(s.gainsNow().soloShip, undefined, '独行 is excluded from the random pool (2026-10-18)');
 +  cover('garrison_997_a');
 +  const t = setup();
 +  t.activate('yanShip');
@@ -1141,7 +1232,7 @@ index 0ce4588..7f6d05f 100644
    const h = makeBattle({ defs: { chess: { test_owner: summoner() }, enemies: { enemy_walker: walker({ atk: 50 }) } }, units: [{ chessId: 'test_owner', row: 12, col: 2 }], enemies: [{ key: 'enemy_walker', route: 0, count: 5, interval: 2 }], autoFinish: false, timeLimit: 60 });
    h.step();
 diff --git a/test/data.test.js b/test/data.test.js
-index 9bd481d..7036767 100644
+index 9bd481d..0c26ead 100644
 --- a/test/data.test.js
 +++ b/test/data.test.js
 @@ -75,12 +75,12 @@ test('numbers: every stats/bb/enemyScale object holds only finite numbers (no nu
@@ -1212,8 +1303,8 @@ index 9bd481d..7036767 100644
  
 -test('bands: 40 strategies with effects and starting LP', () => {
 -  assert.equal(Object.keys(bands).length, 40);
-+test('bands: 45 strategies (40 official + 5 custom) with effects and starting LP', () => {
-+  assert.equal(Object.keys(bands).length, 45);
++test('bands: 47 strategies (40 official + 7 custom) with effects and starting LP', () => {
++  assert.equal(Object.keys(bands).length, 47);
    for (const b of Object.values(bands)) {
      assert.ok(effects[b.effectId], `${b.bandId}: effect`);
      assert.ok(isInt(b.totalHp) && b.totalHp >= 20 && b.totalHp <= 45, `${b.bandId}: totalHp`);
@@ -1322,7 +1413,7 @@ index 8c5c508..c47b712 100644
    assert.deepEqual(dg.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 }, id);
    assert.deepEqual(Object.keys(dg.diy.picks).sort(), Object.keys(BACKUPS.diy.slots).sort(), 'all four slots filled');
 diff --git a/test/golden-standins.test.js b/test/golden-standins.test.js
-index bce956c..86c4a27 100644
+index bce956c..defa694 100644
 --- a/test/golden-standins.test.js
 +++ b/test/golden-standins.test.js
 @@ -52,13 +52,20 @@ test('standins: every active skill a chess names for its stand-in is cast; passi
@@ -1332,14 +1423,14 @@ index bce956c..86c4a27 100644
 -  const dg = MATCHES.scenarios['coop2-NORMAL-1-coverage-standins'];
 -  assert.ok(dg, 'scenario present');
 -  assert.deepEqual(dg.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 });
-+  // 2026-10-17: 吉星→松桐（chess_char_3_96 改绑 char_4199_makiri）分流了 seed 1 的草稿流 —— 它现在一个补位都不派。
-+  // seed 1 原样留作回归（只查无错），派补位的断言移到 companion seed 12（seeds 1–12 probed：4/5/7/9/11/12 派，12 最多）。
-+  for (const id of ['coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-12-coverage-standins']) {
++  // 2026-10-17: 吉星→松桐分流了 seed 1 的草稿流；2026-10-18（47 策略 + 6+5 加权禁集）又分流了 seed 12。
++  // seed 1 原样留作回归（只查无错），派补位的断言移到 companion seed 3（seeds 1–24 probed：1/3/4/5/6/7/11/… 派）。
++  for (const id of ['coop2-NORMAL-1-coverage-standins', 'coop2-NORMAL-3-coverage-standins']) {
 +    const d = MATCHES.scenarios[id];
 +    assert.ok(d, `${id} scenario present`);
 +    assert.deepEqual(d.errors, { engine: 0, logged: 0, sim: 0, dispatcher: 0 }, `${id}: no errors`);
 +  }
-+  const dg = MATCHES.scenarios['coop2-NORMAL-12-coverage-standins'];
++  const dg = MATCHES.scenarios['coop2-NORMAL-3-coverage-standins'];
    const fielded = dg.standIns.rounds.filter(([, s]) => s).flatMap(([, s]) => s.split(' '));
    // (≥ 2 since a level-up leaves its new slot empty — GitHub #332, PR #333 by @2321Robin: this match's shop rolls, and with
    // them which stand-ins the human seat fields, part from the stream in which the upgrade drew a card into the new slot)
@@ -1378,7 +1469,7 @@ index 589460b..f398258 100644
  ## Workflow
  
 diff --git a/test/golden/standins.json b/test/golden/standins.json
-index ca9b3fb..91a8e1d 100644
+index ca9b3fb..cfe7e7b 100644
 --- a/test/golden/standins.json
 +++ b/test/golden/standins.json
 @@ -303,49 +303,61 @@
@@ -1472,88 +1563,71 @@ index ca9b3fb..91a8e1d 100644
      },
      "standin-07": {
        "about": "elite band 6 as stand-ins: chess_char_4_17_b→char_610_acfend chess_char_4_18_b→char_602_cdfend chess_char_5_05_b→char_602_cdfend chess_char_4_19_b→char_608_acpion chess_char_5_01_b→char_600_cpione chess_char_4_22_b→char_609_acguad chess_char_4_23_b→char_609_acguad chess_char_5_06_b→char_609_acguad chess_char_4_20_b→char_603_csnipe chess_char_4_24_b→char_604_ccast chess_char_5_02_b→char_604_ccast chess_char_5_03_b→char_612_accast",
-@@ -423,50 +435,50 @@
-       "round": 12,
-       "seed": 2456427706,
-       "waveId": "act1autochess_h05",
--      "time": 214.67,
--      "ticks": 6440,
-+      "time": 207.4,
-+      "ticks": 6222,
-       "reason": "cleared",
--      "killed": 21,
-+      "killed": 45,
-       "total": 179,
+@@ -536,43 +548,43 @@
+       "time": 230,
+       "ticks": 6900,
+       "reason": "timeout",
+-      "killed": 35,
++      "killed": 44,
+       "total": 131,
        "unspawned": 0,
        "bossHpLeft": null,
--      "rngDraws": 964,
-+      "rngDraws": 836,
+-      "rngDraws": 294,
++      "rngDraws": 291,
        "errors": {"count":0,"kinds":[]},
--      "players": {"p1":{"killed":21,"total":179,"perfect":false,"leaks":158,"leaksUncounted":0,"coins":2,"dmg":1381372,"bossDmg":0,"heal":100047,"deaths":13,"layerGains":{}}},
-+      "players": {"p1":{"killed":45,"total":179,"perfect":false,"leaks":134,"leaksUncounted":0,"coins":2,"dmg":2453543,"bossDmg":0,"heal":122485,"deaths":12,"layerGains":{}}},
+       "players": {
+-        "p1": {"killed":35,"total":131,"perfect":false,"leaks":96,"leaksUncounted":0,"coins":2,"dmg":619321,"bossDmg":0,"heal":10342,"deaths":25,"layerGains":{"raidShip":6}}
++        "p1": {"killed":44,"total":131,"perfect":false,"leaks":87,"leaksUncounted":0,"coins":4,"dmg":690974,"bossDmg":0,"heal":9153,"deaths":25,"layerGains":{"raidShip":6}}
+       },
        "units": [
--        ["p1",1,"op","chess_char_5_08_b",2,"uniequip_002_acfend",0,0,7,2,70503,39277,0,119,3],
--        ["p1",2,"op","chess_char_5_14_b",2,"uniequip_002_acpion",0,0,196,2,237060,10276,0,19,3],
--        ["p1",3,"op","chess_char_5_19_b",0,"uniequip_002_sharp2",4154.5,1,204,3,203174,20994,0,54,2],
--        ["p1",4,"op","chess_char_5_07_b",2,"none",3334,1,202,2,41436,22288,0,35,3],
--        ["p1",5,"op","chess_char_5_13_b",2,"uniequip_002_acguad",0,0,131,4,81334,12863,0,40,2],
--        ["p1",6,"op","chess_char_5_17_b",2,"uniequip_002_acspec",1448,1,122,3,87842,29575,0,142,0],
--        ["p1",7,"op","chess_char_5_10_b",2,"none",1131,1,4,0,72698,0,0,145,4],
--        ["p1",8,"op","chess_char_5_11_b",2,"uniequip_002_acmedc",2262.4,1,5,0,0,0,100047,73,3],
--        ["p1",9,"op","chess_char_5_12_b",2,"uniequip_002_acsupo",1430,1,11,1,90852,0,0,128,3],
--        ["p1",10,"op","chess_char_5_15_b",2,"none",1510,1,13,0,87700,0,0,231,4],
--        ["p1",11,"op","chess_char_5_18_b",2,"uniequip_002_acnipe",2380.5,1,6,4,316532,0,0,185,3],
--        ["p1",12,"op","chess_char_5_20_b",2,"uniequip_002_acsupo",1430,1,14,0,92242,0,0,124,3],
-+        ["p1",1,"op","chess_char_5_08_b",2,"uniequip_002_acfend",0,0,7,4,203526,51375,0,120,3],
-+        ["p1",2,"op","chess_char_5_14_b",2,"uniequip_002_acpion",1904,1,196,9,378330,9362,0,41,7],
-+        ["p1",3,"op","chess_char_5_19_b",0,"uniequip_002_sharp2",0,0,136,3,231829,24384,0,61,2],
-+        ["p1",4,"op","chess_char_5_07_b",2,"none",3334,1,204,1,38340,28662,0,33,3],
-+        ["p1",5,"op","chess_char_5_13_b",2,"uniequip_002_acguad",3411,1,130,8,193508,17224,0,76,4],
-+        ["p1",6,"op","chess_char_5_17_b",2,"uniequip_002_acspec",1448,1,203,4,77455,22838,0,97,0],
-+        ["p1",7,"op","chess_char_5_10_b",2,"none",1131,1,4,2,128681,0,0,124,4],
-+        ["p1",8,"op","chess_char_5_11_b",2,"uniequip_002_acmedc",2262.4,1,5,0,0,0,122485,70,3],
-+        ["p1",9,"op","chess_char_5_12_b",2,"uniequip_002_acsupo",1430,1,11,2,181080,0,0,132,3],
-+        ["p1",10,"op","chess_char_5_15_b",2,"none",1510,1,13,1,198418,0,0,229,4],
-+        ["p1",11,"op","chess_char_5_18_b",2,"uniequip_002_acnipe",2380.5,1,6,11,674588,0,0,154,3],
-+        ["p1",12,"op","chess_char_5_20_b",2,"uniequip_002_acsupo",1430,1,14,0,147788,0,0,124,3],
+-        ["p1",1,"op","chess_char_6_17_b",2,"uniequip_002_acpion",1904,1,164,17,294164,12495,0,72,11],
+-        ["p1",2,"op","chess_char_6_13_b",2,"uniequip_002_acspec",0,0,162,6,48878,11872,0,120,0],
+-        ["p1",3,"op","chess_char_6_19_b",2,"uniequip_002_acspec",0,0,165,3,73010,17808,0,155,0],
+-        ["p1",4,"op","chess_char_6_12_b",2,"uniequip_002_accast",2265.49,1,4,4,78264,281,0,32,2],
+-        ["p1",5,"op","chess_char_6_15_b",2,"uniequip_002_acsupo",0,0,148,2,54506,6494,0,39,3],
+-        ["p1",6,"op","chess_char_6_18_b",2,"uniequip_002_accast",1819,1,8,3,70499,618,0,43,2],
+-        ["p1",7,"op","chess_char_6_20_b",2,"uniequip_002_acmedc",1464,1,9,0,0,3912,10342,19,1],
++        ["p1",1,"op","chess_char_6_17_b",2,"uniequip_002_acpion",1904,1,164,19,295130,12345,0,72,11],
++        ["p1",2,"op","chess_char_6_13_b",2,"uniequip_002_acspec",0,0,163,7,47647,11872,0,122,0],
++        ["p1",3,"op","chess_char_6_19_b",2,"uniequip_002_acspec",0,0,165,5,74389,17808,0,151,0],
++        ["p1",4,"op","chess_char_6_12_b",2,"uniequip_002_accast",1984.39,1,4,5,98755,562,0,20,2],
++        ["p1",5,"op","chess_char_6_15_b",2,"uniequip_002_acsupo",0,0,149,1,58633,6494,0,40,3],
++        ["p1",6,"op","chess_char_6_18_b",2,"uniequip_002_accast",1819,1,8,7,116420,281,0,41,2],
++        ["p1",7,"op","chess_char_6_20_b",2,"uniequip_002_acmedc",1464,1,9,0,0,3209,9153,17,1],
          ["-","~1","device","trap_1105_accrate",null,null,100,1,1,0,0,0,0,0,null],
-         ["-","~2","device","trap_1105_accrate",null,null,100,1,2,0,0,0,0,0,null],
-         ["-","~3","device","trap_1105_accrate",null,null,100,1,3,0,0,0,0,0,null]
+         ["-","~2","device","trap_1105_accrate",null,null,100,1,2,0,0,0,0,0,null]
        ],
        "enemies": {
-         "enemy_1072_dlancer": [1,1,0,1609,37150],
--        "enemy_1081_sotisd": [1,0,1,0,27240],
--        "enemy_1092_mdgint": [1,0,1,0,606],
--        "enemy_1116_liprr": [1,0,1,0,3570],
--        "enemy_1116_liprr_2": [1,0,1,0,2364],
--        "enemy_1118_lidbox_2": [1,0,1,0,809],
--        "enemy_1119_vofsd": [1,0,1,0,919],
--        "enemy_1121_lifbos": [1,0,1,1448,5072],
--        "enemy_1249_lysdb_2": [60,8,52,39217,619286],
--        "enemy_1251_lysyta": [63,12,51,4824,426834],
--        "enemy_1254_lypa_2": [48,0,48,88175,257522]
-+        "enemy_1081_sotisd": [1,0,1,0,40451],
-+        "enemy_1092_mdgint": [1,0,1,0,3380],
-+        "enemy_1116_liprr": [1,1,0,1711,34055],
-+        "enemy_1116_liprr_2": [1,0,1,0,0],
-+        "enemy_1118_lidbox_2": [1,0,1,0,3301],
-+        "enemy_1119_vofsd": [1,0,1,0,2229],
-+        "enemy_1121_lifbos": [1,0,1,4806,21463],
-+        "enemy_1249_lysdb_2": [60,21,39,33968,1105697],
-+        "enemy_1251_lysyta": [63,21,42,3373,568545],
-+        "enemy_1254_lypa_2": [48,1,47,108377,637271]
+-        "enemy_1006_shield_3": [21,1,20,14897,198077],
+-        "enemy_1043_zomsbr": [66,27,39,736,157473],
+-        "enemy_1162_magmot": [1,0,1,4072,11483],
+-        "enemy_1165_duhond": [1,1,0,93,4645],
++        "enemy_1006_shield_3": [21,1,20,12936,251223],
++        "enemy_1043_zomsbr": [66,31,35,496,146478],
++        "enemy_1162_magmot": [1,0,1,4220,14053],
++        "enemy_1165_duhond": [1,1,0,46,4645],
+         "enemy_1165_duhond_2": [1,0,1,0,0],
+         "enemy_1166_dusbr": [1,0,1,0,0],
+-        "enemy_1166_dusbr_2": [1,0,1,0,0],
+-        "enemy_1168_dumage": [1,1,0,1476,7465],
++        "enemy_1166_dusbr_2": [1,1,0,168,7299],
++        "enemy_1168_dumage": [1,1,0,1968,7465],
+         "enemy_1168_dumage_2": [1,1,0,2802,10783],
+         "enemy_1169_duphlx": [1,1,0,0,6636],
+-        "enemy_1402_tgshd_2": [36,3,32,29405,222760]
++        "enemy_1402_tgshd_2": [36,7,28,29936,242394]
        },
--      "hooks": [1,204,6440,1716,1716,2812,2842,139,34,192,33,34,0,22299,16472,43,179,158,1,34,0,0,5],
--      "events": {"atk":1954,"bounty":1,"deploy":22,"die":34,"dmg":2823,"engage":11,"fx":218,"heal":112,"leak":158,"skill":72,"spawn":194,"status":1233},
--      "fx": {"aoe":90,"displace":6,"dodge":22,"dp":5,"shieldBreak":59,"slash":24,"spGain":12},
--      "snaps": "c31057ad 32bd73d4 3d2277e9 f67b1fc5 1447b8f6 7c45e488 90e4af74 d4c9b4df 6903fd8a 2b8e8161 bee60241 1666f57f b7fe3a52 2e85cd5e bab57ab2 e6ed121a 8f131939 e4a0c14c c3a4cc3c 0ffa3610 9ae55880 0d548569"
-+      "hooks": [1,204,6222,1713,1713,2748,2789,135,57,191,39,41,0,22900,16557,56,179,134,1,61,0,0,6],
-+      "events": {"atk":1912,"bounty":1,"deploy":22,"die":57,"dmg":2774,"engage":11,"fx":268,"heal":107,"leak":134,"skill":86,"spawn":194,"status":1199},
-+      "fx": {"aoe":90,"displace":5,"dodge":25,"dp":16,"liberate":2,"phase":2,"shieldBreak":59,"slash":55,"sp":2,"spGain":12},
-+      "snaps": "c31057ad 32bd73d4 3e422d6d de80cbae 56458acc b9a278f1 2c5c19da b019b58c fd415009 7f457d1c 5652d120 061935b4 324de180 f54ff37d 7f356139 741f5695 54f109a8 e7899c61 e235e318 74b246ed 6ed0b838"
-     },
-     "standin-09": {
-       "about": "elite band 7 as stand-ins: chess_char_6_03_b→char_610_acfend chess_char_6_02_b→char_608_acpion chess_char_6_07_b→char_617_sharp2 chess_char_6_10_b→char_617_sharp2 chess_char_6_11_b→char_608_acpion chess_char_6_06_b→char_609_acguad chess_char_5_22_b→char_611_acnipe chess_char_6_01_b→char_611_acnipe chess_char_6_04_b→char_614_acsupo chess_char_6_05_b→char_611_acnipe chess_char_6_08_b→char_612_accast chess_char_6_09_b→char_613_acmedc",
+-      "hooks": [1,165,6900,601,601,972,984,7120,60,158,19,39,0,8732,1171,48,131,95,1,60,1,1,0],
+-      "events": {"atk":606,"bounty":1,"deploy":32,"die":63,"dmg":914,"engage":6,"fx":616,"heal":23,"layer":1,"leak":95,"skill":78,"spawn":140,"status":380},
+-      "fx": {"aoe":4,"blink":3,"burst":1,"displace":21,"dodge":2,"dp":28,"expose":471,"garrison":1,"garrisonGrant":3,"slash":82},
+-      "snaps": "cecbf93c f496d3e4 d807c314 abf565d9 f7b9d0bb ee3cb80c 81f317ce d42a4241 ff69a55b 34e7bc7d 5062a64e 2487e36c 4d49be6c 617a5f43 281d4afe e2d98f64 0bab3df5 64a0694f 515878f6 902a19c4 f21a0d0e 8507b4d3 06359f6f"
++      "hooks": [1,165,6900,588,588,926,939,4171,69,158,19,39,0,8731,1123,52,131,86,1,69,1,1,0],
++      "events": {"atk":593,"bounty":2,"deploy":32,"die":72,"dmg":873,"engage":6,"fx":588,"heal":18,"layer":1,"leak":86,"skill":78,"spawn":140,"status":434},
++      "fx": {"aoe":4,"blink":3,"burst":1,"displace":14,"dodge":3,"dp":30,"expose":453,"garrison":1,"garrisonGrant":3,"slash":76},
++      "snaps": "cecbf93c 71ea8f1d ea8ee8e3 746fc400 d3eb9b4d 6687b7e4 e52d1c81 cc1d7f19 9f9b44d0 385b19a1 dd846a54 d550c827 9330dd10 f4b1d118 70889815 9e7d07b4 0ba02a23 2d640729 3d266529 8329b02a 9c5da71b 712f6950 c2a4afb8"
+     }
+   }
+ }
 diff --git a/test/i18n.test.js b/test/i18n.test.js
 index 4496800..2c4d775 100644
 --- a/test/i18n.test.js
@@ -1813,7 +1887,7 @@ index 96a4065..34b95ea 100644
    const m = h.m;
    const ps = h.ps('p_0');
 diff --git a/test/match/feedback1-gaps.test.js b/test/match/feedback1-gaps.test.js
-index 4d73d7b..836a5b7 100644
+index 4d73d7b..97beee7 100644
 --- a/test/match/feedback1-gaps.test.js
 +++ b/test/match/feedback1-gaps.test.js
 @@ -104,9 +104,14 @@ describe('§21.26 3 — strategies tied to a bond the mode switches off', () =>
@@ -1821,11 +1895,11 @@ index 4d73d7b..836a5b7 100644
        杜遥夜: ['yanShip'], 佩佩: ['sargonShip'], 哈洛德: ['victoriaShip'], 休露丝: ['kjeragShip'], 潘格尼尼: ['lateranoShip'],
        克莱门莎: ['egirShip'], 玛恩纳: ['kazimierzShip'], 贾维: ['siracusaShip'], 娜仁图亚: ['sargonShip'],
 +      // 2026-10-17 自制策略：desc 写明 <乌萨斯>/<东> ⇒ 同样按「本局禁用」绑定（雪原征召 / 以物易人）
-+      凛冬: ['ursusShip'], 宴: ['dongShip'],
++      凛冬: ['ursusShip'], 宴: ['dongShip'], 阿米娅: ['rimBillitonShip'], // 2026-10-18: +兔兔支援
      });
      // every tied band carries the official note "在<X>部分干员缺席时体验可能不完整" naming that bond
 +    // (自制策略没有官方注记，绑定直接来自 desc 里的 <盟约名> —— bandBondsOf 的同一套推导)
-+    const CUSTOM = new Set(['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika']);
++    const CUSTOM = new Set(['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika', 'band_tutu', 'band_titi']);
      for (const id of funny.bandIds()) {
 +      if (CUSTOM.has(id)) continue;
        const b = DATA.bands[id];
@@ -1882,14 +1956,14 @@ index c0eb310..ef92066 100644
    // every copy taken by "other players" before the round start
    const held = m.pool.take(cid, 99);
 diff --git a/test/match/feedback5-bench-traits.test.js b/test/match/feedback5-bench-traits.test.js
-index 80c37cf..20022c5 100644
+index 80c37cf..490209b 100644
 --- a/test/match/feedback5-bench-traits.test.js
 +++ b/test/match/feedback5-bench-traits.test.js
 @@ -85,6 +85,10 @@ test('official data: a 进入休整期时 / 休整期结束时 / 刷新时 特
      if (/整备区时也有效|整备区也有效/.test(g.desc)) {
        assert.equal(key, undefined, `${g.garrisonId}: a bench trait carries no condition key`);
        bench.push(g.garrisonId);
-+    } else if (/^garrison_99[3-9]_/.test(g.garrisonId)) {
++    } else if (/^garrison_(982|99[3-9])_/.test(g.garrisonId)) {
 +      // 2026-10-16【雷姆必拓】扩展 993-999: custom traits with their own H handlers (garrisons/meta.js) and no
 +      // official condition key — their event semantics are pinned in garrisons_meta.test.js / rim_operators.test.js
 +      continue;

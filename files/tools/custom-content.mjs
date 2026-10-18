@@ -19,7 +19,7 @@ export const CUSTOM_CHESS_RECORDS = 40;  // 新增 chess 记录数（普通 + �
 export const CUSTOM_BOND_COUNT = 3;      // 新增盟约数                （23  + N；2026-10-16 +1 雷姆必拓）
 export const CUSTOM_CORE_BOND_COUNT = 3; // 新增「核心」盟约数        （8   + N；2026-10-16 +1 雷姆必拓）
 export const CUSTOM_ITEMS = 8;           // 新增装备数（普通 + 进阶）（115 + 2N 条记录 / 56 + N 件普通 EQUIP；2026-10-16 PR2 4→8）
-export const CUSTOM_BAND_COUNT = 5;      // 新增策略数                （40  + N；自制 2026-10-17）
+export const CUSTOM_BAND_COUNT = 7;      // 新增策略数                （40  + N；自制 5 条 2026-10-17 + 2 条 2026-10-18）
 
 /** 自制棋子。key = 基础 chessId（不带 `_a`）。 */
 const CHESS = {
@@ -153,7 +153,7 @@ const CHESS = {
     defaultSkillIndex: 1,               // S2 弦月（tier4 惯例 21/26 用 skillIndex 1；自带 75% 物理闪避）
     moduleId: 'uniequip_002_helage',    // sbl-x 藏锋（无特性追加；003 免死版未被选用）
     bondIds: ['ursusShip', 'visiShip'], // 【乌萨斯】【远见】（2026-10-13 用户口径：去掉【突袭】）
-    garrisonIds: ['garrison_982_a', 'garrison_982_b'], // 特质：老将刀意
+    garrisonIds: ['garrison_982_a', 'garrison_982_b'], // 特质：<休整期开始时>已激活的【乌萨斯】【远见】+8/16（2026-10-18 修订）
   },
 
   // ---- 雷姆必拓 7 名新干员（2026-10-16 PR2，实装计划 §2.3；采集单见仓库根 采集单-*.md）----
@@ -336,14 +336,19 @@ const GARRISONS = {
     effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
   },
   'garrison_982_a': {
-    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+3（每场战斗最多叠加9层，需盟约已激活）',
-    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
-    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+    // 2026-10-18 用户修订：战斗中击杀叠层（老将刀意）→ <休整期开始时>使已激活的【乌萨斯】【远见】盟约层数+8/16。
+    // 与 991（松桐）同型：SERVER_PREP_START、SERVER_ADD_BOND、bbStr.bond 列举盟约（无位置条件——文案未限定在场），
+    // 处理器在 meta.js（act2autochess_gar_eff_982_a/b → bondListLayers，只加已激活的）。
+    garrisonDesc: '<休整期开始时>使已激活的【乌萨斯】【远见】盟约层数+8',
+    eventType: 'SERVER_PREP_START', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND', battleRuneKey: null,
+    bb: { count: 8 }, bbStr: { bond: 'ursusShip,visiShip' },
   },
   'garrison_982_b': {
-    garrisonDesc: '<战斗中>自身每击杀一个敌人，使已激活的【乌萨斯】【远见】层数+6（每场战斗最多叠加18层，需盟约已激活）',
-    eventType: 'IN_BATTLE', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
-    effectType: 'ADD_BOND', battleRuneKey: 'char_dynamic_ability_new',
+    garrisonDesc: '<休整期开始时>使已激活的【乌萨斯】【远见】盟约层数+16',
+    eventType: 'SERVER_PREP_START', eventTypeDesc: '持续叠加', eventTypeIcon: 'icon_bond',
+    effectType: 'SERVER_ADD_BOND', battleRuneKey: null,
+    bb: { count: 16 }, bbStr: { bond: 'ursusShip,visiShip' },
   },
 
   'garrison_983_a': {
@@ -753,6 +758,22 @@ const BANDS = {
     desc: '【人形天灾】每回合额外获得1资金，但无法刷新出含当前已激活盟约的干员',
     buffs: [{ key: 'band_round_coin_no_active_bond_shop', bb: { coin: 1 } }],
     iconChar: 'char_4091_ulika',
+  },
+  // 2026-10-18 用户需求（第二条批次）：
+  band_tutu: {
+    name: '阿米娅', sortId: 46, totalHp: 22,
+    effectId: 'aceffect_band_9_06', effectName: '兔兔支援',
+    desc: '【兔兔支援】第2、4、7、11回合开始时，获得2名不高于当前调度等级的<雷姆必拓>干员',
+    // rounds/lvlist 是字符串 → 必须走 bbStr（bb 的字符串会被 buildBands 数值化为 0）
+    buffs: [{ key: 'band_rounds_gain_bond_char', bb: { count: 2 }, bbStr: { bond: 'rimBillitonShip', rounds: '2,4,7,11' } }],
+    iconChar: 'char_002_amiya',          // 「兔兔」= 阿米娅（用户未定立绘，我选）
+  },
+  band_titi: {
+    name: '缇缇', sortId: 47, totalHp: 26,
+    effectId: 'aceffect_band_9_07', effectName: '独家签约',
+    desc: '【独家签约】首次将调度等级升级到2、4、6级时，在调度中心刷新3名V级精锐干员，可以选择并获得其中1名；获得后本局内无法再刷新出该名干员',
+    buffs: [{ key: 'up_level_first_offer_elite_pick_banned_after', bb: { tier: 5, count: 3 }, bbStr: { lvlist: '2,4,6' } }],
+    iconChar: 'char_4056_titi',          // 用户指定立绘；策略名用户未定，我定「独家签约」
   },
 };
 

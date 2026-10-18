@@ -46,16 +46,16 @@
         "_h": "xdxdmz"
       },
       "garrison_982_a": {
-        "desc": "While in battle: each time she kills an enemy, +3 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 9 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she kills an enemy, +3 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 9 per battle; the bonds must be active)",
+        "descRaw": "<At the start of the preparation phase> Active [Ursus] and [Foresight] Alliances gain +8 stacks",
+        "desc": "<At the start of the preparation phase> Active [Ursus] and [Foresight] Alliances gain +8 stacks",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "3c3cmz"
+        "_h": "dgdgmz"
       },
       "garrison_982_b": {
-        "desc": "While in battle: each time she kills an enemy, +6 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 18 per battle; the bonds must be active)",
-        "descRaw": "While in battle: each time she kills an enemy, +6 layers to the active 【Ursus】 and 【Foresight】 bonds (capped at 18 per battle; the bonds must be active)",
+        "descRaw": "<At the start of the preparation phase> Active [Ursus] and [Foresight] Alliances gain +16 stacks",
+        "desc": "<At the start of the preparation phase> Active [Ursus] and [Foresight] Alliances gain +16 stacks",
         "eventTypeDesc": "Sustained stacking",
-        "_h": "yhyhmz"
+        "_h": "yjyjmz"
       },
       "garrison_983_a": {
         "desc": "While in battle: for every 3 total layers of her activated 【Ursus】 and 【Precision】 bonds, her ATK +1%",
@@ -327,6 +327,18 @@
         "descRaw": "[Humanoid Catastrophe] Gain 1 extra Funds each round, but your refreshes can no longer offer Operators that belong to an active Alliance",
         "effectName": "Humanoid Catastrophe",
         "desc": "[Humanoid Catastrophe] Gain 1 extra Funds each round, but your refreshes can no longer offer Operators that belong to an active Alliance"
+      },
+      "band_tutu": {
+        "descRaw": "[Bunny Support] At the start of rounds 2, 4, 7 and 11, obtain 2 <Rim Billiton> Operators of a Tier not exceeding the current Dispatch Center Level",
+        "name": "Amiya",
+        "effectName": "Bunny Support",
+        "desc": "[Bunny Support] At the start of rounds 2, 4, 7 and 11, obtain 2 <Rim Billiton> Operators of a Tier not exceeding the current Dispatch Center Level"
+      },
+      "band_titi": {
+        "descRaw": "[Exclusive Signing] When the Dispatch Center Level is raised to 2, 4 or 6 for the first time, 3 Tier-V Elite Operators are presented in the Dispatch Center — choose and obtain 1 of them; the obtained Operator can no longer be refreshed for the rest of the match",
+        "name": "Titi",
+        "effectName": "Exclusive Signing",
+        "desc": "[Exclusive Signing] When the Dispatch Center Level is raised to 2, 4 or 6 for the first time, 3 Tier-V Elite Operators are presented in the Dispatch Center — choose and obtain 1 of them; the obtained Operator can no longer be refreshed for the rest of the match"
       }
     }
   },
@@ -377,16 +389,16 @@
         "_h": "xdxdmz"
       },
       "garrison_982_a": {
-        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+3（各戦闘で最大9層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+3（各戦闘で最大9層、同盟発動中のみ）",
+        "descRaw": "<休整開始時>有効化中の【ウルサス】【先見】の加算数+8",
+        "desc": "<休整開始時>有効化中の【ウルサス】【先見】の加算数+8",
         "eventTypeDesc": "持続スタック",
-        "_h": "3c3cmz"
+        "_h": "dgdgmz"
       },
       "garrison_982_b": {
-        "desc": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+6（各戦闘で最大18層、同盟発動中のみ）",
-        "descRaw": "<戦闘中>自身が敵を1体撃破するごとに、発動中の【ウルサス】【先見】のレベル+6（各戦闘で最大18層、同盟発動中のみ）",
+        "descRaw": "<休整開始時>有効化中の【ウルサス】【先見】の加算数+16",
+        "desc": "<休整開始時>有効化中の【ウルサス】【先見】の加算数+16",
         "eventTypeDesc": "持続スタック",
-        "_h": "yhyhmz"
+        "_h": "yjyjmz"
       },
       "garrison_983_a": {
         "desc": "<戦闘中>発動中の【ウルサス】と【精密】の同盟レベルの合計が3層ごとに、自身の攻撃力+1%",
@@ -658,6 +670,18 @@
         "descRaw": "【人型災害】：各ラウンドで資金を追加で1獲得するが、有効化中の盟約に属するオペレーターは更新で出現しなくなる",
         "effectName": "人型災害",
         "desc": "【人型災害】：各ラウンドで資金を追加で1獲得するが、有効化中の盟約に属するオペレーターは更新で出現しなくなる"
+      },
+      "band_tutu": {
+        "descRaw": "【ウサギの支援】：ラウンド2、4、7、11の開始時に、管理センターのレベル以下の<レムビリトン>オペレーターを2名獲得する",
+        "name": "アーミヤ",
+        "effectName": "ウサギの支援",
+        "desc": "【ウサギの支援】：ラウンド2、4、7、11の開始時に、管理センターのレベル以下の<レムビリトン>オペレーターを2名獲得する"
+      },
+      "band_titi": {
+        "descRaw": "【独占契約】：管理センターのレベルを2・4・6に初めて上げた時、V等級のエリートオペレーター3名が提示される。そのうち1名を選んで獲得でき、獲得したオペレーターはこの試合では更新で出現しなくなる",
+        "name": "ティティ",
+        "effectName": "独占契約",
+        "desc": "【独占契約】：管理センターのレベルを2・4・6に初めて上げた時、V等級のエリートオペレーター3名が提示される。そのうち1名を選んで獲得でき、獲得したオペレーターはこの試合では更新で出現しなくなる"
       }
     }
   },
@@ -708,16 +732,16 @@
         "_h": "xdxdmz"
       },
       "garrison_982_a": {
-        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +3（전투당 최대 9층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +3（전투당 최대 9층, 동맹 발동 필요）",
+        "descRaw": "<정비 시작 시> 활성화된 [우르사스][선견] 맹약의 중첩 수 +8",
+        "desc": "<정비 시작 시> 활성화된 [우르사스][선견] 맹약의 중첩 수 +8",
         "eventTypeDesc": "지속 스택",
-        "_h": "3c3cmz"
+        "_h": "dgdgmz"
       },
       "garrison_982_b": {
-        "desc": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +6（전투당 최대 18층, 동맹 발동 필요）",
-        "descRaw": "<전투 중> 자신이 적을 하나 처치할 때마다, 발동 중인 【우르서스】【예견】 레이어 +6（전투당 최대 18층, 동맹 발동 필요）",
+        "descRaw": "<정비 시작 시> 활성화된 [우르사스][선견] 맹약의 중첩 수 +16",
+        "desc": "<정비 시작 시> 활성화된 [우르사스][선견] 맹약의 중첩 수 +16",
         "eventTypeDesc": "지속 스택",
-        "_h": "yhyhmz"
+        "_h": "yjyjmz"
       },
       "garrison_983_a": {
         "desc": "<전투 중> 발동 중인 【우르서스】와 【정밀】 동맹 레이어의 합계가 3층마다 자신의 공격력 +1%",
@@ -989,6 +1013,18 @@
         "descRaw": "[인간형 재해] 라운드마다 자금 1을 추가 획득하지만, 활성화된 맹약에 속한 오퍼레이터는 갱신으로 등장하지 않습니다",
         "effectName": "인간형 재해",
         "desc": "[인간형 재해] 라운드마다 자금 1을 추가 획득하지만, 활성화된 맹약에 속한 오퍼레이터는 갱신으로 등장하지 않습니다"
+      },
+      "band_tutu": {
+        "descRaw": "[토끼 지원] 2, 4, 7, 11 라운드 시작 시, 현재 보급센터 레벨 이하의 <렘 빌리톤> 오퍼레이터 2명을 획득합니다",
+        "name": "아미야",
+        "effectName": "토끼 지원",
+        "desc": "[토끼 지원] 2, 4, 7, 11 라운드 시작 시, 현재 보급센터 레벨 이하의 <렘 빌리톤> 오퍼레이터 2명을 획득합니다"
+      },
+      "band_titi": {
+        "descRaw": "[독점 계약] 보급센터 레벨을 2, 4, 6으로 처음 올릴 때, V등급 엘리트 오퍼레이터 3명이 제시됩니다 — 그중 1명을 선택해 획득하며, 획득한 오퍼레이터는 이번 경기에서 갱신으로 더 이상 등장하지 않습니다",
+        "name": "티티",
+        "effectName": "독점 계약",
+        "desc": "[독점 계약] 보급센터 레벨을 2, 4, 6으로 처음 올릴 때, V등급 엘리트 오퍼레이터 3명이 제시됩니다 — 그중 1명을 선택해 획득하며, 획득한 오퍼레이터는 이번 경기에서 갱신으로 더 이상 등장하지 않습니다"
       }
     }
   },
@@ -1039,16 +1075,16 @@
         "_h": "xdxdmz"
       },
       "garrison_982_a": {
-        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+3（每場戰鬥最多疊加9層，需盟約已激活）",
-        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+3（每場戰鬥最多疊加9層，需盟約已激活）",
+        "descRaw": "<休整期開始時>使已啟動的【烏薩斯】【遠見】盟約層數+8",
+        "desc": "<休整期開始時>使已啟動的【烏薩斯】【遠見】盟約層數+8",
         "eventTypeDesc": "持續疊加",
-        "_h": "3c3cmz"
+        "_h": "dgdgmz"
       },
       "garrison_982_b": {
-        "desc": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+6（每場戰鬥最多疊加18層，需盟約已激活）",
-        "descRaw": "<戰鬥中>自身每擊殺一個敵人，使已激活的【烏薩斯】【遠見】層數+6（每場戰鬥最多疊加18層，需盟約已激活）",
+        "descRaw": "<休整期開始時>使已啟動的【烏薩斯】【遠見】盟約層數+16",
+        "desc": "<休整期開始時>使已啟動的【烏薩斯】【遠見】盟約層數+16",
         "eventTypeDesc": "持續疊加",
-        "_h": "yhyhmz"
+        "_h": "yjyjmz"
       },
       "garrison_983_a": {
         "desc": "<戰鬥中>己方已激活的【烏薩斯】與【精準】的盟約層數每合計達到3層，自身攻擊力+1%",
@@ -1320,6 +1356,18 @@
         "descRaw": "【人形天災】每回合額外獲得1資金，但無法更新出含目前已啟動盟約的幹員",
         "effectName": "人形天災",
         "desc": "【人形天災】每回合額外獲得1資金，但無法更新出含目前已啟動盟約的幹員"
+      },
+      "band_tutu": {
+        "descRaw": "【兔兔支援】第2、4、7、11回合開始時，獲得2名不高於目前調度等級的<雷姆必拓>幹員",
+        "name": "阿米婭",
+        "effectName": "兔兔支援",
+        "desc": "【兔兔支援】第2、4、7、11回合開始時，獲得2名不高於目前調度等級的<雷姆必拓>幹員"
+      },
+      "band_titi": {
+        "descRaw": "【獨家簽約】首次將調度等級升級到2、4、6級時，在調度中心刷新3名V級精銳幹員，可以選擇並獲得其中1名；獲得後本局內無法再刷新出該名幹員",
+        "name": "緹緹",
+        "effectName": "獨家簽約",
+        "desc": "【獨家簽約】首次將調度等級升級到2、4、6級時，在調度中心刷新3名V級精銳幹員，可以選擇並獲得其中1名；獲得後本局內無法再刷新出該名幹員"
       }
     }
   }

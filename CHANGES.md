@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-10-18（第十三条 · v1.0.11）· 随机叠层黑名单 ＋ 赫拉格特质重做 ＋ 兔兔支援/独家签约 ＋ 策略立绘蒙版
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `patches/01`（garrisons/meta.js） | **bug 修复**：蜜莓 995 / 时隙 997 的随机叠层排除【调和】【协防】【独行】【绝技】（`RANDOM_LAYER_EXCLUDE`，用户口径：不会随机到这四条） |
+| `patches/01`（garrisons/meta.js + kits/ops/chess_char_4_98-helage.js） | **赫拉格 982 重做**（用户口径）：战斗中击杀叠层（老将刀意 3/6、上限 9/18）→ `<休整期开始时>`使已激活的【乌萨斯】【远见】盟约层数 **+8/16**（SERVER_PREP_START、SERVER_ADD_BOND、无位置条件；kit 的 kill 监听移除） |
+| `files/tools/custom-content.mjs` | **+2 条自制策略**（CUSTOM_BAND_COUNT 5→7）：【兔兔支援】阿米娅（22 血，第 2/4/7/11 回合开始各获得 2 名 ≤调度等级的 `<雷姆必拓>` 干员，`band_rounds_gain_bond_char`）；【独家签约】缇缇（26 血，首次升到 2/4/6 级时在调度中心弹 3 名 V 级精锐三选一，签下者本局刷新不再出现，`up_level_first_offer_elite_pick_banned_after`）。⚠️ 字符串参数（rounds/lvlist）必须走 `bbStr`——`bb` 里的字符串会被 buildBands 数值化为 0 |
+| `patches/01`（bands/meta.js + player/prep.js + effectsMeta.js） | 独家签约套凯瑟琳【定向投放】的 reward-offer 通路（`ctx.offerChess` 独立弹窗，**不动商店格/冻结**）；`pickReward` 新增 `onReward` 派发（HOOKS +1）——签下检测与商店禁入（`band:titi:banned:*` counters，回合开始/主动刷新时把被签干员换出商店格，冻结位原样保留） |
+| `files/public/assets/band/*.png` ×7 | 5 条旧自制策略 + 2 条新策略的立绘统一加**原版风格蒙版**（青调双色调 + 扫描线 + 网格 + 底部渐变 + [RCZ] STRATEGY / (CROSSFIELD PROTOCOL) 角标；阿米娅头像补拉） |
+| `files/i18n/mod-i18n.json`（经 apply-i18n 合并） | 982 四语言重写 + 两条新策略四语言（bands 家族 + aceffect_band_9_06/07 派生；garrisons 记录不写 `name` 叶——zh 记录没有该叶子） |
+| `mod.json` | `version` 1.0.10 → **1.0.11**；`base.files 115 · patched 97 · owned 134 · removed 18 · generated 22`（patch01 33 目标 / patch02 64 目标；owned +2 图标） |
+
+### 验证
+
+- 全量 6350 项：内容性 0 fail（golden coverage-diy companion seed 15→31、coverage-standins 12→3——47 策略再次分流草稿流，seeds 1–40 probed）
+- 纯净基线树安装 + verify：见发布记录
+
+---
+
 ## 2026-10-18（第十二条 · v1.0.10）· 雷姆必拓整合 + 禁用抽取改「6 核心 + 5 支线」加权 ＋ 3 人盟约数值修订
 
 > 雷姆必拓（rimBillitonShip）从独立手工整合并入本 mod：+7 名预设干员、+1 核心盟约（902，阈值 3-6-9）、

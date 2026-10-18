@@ -24,7 +24,7 @@ const IDS = {
     'chess_item_9_03_e_a', 'chess_item_9_03_e_b', 'chess_item_9_04_e_a', 'chess_item_9_04_e_b'],
   // 2026-10-17：自制策略（5 条）。records 的 _h 由本脚本按 data/bands.json 的 zh 源文本算（见下），
   // mod-i18n.json 里只写文案；每个策略的效果记录（aceffect_band_9_0x）从它派生。
-  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika'],
+  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika', 'band_tutu', 'band_titi'],
   // effects 记录（含 _h）：mod-i18n.json 里存在则直接用；不存在才从 bonds/items/bands 派生
   effects: ['bondeffect_dong', 'bondeffect_ursus', 'eff_9_01_e', 'eff_9_02_e', 'eff_9_03_e', 'eff_9_04_e'],
 };
