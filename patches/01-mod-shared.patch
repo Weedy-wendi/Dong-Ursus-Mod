@@ -14978,7 +14978,7 @@ index 12962e7..013c2b0 100644
      // Explicit carry outside the 联防 opening follows this one deployment. The opening itself restores at the end
      // of Battle.start, so deployment/battle-start gifts do not come on top of it; later redeploys keep their gifts.
 diff --git a/server/sim/content/bands/meta.js b/server/sim/content/bands/meta.js
-index c2f7aa5..e25375a 100644
+index c2f7aa5..20381c0 100644
 --- a/server/sim/content/bands/meta.js
 +++ b/server/sim/content/bands/meta.js
 @@ -76,6 +76,57 @@ function rollBond(ctx, bond, { anyTier = false } = {}) {
@@ -15039,7 +15039,7 @@ index c2f7aa5..e25375a 100644
  // ---------------------------------------------------------------------------------------------------------------
  // buff key → (params[], bandId) → hooks
  
-@@ -363,6 +414,157 @@ K.preparation_start_add_special_goods_every_n_round = (ps) => ({
+@@ -363,6 +414,92 @@ K.preparation_start_add_special_goods_every_n_round = (ps) => ({
    },
  });
  
@@ -15129,95 +15129,23 @@ index c2f7aa5..e25375a 100644
 +  onRoundStart(ctx) { rerollOffActiveBonds(ctx); },
 +  onRefresh(ctx) { rerollOffActiveBonds(ctx); },
 +});
-+
-+// 兔兔支援（阿米娅）「第2、4、7、11回合开始时，获得2名不高于当前调度等级的<雷姆必拓>干员」：
-+// rollBond 默认 maxTier = 调度等级（kit 契约），发牌走 grant（占池，精锐同 garrison_39 口径不进合成）。
-+K.band_rounds_gain_bond_char = (ps) => ({
-+  onRoundStart(ctx) {
-+    const p = ps[0];
-+    if (!list(p.rounds).map(Number).includes(ctx.round)) return;
-+    for (let k = 0; k < Math.max(1, int(p.count, 1)); k++) {
-+      const id = rollBond(ctx, p.bond);
-+      if (id) grant(ctx, id, { source: 'band' });
-+    }
-+  },
-+});
-+
-+/**
-+ * 独家签约（缇缇）「首次将调度等级升级到2、4、6级时，在调度中心刷新3名V级精锐干员，可以选择并获得其中1名；
-+ * 获得后本局内无法再刷新出该名干员」。套凯瑟琳【定向投放】（up_shop_add_special_goods）的 reward-offer 通路：
-+ * ctx.offerChess 弹独立的选一界面（**不动商店格、冻结原样保留**），counters 记录「本等级已触发」与「已提供/已签下」。
-+ * 签下检测 = pickReward 的新 onReward 派发（player/prep.js）；被签干员在回合开始 / 主动刷新时从商店格换掉
-+ * （人形天灾 rerollOffActiveBonds 的同款换卡法，maxTier = 当前调度等级）。
-+ */
-+K.up_level_first_offer_elite_pick_banned_after = (ps) => ({
-+  onLevelUp(ctx, ev) {
-+    const p = ps[0];
-+    const lv = list(p.lvlist).map(Number);
-+    if (!Number.isInteger(ev.level) || !lv.includes(ev.level)) return;
-+    if (ctx.counter(`band:titi:done:${ev.level}`) > 0) return;
-+    ctx.setCounter(`band:titi:done:${ev.level}`, 1);
-+    const tier = int(p.tier, 5);
-+    // 池里滚的是 base id（精锐不在池）→ 滚 base 再换算 goldenId；offer 里不重复、base 不重复
-+    const ids = [];
-+    const bases = [];
-+    for (let i = 0; i < 60 && ids.length < Math.max(1, int(p.count, 3)); i++) {
-+      const base = ctx.rollChess({ tier, filter: (x) => !bases.includes(x) });
-+      if (!base) break;
-+      bases.push(base);
-+      const gid = ctx.gd.goldenIdOf(base);
-+      if (!gid || ids.includes(gid)) continue;
-+      ids.push(gid);
-+      ctx.setCounter(`band:titi:offered:${gid}`, 1);
-+    }
-+    ctx.offerChess(ids.length ? ids : null, { tier, source: 'band' });
-+  },
-+  onReward(ctx, ev) {
-+    if (ev.kind !== 'chess' || !ev.id) return;
-+    if (ctx.counter(`band:titi:offered:${ev.id}`) <= 0) return;
-+    ctx.setCounter(`band:titi:offered:${ev.id}`, 0);
-+    ctx.setCounter(`band:titi:banned:${ev.id}`, 1);
-+  },
-+  onRoundStart(ctx) { scrubSigned(ctx); },
-+  onRefresh(ctx) { scrubSigned(ctx); },
-+});
-+
-+/** 把已签下的干员从商店格换掉（没有可换的就保留原卡——与人形天灾同口径）。 */
-+function scrubSigned(ctx) {
-+  const slots = ctx.shopSlots();
-+  for (let i = 0; i < slots.length; i++) {
-+    const s = slots[i];
-+    if (!s || s.kind !== 'chess' || s.sold) continue;
-+    if (ctx.counter(`band:titi:banned:${s.id}`) <= 0) continue;
-+    const id = ctx.rollChess({ maxTier: Math.max(1, ctx.shopLevel()), filter: (x) => ctx.counter(`band:titi:banned:${x}`) <= 0 });
-+    if (id) ctx.setShopSlot(i, { kind: 'chess', id, frozen: s.frozen });  // 禁令保留在 counter 里，可反复触发
-+  }
-+}
-+
  // ---------------------------------------------------------------------------------------------------------------
  // 鸭爵 “神秘顾客”: "从第5回合起，你和队友遭遇的部分敌人可能会替换为<鸭爵><高普尼克><流泪小子><圆仔>，击倒这些敌人者获得1资金奖励
  // （包括联防阶段）". A global handler rewrites the battle spawn list of every alive player while the band is held by that
 diff --git a/server/sim/content/bonds/core.js b/server/sim/content/bonds/core.js
-index 8b12c71..e8507b0 100644
+index 8b12c71..90bcbee 100644
 --- a/server/sim/content/bonds/core.js
 +++ b/server/sim/content/bonds/core.js
-@@ -59,10 +59,15 @@ const BUFF_KEYS = Object.freeze({
+@@ -59,6 +59,8 @@ const BUFF_KEYS = Object.freeze({
    egirShip: 'act1autochess_bond_eff_egir',
    siracusaShip: 'act2autochess_bond_eff_siracusa',
    kazimierzShip: 'act2autochess_bond_eff_kazimierz',
 +  ursusShip: 'act2autochess_bond_eff_ursus',   // 自定义（2026-10-12 效果正式化）
 +  dongShip: 'act2autochess_bond_eff_dong',     // 自定义（2026-10-13 效果正式化）
-+  rimBillitonShip: 'act2autochess_bond_eff_rim', // 自定义（2026-10-16 效果正式化，雷姆必拓）
  });
  const SARGON_SHARE_KEY = 'act2autochess_bond_eff_sargon[share]';
  const VICTORIA_REWARD_KEY = 'bond_layer_added_reward_equip';
- const VICTORIA_COUNTER = 'bond:victoria:hammers';
-+const RIM_REWARD_KEY = 'bond_layer_gain_chess';   // 自定义（tools/custom-content.mjs rimBillitonShip.milestone）
-+const RIM_COUNTER = 'bond:rim:recruits';
- 
- /** Bond effect blackboard `{ ...bb, ...bbStr }` of a core bond (null when the data record is missing). */
- export function bondBb(bondId, key = BUFF_KEYS[bondId]) {
-@@ -656,6 +661,229 @@ function installKazimierz(battle, pid, bb, members) {
+@@ -656,6 +658,168 @@ function installKazimierz(battle, pid, bb, members) {
  // =====================================================================================================================
  // entry points
  
@@ -15383,124 +15311,24 @@ index 8b12c71..e8507b0 100644
 +  }
 +}
 +
-+// =====================================================================================================================
-+// 雷姆必拓 (rimBillitonShip — 自定义核心盟约, 2026-10-16 效果正式化, 实装计划 §3.1; 用户口径)
-+//   3: members ATK +(atk_base + atk_per_layer·L) (直接乘算, additive with the other percentages) — the 炎 shape
-+//      (passiveBuff + onLayers refresh);
-+//      prep milestone: every 25 layers → 1 rim operator of tier ≤ the dispatch centre level (payRecruits below;
-+//      2026-10-16 用户口径: the milestone itself is NOT doubled by 投资人, but the granted operator's own
-+//      「获得时」 traits fire ×2/×3 as usual — grantChess dispatches onGain).
-+//   6: each skill start grants a stealth window; every on-field 【雷姆必拓】 operator raises the members' attack
-+//      damage by dmg_per_member (维多利亚 shape: one passive buff whose dmgDealtMul re-reads the live on-field
-+//      count on deploy + a 1 s poll).
-+//   9: the stealth lasts longer (stealth_duration vs stealth_duration_6) + a skill_atk_window s ATK window on the
-+//      skill start (directMods — the additive pool; replace, no stack), 2026-10-17 用户口径.
-+// 入口: installRim(battle, pid, bb, members); bb 由 data/bonds.json bondeffect_rim 带来（tools/custom-content.mjs）。
-+function installRim(battle, pid, bb, members) {
-+  const memberSet = new Set(members);
-+  const L = () => S.bondLayers(battle, pid, 'rimBillitonShip');
-+  // 3: ATK — refreshed one tick after a layer gain (炎 same shape); 2026-10-18 用户修订：每层 0.7%→0.5%
-+  const applyAtk = () => {
-+    const mods = S.directMods({ atk: num(bb.atk_base, 0.2) + num(bb.atk_per_layer, 0.005) * L() });
-+    for (const u of members) S.passiveBuff(battle, u, 'bond:rim', mods);
-+  };
-+  applyAtk();
-+  onLayers(battle, pid, 'rimBillitonShip', applyAtk);
-+  // 6 (2026-10-18 user revision): a skill start grants 20 s of stealth; every **distinct** on-field 【雷姆必拓】
-+  // operator (a/b forms of the same operator count once) raises the members' attack damage by 30 % (维多利亚 shape:
-+  // one passive buff whose dmgDealtMul re-reads the live on-field distinct count on deploy + a 1 s poll — the count
-+  // is 1 + 0.3×n inside the buff, × across buffs).
-+  if (!reached(battle, pid, 'rimBillitonShip', num(bb.ex_bond_char_cnt, 6))) return;
-+  const stealthDur = () => (reached(battle, pid, 'rimBillitonShip', 9) ? num(bb.stealth_duration, 40) : num(bb.stealth_duration_6, 20));
-+  battle.on('skillStart', ({ unit }) => {
-+    if (!memberSet.has(unit)) return;
-+    const dur = stealthDur();
-+    if (dur > 0) battle.addBuff(unit, { key: 'bond:rim:stealth', duration: dur, flags: { stealth: true }, status: 'stealth' });
-+  });
-+  const per = num(bb.dmg_per_member, 0.3);
-+  const applyDmg = () => {
-+    const seen = new Set(); // 「不同的干员」：a/b 形态归一后去重（同名多部署同 id，天然合并）
-+    for (const u of members) {
-+      if (!S.onField(u) || !u.alive) continue;
-+      seen.add(String(u.id).replace(/_b$/, '_a'));
-+    }
-+    const mul = 1 + per * seen.size;
-+    for (const u of members) {
-+      if (u.alive) S.passiveBuff(battle, u, 'bond:rim:dmg', { dmgDealtMul: mul });
-+      else battle.removeBuff(u, 'bond:rim:dmg');
-+    }
-+  };
-+  applyDmg();
-+  battle.on('deploy', ({ unit }) => { if (memberSet.has(unit)) applyDmg(); });
-+  battle.every(1, applyDmg);
-+  // 9 (2026-10-17 user revision): the stealth lasts 40 s instead (stealthDur above) + a 10 s ATK window on the
-+  // skill start (directMods atkPct — the additive pool, same field as the operators' own ATK buffs; replace, no stack)
-+  if (!reached(battle, pid, 'rimBillitonShip', 9)) return;
-+  battle.on('skillStart', ({ unit }) => {
-+    if (!memberSet.has(unit)) return;
-+    const win = num(bb.skill_atk_window, 10), atk = num(bb.skill_atk, 2);
-+    if (!(win > 0) || !(atk > 0)) return;
-+    battle.addBuff(unit, { key: 'bond:rim:skill', duration: win, refresh: 'replace', mods: S.directMods({ atk: atk }), visible: true });
-+  });
-+}
-+
  const INSTALLERS = Object.freeze({
    yanShip: installYan,
    sargonShip: installSargon,
-@@ -665,6 +893,9 @@ const INSTALLERS = Object.freeze({
+@@ -665,6 +829,8 @@ const INSTALLERS = Object.freeze({
    egirShip: installEgir,
    siracusaShip: installSiracusa,
    kazimierzShip: installKazimierz,
 +  ursusShip: installUrsus, // 自定义（2026-10-12 效果正式化）
 +  dongShip: installDong,   // 自定义（2026-10-13 效果正式化）
-+  rimBillitonShip: installRim, // 自定义（2026-10-16 效果正式化，雷姆必拓）
  });
  
  export function install(battle) {
-@@ -717,16 +948,61 @@ export function payHammers(ctx) {
+@@ -717,16 +883,22 @@ export function payHammers(ctx) {
  /** Hooks on which owed hammers are (caught up and) paid; onLayers only for 维多利亚's own gains. */
  const HAMMER_HOOKS = Object.freeze(['onLayers', 'onRoundStart', 'onPrepStart', 'onPrepEnd', 'onBuy', 'onGain', 'onSold', 'onMerge']);
  
 -export function registerMeta(registry) {
 -  const prev = typeof registry.get === 'function' ? registry.get('bond:victoriaShip') : null;
-+/**
-+ * 雷姆必拓 operator milestones: every `layer` (25) layers pay `count` (1) rim operator(s) of tier ≤ the dispatch
-+ * centre level once (counter = milestones paid; 2026-10-16 实装计划 §3.1c, the 维多利亚 hammer shape).
-+ * A bond effect, so it pays only while 雷姆必拓 is active; milestones crossed while inactive are paid the next time a
-+ * hook sees it active — same catch-up as payHammers. The payout itself is NOT doubled by 投资人 (a bond milestone,
-+ * not an EffectDispatcher.investRepeat gain); the granted operator's own 「获得时」 traits fire ×2/×3 as usual —
-+ * grantChess dispatches onGain like any gain (2026-10-16 用户口径, pinned in test/content/rim_bond.test.js).
-+ */
-+export function payRecruits(ctx) {
-+  if (!ctx.bondActive('rimBillitonShip')) return 0;
-+  const p = S.buffParams(ctx.data?.bonds?.rimBillitonShip ?? S.bondRecord('rimBillitonShip'), RIM_REWARD_KEY);
-+  const step = Math.floor(num(p?.layer, 0));
-+  if (!p || !(step > 0)) return 0;
-+  const due = Math.floor(ctx.layers('rimBillitonShip') / step);
-+  const count = Math.max(0, Math.floor(num(p.count, 1)));
-+  let granted = 0;
-+  // The counter is reserved BEFORE the grant so the grant's own onGain dispatch (which re-enters this function) sees
-+  // the milestone as paid; when nothing can be granted it is released again. [ASSUMED] a milestone waits instead of
-+  // being consumed when the dispatch centre level admits no rim member at all (the official sources are silent on the
-+  // level cap's empty case).
-+  for (let guard = 0; guard < 100; guard++) {
-+    const paid = ctx.counter(RIM_COUNTER);
-+    if (paid >= due) break;
-+    ctx.setCounter(RIM_COUNTER, paid + 1);
-+    const maxTier = Math.max(1, Math.floor(num(ctx.shopLevel?.(), 6))); // 不高于当前调度中心等级
-+    let paidOut = 0;
-+    for (let i = 0; i < count; i++) {
-+      const id = ctx.rollChess({ bond: 'rimBillitonShip', maxTier });
-+      if (!id || !ctx.grantChess(id, { source: 'bond:rimBillitonShip' })) break;
-+      paidOut++;
-+    }
-+    if (!paidOut) { ctx.setCounter(RIM_COUNTER, paid); break; } // the pool has no rim member of tier ≤ the level: wait
-+    granted += paidOut;
-+  }
-+  if (granted && typeof ctx.toast === 'function') ctx.toast(msg('【雷姆必拓】获得{n}名干员', { n: granted }), 'info');
-+  return granted;
-+}
-+
 +/**
 + * Wire a milestone payer (`pay(ctx)`) onto `bondId`'s meta handler over the HAMMER_HOOKS (payHammers shape). */
 +function wireMilestone(registry, bondId, pay) {
@@ -15523,21 +15351,20 @@ index 8b12c71..e8507b0 100644
 +
 +export function registerMeta(registry) {
 +  wireMilestone(registry, 'victoriaShip', payHammers);
-+  wireMilestone(registry, 'rimBillitonShip', payRecruits); // 自定义（2026-10-16 效果正式化，雷姆必拓）
  }
 diff --git a/server/sim/content/garrisons/meta.js b/server/sim/content/garrisons/meta.js
-index 593cf20..ff0a3e2 100644
+index 593cf20..9e974ec 100644
 --- a/server/sim/content/garrisons/meta.js
 +++ b/server/sim/content/garrisons/meta.js
-@@ -430,6 +430,185 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
+@@ -430,6 +430,86 @@ H.SERVER_FRONT_SAME_EFFECT_PREP_START = {
  };
  
  
 +// ---------------------------------------------------------------------------------------------
 +// 自定义特质（tools/custom-content.mjs 注入，2026-10-12 乌萨斯扩展第二批）。effectKey = 自定义段
-+// act2autochess_gar_eff_986/987（黑board valueStr）。与官方 SERVER_ADD_BOND_POSITION 的区别：文案无限定
-+// 「已激活」（鸿雪 986「所属盟约层数」）→ requireActive:false；烈夏 987「获得 N 个道具」= 随机道具
-+// （官方 SERVER_GAIN_EQUIP 给的是指定 chess，不适用）。
++// act2autochess_gar_eff_986/987（blackboard valueStr）。与官方 SERVER_ADD_BOND_POSITION 的区别：文案无限定
++// 「已激活」（鸿雪 986「所属盟约层数」）→ requireActive:false；烈夏 987（2026-10-18 用户修订）：获得时固定给
++// count 个【乌萨斯军粮】，每名额小概率（bbStr.prob）改为【冰原咆哮】（gainLetoItems）。
 +H['act2autochess_gar_eff_986_a'] = {
 +  run(ctx) { positionLayers(ctx, num(ctx.source.bb.count, 4)); },
 +};
@@ -15545,10 +15372,10 @@ index 593cf20..ff0a3e2 100644
 +  run(ctx) { positionLayers(ctx, num(ctx.source.bb.count, 8)); },
 +};
 +H['act2autochess_gar_eff_987_a'] = {
-+  run(ctx) { gainRandomItems(ctx, num(ctx.source.bb.count, 1)); },
++  run(ctx) { gainLetoItems(ctx, num(ctx.source.bb.count, 1), ctx.source.bbStr ?? {}); },
 +};
 +H['act2autochess_gar_eff_987_b'] = {
-+  run(ctx) { gainRandomItems(ctx, num(ctx.source.bb.count, 2)); },
++  run(ctx) { gainLetoItems(ctx, num(ctx.source.bb.count, 2), ctx.source.bbStr ?? {}); },
 +};
 +// 2026-10-13 【东】扩展批次（990/991）。990 白雪 2026-10-17 用户修订：
 +// 「已激活的层数最高的盟约」→「自身所属盟约」（不挑层数最高、不要求已激活），+3/6→+4/8 → ownLayers。
@@ -15587,79 +15414,7 @@ index 593cf20..ff0a3e2 100644
 +  for (const b of metaBonds(ctx, ctx.source.piece)) ctx.addLayers(b, count, { requireActive: false });
 +}
 +
-+// 2026-10-16 【雷姆必拓】扩展批次（PR2，实装计划 §3.2）：993 暴行 / 995 蜜莓 / 997 时隙 / 998 珊比。
-+// 2026-10-17：+994 火哨（<休整期结束时>给已激活的【雷姆必拓】盟约 +2/+4 层，SERVER_PREP_FIN）；
-+// 995/997 的产层改为「随机 1 个已激活盟约 +3/+6，重复 4/8 次」（bb.times 参数化）。（996 黑 / 999 莱伊在各自 kit。）
-+H['act2autochess_gar_eff_993_a'] = {
-+  run(ctx) { ctx.addPendingFunds(num(ctx.source.bb.count, 1)); },   // SERVER_ONCE_GOLD（garrison_21）同款
-+};
-+H['act2autochess_gar_eff_993_b'] = {
-+  run(ctx) { ctx.addPendingFunds(num(ctx.source.bb.count, 2)); },
-+};
-+H['act2autochess_gar_eff_995_a'] = {
-+  run(ctx) { randomActiveLayers(ctx, num(ctx.source.bb.count, 3), num(ctx.source.bb.times, 4)); },
-+};
-+H['act2autochess_gar_eff_995_b'] = {
-+  run(ctx) { randomActiveLayers(ctx, num(ctx.source.bb.count, 3), num(ctx.source.bb.times, 8)); },
-+};
-+H['act2autochess_gar_eff_997_a'] = {
-+  run(ctx) { randomActiveLayers(ctx, num(ctx.source.bb.count, 6), num(ctx.source.bb.times, 4)); },
-+};
-+H['act2autochess_gar_eff_997_b'] = {
-+  run(ctx) { randomActiveLayers(ctx, num(ctx.source.bb.count, 6), num(ctx.source.bb.times, 8)); },
-+};
-+// 2026-10-17 火哨 994 二次修订（用户口径）：自然技力回复 → <休整期结束时>给已激活的【雷姆必拓】盟约 +2/+4 层
-+// （不再走官方 attr_common_global_buff 数据通路，改自定义 SERVER_PREP_FIN handler——白雪 garrison_986 同事件）。
-+H['act2autochess_gar_eff_994_a'] = {
-+  run(ctx) { ctx.addLayers('rimBillitonShip', num(ctx.source.bb.count, 2), { requireActive: true }); },
-+};
-+H['act2autochess_gar_eff_994_b'] = {
-+  run(ctx) { ctx.addLayers('rimBillitonShip', num(ctx.source.bb.count, 4), { requireActive: true }); },
-+};
-+H['act2autochess_gar_eff_998_a'] = {
-+  run(ctx) { recruitAround(ctx, num(ctx.source.bb.count, 3), num(ctx.source.bb.cap, 2)); },
-+};
-+H['act2autochess_gar_eff_998_b'] = {
-+  run(ctx) { recruitAround(ctx, num(ctx.source.bb.count, 2), num(ctx.source.bb.cap, 3)); },
-+};
 +
-+/** 自定义 995/997（蜜莓/时隙）：「使随机 1 个已激活盟约的层数 +N，重复 2 次」——每次独立随机（两次可命中
-+ *  同一盟约），只在已激活集合里挑（并列 → rng 洗牌定序，照 SERVER_MOST_BOND）；文案为官方现成措辞
-+ *  （mooncell Ⅵ阶「获得…重复 2 次」）。调和/协防/独行/绝技不在随机池（2026-10-18 用户口径）。 */
-+const RANDOM_LAYER_EXCLUDE = new Set(['maniShip', 'emptyShip', 'soloShip', 'suntShip']);
-+function randomActiveLayers(ctx, count, times = 2) {
-+  if (!(count > 0)) return;
-+  // 2026-10-18 用户口径（bug 修复）：调和/协防/独行/绝技不参与「随机 1 个已激活盟约」的抽取——
-+  // 这四条是功能性/不叠层的盟约（noStack 或纯功能），随机到等于浪费（用户口径：不会随机到这几个盟约）。
-+  const actives = [];
-+  for (const id of bondOrder(ctx)) {
-+    if (RANDOM_LAYER_EXCLUDE.has(id)) continue;
-+    if (ctx.bondActive(id)) actives.push(id);
-+  }
-+  if (!actives.length) return;
-+  const order = actives.length > 1 ? ctx.rng.shuffle(actives.slice()) : actives;
-+  for (let i = 0; i < Math.max(1, Math.floor(times)); i++) {
-+    const id = order[i % order.length];
-+    ctx.addLayers(id, count, { requireActive: true });
-+  }
-+}
-+
-+/** 自定义 998（珊比）：<进入休整期时>周围八格内每有 `step`（3/2）名干员，随机获得 1 名不高于当前调度中心
-+ *  等级的【雷姆必拓】干员。周围八格 = 与自身 |Δrow| ≤ 1 且 |Δcol| ≤ 1 的棋子（不含自身，九宫格口径，灵巧
-+ *  「周围八格」同款）；名数 = min(floor(周围数 / step), `cap`（普通 2 / 精锐 3，bb.cap——2026-10-16 用户口径
-+ *  的每回合上限）。 [ASSUMED] 阶位上限 = 调度中心等级（rollChess maxTier，payRecruits 同款）。 */
-+function recruitAround(ctx, step, cap) {
-+  const me = selfView(ctx);
-+  if (!onBoard(me) || !(step > 0)) return;
-+  const around = chessOnBoard(ctx).filter((p) => p.uid !== me.uid
-+    && Math.abs(p.row - me.row) <= 1 && Math.abs(p.col - me.col) <= 1).length;
-+  const n = Math.min(Math.max(0, Math.floor(cap)), Math.floor(around / step));
-+  const maxTier = Math.min(6, Math.max(1, Math.floor(num(ctx.shopLevel?.(), 6))));
-+  for (let i = 0; i < Math.min(10, n); i++) {
-+    const id = ctx.rollChess({ bond: 'rimBillitonShip', maxTier });
-+    if (id) ctx.grantChess(id);
-+  }
-+}
 +
 +/** 自定义 986（鸿雪）：自身和身前干员的所属盟约层数 +N（未激活也加；身前无干员则只有自身）。
 + *  2026-10-16 用户修订：付与对象由「身后一格」改为「身前一格」（behindPiece → frontPiece）。 */
@@ -15672,43 +15427,16 @@ index 593cf20..ff0a3e2 100644
 +  for (const t of targets) for (const b of metaBonds(ctx, t)) ctx.addLayers(b, count, { requireActive: false });
 +}
 +
-+/**
-+ * 自定义 987（烈夏）随机道具池的排除名单（2026-10-16 用户口径）：6 阶道具（由 maxTier 封顶 5 覆盖）、信标、
-+ * 博士投影、拟态物质、画卷、商业包装方案、教鞭、天马之盔、突变细胞，以及**普通维式重锤以外**的维式重锤
-+ * （战栗/坚固/加速/灼燃 —— 普通维式重锤 chess_item_1_01_e_a 保留）。id 取自 data/items.json；其中画卷/教鞭
-+ * （6 阶）、突变细胞与部分维式重锤本就不在商店池（tools/build-data.mjs 的 SHOP_EXCLUDED_ITEMS / isShopItem），
-+ * 列全只为口径完整、便于日后核对。
-+ */
-+const LETO_ITEM_EXCLUDE = new Set([
-+  'chess_item_5_04_e_a',   // 信标
-+  'chess_item_5_05_e_a',   // 拟态物质
-+  'chess_item_5_06_e_a',   // 博士投影
-+  'chess_item_5_07_e_a',   // 商业包装方案
-+  'chess_item_5_08_e_a',   // 突变细胞
-+  'chess_item_5_09_e_a',   // 天马之盔
-+  'chess_item_6_02_m',     // 画卷（6 阶）
-+  'chess_item_6_03_m',     // 教鞭（6 阶）
-+  'chess_item_2_03_e_a',   // 战栗维式重锤
-+  'chess_item_3_09_e_a',   // 坚固维式重锤
-+  'chess_item_3_10_e_a',   // 加速维式重锤
-+  'chess_item_4_09_e_a',   // 灼燃维式重锤
-+]);
-+
-+/** 自定义 987（烈夏）：获得时给玩家 count 个随机道具（投资人按 dispatcher 既有规则重复）。
-+ *  2026-10-16 用户修订：排除 LETO_ITEM_EXCLUDE，并且不再出现 6 阶道具（maxTier 封顶 5）。
-+ *  实现用**重试采样**（抽到排除项就再抽，最多 12 次）而**不去改本体的 rollItemId 接口**：本体共享文件在
-+ *  fork 上常被改写（实测 IncreasePlayerCapacity fork 把 server/match/match/spDraft.js 整个重写了），
-+ *  补丁每多一个目标文件，就多一处「装不上」的风险。 */
-+const LETO_PICK_TRIES = 12;
-+function gainRandomItems(ctx, count) {
-+  const maxTier = Math.min(5, Math.max(1, Math.floor(num(ctx.shopLevel?.(), 6))));
++/** 自定义 987（烈夏）：获得时给玩家 count 个【乌萨斯军粮】（chess_item_9_03_e_a），每个名额以 bbStr.prob
++ *  （15% [ASSUMED]）改为【冰原咆哮】（chess_item_9_04_e_a）。投资人按 dispatcher 既有规则重复。
++ *  直接 grantItem 固定 id（不再走 rollItem 随机池——2026-10-18 用户修订，随机池与排除名单随之退役）。 */
++function gainLetoItems(ctx, count, bbStr) {
++  const item = (bbStr && bbStr.item) || 'chess_item_9_03_e_a';
++  const rare = (bbStr && bbStr.rare) || 'chess_item_9_04_e_a';
++  const prob = Math.max(0, Math.min(1, parseFloat(bbStr && bbStr.prob) || 0));
 +  for (let i = 0; i < Math.min(10, count); i++) {
-+    let id = null;
-+    for (let t = 0; t < LETO_PICK_TRIES && !id; t++) {
-+      const cand = ctx.rollItem({ maxTier });
-+      if (cand && !LETO_ITEM_EXCLUDE.has(cand)) id = cand;
-+    }
-+    if (id) ctx.grantItem(id);
++    const id = (prob > 0 && ctx.rng && ctx.rng() < prob) ? rare : item;
++    ctx.grantItem(id);
 +  }
 +}
 +
@@ -15884,7 +15612,7 @@ index 6c5dd94..d288046 100644
  // grants
  
 diff --git a/server/sim/content/kits/index.js b/server/sim/content/kits/index.js
-index a8994d7..5b91666 100644
+index a8994d7..af63354 100644
 --- a/server/sim/content/kits/index.js
 +++ b/server/sim/content/kits/index.js
 @@ -29,20 +29,23 @@ export const KIT_FILES = Object.freeze([
@@ -15892,8 +15620,8 @@ index a8994d7..5b91666 100644
      'chess_char_1_09-caper.js', 'chess_char_1_10-sunbr.js', 'chess_char_1_11-skgoat.js', 'chess_char_1_12-estell.js',
      'chess_char_1_13-podego.js', 'chess_char_1_14-greyy.js', 'chess_char_1_16-tinman.js', 'chess_char_1_17-indigo.js',
 -    'chess_char_1_18-utage.js', 'chess_char_1_19-wildmn.js', 'chess_char_1_20-liskam.js'],
-+    'chess_char_1_18-utage.js', 'chess_char_1_19-wildmn.js', 'chess_char_1_20-liskam.js',
-+    'chess_char_1_96-savage.js'],  // 2026-10-16 PR2: 暴行【雷姆必拓】
++    'chess_char_1_18-utage.js', 'chess_char_1_19-wildmn.js',     'chess_char_1_20-liskam.js',
++  ],  // 2026-10-18 雷姆必拓批次下架：savage 注册移除
    // tier 2
    ['chess_char_2_01-excu.js', 'chess_char_2_02-silent.js', 'chess_char_2_03-slchan.js', 'chess_char_2_04-grabds.js',
      'chess_char_2_05-harold.js', 'chess_char_2_06-papyrs.js', 'chess_char_2_07-ghost.js', 'chess_char_2_08-bubble.js',
@@ -15901,7 +15629,7 @@ index a8994d7..5b91666 100644
      'chess_char_2_13-tippi.js', 'chess_char_2_14-flower.js', 'chess_char_2_15-akkord.js', 'chess_char_2_16-whitew.js',
 -    'chess_char_2_17-branch.js', 'chess_char_2_18-ashlok.js', 'chess_char_2_19-tinman.js'],
 +    'chess_char_2_17-branch.js', 'chess_char_2_18-ashlok.js', 'chess_char_2_19-tinman.js',
-+    'chess_char_2_98-botany.js', 'chess_char_2_96-firwhl.js'],  // 2026-10-16 PR2: 火哨【雷姆必拓】
++    'chess_char_2_98-botany.js'],  // 2026-10-18 雷姆必拓批次下架：firwhl 注册移除
    // tier 3
    ['chess_char_3_01-angel.js', 'chess_char_3_02-ayer.js', 'chess_char_3_03-swire.js', 'chess_char_3_04-swire2.js',
      'chess_char_3_05-skadi.js', 'chess_char_3_06-philae.js', 'chess_char_3_07-forcer.js', 'chess_char_3_08-mint.js',
@@ -15910,11 +15638,11 @@ index a8994d7..5b91666 100644
      'chess_char_3_17-shotst.js', 'chess_char_3_18-vulpis.js', 'chess_char_3_19-vigil.js', 'chess_char_3_20-kjera.js',
 -    'chess_char_3_21-archet.js'],
 +    'chess_char_3_21-archet.js', 'chess_char_3_96-makiri.js', 'chess_char_3_97-yuki.js', 'chess_char_3_98-leto.js',
-+    'chess_char_3_99-gyuki.js', 'chess_char_3_95-glider.js'],  // 2026-10-16 PR2: 蜜莓【雷姆必拓】
++    'chess_char_3_99-gyuki.js'],  // 2026-10-18 雷姆必拓批次下架：glider 注册移除
    // tier 4
    ['chess_char_4_01-rmixer.js', 'chess_char_4_02-mostma.js', 'chess_char_4_03-kjera.js', 'chess_char_4_04-ines.js',
      'chess_char_4_05-beewax.js', 'chess_char_4_06-kroos2.js', 'chess_char_4_07-bpipe.js', 'chess_char_4_08-rosesa.js',
-@@ -50,21 +53,24 @@ export const KIT_FILES = Object.freeze([
+@@ -50,21 +53,22 @@ export const KIT_FILES = Object.freeze([
      'chess_char_4_13-gnosis.js', 'chess_char_4_14-lionhd.js', 'chess_char_4_15-reckpr.js', 'chess_char_4_16-texas2.js',
      'chess_char_4_17-hsguma.js', 'chess_char_4_18-mudrok.js', 'chess_char_4_19-flamtl.js', 'chess_char_4_20-fartth.js',
      'chess_char_4_21-plosis.js', 'chess_char_4_22-svrash.js', 'chess_char_4_23-gvial2.js', 'chess_char_4_24-billro.js',
@@ -15928,8 +15656,7 @@ index a8994d7..5b91666 100644
      'chess_char_5_17-f12yin.js', 'chess_char_5_18-gvial2.js', 'chess_char_5_19-mlynar.js', 'chess_char_5_20-aglina.js',
 -    'chess_char_5_21-sntlla.js', 'chess_char_5_22-nymph.js', 'chess_char_5_23-reckpr.js'],
 +    'chess_char_5_21-sntlla.js', 'chess_char_5_22-nymph.js', 'chess_char_5_23-reckpr.js', 'chess_char_5_97-saga.js',
-+    'chess_char_5_98-turdus.js', 'chess_char_5_99-veen.js',
-+    'chess_char_5_96-shwaz.js', 'chess_char_5_95-tmslot.js'],  // 2026-10-16 PR2: 黑/时隙【雷姆必拓】
++    'chess_char_5_98-turdus.js', 'chess_char_5_99-veen.js'],  // 2026-10-18 雷姆必拓批次下架：shwaz/tmslot 注册移除
    // tier 6 (and 盟约·辅助干员 chess_char_1_15, a hidden tier-1 chess always registered with the tier-6 kits)
    ['chess_char_1_15-pithst.js', 'chess_char_6_01-lemuen.js', 'chess_char_6_02-sbell2.js', 'chess_char_6_03-yu.js',
      'chess_char_6_04-skadi2.js', 'chess_char_6_05-pasngr.js', 'chess_char_6_06-pepe.js', 'chess_char_6_07-siege2.js',
@@ -15937,12 +15664,11 @@ index a8994d7..5b91666 100644
      'chess_char_6_12-rosmon.js', 'chess_char_6_13-angel2.js', 'chess_char_6_14-lumen.js', 'chess_char_6_15-qiubai.js',
      'chess_char_6_16-halo2.js', 'chess_char_6_17-nearl2.js', 'chess_char_6_18-whitw2.js', 'chess_char_6_19-blkkgt.js',
 -    'chess_char_6_20-agoat2.js'],
-+    'chess_char_6_20-agoat2.js', 'chess_char_6_97-yato2.js', 'chess_char_6_98-headb2.js', 'chess_char_6_99-poca.js',
-+    'chess_char_6_96-thumpy.js', 'chess_char_6_95-ray.js'],  // 2026-10-16 PR2: 珊比/莱伊【雷姆必拓】
++    'chess_char_6_20-agoat2.js', 'chess_char_6_97-yato2.js', 'chess_char_6_98-headb2.js', 'chess_char_6_99-poca.js'],  // 2026-10-18 雷姆必拓批次下架：thumpy/ray 注册移除
  ].map((group) => Object.freeze(group)));
  
  /**
-@@ -82,30 +88,23 @@ export const OPERATOR_KIT_FILES = Object.freeze([
+@@ -82,30 +86,23 @@ export const OPERATOR_KIT_FILES = Object.freeze([
    'op-siege.js',
    'op-chen.js',
    'op-irene.js',
@@ -15973,7 +15699,7 @@ index a8994d7..5b91666 100644
    'op-zumama.js',
    'op-judge.js',
    'op-shu.js',
-@@ -119,10 +118,8 @@ export const OPERATOR_KIT_FILES = Object.freeze([
+@@ -119,10 +116,8 @@ export const OPERATOR_KIT_FILES = Object.freeze([
    'op-chen3.js',
    'op-leizi2.js',
    'op-vvana.js',
@@ -16312,7 +16038,7 @@ index 20d83dd..9c459fb 100644
        skel: assetUrl(m.skel.rel),
        atlas: assetUrl(m.atlas.rel),
 diff --git a/tools/build-data.mjs b/tools/build-data.mjs
-index 48fa3fa..3a8bf8d 100644
+index 48fa3fa..51edd71 100644
 --- a/tools/build-data.mjs
 +++ b/tools/build-data.mjs
 @@ -40,6 +40,7 @@ import { bandBondIds } from '../shared/bandBonds.js';
@@ -16343,8 +16069,8 @@ index 48fa3fa..3a8bf8d 100644
 +    // 远见/奇迹 0.25×、精准 5×、灵巧/迅捷/坚守/助力 3×、萨尔贡/阿戈尔 2×、协防/独行/不屈 0.5×（仍可抽中）。
 +    // 期望被禁 40.42 / 可用 91.58（132 可见；真机 7+5 均匀基准 = 41.08 / 90.92 —— 禁用数与可用数都基本持平）。
 +    // 投资人 investShip 保持 weight 0 = 永不被禁。评估见 禁用机制速查.md §14。
-+    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 6, addon: 5 }, HARD: { core: 6, addon: 5 }, ABYSS: { core: 6, addon: 5 }, TRAINING: { core: 0, addon: 0 },
-+      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0 (协防 emptyShip bannable; 投资人 investShip stays weight 0 = never banned); weighted draw (bond.weight, 10 = normal); NORMAL/HARD/ABYSS = 6 core + 5 addon' },
++    bans: { FUNNY: { core: 0, addon: 1 }, NORMAL: { core: 5, addon: 5 }, HARD: { core: 5, addon: 5 }, ABYSS: { core: 5, addon: 5 }, TRAINING: { core: 0, addon: 0 },
++      rule: 'banned iff every bond of a visible non-DIY chess is in (drawn set D ∪ mode.inactiveBondIds); core = isCore bonds, addon = other bonds with weight > 0 (协防 emptyShip bannable; 投资人 investShip stays weight 0 = never banned); weighted draw (bond.weight, 10 = normal); NORMAL/HARD/ABYSS = 5 core + 5 addon（2026-10-18 用户回退到 2026-10-17 第二条口径）' },
      bandDraft: { skipsPerPlayer: 1, order: 'random', duplicatesAllowed: true, timeoutBandId: 'band_bldsk' },
      titles: Object.values(act.playerTitleDataDict || {}).map((t) => ({ id: t.id, picId: t.picId, name: t.txt, ...(titleRules[t.id] || {}) })),
      titleRule: 'each player gets at most one title; each title is used at most once per match; assign by the category where the player ranks best relative to teammates [ASSUMED]',
@@ -16370,6 +16096,7 @@ index 48fa3fa..3a8bf8d 100644
    log('building…');
    // one pass of the operator builders per potential rank (潜能 1–6, ctx.potRank): the full-potential pass is the data,
    // annotated below with what every lower rank changes (attachPotential)
+
 diff --git a/tools/fetch-assets.mjs b/tools/fetch-assets.mjs
 index f12d457..49ae8de 100644
 --- a/tools/fetch-assets.mjs

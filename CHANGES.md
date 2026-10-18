@@ -4,6 +4,39 @@
 
 ---
 
+## 2026-10-18（第十八条 · v1.0.16）· 【雷姆必拓】批次整体下架 ＋ 禁用抽取回退 5+5 ＋ 乌萨斯特质修订
+
+### 用户口径
+
+①删除雷姆必拓 7 名干员（暴行/火哨/蜜莓/黑/时隙/珊比/莱伊）与 rimBillitonShip 盟约、②删除【兔兔支援】策略、③干员禁用回退「5 核心 + 5 支线」加权抽取（2026-10-17 第二条口径；第三条的 6+5 重权重表与 PR3 放回保底随批次撤销）；④赫拉格 982：<休整期开始时>使已激活的【乌萨斯】【远见】层数+6/12；⑤烈夏：获得时固定给 1/2 个【乌萨斯军粮】，小概率（15% [ASSUMED]）变为【冰原咆哮】；⑥早露：己方已激活的【乌萨斯】与【精准】每合计 3 层，攻击力+2/4%（**并补实装**——此前雪崩攻势只有文案无 effectKey/bb，从未生效）。
+
+### 主要落点
+
+| 文件 | 改动 |
+|---|---|
+| `patches/01`（bonds/core.js） | installRim + payRecruits + RIM 常量 + INSTALLERS/wire 行整段删除 |
+| `patches/01`（kits/index.js + 7 kit 文件删除） | rim 干员 kit 注册与文件移除（owned 554→361） |
+| `patches/01`（garrisons/meta.js） | 993-999 处理器 + randomActiveLayers/recruitAround 专用函数删除 |
+| `patches/01`（bands/meta.js） | band_rounds_gain_bond_char（兔兔）与 up_level_first_offer（签约）handler 删除 |
+| `patches/01`（build-data.mjs） | bans 6+5 → **5+5** |
+| `tools/custom-content.mjs` | CHESS/BONDS/GARRISONS 993-999/ITEMS 9_05-9_06/band_tutu 定义删除；乌萨斯批次干员 bondIds 去 rim；BOND_OVERRIDES 加籍三条删除；GARRISON_OVERRIDES 73/96 删除；权重表回退（visi/mira 2.5、swift/preci/skillful 45、emptyShip 10、其余 10）；CUSTOM_* 计数全部回退 |
+| `patches/02`（pool.js） | drawDisabledBonds 放回保底段删除（guaranteed 字段退役） |
+| `patches/02`（约 25 个测试文件） | rim 用例删除、全部计数回退（chess 292/125、bonds 25/10 core、bands 45、items 123、diy 66、summoners 26、emptyShip 31、visible 125、bans 5+5 等） |
+| `tools/i18n-rim-pr1/2/3.mjs` | 退役为 no-op（rim overlay 随 build-i18n 重建消失） |
+| `mod.json` | 1.0.15 → **1.0.16**；owned 删 193（rim 素材/kit/测试）；指纹刷新 |
+
+### 验证
+
+- 工作区全量 6349 项：内容性 0 fail（golden-diy 的派位 probe 进行中，见下）；i18n stale=0；golden 9/9。
+- 纯净 `16a0f9b` worktree：patch01+02 apply 后 **97/97 patched 指纹全部一致**。
+- build-data：chess=292 visibleChess=125 bonds=25 garrisons=275 items=123 bands=45（rim 零残留）。
+
+### golden-diy 派位 probe（进行中）
+
+rim 下架后原 31/26/67 三个 coverage-diy seed 的 bot 派位流漂移（不再派 5_diy1_a）。probe 31-152 无命中，153-250 进行中；命中后固化 seed 并重算 golden。
+
+---
+
 ## 2026-10-18（第十七条 · v1.0.15）· 雷姆必拓盟约数值/判定修订 ＋ 黑特质重做
 
 ### 改了什么

@@ -17,12 +17,9 @@
 //   - 模组 SBL-X 藏锋（精锐，数据承载 stage1 {hp230,atk55}）：特性显示段「生命值低于 50% 获得 25% 庇护」=
 //     隐藏模组天赋（index 0 的 damage_resistance / hp_ratio）—— 庇护取最高（tier1.js holdProtect）。
 //     003「热的雪」未选用：tb.hp_ratio 缺省时免死钩子静默不装。
-//   - 干员自身效果【采集单第 8 项】老将刀意：本干员每击杀一个敌人，使**已激活的**【乌萨斯】【远见】层数
-//     +3（普通）/ +6（精锐），每场战斗每盟约最多经此叠加 9（普通）/ 18（精锐）层（2026-10-16 用户修订：
-//     2/4 与 8/16 → 3/6 与 9/18）。⚠️ 这是赫拉格自己的干员效果（reason 'op'），不是盟约效果；
-//     bonds/ 下无任何新实现。击杀事件 = 引擎 'kill'（deploy.js：emit('kill', { killer, victim })）。
-//     「已激活」判定内联读 battle.getPlayer(pid).bonds[id].active（kit 禁 import support/index.js ——
-//     kits_layout.test.js；这是 support 的 bondActive 的最小内联版）。
+//   - 干员自身效果【采集单第 8 项】老将刀意：2026-10-18 用户修订 → 改为 <休整期开始时>使已激活的
+//     【乌萨斯】【远见】盟约层数+8/16 —— 移交 garrisons/meta.js（act2autochess_gar_eff_982_a/b，
+//     SERVER_PREP_START 事件），本 kit 的 kill 监听与相关常量已移除。
 
 import { num, traitBb, skillRec, toggleBuff, up, onHitOn, holdProtect, PROTECT_TICK_HOLD } from '../shared/tier1.js';
 
@@ -34,16 +31,11 @@ const bbOf = (chess, id) => skillRec(chess, id)?.bb ?? {};
 /** The blackboard of the talent with data index `i` ({} when absent; module parts with a new index included). */
 const talentAt = (chess, i) => (chess?.talents ?? []).find((t) => t && t.index === i)?.bb ?? {};
 
-/** 干员自身效果：每击杀一个敌人给【远见】加的层数的盟约（普通 / 精锐同池）。 */
-const KILL_BONDS = ['ursusShip', 'visiShip'];
-
 export default {
   chess_char_4_98_a: (bb, chess) => {
     const t0 = talentAt(chess, 0), t1 = talentAt(chess, 1), t2 = talentAt(chess, 2);
     const tb = traitBb(chess);
     const b1 = bbOf(chess, S1), b2 = bbOf(chess, S2), b3 = bbOf(chess, S3);
-    const killGain = chess?.isGolden ? 6 : 3;   // 每次击杀加的层数（2026-10-16 用户修订：2/4→3/6）
-    const killCap = chess?.isGolden ? 18 : 9;   // 每场战斗每盟约上限（2026-10-16 用户修订：8/16→9/18）
 
     const s2Spec = {
       kind: 'duration',
@@ -89,24 +81,6 @@ export default {
         } },
       ],
       install(battle, unit) {
-        // ---- 干员自身效果：老将刀意（必须在模组分支之前，无条件安装）----
-        // 每击杀一个敌人 → 已激活的【乌萨斯】【远见】各 +3/+6 层，每场战斗每盟约最多 9/18 层
-        // （unit.mem 按盟约分键记账，跨部署累计 —— unit 是每场战斗的作用域；2026-10-14 用户修订）。
-        battle.on('kill', (c) => {
-          if (c.killer !== unit || unit.ownerId == null) return;
-          unit.mem = unit.mem || {};
-          const ps = battle.getPlayer?.(unit.ownerId);
-          if (!ps) return;
-          for (const id of KILL_BONDS) {
-            const st = ps.bonds?.[id];
-            if (!st || !st.active) continue;          // 「已激活的」——未激活的盟约不吃层
-            const used = num(unit.mem['helageKill:' + id], 0);
-            const add = Math.min(killGain, Math.max(0, killCap - used));
-            if (!(add > 0)) continue;
-            const got = battle.addLayers(unit.ownerId, id, add, 'op', { source: unit });
-            if (got > 0) unit.mem['helageKill:' + id] = used + got;
-          }
-        }, { owner: unit });
 
         // SBL-X “藏锋”: 生命值低于50%时，获得25%的庇护 — the shared 庇护 (holdProtect: the strongest of every
         // source holds), refreshed every tick and at each hit on him while he is below

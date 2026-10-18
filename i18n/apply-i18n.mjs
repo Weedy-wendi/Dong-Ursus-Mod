@@ -25,10 +25,10 @@ const IDS = {
   // 2026-10-17：自制策略（5 条）。records 的 _h 由本脚本按 data/bands.json 的 zh 源文本算（见下），
   // mod-i18n.json 里只写文案；每个策略的效果记录（aceffect_band_9_0x）从它派生。
   // 2026-10-18：+band_tutu；band_titi（独家签约）当日下架——见下方 REMOVED_BANDS 清理。
-  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika', 'band_tutu'],
+  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika'],
   // 已下架的自制策略：overlay（bands + 派生 effects）里的残留记录必须清掉——
   // zh 源已不存在会导致 stale≠0 / coverage 虚高。幂等：没有残留时是 no-op。
-  removedBands: [{ id: 'band_titi', effectId: 'aceffect_band_9_07' }],
+  removedBands: [{ id: 'band_titi', effectId: 'aceffect_band_9_07' }, { id: 'band_tutu', effectId: 'aceffect_band_9_06' }],
   // effects 记录（含 _h）：mod-i18n.json 里存在则直接用；不存在才从 bonds/items/bands 派生
   effects: ['bondeffect_dong', 'bondeffect_ursus', 'eff_9_01_e', 'eff_9_02_e', 'eff_9_03_e', 'eff_9_04_e'],
 };
