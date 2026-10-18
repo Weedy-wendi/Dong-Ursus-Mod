@@ -19,7 +19,7 @@ export const CUSTOM_CHESS_RECORDS = 40;  // 新增 chess 记录数（普通 + �
 export const CUSTOM_BOND_COUNT = 3;      // 新增盟约数                （23  + N；2026-10-16 +1 雷姆必拓）
 export const CUSTOM_CORE_BOND_COUNT = 3; // 新增「核心」盟约数        （8   + N；2026-10-16 +1 雷姆必拓）
 export const CUSTOM_ITEMS = 8;           // 新增装备数（普通 + 进阶）（115 + 2N 条记录 / 56 + N 件普通 EQUIP；2026-10-16 PR2 4→8）
-export const CUSTOM_BAND_COUNT = 7;      // 新增策略数                （40  + N；自制 5 条 2026-10-17 + 2 条 2026-10-18）
+export const CUSTOM_BAND_COUNT = 6;      // 新增策略数                （40  + N；自制 5 条 2026-10-17 + 兔兔支援 2026-10-18；独家签约 2026-10-18 加入当日即下架）
 
 /** 自制棋子。key = 基础 chessId（不带 `_a`）。 */
 const CHESS = {
@@ -761,20 +761,16 @@ const BANDS = {
   },
   // 2026-10-18 用户需求（第二条批次）：
   band_tutu: {
-    name: '阿米娅', sortId: 46, totalHp: 22,
+    name: '珊比', sortId: 46, totalHp: 22,
     effectId: 'aceffect_band_9_06', effectName: '兔兔支援',
     desc: '【兔兔支援】第2、4、7、11回合开始时，获得2名不高于当前调度等级的<雷姆必拓>干员',
     // rounds/lvlist 是字符串 → 必须走 bbStr（bb 的字符串会被 buildBands 数值化为 0）
     buffs: [{ key: 'band_rounds_gain_bond_char', bb: { count: 2 }, bbStr: { bond: 'rimBillitonShip', rounds: '2,4,7,11' } }],
     iconChar: 'char_4235_thumpy',        // 「兔兔」= 珊比（2026-10-18 用户指定，原为阿米娅）
   },
-  band_titi: {
-    name: '缇缇', sortId: 47, totalHp: 26,
-    effectId: 'aceffect_band_9_07', effectName: '独家签约',
-    desc: '【独家签约】首次将调度等级升级到2、4、6级时，在调度中心刷新3名V级精锐干员，可以选择并获得其中1名；获得后本局内无法再刷新出该名干员',
-    buffs: [{ key: 'up_level_first_offer_elite_pick_banned_after', bb: { tier: 5, count: 3 }, bbStr: { lvlist: '2,4,6' } }],
-    iconChar: 'char_4056_titi',          // 用户指定立绘；策略名用户未定，我定「独家签约」
-  },
+  // band_titi（独家签约，2026-10-18 同日加入同日下架）：策略定义、i18n overlay、图标均已删除；
+  // meta.js 的 up_level_first_offer_elite_pick_banned_after handler 保留为死代码（无 band 引用即永不触发），
+  // 避免为删几行死代码重建 patches/01 的指纹。
 };
 
 /**

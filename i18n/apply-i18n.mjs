@@ -24,7 +24,11 @@ const IDS = {
     'chess_item_9_03_e_a', 'chess_item_9_03_e_b', 'chess_item_9_04_e_a', 'chess_item_9_04_e_b'],
   // 2026-10-17：自制策略（5 条）。records 的 _h 由本脚本按 data/bands.json 的 zh 源文本算（见下），
   // mod-i18n.json 里只写文案；每个策略的效果记录（aceffect_band_9_0x）从它派生。
-  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika', 'band_tutu', 'band_titi'],
+  // 2026-10-18：+band_tutu；band_titi（独家签约）当日下架——见下方 REMOVED_BANDS 清理。
+  bands: ['band_palico', 'band_headbr', 'band_haruka', 'band_utage', 'band_ulika', 'band_tutu'],
+  // 已下架的自制策略：overlay（bands + 派生 effects）里的残留记录必须清掉——
+  // zh 源已不存在会导致 stale≠0 / coverage 虚高。幂等：没有残留时是 no-op。
+  removedBands: [{ id: 'band_titi', effectId: 'aceffect_band_9_07' }],
   // effects 记录（含 _h）：mod-i18n.json 里存在则直接用；不存在才从 bonds/items/bands 派生
   effects: ['bondeffect_dong', 'bondeffect_ursus', 'eff_9_01_e', 'eff_9_02_e', 'eff_9_03_e', 'eff_9_04_e'],
 };
@@ -76,6 +80,12 @@ for (const lang of LANGS) {
   // 策略（bands）：mod-i18n.json 只写文案，_h 按 data/bands.json 的 zh 源文本现算（策略文案是自制内容，
   // 官方客户端里没有对应文本，只能手写四语言；族级同样需要 _h，否则整条 stale）。
   ov.files.bands = ov.files.bands || {};
+  // 下架策略清理：先删残留记录（bands + 派生 effects），让后面的 coverage 差量修正（负 delta）把
+  // translated/modI18nAdded 一并拉回正确值。
+  for (const rb of IDS.removedBands) {
+    if (ov.files.bands[rb.id]) { delete ov.files.bands[rb.id]; console.log(`[i18n] ${lang}: 移除下架策略 ${rb.id}`); }
+    if (rb.effectId && ov.files.effects[rb.effectId]) { delete ov.files.effects[rb.effectId]; console.log(`[i18n] ${lang}: 移除下架策略效果 ${rb.effectId}`); }
+  }
   const zhBands = JSON.parse(readFileSync(join(repo, 'data', 'bands.json'), 'utf8'));
   for (const id of IDS.bands) {
     const rec = mod[lang]?.bands?.[id];
@@ -153,11 +163,12 @@ for (const lang of LANGS) {
       const c = ov.meta.coverage[fam];
       if (!c) continue;
       const delta = n - (prev[fam] ?? 0);
-      if (delta > 0) c.translated = Math.min(c.texts ?? Infinity, (c.translated ?? 0) + delta);
+      // delta 可为负（下架策略删除记录后叶数减少，2026-10-18）：双向修正 translated
+      if (delta !== 0) c.translated = Math.max(0, Math.min(c.texts ?? Infinity, (c.translated ?? 0) + delta));
       c.pct = c.texts ? Math.round((c.translated / c.texts) * 1000) / 10 : c.pct;
     }
-    const dt = Object.entries(per).reduce((m, [fam, n]) => m + Math.max(0, n - (prev[fam] ?? 0)), 0);
-    if (dt > 0) ov.meta.totals.translated = Math.min(ov.meta.totals.texts ?? Infinity, (ov.meta.totals.translated ?? 0) + dt);
+    const dt = Object.entries(per).reduce((m, [fam, n]) => m + (n - (prev[fam] ?? 0)), 0);
+    if (dt !== 0) ov.meta.totals.translated = Math.max(0, Math.min(ov.meta.totals.texts ?? Infinity, (ov.meta.totals.translated ?? 0) + dt));
     ov.meta.totals.pct = ov.meta.totals.texts ? Math.round((ov.meta.totals.translated / ov.meta.totals.texts) * 1000) / 10 : ov.meta.totals.pct;
     ov.meta.modI18nAdded = per;
   }

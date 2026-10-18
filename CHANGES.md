@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-10-18（第十五条 · v1.0.13）· 兔兔支援显示名改珊比 ＋ 删除【独家签约】策略
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `files/tools/custom-content.mjs` | ①【兔兔支援】`name` 阿米娅 → **珊比**（截图反馈：策略选人界面显示的还是「阿米娅」——上轮只改了 iconChar 立绘字段，显示名走 `name`/i18n，是两个数据）；②**删除 `band_titi`（独家签约）定义**，`CUSTOM_BAND_COUNT` 7→6 |
+| `i18n/mod-i18n.json` | band_tutu 四语 `name`：en `Amiya`→`Thumpy`（wiki 非官方名 [ASSUMED]）、zh-TW/ja/ko →`珊比`（CN-only fallback 惯例）；删 band_titi 四语块 |
+| `i18n/apply-i18n.mjs` | `IDS.bands` 去 band_titi；新增 `removedBands` 下架清理（幂等删除 overlay 里的 band_titi + 派生 `aceffect_band_9_07` 残留）；coverage 差量修正允许负 delta（删记录后 translated 回落） |
+| `files/data/assets.json` | bands 表删 band_titi，`stats.bands` 47→46 |
+| `files/public/assets/band/band_titi.png` | 删除（owned 134→133） |
+| `mod.json` | `version` 1.0.12 → **1.0.13**；owned 指纹重算（assets.json / custom-content.mjs）、删 band_titi.png 条目 |
+| 引擎侧 `server/sim/content/bands/meta.js` | **不改**——`up_level_first_offer_elite_pick_banned_after` handler 保留为死代码（无 band 引用即永不触发），避免为删几行死代码重建 patches/01 指纹（custom-content 已加注释说明） |
+
+### 验证
+
+- 工作区全量重跑：build-data（bands 46）→ build-i18n --lang ×4（texts 重算 209）→ apply-i18n（清残留 + 补 overlay）→ i18n-rim-pr1/2/3（重补 build-i18n 清掉的 rim overlay）；`i18n-data.test.js` 11/11（stale=0、en bonds/items/bands 覆盖率回 100%）
+- `test/data.test.js` + `test/content/bands.test.js` + `test/match/feedback1-gaps.test.js` 87/87（bands 46、meta handler 34、coverage 无缺口；签约用例删除）
+- 工作区/真机树/mod 包三处 band 图标目录同步（6 张自制）
+
+---
+
 ## 2026-10-18（第十四条 · v1.0.12）· 兔兔支援立绘改珊比 ＋ 7 条自制策略撤蒙版恢复原始底图
 
 ### 改了什么
