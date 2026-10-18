@@ -2179,8 +2179,8 @@
       "sha256": "a897c35a6a9239f33c83a9c02652539388042a529a3a1934fe4ec49cb17276a5"
     },
     "test/golden-diy.test.js": {
-      "size": 2545,
-      "sha256": "9f4bc9d5513c34b0e69c3aaffc98c49e60e12a4857981524e430930be5ab2c3e"
+      "size": 2402,
+      "sha256": "03e7f2f56a672f2c58cd68008c1a0090da19d49bb14ebfcd4c221418a65aeb81"
     },
     "test/golden-standins.test.js": {
       "size": 4491,
